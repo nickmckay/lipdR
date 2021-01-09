@@ -18,9 +18,11 @@ D: LiPD data, sorted by dataset name : list
 Collapse time series into LiPD dataset form
 }
 \examples{
-D <- readLipds()
+\dontrun{
+D <- readLipd()
 ts <- extractTs(D)
 D <- collapseTs(ts)
+}
 
 }
 \author{
