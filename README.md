@@ -1,14 +1,15 @@
 # LiPD Utilities - R
 -----
-
+<!-- badges: start -->
 [![DOI](https://zenodo.org/badge/24036/nickmckay/LiPD-utilities.svg)](https://zenodo.org/badge/24036/nickmckay/LiPD-utilities.svg)
 [![R](https://img.shields.io/badge/R-1.0.136-blue.svg)]()
 [![R Studio](https://img.shields.io/badge/RStudio-3.3.1-blue.svg)]()
 [![license](https://img.shields.io/badge/license-GPL-brightgreen.svg)]()
+[![R build status](https://github.com/nickmckay/lipdR/workflows/R-CMD-check/badge.svg)](https://github.com/nickmckay/lipdR/actions)
+<!-- badges: end -->
 
-NOTE: pcaMethonds must be installed prior to installing the LiPD R package!
 
-Welcome to LiPD Utilities in R . This guide will provide everything you need to get up and running with the LiPD Utilities in R,  and show you how to use the core functions in the LiPD package. 
+Welcome to the lipdR package, a set of LiPD Utilities in R . This guide will provide everything you need to get up and running with the LiPD Utilities in R,  and show you how to use the core functions in the LiPD package. 
 
 ## Table of contents
 
@@ -58,26 +59,23 @@ Create a new project in R Studio and start with a fresh workspace:
 
 ![Workspace](https://www.dropbox.com/s/wg2w9ag7hwi7knd/1_fresh.png?raw=1)
 
-Install _devtools_ in the console window:
+Install _remotes_ in the console window:
  
-    install.packages("devtools")
+    install.packages("remotes")
 
-Load the _devtools_ package:
+Load the _remotes_ package:
 
-    library(devtools)
+    library(remotes)
 
-Use _devtools_ to install the LiPD Utilities package from github:
+Use _remotes_ to install the LiPD Utilities package from github:
 
-    devtools::install_github("nickmckay/LiPD-Utilities", subdir = "R")
+    remotes::install_github("nickmckay/lipdR")
 
 Load the _lipdR_ package:
 
     library(lipdR)
 
 And that's it! You have successfully installed the LiPD utilities and are ready to start working. Your console should now look similar to this:
-
-![Installed](https://www.dropbox.com/s/dl45u3r4yheeqxh/1_installed.png?raw=1)
-
 
 ## Core functions
 
@@ -87,12 +85,12 @@ And that's it! You have successfully installed the LiPD utilities and are ready 
 > 
 > **D**
 >
-> Represents multiple datasets read into a single variable. Each dataset is organized by its dataset name.   `D[["ODP1098B13"]][["paleoData"]]`
+> Represents multiple datasets read into a single variable. Each dataset is organized by its dataset name.   `D[["ODP1098B13"]][["paleoData"]]` or `D$ODP1098B13$paleoData`
 >
 >
 > **L**
 >
-> Represents a single dataset. The dataset does not need to be organized by name.  `L[["paleoData"]]` 
+> Represents a single dataset. The dataset does not need to be organized by name.  `L[["paleoData"]]` or `L$paleoData`
 > 
 >
 > **ts**
