@@ -39,5 +39,6 @@ Imports:
     tibble,
     purrr,
     tidyr,
-    usethis
+    usethis,
+    tidyselect
 Suggests: testthat
