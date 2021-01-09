@@ -24,7 +24,7 @@ and return a new time series with the matching objects
 Valid operators : ==, =, <=, >=, <, >
 }
 \examples{
-
+\dontrun{
 # Time series
 ts = [ object1, object2, object3, object4 ]
 
@@ -38,7 +38,7 @@ new.ts = filterTs(ts, ["paleoData_variableName == d18O", "archiveType == marine 
 # result
 [object2]
 
-
+}
 }
 \author{
 Chris Heiser

@@ -4,7 +4,7 @@
 \alias{pullTsVariable}
 \title{pull variable out of TS object}
 \usage{
-pullTsVariable(TS, variable)
+pullTsVariable(TS, variable, strict.search = FALSE)
 }
 \arguments{
 \item{TS}{a LiPD Timeseries object}

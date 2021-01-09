@@ -18,13 +18,13 @@ none
 Write LiPD data onto disk as LiPD files
 }
 \examples{
-
+\dontrun{
 # write - without path argument
 writeLipd(D)
 
 # write - with path argument
 writeLipd(D, "/Users/bobsmith/Desktop/lipd_files")
-
+}
 }
 \author{
 Chris Heiser

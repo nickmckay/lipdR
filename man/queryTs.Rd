@@ -26,7 +26,7 @@ indices = queryTs(ts, "archiveType == marine sediment")
 Valid operators : ==, =, <=, >=, <, >
 }
 \examples{
-
+\dontrun{
 # Time series
 ts = [ object1, object2, object3, object4 ]
 
@@ -39,7 +39,7 @@ idxs = filterTs(ts, "archiveType == marine sediment")
 idxs = filterTs(ts, "paleoData_variableName == d18O")
 # result
 [2]
-
+}
 }
 \author{
 Chris Heiser

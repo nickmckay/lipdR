@@ -20,8 +20,10 @@ ts:  Time series : list
 Create a time series from a library of LiPD datasets. A Time series is a flattened version of LiPD data that can be queried and filtered for easier data analysis.
 }
 \examples{
-D <- readLipds()
+\dontrun{
+D <- readLipd()
 ts <- extractTs(D)
+}
 
 }
 \author{

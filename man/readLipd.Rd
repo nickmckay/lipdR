@@ -16,7 +16,8 @@ D : LiPD dataset(s)
 Read LiPD files into R workspace
 }
 \examples{
-read in multiple datasets - no path argument
+\dontrun{
+#' read in multiple datasets - no path argument
 D <- readLipd()   # choose option 'd' for directory
 
 read in multiple datasets - with path argument
@@ -27,7 +28,7 @@ L <- readLipd()  # choose option "s" for single file
 
 read in one dataset - with path argument
 L <- readLipd("/Users/bobsmith/Desktop/lipd_files/dataset.lpd")
-
+}
 }
 \author{
 Chris Heiser
