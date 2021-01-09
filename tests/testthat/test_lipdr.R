@@ -1,5 +1,55 @@
 context("lipdR")
 
+test_lipdread <- function(path){
+  tryCatch({
+    D <- readLipd(path)
+    return(0)
+  }, error=function(cond){
+    print(cond)
+    return(-1)
+  })
+}
+
+
+test_extractTs <- function(path){
+  tryCatch({
+    L <- readLipd(path)
+    ts <- extractTs(L)
+    return(0)
+  }, error=function(cond){
+    print(cond)
+    return(-1)
+  })
+}
+
+
+test_extractTsCorrectCount <- function(path){
+  tryCatch({
+    L <- readLipd(path)
+    ts <- extractTs(L)
+    return(length(ts))
+  }, error=function(cond){
+    print(cond)
+    return(-1)
+  })
+}
+
+test_extractTsUniqueTsids <- function(path){
+  skip("needs to be updated")
+  tryCatch({
+    L <- readLipd(path)
+    ts <- extractTs(L)
+    ids <- geoChronR::pullTsVariable(ts, "paleoData_TSid")
+    if(any(duplicated(ids))){
+      return(-1)
+    }
+    return(0)
+  }, error=function(cond){
+    print(cond)
+    return(-1)
+  })
+}
+
 test_that("stripExtension() Works",{ 
   expect_match(stripExtension("~/asd/asd/asdas.lpd"),"asdas")
   expect_match(stripExtension("~/asd/asd/asdas"),"asdas")
