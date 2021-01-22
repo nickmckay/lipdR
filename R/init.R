@@ -115,6 +115,10 @@ writeLipd <- function(D, path=NULL, ignore.warnings=FALSE,removeNamesFromLists =
       path <- browse_dialog("d")
       setwd(path)
     }
+    
+    #normalize the path
+    path <- normalizePath(dirname(path),mustWork = FALSE)
+    
     set_bagit()
     if ("paleoData" %in% names(D)){
       print(paste0("writing: ", D[["dataSetName"]]))
