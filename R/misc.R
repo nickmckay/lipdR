@@ -24,9 +24,8 @@ download_from_url <- function(path){
   # Test if the string is a URL or not
   if(is.url(path)){
     #check to see if the url is https
-    if(tolower(substr(path,1,5)) == "http:" & get_os() == "win"){
-      path <- stringr::str_replace(path,"http://","https://")#replace with https
-    }
+    path <- stringr::str_replace(path,"http://lipdverse.org","https://lipdverse.org")#replace with https
+    
     
     
     #check for libcurl
@@ -58,6 +57,19 @@ download_from_url <- function(path){
       }else{
         dsn <- basename(path)
       }
+      
+      
+      #truncate for linkedearth
+      end <- nchar(dsn)
+      start <- max(unlist(stringr::str_locate_all(dsn,"=")))+1
+      if(!is.finite(start)){
+        start <- 1
+      }
+      dsn <- substr(dsn, start = start, stop = end)
+      
+      
+
+
       # String together a local download path
       dir <- get_download_path()
       local_path <- file.path(dir, paste0(dsn, ".lpd"))
