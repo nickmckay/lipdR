@@ -1,4 +1,46 @@
 
+#' Duplicate a table in a LiPD file
+#'
+#' @param L 
+#' @param paleo.or.chron is this a "paleo" or "chron" table?
+#' @param paleo.or.chron.number what number is this paleo or chron object (default = 1)
+#' @param table.type "measurement", "ensemble" or "summary" table? (default = "measurement")
+#' @param table.number what number is this table object (default = 1)
+#' @param n.duplicates how many duplicates to do you want? (default = 1)
+#' @importFrom purrr map
+#' @return
+#' @export
+duplicateTable <- function(L,
+                           paleo.or.chron = "paleo",
+                           paleo.or.chron.number = 1,
+                           table.type = "measurement",
+                           table.number = 1,
+                           n.duplicates = 1){
+  
+  for(i in 1:n.duplicates){
+    t2d <- L[[paste0(paleo.or.chron,"Data")]][[paleo.or.chron.number]][[paste0(table.type,"Table")]][[table.number]]
+    
+    
+    newTsid <- function(inst){
+      if(is.list(inst)){
+        inst$TSid <- createTSid()
+      }
+      return(inst)
+    }
+    
+    d <- purrr::map(t2d,newTsid)
+    if(!is.null(d$tableName)){
+      d$tableName <- paste0(d$tableName,"_duplicated")
+    }
+    
+    #how many tables so far?
+    L[[paste0(paleo.or.chron,"Data")]][[paleo.or.chron.number]][[paste0(table.type,"Table")]] <- append(L[[paste0(paleo.or.chron,"Data")]][[paleo.or.chron.number]][[paste0(table.type,"Table")]],list(d))
+    
+  }
+  
+return(L)
+}
+
 #' @export
 #' @importFrom dplyr bind_cols bind_rows group_by
 #' @importFrom rlang .data
@@ -132,11 +174,11 @@ tidyTsOld <- function(TS){
     er <- nrow(tdf)+sr-1
     
     
-
+    
     
     nm <- match(names(tdf),pcolnames)
     #if(i == 1){
-
+    
     
     set(tidyData, i= sr:er,j = nm, tdf)
     

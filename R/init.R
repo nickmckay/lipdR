@@ -117,7 +117,11 @@ writeLipd <- function(D, path=NULL, ignore.warnings=FALSE,removeNamesFromLists =
     }
     
     #normalize the path
-    path <- normalizePath(dirname(path),mustWork = FALSE)
+    if(isDirectory(path)){
+      path <- normalizePath(path,mustWork = FALSE)
+    }else{
+      path <- normalizePath(dirname(path),mustWork = FALSE)
+    }
     
     set_bagit()
     if ("paleoData" %in% names(D)){
