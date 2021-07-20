@@ -2,7 +2,7 @@
 % Please edit documentation in R/timeseries_collapse.R
 \name{collapse_block_indexed}
 \alias{collapse_block_indexed}
-\title{Use regex to split the tableName into a crumbs path}
+\title{Collapses blocks: funding, publication calibration, interpretation}
 \usage{
 collapse_block_indexed(entry, l, key)
 }
@@ -12,13 +12,8 @@ collapse_block_indexed(entry, l, key)
 \item{l}{Metadata (to add new data to)}
 
 \item{key}{Current key from time series entry}
-
-\item{ts:}{Time series}
 }
 \value{
-list matches: Separated names and indices
-Collapses blocks: funding, publication calibration, interpretation
-
 l Metadata
 }
 \description{

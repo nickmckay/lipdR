@@ -111,8 +111,8 @@ get_download_path <- function(){
 #' Get dataSetName from metadata. If one is not found, use filename as fallback.
 #' @export
 #' @keywords internal
-#' @param list d: Metadata
-#' @param name: Filename fallback
+#' @param list d Metadata
+#' @param name Filename fallback
 #' @return char dsn: Dataset name
 get_datasetname <- function(d, name){
   dsn <- name
@@ -126,7 +126,7 @@ get_datasetname <- function(d, name){
 #' Get dataSetName from metadata. If one is not found, use filename as fallback.
 #' @export
 #' @keywords internal
-#' @param vn: Variable name
+#' @param vn Variable name
 #' @return char vn: Variable name, possibly appended with a number
 get_vn <- function(vn, names){
   base <- vn
@@ -307,7 +307,7 @@ unindex_geo <- function(d){
 #' R will not zip directories with certain characters.
 #' @export
 #' @keywords internal
-#' @param dsn: Dataset name
+#' @param dsn Dataset name
 #' @return char dsn: Dataset name
 replace_invalid_chars <- function(dsn){
   dsn <- gsub("[.]", "-", dsn)

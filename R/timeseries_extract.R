@@ -2,9 +2,9 @@
 #' @export
 #' @author Chris Heiser
 #' @description Create a time series from a library of LiPD datasets. A Time series is a flattened version of LiPD data that can be queried and filtered for easier data analysis.
-#' @param D LiPD data, sorted by dataset name : list
-#' @param whichtables : char: Options: "all", "summ", "meas", "ens" : Table type to output in the time series.
-#' @param mode : char: Options: "paleo", "chron"
+#' @param D LiPD data, sorted by dataset name  list
+#' @param whichtables : char: Options: "all", "summ", "meas", "ens"  Table type to output in the time series.
+#' @param mode : char: Options "paleo", "chron"
 #' @return ts:  Time series : list
 #' @examples 
 #' \dontrun{

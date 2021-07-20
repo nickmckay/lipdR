@@ -7,7 +7,7 @@
 update_lipd_v1_3_keys(d)
 }
 \arguments{
-\item{d:}{Metadata}
+\item{d}{Metadata}
 }
 \value{
 list d: Metadata

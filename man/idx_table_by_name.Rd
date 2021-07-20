@@ -7,7 +7,7 @@
 idx_table_by_name(tables)
 }
 \arguments{
-\item{tables:}{Metadata}
+\item{tables}{Metadata}
 }
 \value{
 list tables: Metadata

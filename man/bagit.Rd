@@ -10,7 +10,7 @@ Warning: This often has system call issues in windows OS.}
 bagit(dir_bag)
 }
 \arguments{
-\item{char}{dir_bag: The path to the directory that needs to be bagged}
+\item{dir_bag}{The path to the directory that needs to be bagged}
 }
 \value{
 bool: Bagit success

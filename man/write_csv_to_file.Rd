@@ -8,7 +8,7 @@ csvs format: [ some_filename.csv $columns.data ]}
 write_csv_to_file(csvs)
 }
 \arguments{
-\item{csvs:}{CSV data}
+\item{csvs}{CSV data}
 }
 \value{
 bool success: CSV write success or fail

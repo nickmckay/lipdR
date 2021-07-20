@@ -7,7 +7,9 @@
 zipper(dir_original, dir_tmp, dsn)
 }
 \arguments{
-\item{char}{dir_tmp:  Temp directory}
+\item{dir_original}{Directory to move the LiPD to}
+
+\item{dir_tmp}{Temp directory}
 }
 \value{
 none

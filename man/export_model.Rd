@@ -7,7 +7,7 @@
 export_model(models)
 }
 \arguments{
-\item{models:}{Metadata}
+\item{models}{Metadata}
 }
 \value{
 list models: Metadata

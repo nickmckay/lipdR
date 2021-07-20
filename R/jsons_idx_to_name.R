@@ -1,7 +1,7 @@
 #' Change index-by-number to index-by-variableName
 #' @export
 #' @keywords internal
-#' @param d: Metadata
+#' @param d Metadata
 #' @return list d: Metadata
 idx_num_to_name <- function(d){
   if ("paleoData" %in% names(d)){
@@ -17,7 +17,7 @@ idx_num_to_name <- function(d){
 #' Change index-by-number for one section
 #' @export
 #' @keywords internal
-#' @param section: Metadata
+#' @param section Metadata
 #' @return list section: Metadata
 import_section<- function(section){
   # section
@@ -41,7 +41,7 @@ import_section<- function(section){
 #' Index model tables
 #' @export
 #' @keywords internal
-#' @param models: Metadata
+#' @param models Metadata
 #' @return list models: Metadata
 import_model <- function(models){
   tryCatch({
@@ -65,7 +65,7 @@ import_model <- function(models){
 #' Index tables in a loop
 #' @export
 #' @keywords internal
-#' @param tables: Metadata
+#' @param tables Metadata
 #' @return list tables: Metadata
 idx_table_by_name <- function(tables){
   for (i in 1:length(tables)){

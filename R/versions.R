@@ -8,7 +8,7 @@
 #' Add createdBy key to metdata
 #' @export
 #' @keywords internal
-#' @param d: Metadata
+#' @param d Metadata
 #' @return list d: Metadata
 add_created_by <- function(d){
   if(!("createdBy" %in% names(d))){
@@ -20,7 +20,7 @@ add_created_by <- function(d){
 #' Switch DOI from BibJSON structure 'identifier' key to a root level "doi" key
 #' @export
 #' @keywords internal
-#' @param d: Metadata
+#' @param d Metadata
 #' @return list d: Metadata
 fix_doi <- function(d){
   # DOI keys that we do not want. We want 'doi'
@@ -54,7 +54,7 @@ fix_doi <- function(d){
 #' Check what version of LiPD this file is using. If none is found, assume it's using version 1.0
 #' @export
 #' @keywords internal
-#' @param d: Metadata
+#' @param d Metadata
 #' @return list tmp: Version number and meta
 get_lipd_version <- function(d){
   version <- NULL
@@ -158,7 +158,7 @@ update_lipd_v1_1 <- function(d){
 #'   distribution tables
 #' @export
 #' @keywords internal
-#' @param d: Metadata
+#' @param d Metadata
 #' @return list d: Metadata
 update_lipd_v1_2 <- function(d){
   if("paleoData" %in% names(d)){
@@ -174,8 +174,8 @@ update_lipd_v1_2 <- function(d){
 #' Update LiPD v1.1 to v1.2 - one section
 #' @export
 #' @keywords internal
-#' @param d: Metadata
-#' @param pc: paleoData or chronData
+#' @param d Metadata
+#' @param pc paleoData or chronData
 #' @return list d: Metadata
 update_lipd_v1_2_section <- function(d, pc){
   if(!isNullOb(d[[pc]])){
@@ -221,7 +221,7 @@ update_lipd_v1_3 <- function(d){
 #' @export
 #' @importFrom stats setNames
 #' @keywords internal
-#' @param d: Metadata
+#' @param d Metadata
 #' @return list d: Metadata
 update_lipd_v1_3_keys <- function(d){
   v12keys <- c("paleoMeasurementTable", "chronMeasurementTable", "paleoModel", "chronModel", "paleoDataMD5", "chronDataMD5", "paleoEnsembleMD5",  
@@ -321,8 +321,8 @@ update_lipd_v1_3_structure <- function(d){
 #' Merge the old interpretation fields into the new, combined interpretation field
 #' @export
 #' @keywords internal
-#' @param d: Metadata
-#' @param key: climateInterpretation or isotopeInterpretation
+#' @param d Metadata
+#' @param key climateInterpretation or isotopeInterpretation
 #' @return list d: Metadata
 merge_interpretations <- function(d, key){
   scope <- gsub("Interpretation", "", key)

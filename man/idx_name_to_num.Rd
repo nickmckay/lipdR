@@ -7,7 +7,7 @@
 idx_name_to_num(d)
 }
 \arguments{
-\item{d:}{Metadata}
+\item{d}{Metadata}
 }
 \value{
 list d: Metadata

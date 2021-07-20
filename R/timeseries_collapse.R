@@ -256,10 +256,7 @@ collapse_column <- function(table, entry, pc){
   return(table)
 }
 
-#' Use regex to split the tableName into a crumbs path
-#' @export
-#' @param ts: Time series
-#' @return list matches: Separated names and indices
+# Use regex to split the tableName into a crumbs path
 # get_crumbs <- function(ts){
 #   matches <- c()
 #   tryCatch({
@@ -322,9 +319,10 @@ collapse_block_indexed <- function(entry, l, key){
 #' @param entry Time series entry
 #' @param l Metadata (to append to)
 #' @param key Key from time series entry
+#' @param pc paleo or chron? #deprecated
 #'
 #' @return l: Metadata
-collapse_block <- function(entry, l, key){
+collapse_block <- function(entry, l, key, pc){
   exclude <- c('filename', 'googleWorkSheetKey', 'tableName', "missingValue", "tableMD5", "dataMD5", "googWorkSheetKey", "geo", "funding", "pub")
   # key_match / 1,1 "paleoData" / 1,2 "_" / 1,3 "someKey"
   key_match <- stringr::str_match_all(key, "(\\w+)[_](\\w+)")

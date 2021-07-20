@@ -7,9 +7,9 @@
 export_section(section, pc)
 }
 \arguments{
-\item{section:}{Metadata}
+\item{section}{Metadata}
 
-\item{char}{pc: paleoData or chronData}
+\item{pc}{paleoData or chronData}
 }
 \value{
 list d: Metadata

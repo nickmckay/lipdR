@@ -36,8 +36,8 @@ lipd_read <- function(path){
 #' @export
 #' @keywords internal
 #' @param j Metadata
-#' @param path: Destination path
-#' @param dsn: Dataset name
+#' @param path Destination path
+#' @param dsn Dataset name
 #' @return none:
 lipd_write <- function(j, path, dsn, ignore.warnings,removeNamesFromLists = FALSE){
   tryCatch({

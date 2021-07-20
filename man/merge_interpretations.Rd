@@ -7,9 +7,9 @@
 merge_interpretations(d, key)
 }
 \arguments{
-\item{d:}{Metadata}
+\item{d}{Metadata}
 
-\item{char}{key: climateInterpretation or isotopeInterpretation}
+\item{key}{climateInterpretation or isotopeInterpretation}
 }
 \value{
 list d: Metadata

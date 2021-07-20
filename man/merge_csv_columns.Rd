@@ -7,9 +7,9 @@
 merge_csv_columns(csvs, meta)
 }
 \arguments{
-\item{csvs:}{Values, sorted by column}
+\item{csvs}{Values, sorted by column}
 
-\item{meta:}{Table metadata, sorted by column}
+\item{meta}{Table metadata, sorted by column}
 }
 \value{
 list meta: Table metadata

@@ -8,7 +8,7 @@ match[[1]][[1]] = full key with underscore and index (ex. "physicalSample_tableN
 match[[1]][[2]] = first key (ex. "physicalSample")
 match[[1]][[3]] = second key (ex. "tableName")}
 \usage{
-collapse_block(entry, l, key)
+collapse_block(entry, l, key, pc)
 }
 \arguments{
 \item{entry}{Time series entry}
@@ -16,6 +16,8 @@ collapse_block(entry, l, key)
 \item{l}{Metadata (to append to)}
 
 \item{key}{Key from time series entry}
+
+\item{pc}{paleo or chron? #deprecated}
 }
 \value{
 l: Metadata

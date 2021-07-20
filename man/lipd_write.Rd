@@ -11,7 +11,9 @@ lipd_write(j, path, dsn, ignore.warnings, removeNamesFromLists = FALSE)
 \arguments{
 \item{j}{Metadata}
 
-\item{char}{dsn: Dataset name}
+\item{path}{Destination path}
+
+\item{dsn}{Dataset name}
 }
 \value{
 none:

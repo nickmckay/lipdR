@@ -1,8 +1,8 @@
 #' Get csv "values" fields from metadata.
 #' @export
 #' @keywords internal
-#' @param d: Metadata
-#' @param dsn: Dataset name
+#' @param d Metadata
+#' @param dsn Dataset name
 #' @return list d2: Metadata / CSV
 get_csv_from_metadata <- function(d, dsn){
   new <- list()
@@ -21,9 +21,9 @@ get_csv_from_metadata <- function(d, dsn){
 #' csv.data format: [ some_filename.csv $columns.data ]
 #' @export
 #' @keywords internal
-#' @param dat: Metadata
-#' @param pc_1: paleo or chron
-#' @param dsn: Dataset name
+#' @param dat Metadata
+#' @param pc_1 paleo or chron
+#' @param dsn Dataset name
 #' @return list dat: Split data
 get_csv_from_section <- function(dat, pc_1, dsn){
   new = list()
@@ -64,9 +64,9 @@ get_csv_from_section <- function(dat, pc_1, dsn){
 #' Parse metadata and csv from models
 #' @export
 #' @keywords internal
-#' @param models: Metadata
-#' @param crumbs: Crumbs
-#' @param csvs: CSV data
+#' @param models Metadata
+#' @param crumbs Crumbs
+#' @param csvs CSV data
 #' @return list new: Metadata / CSV
 get_csv_from_model <- function(models, crumbs, csvs){
   new <- list()
@@ -110,9 +110,9 @@ get_csv_from_model <- function(models, crumbs, csvs){
 #' Parse metadata and csv from list of tables
 #' @export
 #' @keywords internal
-#' @param tables: Metadata
-#' @param crumbs: Crumbs
-#' @param csvs: CSV data
+#' @param tables Metadata
+#' @param crumbs Crumbs
+#' @param csvs CSV data
 #' @return list new: Metadata / CSV
 get_csv_from_table <- function(tables, crumbs, csvs){
   new <- list()
@@ -140,7 +140,7 @@ get_csv_from_table <- function(tables, crumbs, csvs){
 #' Parse metadata and csv from columns
 #' @export
 #' @keywords internal
-#' @param table: Metadata
+#' @param table Metadata
 #' @return list new: Metadata / CSV
 get_csv_from_columns <- function(table){
   tryCatch({

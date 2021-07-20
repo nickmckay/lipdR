@@ -7,7 +7,7 @@
 fake_bagit(dir_bag)
 }
 \arguments{
-\item{char}{dir_bag: The path to the directory that needs to be bagged}
+\item{dir_bag}{The path to the directory that needs to be bagged}
 }
 \value{
 none

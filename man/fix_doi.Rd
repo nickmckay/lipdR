@@ -7,7 +7,7 @@
 fix_doi(d)
 }
 \arguments{
-\item{d:}{Metadata}
+\item{d}{Metadata}
 }
 \value{
 list d: Metadata

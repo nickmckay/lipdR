@@ -7,7 +7,7 @@
 #' values into their respective metadata columns.
 #' @export
 #' @keywords internal
-#' @param d: Metadata
+#' @param d Metadata
 #' @return list d: Metadata
 merge_csv_metadata <- function(d){
   tryCatch({
@@ -29,9 +29,9 @@ merge_csv_metadata <- function(d){
 #' Merge CSV into each section
 #' @export
 #' @keywords internal
-#' @param section: Metadata
-#' @param crumbs: paleo or chron
-#' @param csvs: CSV, sorted by filename
+#' @param section Metadata
+#' @param crumbs paleo or chron
+#' @param csvs CSV, sorted by filename
 #' @return list section: Metadata
 merge_csv_section <- function(section, crumbs, csvs){
   tryCatch({
@@ -55,9 +55,9 @@ merge_csv_section <- function(section, crumbs, csvs){
 #' Merge CSV into each model
 #' @export
 #' @keywords internal
-#' @param  list models: Metadata
-#' @param crumbs: Crumbs
-#' @param csvs: CSV data
+#' @param  list models Metadata
+#' @param crumbs Crumbs
+#' @param csvs CSV data
 #' @return list models: Metadata
 merge_csv_model <- function(models, crumbs, csvs){
   tryCatch({
@@ -82,9 +82,9 @@ merge_csv_model <- function(models, crumbs, csvs){
 #' Merge CSV data into each table
 #' @export
 #' @keywords internal
-#' @param  list models: Metadata
-#' @param crumbs: Crumbs
-#' @param csvs: CSV data
+#' @param  list models Metadata
+#' @param crumbs Crumbs
+#' @param csvs CSV data
 #' @return list models: Metadata
 merge_csv_table <- function(tables, crumbs, csvs){
   tryCatch({
@@ -110,8 +110,8 @@ merge_csv_table <- function(tables, crumbs, csvs){
 #' Merge values into each column
 #' @export
 #' @keywords internal
-#' @param csvs: Values, sorted by column
-#' @param meta: Table metadata, sorted by column
+#' @param csvs Values, sorted by column
+#' @param meta Table metadata, sorted by column
 #' @return list meta: Table metadata
 merge_csv_columns <- function(csvs, meta){
   tryCatch({

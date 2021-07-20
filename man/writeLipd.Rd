@@ -12,9 +12,9 @@ writeLipd(
 )
 }
 \arguments{
-\item{D}{LiPD datasets : list}
+\item{D}{LiPD datasets  list}
 
-\item{path}{Destination path : char}
+\item{path}{Destination path  char}
 }
 \value{
 none

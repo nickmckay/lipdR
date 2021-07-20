@@ -8,9 +8,11 @@ csv.data format: [ some_filename.csv $columns.data ]}
 get_csv_from_section(dat, pc_1, dsn)
 }
 \arguments{
-\item{dat:}{Metadata}
+\item{dat}{Metadata}
 
-\item{char}{dsn: Dataset name}
+\item{pc_1}{paleo or chron}
+
+\item{dsn}{Dataset name}
 }
 \value{
 list dat: Split data

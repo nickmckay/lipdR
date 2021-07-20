@@ -7,7 +7,7 @@
 add_created_by(d)
 }
 \arguments{
-\item{d:}{Metadata}
+\item{d}{Metadata}
 }
 \value{
 list d: Metadata

@@ -7,7 +7,7 @@
 get_src_or_dst(path)
 }
 \arguments{
-\item{char}{path Target path}
+\item{path}{Target path}
 }
 \value{
 char path Directory or file path
