@@ -43,7 +43,7 @@ set_bagit <- function(){
 #' 
 #' @export
 #' @keywords internal
-#' @param char dir_bag: The path to the directory that needs to be bagged
+#' @param dir_bag: The path to the directory that needs to be bagged
 #' @return bool: Bagit success
 bagit <- function(dir_bag){
   tryCatch({
@@ -80,7 +80,7 @@ bagit <- function(dir_bag){
 #' 
 #' @export
 #' @keywords internal
-#' @param char dir_bag: The path to the directory that needs to be bagged
+#' @param dir_bag: The path to the directory that needs to be bagged
 #' @return none
 fake_bagit <- function(dir_bag){
   tryCatch({

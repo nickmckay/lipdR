@@ -14,7 +14,7 @@ duplicateTable(
 )
 }
 \arguments{
-\item{L}{}
+\item{L}{a LiPD object}
 
 \item{paleo.or.chron}{is this a "paleo" or "chron" table?}
 
@@ -27,7 +27,7 @@ duplicateTable(
 \item{n.duplicates}{how many duplicates to do you want? (default = 1)}
 }
 \value{
-
+measurementTable
 }
 \description{
 Duplicate a table in a LiPD file

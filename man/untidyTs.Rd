@@ -9,7 +9,7 @@ untidyTs(tTS, age.var = "age")
 \arguments{
 \item{tTS}{a tidy data frame, such as those created by tidyTs()}
 
-\item{age.var}{}
+\item{age.var}{variable name for the time dimension}
 }
 \value{
 a LiPD Timeseries object

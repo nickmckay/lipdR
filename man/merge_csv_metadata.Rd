@@ -8,7 +8,7 @@ values into their respective metadata columns.}
 merge_csv_metadata(d)
 }
 \arguments{
-\item{list}{d: Metadata}
+\item{d:}{Metadata}
 }
 \value{
 list d: Metadata

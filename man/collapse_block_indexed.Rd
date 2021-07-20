@@ -7,21 +7,28 @@
 collapse_block_indexed(entry, l, key)
 }
 \arguments{
-\item{list}{l: Metadata (to add new data to)}
+\item{entry}{Time series entry}
 
-\item{char}{key: Current key from time series entry}
+\item{l}{Metadata (to add new data to)}
+
+\item{key}{Current key from time series entry}
+
+\item{ts:}{Time series}
 }
 \value{
 list matches: Separated names and indices
 Collapses blocks: funding, publication calibration, interpretation
-These follow the regex format of "<key1><idx>_<key2>"
-match[[1]][[1]] = full key with underscore and index (ex. "interpretation1_variableDetail")
-match[[1]][[2]] = first key (ex. "interpretation)
-match[[1]][[3]] = index number (ex. the "1" from "interpretation1")
-match[[1]][[4]] = second key (ex. "variableDetail")
 
-list l: Metadata
+l Metadata
 }
 \description{
-Use regex to split the tableName into a crumbs path
+These follow the regex format of "<key1><idx>_<key2>"
+
+match[[1]][[1]] = full key with underscore and index (ex. "interpretation1_variableDetail")
+
+match[[1]][[2]] = first key (ex. "interpretation)
+
+match[[1]][[3]] = index number (ex. the "1" from "interpretation1")
+
+match[[1]][[4]] = second key (ex. "variableDetail")
 }

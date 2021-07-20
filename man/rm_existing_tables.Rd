@@ -7,12 +7,14 @@
 rm_existing_tables(d, pc, whichtables)
 }
 \arguments{
-\item{list}{d: Metadata}
+\item{d}{Metadata}
 
-\item{char}{whichtables: all summ meas ens}
+\item{pc}{paleoData or chronData}
+
+\item{whichtables}{all summ meas ens}
 }
 \value{
-list d: Metadata
+d: Metadata
 }
 \description{
 Remove tables that correspond to 'whichtables' type. These tables will be collapsed next and need a clean slate.

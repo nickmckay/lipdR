@@ -9,7 +9,7 @@ tidyTs(TS, age.var = "age")
 \arguments{
 \item{TS}{a LiPD Timeseries object}
 
-\item{age.var}{}
+\item{age.var}{variable name for the time dimension}
 }
 \value{
 a tidy data.frame

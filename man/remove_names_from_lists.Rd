@@ -7,7 +7,7 @@
 remove_names_from_lists(L)
 }
 \arguments{
-\item{L}{}
+\item{L}{a LiPD object}
 }
 \value{
 L without named lists in key spots

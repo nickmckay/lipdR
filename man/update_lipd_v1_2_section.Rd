@@ -7,7 +7,7 @@
 update_lipd_v1_2_section(d, pc)
 }
 \arguments{
-\item{list}{d: Metadata}
+\item{d:}{Metadata}
 
 \item{char}{pc: paleoData or chronData}
 }

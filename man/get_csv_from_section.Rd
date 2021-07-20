@@ -8,7 +8,7 @@ csv.data format: [ some_filename.csv $columns.data ]}
 get_csv_from_section(dat, pc_1, dsn)
 }
 \arguments{
-\item{list}{dat: Metadata}
+\item{dat:}{Metadata}
 
 \item{char}{dsn: Dataset name}
 }

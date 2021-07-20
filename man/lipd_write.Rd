@@ -9,7 +9,7 @@ zip up bag folder, place lipd in target dst, move to original dir, delete tmp}
 lipd_write(j, path, dsn, ignore.warnings, removeNamesFromLists = FALSE)
 }
 \arguments{
-\item{list}{j: Metadata}
+\item{j}{Metadata}
 
 \item{char}{dsn: Dataset name}
 }

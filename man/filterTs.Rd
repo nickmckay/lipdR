@@ -6,7 +6,7 @@
 and return a new time series with the matching objects
 Valid operators : ==, =, <=, >=, <, >}
 \usage{
-filterTs(ts, expression)
+filterTs(ts, expression, exact = FALSE)
 }
 \arguments{
 \item{ts}{Time series : list , Time series data}

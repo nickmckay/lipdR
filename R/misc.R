@@ -112,7 +112,7 @@ get_download_path <- function(){
 #' @export
 #' @keywords internal
 #' @param list d: Metadata
-#' @param char name: Filename fallback
+#' @param name: Filename fallback
 #' @return char dsn: Dataset name
 get_datasetname <- function(d, name){
   dsn <- name
@@ -126,7 +126,7 @@ get_datasetname <- function(d, name){
 #' Get dataSetName from metadata. If one is not found, use filename as fallback.
 #' @export
 #' @keywords internal
-#' @param char vn: Variable name
+#' @param vn: Variable name
 #' @return char vn: Variable name, possibly appended with a number
 get_vn <- function(vn, names){
   base <- vn
@@ -307,7 +307,7 @@ unindex_geo <- function(d){
 #' R will not zip directories with certain characters.
 #' @export
 #' @keywords internal
-#' @param char dsn: Dataset name
+#' @param dsn: Dataset name
 #' @return char dsn: Dataset name
 replace_invalid_chars <- function(dsn){
   dsn <- gsub("[.]", "-", dsn)
@@ -380,7 +380,7 @@ warn_ensembles_in_paleo <- function(L, ignore.warnings){
 
 #' remove names from lists
 #'
-#' @param L 
+#' @param L a LiPD object
 #'
 #' @return L without named lists in key spots
 #' @export

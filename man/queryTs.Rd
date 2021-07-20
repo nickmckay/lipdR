@@ -7,7 +7,7 @@ and return vector of the indices that match.
 indices = queryTs(ts, "archiveType == marine sediment")
 Valid operators : ==, =, <=, >=, <, >}
 \usage{
-queryTs(ts, expression)
+queryTs(ts, expression, exact = FALSE)
 }
 \arguments{
 \item{ts}{Time series : list , Time Series data}

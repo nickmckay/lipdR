@@ -7,7 +7,7 @@
 combineInterpretationByScope(sTS)
 }
 \arguments{
-\item{sTS}{}
+\item{sTS}{an interpretation-split TS object}
 }
 \value{
 a regular Timeseries structure

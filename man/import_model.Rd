@@ -7,7 +7,7 @@
 import_model(models)
 }
 \arguments{
-\item{list}{models: Metadata}
+\item{models:}{Metadata}
 }
 \value{
 list models: Metadata

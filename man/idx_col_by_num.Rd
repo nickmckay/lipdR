@@ -8,7 +8,7 @@ Place the new columns under a "columns" list}
 idx_col_by_num(table)
 }
 \arguments{
-\item{list}{table: Metadata}
+\item{table:}{Metadata}
 }
 \value{
 list table: Metadata

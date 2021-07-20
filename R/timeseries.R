@@ -7,7 +7,6 @@
 #' @param ts Time series : list , Time Series data
 #' @param expression Search expression : char (single query) or list (multiple query)
 #' @param exact Key match : char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
-#' @usage queryTs(ts, expression)
 #' @return idxs: Matching indices : list
 #' @examples 
 #' \dontrun{
@@ -37,7 +36,6 @@ queryTs= function(ts, expression, exact=FALSE){
 #' @param ts Time series : list , Time series data
 #' @param expression Search expression : char (single query) or list (multiple query)
 #' @param exact Key match : char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
-#' @usage filterTs(ts, expression)
 #' @return new.ts : Time series : list
 #' @examples 
 #' \dontrun{

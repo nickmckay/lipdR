@@ -7,9 +7,11 @@
 get_csv_from_table(tables, crumbs, csvs)
 }
 \arguments{
+\item{tables:}{Metadata}
+
 \item{char}{crumbs: Crumbs}
 
-\item{list}{csvs: CSV data}
+\item{csvs:}{CSV data}
 }
 \value{
 list new: Metadata / CSV

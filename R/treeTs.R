@@ -1,7 +1,7 @@
 #' Lump metadata variables with other rows in Ts (treeTS)
 #'
-#' @param Ts 
-#' @param sc 
+#' @param Ts a TS object
+#' @param sc metadata fields to lump
 #'
 #' @return A lumped Ts
 #' @export

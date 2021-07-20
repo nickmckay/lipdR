@@ -7,10 +7,10 @@
 tsPluck(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{a single row}
 }
 \value{
-
+plucked
 }
 \description{
 Pull a single entry list object ot the top level (internal use)

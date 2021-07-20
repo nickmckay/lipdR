@@ -2,8 +2,8 @@
 #' @export
 #' @importFrom utils unzip
 #' @keywords internal
-#' @param char path: Path
-#' @param char tmp: Temporary directory
+#' @param path: Path
+#' @param tmp: Temporary directory
 #' @return none
 unzipper <- function(path, dir_tmp){
   if(length(path)>0){
@@ -18,8 +18,8 @@ unzipper <- function(path, dir_tmp){
 #' @export
 #' @importFrom utils zip
 #' @keywords internal
-#' @param char dir_original: Directory to move the LiPD to
-#' @param char dir_tmp:  Temp directory
+#' @param dir_original: Directory to move the LiPD to
+#' @param dir_tmp:  Temp directory
 #' @return none
 zipper <- function(dir_original, dir_tmp, dsn){
   # zip the top lipd directory. zip file is create one level up

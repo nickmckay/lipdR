@@ -8,15 +8,17 @@ match[[1]][[1]] = full key with underscore and index (ex. "physicalSample_tableN
 match[[1]][[2]] = first key (ex. "physicalSample")
 match[[1]][[3]] = second key (ex. "tableName")}
 \usage{
-collapse_block(entry, l, key, pc)
+collapse_block(entry, l, key)
 }
 \arguments{
-\item{list}{l: Metadata (to append to)}
+\item{entry}{Time series entry}
 
-\item{char}{key: Key from time series entry}
+\item{l}{Metadata (to append to)}
+
+\item{key}{Key from time series entry}
 }
 \value{
-list l: Metadata
+l: Metadata
 }
 \description{
 Collapses blocks: calibration, physicalSample, hasResolution, 

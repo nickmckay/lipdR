@@ -118,7 +118,7 @@ read_csv_from_file <- function(){
 #' @export
 #' @importFrom utils write.table
 #' @keywords internal
-#' @param list csvs: CSV data
+#' @param csvs: CSV data
 #' @return bool success: CSV write success or fail
 write_csv_to_file <- function(csvs){
   tryCatch({

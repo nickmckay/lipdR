@@ -35,9 +35,9 @@ lipd_read <- function(path){
 #' zip up bag folder, place lipd in target dst, move to original dir, delete tmp
 #' @export
 #' @keywords internal
-#' @param list j: Metadata
-#' @param char path: Destination path
-#' @param char dsn: Dataset name
+#' @param j Metadata
+#' @param path: Destination path
+#' @param dsn: Dataset name
 #' @return none:
 lipd_write <- function(j, path, dsn, ignore.warnings,removeNamesFromLists = FALSE){
   tryCatch({

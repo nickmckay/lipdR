@@ -95,7 +95,7 @@ readLipd <- function(path=NULL){
 #' @keywords internal
 #' @param D LiPD datasets : list
 #' @param path Destination path : char
-#' @usage writeLipd(D, path)
+#' @importFrom pkgbuild find_rtools
 #' @return none
 #' @examples 
 #' \dontrun{

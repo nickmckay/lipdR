@@ -5,7 +5,6 @@
 #' @param ts Time series : list
 #' @param force Attempt to collapse time series when lipd ts_storage is not provided: bool
 #'
-#' @usage collapseTs(ts)
 #' @return D: LiPD data, sorted by dataset name : list
 #' @examples 
 #' \dontrun{
@@ -159,10 +158,10 @@ collapse_author <- function(d, entry){
 
 #' Collapse time series section; paleo or chron 
 #' @export
-#' @param list d: Metadata
-#' @param list entry: Time series entry
-#' @param char pc: paleoData or chronData
-#' @return list d: Metadata
+#' @param d Metadata
+#' @param entry Time series entry
+#' @param pc paleoData or chronData
+#' @return d: Metadata
 collapse_table <- function(d, entry, pc){
   # Get the crumbs to the target table
   # m <- get_crumbs(entry)
@@ -180,10 +179,10 @@ collapse_table <- function(d, entry, pc){
 
 #' Collapse time series table root. All keys listed below are known table root keys. 
 #' @export
-#' @param list table: Metadata
-#' @param list entry: Time series entry
-#' @param char pc: paleoData or chronData
-#' @return list table: Metadata
+#' @param table Metadata
+#' @param entry Time series entry
+#' @param pc paleoData or chronData
+#' @return table: Metadata
 collapse_table_root <- function(table, entry, pc){
   root_keys <- c('filename', 'googleWorkSheetKey', 'tableName', "missingValue", "tableMD5", "dataMD5", "googWorkSheetKey")
   for(i in 1:length(root_keys)){
@@ -197,10 +196,10 @@ collapse_table_root <- function(table, entry, pc){
 
 #' Collapse time series column. Compile column entries and place new column in table. 
 #' @export
-#' @param list table: Metadata
-#' @param list entry: Time series entry
-#' @param char pc: paleoData or chronData
-#' @return list table: Metadata
+#' @param table Metadata
+#' @param entry Time series entry
+#' @param pc paleoData or chronData
+#' @return table: Metadata
 collapse_column <- function(table, entry, pc){
   new_column <- list()
   interp <- list()
@@ -259,7 +258,7 @@ collapse_column <- function(table, entry, pc){
 
 #' Use regex to split the tableName into a crumbs path
 #' @export
-#' @param list ts: Time series
+#' @param ts: Time series
 #' @return list matches: Separated names and indices
 # get_crumbs <- function(ts){
 #   matches <- c()
@@ -281,17 +280,16 @@ collapse_column <- function(table, entry, pc){
 
 
 #' Collapses blocks: funding, publication calibration, interpretation
-#' These follow the regex format of "<key1><idx>_<key2>"
-#' match[[1]][[1]] = full key with underscore and index (ex. "interpretation1_variableDetail")
-#' match[[1]][[2]] = first key (ex. "interpretation)
-#' match[[1]][[3]] = index number (ex. the "1" from "interpretation1")
-#' match[[1]][[4]] = second key (ex. "variableDetail")
-#' 
+#' @description These follow the regex format of "<key1><idx>_<key2>"
+#' @description match[[1]][[1]] = full key with underscore and index (ex. "interpretation1_variableDetail")
+#' @description match[[1]][[2]] = first key (ex. "interpretation)
+#' @description match[[1]][[3]] = index number (ex. the "1" from "interpretation1")
+#' @description match[[1]][[4]] = second key (ex. "variableDetail")
 #' @export
-#' @param list entry: Time series entry
-#' @param list l: Metadata (to add new data to)
-#' @param char key: Current key from time series entry
-#' @return list l: Metadata
+#' @param entry Time series entry
+#' @param l Metadata (to add new data to)
+#' @param key Current key from time series entry
+#' @return l Metadata
 collapse_block_indexed <- function(entry, l, key){
   # print(paste0("collapsing block: ", key))
   match <- stringr::str_match_all(key, "(\\w+)(\\d+)[_](\\w+)")
@@ -320,11 +318,13 @@ collapse_block_indexed <- function(entry, l, key){
 #' match[[1]][[3]] = second key (ex. "tableName")
 #' 
 #' @export
-#' @param list entry: Time series entry
-#' @param list l: Metadata (to append to)
-#' @param char key: Key from time series entry
-#' @return list l: Metadata
-collapse_block <- function(entry, l, key, pc){
+#'
+#' @param entry Time series entry
+#' @param l Metadata (to append to)
+#' @param key Key from time series entry
+#'
+#' @return l: Metadata
+collapse_block <- function(entry, l, key){
   exclude <- c('filename', 'googleWorkSheetKey', 'tableName', "missingValue", "tableMD5", "dataMD5", "googWorkSheetKey", "geo", "funding", "pub")
   # key_match / 1,1 "paleoData" / 1,2 "_" / 1,3 "someKey"
   key_match <- stringr::str_match_all(key, "(\\w+)[_](\\w+)")
@@ -340,10 +340,10 @@ collapse_block <- function(entry, l, key, pc){
 
 #' Get the target table
 #' @export
-#' @param list d: Metadata
-#' @param list current: Current time series entry
-#' @param char pc: paleoData or chronData
-#' @return list table: Metadata
+#' @param d Metadata
+#' @param current Current time series entry
+#' @param pc paleoData or chronData
+#' @return table: Metadata
 get_table <- function(d, current, pc){
     table <- list()
     # Use the path and indexing info to get the "in progress" table that belongs to this TS entry. We want to add this TS entry (column) to this table.
@@ -395,11 +395,11 @@ get_table <- function(d, current, pc){
 
 #' Put the target table
 #' @export
-#' @param list d: Metadata
-#' @param list current: Current time series entry
-#' @param char pc: paleoData or chronData
-#' @param list table: Metadata (to be placed)
-#' @return list d: Metadata
+#' @param d Metadata
+#' @param current Current time series entry
+#' @param pc paleoData or chronData
+#' @param table Metadata (to be placed)
+#' @return d: Metadata
 put_table <- function(d, current, pc, table){
   tt <- current$tableType
   modelNumber <- current$modelNumber
@@ -438,13 +438,13 @@ put_table <- function(d, current, pc, table){
 
 #' Before you place a table, you must have the structure leading up to the location or you'll get errors. Build the structure
 #' @export
-#' @param list d: Metadata
-#' @param char pc: paleoData or chronData
-#' @param char table_type: meas, ens, or summ
-#' @param num pcNumber: paleoData or chronData index number
-#' @param num modelNumber: Model index number OR null (if meas table)
-#' @param num tableumber: Table index number
-#' @return list d: Metadata
+#' @param d Metadata
+#' @param pc paleoData or chronData
+#' @param table_type meas, ens, or summ
+#' @param pcNumber paleoData or chronData index number
+#' @param modelNumber Model index number OR null (if meas table)
+#' @param tableNumber Table index number
+#' @return D: Metadata
 build_structure <- function(d, pc, table_type, pcNumber, modelNumber, tableNumber){
 
   if(is.null(d)){
@@ -530,10 +530,10 @@ build_structure <- function(d, pc, table_type, pcNumber, modelNumber, tableNumbe
 
 #' Remove tables that correspond to 'whichtables' type. These tables will be collapsed next and need a clean slate. 
 #' @export
-#' @param list d: Metadata
-#' @param char pc: paleoData or chronData
-#' @param char whichtables: all summ meas ens
-#' @return list d: Metadata
+#' @param d Metadata
+#' @param pc paleoData or chronData
+#' @param whichtables all summ meas ens
+#' @return d: Metadata
 rm_existing_tables <- function(d, pc, whichtables){
   tryCatch({
     if(pc %in% names(d)){
@@ -578,11 +578,14 @@ rm_existing_tables <- function(d, pc, whichtables){
 
 #' Put in paleoData and chronData as the base for this dataset using the oroginal dataset data.  
 #' @export
-#' @param list d: Metadata
-#' @param char pc: paleoData or chronData
-#' @param bool force: Build dataset without original data from lipd
-#' @param char mode: paleo or chron mode
-#' @return list d: Metadata
+#'
+#' @param force Build dataset without original data from lipd
+#' @param entry ts entry
+#' @param raw_datasets stored loaded data
+#' @param dsn datasetname
+#' @param mode paleo or chron mode
+#'
+#' @return d: Metadata
 put_base_data <- function(entry, raw_datasets, dsn, force, mode){
   d <- list()
   
