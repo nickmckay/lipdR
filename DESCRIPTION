@@ -41,5 +41,6 @@ Imports:
     tidyr,
     usethis,
     tidyselect,
-    pkgbuild
+    pkgbuild,
+    glue
 Suggests: testthat
