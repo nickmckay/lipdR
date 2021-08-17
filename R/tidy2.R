@@ -67,6 +67,8 @@ ts2tibble <- function(TS){
     }
   }
   
+  tibbleTS <- structure(tibbleTS,class = c("lipd-ts-tibble-long",class(tibble::tibble())))
+  
   return(tibbleTS)
 }
 
@@ -95,7 +97,9 @@ tidyTs <- function(TS,age.var = "age"){
   }
   
   
-  tidy <- tidyr::unchop(tts,c(all_of(age.var),tidyselect::starts_with("paleoData_values")))
+  tidy <- tidyr::unchop(tts,c(all_of(age.var),tidyselect::starts_with("paleoData_values"))) %>% 
+    structure(class = c("lipd-ts-tibble-long",class(tibble::tibble())))
+  
     return(tidy)
 }
 
@@ -122,7 +126,9 @@ if("paleoData_values_char" %in% names(ut)){
   ut$paleoData_values_char <- NULL
 }
 
-TS <- purrr::transpose(ut)
+TS <- purrr::transpose(ut) %>% 
+  structure(class = c("lipd-ts",class(list())))
+
   
 return(TS)
 }

@@ -2,9 +2,9 @@
 #' Create a random TSid
 #' @return TSid
 #' @export
-createTSid <- function(){
+createTSid <- function(prefix = ""){
   
-  return(paste(c("R",sample(c(letters,LETTERS,seq(0,9)),size = 10,replace=TRUE)),collapse = ""))
+  return(paste0(prefix,paste(c("R",sample(c(letters,LETTERS,seq(0,9)),size = 16,replace=TRUE)),collapse = "")))
 }
 
 #' Add TSid where missing in a LiPD file

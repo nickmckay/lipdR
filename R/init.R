@@ -84,6 +84,7 @@ readLipd <- function(path=NULL){
   }
   #reset the wd
   setwd(swd)
+  D <- new_lipd(D)
   return(D)
 }
 

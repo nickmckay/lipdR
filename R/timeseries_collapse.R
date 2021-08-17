@@ -22,6 +22,15 @@ collapseTs <- function(ts, force=FALSE){
   whichtables <- ts[[1]]$whichtables
 
   # Get the original data from the lipd environment whenever possible
+  if(force == "if necessary"){
+    if(exists("TMP_ts_storage", envir = lipdEnv)){
+      force <- TRUE
+    }else{
+      force <- FALSE
+    }
+  }
+  
+  
   # Use the time_id to get the corresponding raw data from lipd envir ts storage
   if(!force){
     timeID <- ts[[1]]$timeID
@@ -59,7 +68,9 @@ collapseTs <- function(ts, force=FALSE){
   }, error=function(cond){
     print(paste0("Error: collapseTs: ", cond))
   })
-  D <- rm_empty_fields(D)
+  D <- rm_empty_fields(D) %>% 
+    structure(class = c("lipd",class(list())))
+
   return(D)
 }
 

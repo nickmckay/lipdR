@@ -1,4 +1,5 @@
 validLipd <- function(L){
+  good <- TRUE
   
   #is list
   if(!is.list(L)){
@@ -23,13 +24,13 @@ validLipd <- function(L){
   
   if(!("paleoData" %in% names(L) | "chronData" %in% names(L))){
     print(glue::glue("{L$dataSetName}: LiPD object must contain paleoData and/or chronData"))
-    return(FALSE)
+    good <- FALSE
   }
   
   for(rr in rootRequired){
     if(!(rr %in% names(L))){
       print(glue::glue("{L$dataSetName}: LiPD object must contain {rr}"))
-      return(FALSE)
+      good <- FALSE
     }
   }
   for(rr in rootRecommended){
@@ -38,51 +39,47 @@ validLipd <- function(L){
     }
   }
   
-
-
-# big picture - paleo/chron data ---------------------------------------------------------
-
-  if("paleoData" %in% names(L)){
-    d <- L$paleoData
-    
-    #check table names
-    tn <- purrr::map_chr(d,names)
-    if(any(!tn %in% c("measurementTable","ensembleTable","distributionTable"))){
-      print("Invalid table names in paleoData")
-      return(FALSE)
-    }
-    
-    
-  }
   
-
-# Check pub ---------------------------------------------------------------
-
+  
+  
+  # Check pub ---------------------------------------------------------------
+  
   if(!validPub(L)){
     print(glue::glue("{L$dataSetName}: invalid pub section"))
-    return(FALSE)
+    good <- FALSE
   }
-
-# check funding -----------------------------------------------------------
-# not used enough to worry about yet
-
-# Check Geo ---------------------------------------------------------------
-
+  
+  # check funding -----------------------------------------------------------
+  # not used enough to worry about yet
+  
+  # Check Geo ---------------------------------------------------------------
+  
   if(!validGeo(L)){
     print(glue::glue("{L$dataSetName}: invalid geo section"))
-    return(FALSE)
+    good <- FALSE
   }
   
-# Check paleo measurement contents ---------------------------------------------------
-
-
-  # Check chron measurement contents ---------------------------------------------------
+  # Check paleo measurement contents ---------------------------------------------------
+  if(!validPaleo(L)){
+    print(glue::glue("{L$dataSetName}: invalid paleoData section"))
+    good <- FALSE
+  }
   
+  # Check chron measurement contents ---------------------------------------------------
+  if(!validChron(L)){
+    print(glue::glue("{L$dataSetName}: invalid chronData section"))
+    good <- FALSE
+  }
   
   
   
   #if it passes everything
-  return(TRUE)
+  if(good){
+    return(TRUE)
+  }else{
+    print(L$dataSetName)
+    return(FALSE)
+  }
   
   
 }
@@ -123,7 +120,7 @@ validPub <- function(L){
         return(FALSE)
       }
     }
-   
+    
     forbidden <- c("authors")
     for(f in 1:length(forbidden)){
       if(any(names(p) == forbidden[f])){
@@ -151,7 +148,7 @@ validGeo <- function(L){
     return(FALSE)
   }
   
- 
+  
   reqNames <- c("latitude","longitude")
   
   for(rn in reqNames){
@@ -176,10 +173,10 @@ validGeo <- function(L){
   
   otherNames <- setdiff(names(geo),mustNumeric)
   for(on in otherNames){
-      if(!is.character(geo[[on]])){
-        print(glue::glue("{on} must be character"))
-        return(FALSE)
-      }
+    if(!is.character(geo[[on]])){
+      print(glue::glue("{on} must be character"))
+      return(FALSE)
+    }
   }
   
   #check lat and long
@@ -194,5 +191,188 @@ validGeo <- function(L){
   
   return(TRUE)
   
+}
+
+validPaleo <- function(L){
+  if(!"paleoData" %in% names(L)){
+    warning(glue::glue("{L$dataSetName}: No paleoData metadata present"))
+    return(TRUE) #pubs not required
+  }
+  paleo <- L$paleoData
   
+  if(!is.list(paleo)){
+    print(glue::glue("{L$dataSetName}: Publication must be a list"))
+    return(FALSE)
+  }
+  
+  if(!is.null(names(paleo))){
+    print(glue::glue("{L$dataSetName}: paleoData must be an unnamed list"))
+    return(FALSE)
+    
+  }
+  
+  if(length(paleo) < 1){
+    print(glue::glue("{L$dataSetName}: paleoData must have length >1"))
+    return(FALSE)
+  }
+  
+  
+  tn <- purrr::map(paleo,names) %>% unlist()
+  if(any(!tn %in% c("measurementTable","ensembleTable","distributionTable","model"))){
+    print(glue::glue("{L$dataSetName}:Invalid table names in paleoData"))
+    return(FALSE)
+  }
+  
+  
+  for(p in 1:length(paleo)){
+    P <- paleo[[p]]
+    #check measurementTable structure
+    if(any(names(P) == "measurementTable")){
+      for(m in 1:length(P$measurementTable)){
+        MT <- P$measurementTable[[m]]
+        #get the lists
+        il <- which(purrr::map_lgl(MT,is.list))
+        LS <- MT[il]
+        if(length(LS) < 2){
+          print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} has fewer than two variables"))
+          return(FALSE)
+        }
+        
+        #check for valid variable
+        if(!all(purrr::map_lgl(LS,validVariable))){
+          print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} has invalid variables"))
+          return(FALSE)
+        }
+        
+        #check that all values are the same length
+        lengths <- purrr::map_dbl(LS, ~ length(.x$values))
+        
+        if(any(lengths < 1)){
+          print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} variable values are missing"))
+          return(FALSE)
+        }
+        
+        if(!all(lengths == lengths[1])){
+          print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} variable values have different lengths"))
+          return(FALSE)
+        }
+        
+        
+      }
+    }
+  }
+  
+  return(TRUE)
+  
+}
+
+validChron <- function(L){
+  if(!"chronData" %in% names(L)){
+    warning(glue::glue("{L$dataSetName}: No chronData metadata present"))
+    return(TRUE) #pubs not required
+  }
+  chron <- L$chronData
+  
+  if(!is.list(chron)){
+    print(glue::glue("{L$dataSetName}: Publication must be a list"))
+    return(FALSE)
+  }
+  
+  if(!is.null(names(chron))){
+    print(glue::glue("{L$dataSetName}: chronData must be an unnamed list"))
+    return(FALSE)
+    
+  }
+  
+  if(length(chron) < 1){
+    print(glue::glue("{L$dataSetName}: chronData must have length >1"))
+    return(FALSE)
+  }
+  
+  
+  tn <- purrr::map(chron,names) %>% unlist()
+  if(any(is.null(tn))){
+    print(glue::glue("{L$dataSetName}:Invalid table names in chronData"))
+    return(FALSE)  
+  }
+  
+  if(any(! tn %in% c("measurementTable","ensembleTable","distributionTable","model"))){
+    print(glue::glue("{L$dataSetName}:Invalid table names in chronData"))
+    return(FALSE)
+  }
+  
+  
+  for(p in 1:length(chron)){
+    P <- chron[[p]]
+    #check measurementTable structure
+    if(any(names(P) == "measurementTable")){
+      for(m in 1:length(P$measurementTable)){
+        MT <- P$measurementTable[[m]]
+        #get the lists
+        il <- which(purrr::map_lgl(MT,is.list))
+        LS <- MT[il]
+        if(length(LS) < 2){
+          print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} has fewer than two variables"))
+          return(FALSE)
+        }
+        
+        #check for valid variable
+        if(!all(purrr::map_lgl(LS,validVariable))){
+          print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} has invalid variables"))
+          return(FALSE)
+        }
+        
+        #check that all values are the same length
+        lengths <- purrr::map_dbl(LS, ~ length(.x$values))
+        
+        if(any(lengths < 1)){
+          print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} variable values are missing"))
+          return(FALSE)
+        }
+        
+        if(!all(lengths == lengths[1])){
+          print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} variable values have different lengths"))
+          return(FALSE)
+        }
+        
+        
+      }
+    }
+  }
+  return(TRUE)
+  
+}
+
+
+
+
+
+
+validVariable <- function(V){
+  reqNames <- c("TSid","variableName","values","number")
+  for(r in reqNames){
+    if(! r %in% names(V)){
+      print(glue::glue("Required variable {r} is missing"))
+      print(glue::glue("TSid: {V$TSid}"))
+      print(glue::glue("variableName: {V$variableName}"))
+      return(FALSE)
+    }
+  }
+  
+  #check class
+  reqChar <- c("TSid","variableName")
+  for(on in reqChar){
+    if(!is.character(V[[on]])){
+      print(glue::glue("{on} must be character ({V$TSid} - {V$variableName})"))
+      return(FALSE)
+    }
+  }
+  
+  #check vector
+  if(!is.vector(V$values)){
+    print(glue::glue("variable values must be a vector ({V$TSid} - {V$variableName})"))
+    return(FALSE)
+  }
+  
+  return(TRUE)
 }
