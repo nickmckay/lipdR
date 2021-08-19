@@ -80,9 +80,21 @@ read_csv_from_file <- function(){
     
     n.rows <- length(count.fields(c[ci], blank.lines.skip = FALSE))
     
-    df <- readr::read_csv(c[ci], col_names = FALSE,
-                          na = c("nan", "NaN", "NAN", "NA", ""),
-                          col_types = readr::cols(), guess_max = n.rows)
+    if(packageVersion("readr") > 2){
+      df <- readr::read_csv(c[ci], 
+                            col_names = FALSE,
+                            na = c("nan", "NaN", "NAN", "NA", ""),
+                            col_types = readr::cols(), 
+                            guess_max = n.rows,
+                            lazy = FALSE)
+    }else{
+      df <- readr::read_csv(c[ci], 
+                            col_names = FALSE,
+                            na = c("nan", "NaN", "NAN", "NA", ""),
+                            col_types = readr::cols(), 
+                            guess_max = n.rows)
+    }
+    
     
     #check column types #nope, not now.
     
