@@ -81,8 +81,12 @@ ts2tibble <- function(TS){
 #' @return a tidy data.frame
 #' @export
 tidyTs <- function(TS,age.var = "age"){
+  if(!tibble::is_tibble(TS)){
   tts <- TS %>% 
     ts2tibble()
+  }else{
+    tts <- TS
+  }
   
   
   isNum <- which(purrr::map_lgl(tts$paleoData_values,is.numeric))
