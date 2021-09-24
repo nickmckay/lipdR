@@ -80,6 +80,8 @@ readLipd <- function(path=NULL){
     }
     if(length(D) == 1){
       D <- D[[1]]
+    }else{
+      D <- new_multiLipd(D)
     }
   }
   #reset the wd

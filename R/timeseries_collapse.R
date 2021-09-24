@@ -22,6 +22,15 @@ collapseTs <- function(ts, force=FALSE){
   whichtables <- ts[[1]]$whichtables
 
   # Get the original data from the lipd environment whenever possible
+  if(force == "if necessary"){
+    if(exists("TMP_ts_storage", envir = lipdEnv)){
+      force <- FALSE
+    }else{
+      force <- TRUE
+    }
+  }
+  
+  
   # Use the time_id to get the corresponding raw data from lipd envir ts storage
   if(!force){
     timeID <- ts[[1]]$timeID
@@ -50,16 +59,25 @@ collapseTs <- function(ts, force=FALSE){
         D[[dsn]] <- collapse_root(D[[dsn]], ts[[i]], pc)
       }
       # Use the time series entry to overwrite the (old) raw data for this column
-      D[[dsn]] <- collapse_table(D[[dsn]], ts[[i]], pc)    
-    }
-    # Is there only one dataset after all this? Set it directly in D. 
-    if(length(D)==1){
-      D<-D[[1]]
+      D[[dsn]] <- collapse_table(D[[dsn]], ts[[i]], pc) 
+      
+      D[[dsn]] <- structure(D[[dsn]],class = c("lipd",class(list())))   
     }
   }, error=function(cond){
     print(paste0("Error: collapseTs: ", cond))
   })
-  D <- rm_empty_fields(D)
+  D <- rm_empty_fields(D) 
+  # Is there only one dataset after all this? Set it directly in D. 
+  if(length(D)==1){
+    D <- D[[1]] 
+    D <- structure(D,class = c("lipd",class(list())))
+    
+  }else{
+    for(dd in 1:length(D)){
+      D[[dd]] <- structure(D[[dd]],class = c("lipd",class(list())))   
+    }
+    D <- structure(D,class = c("multi-lipd",class(list())))
+  }
   return(D)
 }
 

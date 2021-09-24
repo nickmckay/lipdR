@@ -58,8 +58,8 @@ extractTs= function(D, whichtables = "all", mode = "paleo"){
       }
     }
   }
-  
-  return(TS)
+  structure(TS,class = c("lipd-ts",class(list()))) %>% 
+  return()
 }
 
 extract=function(L, whichtables, mode, time){
