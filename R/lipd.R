@@ -5,7 +5,7 @@
 #' @param path Local path OR url location of LiPD file
 #' @return j LiPD file data
 lipd_read <- function(path){
-  j <- list()
+  j <- new_lipd()
   dir_original = getwd()
   tryCatch({
     dir_tmp <- create_tmp_dir()
@@ -27,6 +27,7 @@ lipd_read <- function(path){
     setwd(dir_original)
     unlink(dir_tmp, recursive=TRUE)
   })
+
   return(j)
 }
 

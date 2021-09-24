@@ -376,3 +376,8 @@ validVariable <- function(V){
   
   return(TRUE)
 }
+
+
+validMultiLipd <- function(D){
+  all(purrr::map_lgl(D,validLipd))
+}
