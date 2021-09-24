@@ -85,6 +85,7 @@ read_csv_from_file <- function(){
     readr::local_edition(1)
     }
     
+    # This is code for version >2.0.0, not necessary if using local_edition
     # df <- readr::read_csv(c[ci], 
     #                       col_names = FALSE,
     #                       na = c("nan", "NaN", "NAN", "NA", ""),
@@ -92,11 +93,13 @@ read_csv_from_file <- function(){
     #                       guess_max = n.rows,
     #                       lazy = FALSE)
     # }else{
+
       df <- readr::read_csv(c[ci], 
                             col_names = FALSE,
                             na = c("nan", "NaN", "NAN", "NA", ""),
                             col_types = readr::cols(), 
                             guess_max = n.rows)
+
     
     
     #check column types #nope, not now.
