@@ -7,14 +7,20 @@
 build_structure(d, pc, table_type, pcNumber, modelNumber, tableNumber)
 }
 \arguments{
-\item{list}{d: Metadata}
+\item{d}{Metadata}
 
-\item{char}{table_type: meas, ens, or summ}
+\item{pc}{paleoData or chronData}
 
-\item{num}{tableumber: Table index number}
+\item{table_type}{meas, ens, or summ}
+
+\item{pcNumber}{paleoData or chronData index number}
+
+\item{modelNumber}{Model index number OR null (if meas table)}
+
+\item{tableNumber}{Table index number}
 }
 \value{
-list d: Metadata
+D: Metadata
 }
 \description{
 Before you place a table, you must have the structure leading up to the location or you'll get errors. Build the structure

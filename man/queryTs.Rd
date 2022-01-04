@@ -7,14 +7,14 @@ and return vector of the indices that match.
 indices = queryTs(ts, "archiveType == marine sediment")
 Valid operators : ==, =, <=, >=, <, >}
 \usage{
-queryTs(ts, expression)
+queryTs(ts, expression, exact = FALSE)
 }
 \arguments{
-\item{ts}{Time series : list , Time Series data}
+\item{ts}{Time series  list , Time Series data}
 
-\item{expression}{Search expression : char (single query) or list (multiple query)}
+\item{expression}{Search expression  char (single query) or list (multiple query)}
 
-\item{exact}{Key match : char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?}
+\item{exact}{Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?}
 }
 \value{
 idxs: Matching indices : list

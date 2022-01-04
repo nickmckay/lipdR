@@ -7,12 +7,14 @@
 get_table(d, current, pc)
 }
 \arguments{
-\item{list}{current: Current time series entry}
+\item{d}{Metadata}
 
-\item{char}{pc: paleoData or chronData}
+\item{current}{Current time series entry}
+
+\item{pc}{paleoData or chronData}
 }
 \value{
-list table: Metadata
+table: Metadata
 }
 \description{
 Get the target table

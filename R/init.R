@@ -26,7 +26,7 @@ stripExtension <- function(filename){
 #' @author Chris Heiser
 #' @import stringr
 #' @keywords internal
-#' @param path Source path (optional) : char
+#' @param path Source path (optional)  char
 #' @usage readLipd(path)
 #' @return D : LiPD dataset(s)
 #' @examples
@@ -80,6 +80,8 @@ readLipd <- function(path=NULL){
     }
     if(length(D) == 1){
       D <- D[[1]]
+    }else{
+      D <- new_multiLipd(D)
     }
   }
   #reset the wd
@@ -93,9 +95,9 @@ readLipd <- function(path=NULL){
 #' @export
 #' @author Chris Heiser
 #' @keywords internal
-#' @param D LiPD datasets : list
-#' @param path Destination path : char
-#' @usage writeLipd(D, path)
+#' @param D LiPD datasets  list
+#' @param path Destination path  char
+#' @importFrom pkgbuild find_rtools
 #' @return none
 #' @examples 
 #' \dontrun{

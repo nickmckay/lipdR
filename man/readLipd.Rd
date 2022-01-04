@@ -7,7 +7,7 @@
 readLipd(path)
 }
 \arguments{
-\item{path}{Source path (optional) : char}
+\item{path}{Source path (optional)  char}
 }
 \value{
 D : LiPD dataset(s)

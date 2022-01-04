@@ -7,12 +7,14 @@
 collapse_column(table, entry, pc)
 }
 \arguments{
-\item{list}{entry: Time series entry}
+\item{table}{Metadata}
 
-\item{char}{pc: paleoData or chronData}
+\item{entry}{Time series entry}
+
+\item{pc}{paleoData or chronData}
 }
 \value{
-list table: Metadata
+table: Metadata
 }
 \description{
 Collapse time series column. Compile column entries and place new column in table.

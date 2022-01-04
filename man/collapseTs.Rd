@@ -4,7 +4,7 @@
 \alias{collapseTs}
 \title{Collapse time series into LiPD dataset form}
 \usage{
-collapseTs(ts)
+collapseTs(ts, force = FALSE)
 }
 \arguments{
 \item{ts}{Time series : list}

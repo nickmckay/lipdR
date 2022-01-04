@@ -7,7 +7,7 @@
 list_files_recursive(x)
 }
 \arguments{
-\item{char}{x: File type}
+\item{x}{File type}
 }
 \value{
 char files: Matching file paths

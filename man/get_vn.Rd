@@ -7,7 +7,7 @@
 get_vn(vn, names)
 }
 \arguments{
-\item{char}{vn: Variable name}
+\item{vn}{Variable name}
 }
 \value{
 char vn: Variable name, possibly appended with a number

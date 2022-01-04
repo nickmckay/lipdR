@@ -10,6 +10,8 @@ pullTsVariable(TS, variable, strict.search = FALSE)
 \item{TS}{a LiPD Timeseries object}
 
 \item{variable}{the name of variable in a TS object}
+
+\item{strict.search}{require an exact match of variable names}
 }
 \value{
 a vector of the values, with NA representing instances without this variable.

@@ -1,5 +1,3 @@
-# LiPD Utilities - R
------
 <!-- badges: start -->
 [![DOI](https://zenodo.org/badge/24036/nickmckay/LiPD-utilities.svg)](https://zenodo.org/badge/24036/nickmckay/LiPD-utilities.svg)
 [![R](https://img.shields.io/badge/R-1.0.136-blue.svg)]()
@@ -8,18 +6,9 @@
 [![R build status](https://github.com/nickmckay/lipdR/workflows/R-CMD-check/badge.svg)](https://github.com/nickmckay/lipdR/actions)
 <!-- badges: end -->
 
+# LiPD Utilities in = R
 
 Welcome to the lipdR package, a set of LiPD Utilities in R . This guide will provide everything you need to get up and running with the LiPD Utilities in R,  and show you how to use the core functions in the LiPD package. 
-
-## Table of contents
-
------
-
-
-[TOC]
-
-
------
 
 ## Features
 

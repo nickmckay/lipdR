@@ -7,12 +7,16 @@
 put_table(d, current, pc, table)
 }
 \arguments{
-\item{char}{pc: paleoData or chronData}
+\item{d}{Metadata}
 
-\item{list}{table: Metadata (to be placed)}
+\item{current}{Current time series entry}
+
+\item{pc}{paleoData or chronData}
+
+\item{table}{Metadata (to be placed)}
 }
 \value{
-list d: Metadata
+d: Metadata
 }
 \description{
 Put the target table

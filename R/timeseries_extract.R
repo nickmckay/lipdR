@@ -2,9 +2,9 @@
 #' @export
 #' @author Chris Heiser
 #' @description Create a time series from a library of LiPD datasets. A Time series is a flattened version of LiPD data that can be queried and filtered for easier data analysis.
-#' @param D LiPD data, sorted by dataset name : list
-#' @param whichtables : char: Options: "all", "summ", "meas", "ens" : Table type to output in the time series.
-#' @param mode : char: Options: "paleo", "chron"
+#' @param D LiPD data, sorted by dataset name  list
+#' @param whichtables : char: Options: "all", "summ", "meas", "ens"  Table type to output in the time series.
+#' @param mode : char: Options "paleo", "chron"
 #' @return ts:  Time series : list
 #' @examples 
 #' \dontrun{
@@ -58,8 +58,8 @@ extractTs= function(D, whichtables = "all", mode = "paleo"){
       }
     }
   }
-  
-  return(TS)
+  structure(TS,class = c("lipd-ts",class(list()))) %>% 
+  return()
 }
 
 extract=function(L, whichtables, mode, time){
@@ -382,7 +382,7 @@ extract_geo=function(L,root){
 
 #' Split interpretation by scope
 #' @export
-#' @param TS 
+#' @param TS a lipd-TS object
 #' @import stringr
 #' @return split TS
 #' @export
@@ -460,7 +460,7 @@ splitInterpretationByScope <- function(TS){
 #' Combine interpretations by scope
 #' @export
 #' @importFrom stats na.omit
-#' @param sTS 
+#' @param sTS an interpretation-split TS object
 #' @return a regular Timeseries structure
 combineInterpretationByScope <- function(sTS){
   

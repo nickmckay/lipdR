@@ -11,12 +11,16 @@ match[[1]][[3]] = second key (ex. "tableName")}
 collapse_block(entry, l, key, pc)
 }
 \arguments{
-\item{list}{l: Metadata (to append to)}
+\item{entry}{Time series entry}
 
-\item{char}{key: Key from time series entry}
+\item{l}{Metadata (to append to)}
+
+\item{key}{Key from time series entry}
+
+\item{pc}{paleo or chron? #deprecated}
 }
 \value{
-list l: Metadata
+l: Metadata
 }
 \description{
 Collapses blocks: calibration, physicalSample, hasResolution, 

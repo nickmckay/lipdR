@@ -7,9 +7,11 @@
 get_csv_from_model(models, crumbs, csvs)
 }
 \arguments{
-\item{char}{crumbs: Crumbs}
+\item{models}{Metadata}
 
-\item{list}{csvs: CSV data}
+\item{crumbs}{Crumbs}
+
+\item{csvs}{CSV data}
 }
 \value{
 list new: Metadata / CSV

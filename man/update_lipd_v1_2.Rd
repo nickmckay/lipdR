@@ -11,7 +11,7 @@
 update_lipd_v1_2(d)
 }
 \arguments{
-\item{list}{d: Metadata}
+\item{d}{Metadata}
 }
 \value{
 list d: Metadata

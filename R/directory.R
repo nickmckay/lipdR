@@ -15,7 +15,7 @@ ask_how_many <- function(){
 #' Open a file browsing gui to let the user pick a file or directory
 #' @export
 #' @keywords internal
-#' @param char ans single (s) or directory (d) 
+#' @param ans single (s) or directory (d) 
 #' @return char path Directory or file path
 browse_dialog <- function(ans){
   tryCatch(
@@ -48,7 +48,7 @@ create_tmp_dir <- function(){
 #' Ask user where local file/directory location is.
 #' @export
 #' @keywords internal
-#' @param char path Target path
+#' @param path Target path
 #' @return char path Directory or file path
 get_src_or_dst<- function(path){
   tryCatch({
@@ -87,7 +87,7 @@ get_lipd_paths <- function(path){
 #' Recursive file list for current directory and below
 #' @export
 #' @keywords internal
-#' @param char x: File type
+#' @param x File type
 #' @return char files: Matching file paths
 list_files_recursive <- function(x){
   # create the file type filter string
@@ -101,7 +101,7 @@ list_files_recursive <- function(x){
 #' Use a recursive file search to find the "data" directory of a LiPD file
 #' @export
 #' @keywords internal
-#' @param char x: File type
+#' @param x File type
 #' @return char files: Matching file paths
 find_data_dir <- function(){
   # If there is a jsonld file, then that means we're in the data directory

@@ -80,9 +80,27 @@ read_csv_from_file <- function(){
     
     n.rows <- length(count.fields(c[ci], blank.lines.skip = FALSE))
     
-    df <- readr::read_csv(c[ci], col_names = FALSE,
-                          na = c("nan", "NaN", "NAN", "NA", ""),
-                          col_types = readr::cols(), guess_max = n.rows)
+    if(packageVersion("readr") > 2){
+      #warning("version 2.0.0 and higher of readr have made this much slower. If you're loadning lots of files consider downgrading to version 1.4.0 until we figure out how to fix this. ")
+    readr::local_edition(1)
+    }
+    
+    # This is code for version >2.0.0, not necessary if using local_edition
+    # df <- readr::read_csv(c[ci], 
+    #                       col_names = FALSE,
+    #                       na = c("nan", "NaN", "NAN", "NA", ""),
+    #                       col_types = readr::cols(), 
+    #                       guess_max = n.rows,
+    #                       lazy = FALSE)
+    # }else{
+
+      df <- readr::read_csv(c[ci], 
+                            col_names = FALSE,
+                            na = c("nan", "NaN", "NAN", "NA", ""),
+                            col_types = readr::cols(), 
+                            guess_max = n.rows)
+
+    
     
     #check column types #nope, not now.
     
@@ -118,7 +136,7 @@ read_csv_from_file <- function(){
 #' @export
 #' @importFrom utils write.table
 #' @keywords internal
-#' @param list csvs: CSV data
+#' @param csvs CSV data
 #' @return bool success: CSV write success or fail
 write_csv_to_file <- function(csvs){
   tryCatch({

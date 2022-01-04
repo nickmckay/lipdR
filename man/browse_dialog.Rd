@@ -7,7 +7,7 @@
 browse_dialog(ans)
 }
 \arguments{
-\item{char}{ans single (s) or directory (d)}
+\item{ans}{single (s) or directory (d)}
 }
 \value{
 char path Directory or file path

@@ -7,7 +7,7 @@
 get_lipd_version(d)
 }
 \arguments{
-\item{list}{d: Metadata}
+\item{d}{Metadata}
 }
 \value{
 list tmp: Version number and meta

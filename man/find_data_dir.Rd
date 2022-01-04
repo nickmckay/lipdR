@@ -7,7 +7,7 @@
 find_data_dir()
 }
 \arguments{
-\item{char}{x: File type}
+\item{x}{File type}
 }
 \value{
 char files: Matching file paths

@@ -5,7 +5,7 @@
 #' @param path Local path OR url location of LiPD file
 #' @return j LiPD file data
 lipd_read <- function(path){
-  j <- list()
+  j <- new_lipd()
   dir_original = getwd()
   tryCatch({
     dir_tmp <- create_tmp_dir()
@@ -27,6 +27,7 @@ lipd_read <- function(path){
     setwd(dir_original)
     unlink(dir_tmp, recursive=TRUE)
   })
+
   return(j)
 }
 
@@ -35,9 +36,9 @@ lipd_read <- function(path){
 #' zip up bag folder, place lipd in target dst, move to original dir, delete tmp
 #' @export
 #' @keywords internal
-#' @param list j: Metadata
-#' @param char path: Destination path
-#' @param char dsn: Dataset name
+#' @param j Metadata
+#' @param path Destination path
+#' @param dsn Dataset name
 #' @return none:
 lipd_write <- function(j, path, dsn, ignore.warnings,removeNamesFromLists = FALSE){
   tryCatch({

@@ -4,12 +4,17 @@
 \alias{writeLipd}
 \title{Write LiPD data onto disk as LiPD files}
 \usage{
-writeLipd(D, path)
+writeLipd(
+  D,
+  path = NULL,
+  ignore.warnings = FALSE,
+  removeNamesFromLists = FALSE
+)
 }
 \arguments{
-\item{D}{LiPD datasets : list}
+\item{D}{LiPD datasets  list}
 
-\item{path}{Destination path : char}
+\item{path}{Destination path  char}
 }
 \value{
 none

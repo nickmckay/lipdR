@@ -8,7 +8,7 @@ R will not zip directories with certain characters.}
 replace_invalid_chars(dsn)
 }
 \arguments{
-\item{char}{dsn: Dataset name}
+\item{dsn}{Dataset name}
 }
 \value{
 char dsn: Dataset name

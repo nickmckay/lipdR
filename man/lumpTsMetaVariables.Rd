@@ -7,9 +7,9 @@
 lumpTsMetaVariables(Ts, sc = c("eps", "rbar", "ncores"))
 }
 \arguments{
-\item{Ts}{}
+\item{Ts}{a TS object}
 
-\item{sc}{}
+\item{sc}{metadata fields to lump}
 }
 \value{
 A lumped Ts

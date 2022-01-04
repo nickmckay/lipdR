@@ -7,7 +7,7 @@
 import_section(section)
 }
 \arguments{
-\item{list}{section: Metadata}
+\item{section}{Metadata}
 }
 \value{
 list section: Metadata

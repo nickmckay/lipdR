@@ -6,14 +6,14 @@
 and return a new time series with the matching objects
 Valid operators : ==, =, <=, >=, <, >}
 \usage{
-filterTs(ts, expression)
+filterTs(ts, expression, exact = FALSE)
 }
 \arguments{
-\item{ts}{Time series : list , Time series data}
+\item{ts}{Time series  list , Time series data}
 
-\item{expression}{Search expression : char (single query) or list (multiple query)}
+\item{expression}{Search expression  char (single query) or list (multiple query)}
 
-\item{exact}{Key match : char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?}
+\item{exact}{Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?}
 }
 \value{
 new.ts : Time series : list

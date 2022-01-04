@@ -7,14 +7,18 @@
 put_base_data(entry, raw_datasets, dsn, force, mode)
 }
 \arguments{
-\item{list}{d: Metadata}
+\item{entry}{ts entry}
 
-\item{bool}{force: Build dataset without original data from lipd}
+\item{raw_datasets}{stored loaded data}
 
-\item{char}{mode: paleo or chron mode}
+\item{dsn}{datasetname}
+
+\item{force}{Build dataset without original data from lipd}
+
+\item{mode}{paleo or chron mode}
 }
 \value{
-list d: Metadata
+d: Metadata
 }
 \description{
 Put in paleoData and chronData as the base for this dataset using the oroginal dataset data.

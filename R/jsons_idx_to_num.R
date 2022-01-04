@@ -1,7 +1,7 @@
 #' Switch all indexing from names to numbers. 
 #' @export
 #' @keywords internal
-#' @param list d: Metadata
+#' @param d Metadata
 #' @return list d: Metadata
 idx_name_to_num <- function(d){
   if ("paleoData" %in% names(d)){
@@ -17,8 +17,8 @@ idx_name_to_num <- function(d){
 #' Index a section. paleoData or chronData
 #' @export
 #' @keywords internal
-#' @param list section: Metadata
-#' @param char pc: paleoData or chronData
+#' @param section Metadata
+#' @param pc paleoData or chronData
 #' @return list d: Metadata
 export_section <- function(section, pc){
   tryCatch({
@@ -48,7 +48,7 @@ export_section <- function(section, pc){
 #' Index model tables
 #' @export
 #' @keywords internal
-#' @param list models: Metadata
+#' @param models Metadata
 #' @return list models: Metadata
 export_model <- function(models){
   tryCatch({
@@ -72,7 +72,7 @@ export_model <- function(models){
 #' Index tables in a loop
 #' @export
 #' @keywords internal
-#' @param list tables: Metadata
+#' @param tables Metadata
 #' @return list tables: Metadata
 idx_table_by_num <- function(tables){
   for (i in 1:length(tables)){
@@ -89,7 +89,7 @@ idx_table_by_num <- function(tables){
 #' Place the new columns under a "columns" list
 #' @export
 #' @keywords internal
-#' @param list table: Metadata
+#' @param table Metadata
 #' @return list table: Metadata
 idx_col_by_num <- function(table){
 

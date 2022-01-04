@@ -7,12 +7,14 @@
 collapse_table(d, entry, pc)
 }
 \arguments{
-\item{list}{entry: Time series entry}
+\item{d}{Metadata}
 
-\item{char}{pc: paleoData or chronData}
+\item{entry}{Time series entry}
+
+\item{pc}{paleoData or chronData}
 }
 \value{
-list d: Metadata
+d: Metadata
 }
 \description{
 Collapse time series section; paleo or chron

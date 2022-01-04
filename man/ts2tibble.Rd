@@ -7,7 +7,7 @@
 ts2tibble(TS)
 }
 \arguments{
-\item{TS}{}
+\item{TS}{a lipd-ts object}
 }
 \value{
 a nested tibble

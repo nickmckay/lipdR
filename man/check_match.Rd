@@ -7,15 +7,15 @@
 check_match(entry, new_ts, idx, key, op, val, i)
 }
 \arguments{
-\item{entry}{Time series entry: list , Current time series entry being checked.}
+\item{entry}{Time series entry list , Current time series entry being checked.}
 
-\item{new_ts}{New time series: list , The list of successful query matches so far.}
+\item{new_ts}{New time series list , The list of successful query matches so far.}
 
-\item{idx}{Index : numeric , The index of this given entry within the time series list}
+\item{idx}{Index  numeric , The index of this given entry within the time series list}
 
-\item{key}{Key : char , The}
+\item{key}{Key  char , The}
 
-\item{exact}{Key match : char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName}
+\item{exact}{Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName}
 }
 \description{
 Compare the query value to the time series value. Does it meet the conditions? If so, add it to the output "new_ts" items.

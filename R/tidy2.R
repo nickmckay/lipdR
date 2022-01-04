@@ -1,8 +1,8 @@
 #' Pull a single entry list object ot the top level (internal use)
 #'
-#' @param x 
+#' @param x a single row
 #'
-#' @return
+#' @return plucked
 tsPluck <- function(x){
   dopluck <- FALSE
   if(is.list(x)){
@@ -28,7 +28,7 @@ tsPluck <- function(x){
 
 #' Convert a LiPD TS object into an equivalent nested tibble
 #'
-#' @param TS 
+#' @param TS a lipd-ts object
 #' @importFrom purrr transpose 
 #' @importFrom purrr modify 
 #' @importFrom tibble as_tibble 
@@ -67,6 +67,8 @@ ts2tibble <- function(TS){
     }
   }
   
+  tibbleTS <- structure(tibbleTS,class = c("lipd-ts-tibble-long",class(tibble::tibble())))
+  
   return(tibbleTS)
 }
 
@@ -77,7 +79,7 @@ ts2tibble <- function(TS){
 #' @importFrom tidyr unchop
 #' @importFrom tidyselect starts_with
 #' @param TS a LiPD Timeseries object
-#' @param age.var 
+#' @param age.var variable name for the time dimension
 #' @return a tidy data.frame
 #' @export
 tidyTs <- function(TS,age.var = "age"){
@@ -99,7 +101,9 @@ tidyTs <- function(TS,age.var = "age"){
   }
   
   
-  tidy <- tidyr::unchop(tts,c(all_of(age.var),tidyselect::starts_with("paleoData_values")))
+  tidy <- tidyr::unchop(tts,c(all_of(age.var),tidyselect::starts_with("paleoData_values"))) %>% 
+    structure(class = c("lipd-ts-tibble-long",class(tibble::tibble())))
+  
     return(tidy)
 }
 
@@ -109,7 +113,7 @@ tidyTs <- function(TS,age.var = "age"){
 #' @importFrom tidyr unchop
 #' @importFrom tidyselect starts_with
 #' @param tTS a tidy data frame, such as those created by tidyTs()
-#' @param age.var 
+#' @inheritParams tidyTs 
 #' @return a LiPD Timeseries object
 #' @export
 untidyTs <- function(tTS,age.var = "age"){
@@ -126,7 +130,9 @@ if("paleoData_values_char" %in% names(ut)){
   ut$paleoData_values_char <- NULL
 }
 
-TS <- purrr::transpose(ut)
+TS <- purrr::transpose(ut) %>% 
+  structure(class = c("lipd-ts",class(list())))
+
   
 return(TS)
 }

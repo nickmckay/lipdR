@@ -7,7 +7,7 @@
 get_csv_from_columns(table)
 }
 \arguments{
-\item{list}{table: Metadata}
+\item{table}{Metadata}
 }
 \value{
 list new: Metadata / CSV

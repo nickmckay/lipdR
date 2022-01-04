@@ -1,14 +1,14 @@
 
 #' Duplicate a table in a LiPD file
 #'
-#' @param L 
+#' @param L a LiPD object
 #' @param paleo.or.chron is this a "paleo" or "chron" table?
 #' @param paleo.or.chron.number what number is this paleo or chron object (default = 1)
 #' @param table.type "measurement", "ensemble" or "summary" table? (default = "measurement")
 #' @param table.number what number is this table object (default = 1)
 #' @param n.duplicates how many duplicates to do you want? (default = 1)
 #' @importFrom purrr map
-#' @return
+#' @return measurementTable
 #' @export
 duplicateTable <- function(L,
                            paleo.or.chron = "paleo",
@@ -214,8 +214,11 @@ tidyTsOld <- function(TS){
 #' @family LiPD manipulation
 #' @title pull variable out of TS object
 #' @description pulls all instances of a single variable out of a TS
+#'
 #' @param TS a LiPD Timeseries object
+#' @param strict.search require an exact match of variable names
 #' @param variable the name of variable in a TS object
+#'
 #' @return a vector of the values, with NA representing instances without this variable.
 pullTsVariable = function(TS,variable,strict.search = FALSE){
   allNames <- unique(unlist(sapply(TS,names)))

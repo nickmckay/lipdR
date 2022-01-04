@@ -4,10 +4,9 @@
 #' Valid operators : ==, =, <=, >=, <, >
 #' @export
 #' @author Chris Heiser
-#' @param ts Time series : list , Time Series data
-#' @param expression Search expression : char (single query) or list (multiple query)
-#' @param exact Key match : char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
-#' @usage queryTs(ts, expression)
+#' @param ts Time series  list , Time Series data
+#' @param expression Search expression  char (single query) or list (multiple query)
+#' @param exact Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
 #' @return idxs: Matching indices : list
 #' @examples 
 #' \dontrun{
@@ -34,10 +33,9 @@ queryTs= function(ts, expression, exact=FALSE){
 #' Valid operators : ==, =, <=, >=, <, >
 #' @export
 #' @author Chris Heiser
-#' @param ts Time series : list , Time series data
-#' @param expression Search expression : char (single query) or list (multiple query)
-#' @param exact Key match : char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
-#' @usage filterTs(ts, expression)
+#' @param ts Time series  list , Time series data
+#' @param expression Search expression  char (single query) or list (multiple query)
+#' @param exact Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
 #' @return new.ts : Time series : list
 #' @examples 
 #' \dontrun{
@@ -64,9 +62,9 @@ filterTs= function(ts, expression, exact=FALSE){
 #' Worker function that sends through the query expressions for finding matching entries in the time series
 #' @export
 #' @author Chris Heiser
-#' @param ts Time series : list , Time Series data
-#' @param expression Search expression : char (single query) or list (multiple query)
-#' @param exact Key match : char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
+#' @param ts Time series  list , Time Series data
+#' @param expression Search expression  char (single query) or list (multiple query)
+#' @param exact Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
 #' @return results: list , Contains list of matching time series entries and a list of matching time series indicies. 
 process_expression <- function(ts, expression, exact=FALSE){
   # Create a copy of the time series for processing
@@ -103,9 +101,9 @@ process_expression <- function(ts, expression, exact=FALSE){
 #' @export
 #' @author Chris Heiser
 #' @keywords internal
-#' @param ts Time series : list , Time series data
-#' @param m Regex match groups : list , The query string split according to the regex matches.
-#' @param exact Key match : char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
+#' @param ts Time series  list , Time series data
+#' @param m Regex match groups  list , The query string split according to the regex matches.
+#' @param exact Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
 get_matches <- function(ts, m, exact){
   tmp = list()
   idx = list()
@@ -163,11 +161,11 @@ get_matches <- function(ts, m, exact){
 #' @export
 #' @author Chris Heiser
 #' @keywords internal
-#' @param entry Time series entry: list , Current time series entry being checked.
-#' @param new_ts New time series: list , The list of successful query matches so far.
-#' @param idx Index : numeric , The index of this given entry within the time series list
-#' @param key Key : char , The 
-#' @param exact Key match : char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName 
+#' @param entry Time series entry list , Current time series entry being checked.
+#' @param new_ts New time series list , The list of successful query matches so far.
+#' @param idx Index  numeric , The index of this given entry within the time series list
+#' @param key Key  char , The 
+#' @param exact Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName 
 check_match <- function(entry, new_ts, idx, key, op, val, i){
   res <- list()
   # We can't parse the operator into the expression, so we have to manually make "switch"-like statments depending on the operator. 

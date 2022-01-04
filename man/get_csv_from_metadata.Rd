@@ -7,9 +7,9 @@
 get_csv_from_metadata(d, dsn)
 }
 \arguments{
-\item{list}{d: Metadata}
+\item{d}{Metadata}
 
-\item{char}{dsn: Dataset name}
+\item{dsn}{Dataset name}
 }
 \value{
 list d2: Metadata / CSV
