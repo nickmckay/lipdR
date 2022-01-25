@@ -6,6 +6,9 @@ quiet <- function(x) {
 
 
 #' Create a random TSid
+#'
+#' @param prefix Optionally pre-pend a string
+#'
 #' @return TSid
 #' @export
 createTSid <- function(prefix = ""){

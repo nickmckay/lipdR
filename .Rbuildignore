@@ -6,3 +6,4 @@
 ^cran-comments\.md$ # Comments for CRAN submission
 ^\.github$
 ^LICENSE\.md$
+^data-raw$

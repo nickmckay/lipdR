@@ -6,7 +6,7 @@ new_multiLipd <- function(x = list()){
   structure(x,class = c("multi-lipd",class(list())))
 }
 
-new_lipdts <- function(x = list()){
+new_lipdTs <- function(x = list()){
   structure(x,class = c("lipd-ts",class(list())))
 }
 
@@ -18,6 +18,12 @@ new_lipdTsTibbleLong <- function(x = list()){
   structure(x,class = c("lipd-ts-tibble-long",class(tibble::tibble())))
 }
 
+#' Is this a LiPD object?
+#'
+#' @param x any object
+#'
+#' @return boolean
+#' @export
 is.lipd <- function(x){
   if(any(class(x) == "lipd")){
     return(TRUE)
@@ -26,6 +32,12 @@ is.lipd <- function(x){
   }
 }
 
+#' Is this a multiLiPD object?
+#'
+#' @param x any object
+#'
+#' @return boolean
+#' @export
 is.multiLipd <- function(x){
   if(any(class(x) == "multi-lipd")){
     return(TRUE)
@@ -34,6 +46,12 @@ is.multiLipd <- function(x){
   }
 }
 
+#' Is this a LiPD TS object?
+#'
+#' @param x any object
+#'
+#' @return boolean
+#' @export
 is.lipdTs <- function(x){
   if(any(class(x) == "lipd-ts")){
     return(TRUE)
@@ -42,6 +60,12 @@ is.lipdTs <- function(x){
   }
 }
 
+#' Is this a LiPD TS Tibble object?
+#'
+#' @param x any object
+#'
+#' @return boolean
+#' @export
 is.lipdTsTibble <- function(x){
   if(any(class(x) == "lipd-ts-tibble")){
     return(TRUE)
@@ -50,6 +74,12 @@ is.lipdTsTibble <- function(x){
   }
 }
 
+#' Is this a LiPD TS Tibble long object?
+#'
+#' @param x any object
+#'
+#' @return boolean
+#' @export
 is.lipdTsTibbleLong <- function(x){
   if(any(class(x) == "lipd-ts-tibble-long")){
     return(TRUE)
@@ -58,7 +88,12 @@ is.lipdTsTibbleLong <- function(x){
   }
 }
 
-
+#' Convert a compatible object into a LiPD Structure
+#'
+#' @param x  a lipd-compatible object
+#'
+#' @return a LiPD object
+#' @export
 as.lipd <- function(x){
   if(is.lipd(x)){
     return(x)
@@ -101,6 +136,12 @@ as.lipd <- function(x){
   }
 }
 
+#' Convert a compatible object into a multiLiPD Structure
+#'
+#' @param x  a multiLiPD-compatible object
+#'
+#' @return a multi LiPD object
+#' @export
 as.multiLipd <- function(x){
   if(is.multiLipd(x)){
     return(x)
@@ -147,7 +188,12 @@ as.multiLipd <- function(x){
   }
 }
 
-
+#' Convert a compatible object into a lipd TS Structure
+#'
+#' @param x  a lipd ts compatible object
+#'
+#' @return a LiPD TS object
+#' @export
 as.lipdTs <- function(x){
   if(is.lipd(x) | is.multiLipd(x)){
     extractTs(x) %>% 
@@ -168,6 +214,12 @@ as.lipdTs <- function(x){
   }
 }
 
+#' Convert a compatible object into a lipd TS Tibble object
+#'
+#' @param x  a lipd ts tibble-compatible object
+#'
+#' @return a  a lipd TS Tibble object
+#' @export
 as.lipdTsTibble <- function(x){
   if(is.lipd(x) | is.multiLipd(x)){
     extractTs(x) %>% 
@@ -190,6 +242,12 @@ as.lipdTsTibble <- function(x){
   }
 }
 
+#' Convert a compatible object into a lipd TS Tibble long object
+#'
+#' @param x  a lipd ts tibble long-compatible object
+#'
+#' @return a  a lipd TS Tibble long object
+#' @export
 as.lipdTsTibbleLong <- function(x){
   if(is.lipd(x) | is.multiLipd(x)){
     extractTs(x) %>% 
