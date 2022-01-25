@@ -1,7 +1,7 @@
 Package: lipdR
 Type: Package
 Title: LiPD utilities for R
-Version: 0.2.4
+Version: 0.3.0
 Date: 2015-06-05
 Updated: 2017-07-27
 Authors@R: 
@@ -50,5 +50,7 @@ Imports:
     usethis,
     tidyselect,
     pkgbuild,
-    glue
-Suggests: testthat
+    glue,
+    lubridate
+Suggests: testthat,
+    neotoma2
