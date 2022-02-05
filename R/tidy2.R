@@ -67,7 +67,7 @@ ts2tibble <- function(TS){
     }
   }
   
-  tibbleTS <- structure(tibbleTS,class = c("lipd-ts-tibble-long",class(tibble::tibble())))
+  tibbleTS <- structure(tibbleTS,class = c("lipd-ts-tibble",class(tibble::tibble())))
   
   return(tibbleTS)
 }
@@ -82,7 +82,7 @@ ts2tibble <- function(TS){
 #' @param age.var variable name for the time dimension
 #' @return a tidy data.frame
 #' @export
-tidyTs <- function(TS,age.var = "age"){
+tidyTs <- function(TS,age.var = NA){
   if(!tibble::is_tibble(TS)){
   tts <- TS %>% 
     ts2tibble()
@@ -90,6 +90,15 @@ tidyTs <- function(TS,age.var = "age"){
     tts <- TS
   }
   
+  if(is.na(age.var)){
+  #make an intelligent guess about age.var
+  if(sum(purrr::map_dbl(TS,~ length(.x$year))) > sum(purrr::map_dbl(TS,~ length(.x$age)))){
+    age.var = "year"
+  }else{
+    age.var = "age"
+  }
+  print(glue::glue("creating a lipdTsTibbleLong using {age.var} as the age.var"))
+  }
   
   isNum <- which(purrr::map_lgl(tts$paleoData_values,is.numeric))
   isChar <- which(purrr::map_lgl(tts$paleoData_values,is.character))
