@@ -1,6 +1,10 @@
 # lipdR 0.3.1
 
+* Can now read/write json objects in pure jsonld
+
 # lipdR 0.3.0
+
+* Implement S3 classes into lipdR
 
 # lipdR 0.2.4
 

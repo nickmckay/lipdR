@@ -78,7 +78,7 @@ zip up bag folder, place lipd in target dst, move to original dir, delete tmp" /
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -125,7 +125,14 @@ Steps: create tmp, create bag dir, get dsn, splice csv from json, write csv, cle
 zip up bag folder, place lipd in target dst, move to original dir, delete tmp</p>
     </div>
 
-    <pre class="usage"><span class='fu'>lipd_write</span><span class='op'>(</span><span class='va'>j</span>, <span class='va'>path</span>, <span class='va'>dsn</span>, <span class='va'>ignore.warnings</span>, removeNamesFromLists <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>lipd_write</span><span class='op'>(</span>
+  <span class='va'>j</span>,
+  <span class='va'>path</span>,
+  <span class='va'>dsn</span>,
+  <span class='va'>ignore.warnings</span>,
+  removeNamesFromLists <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  jsonOnly <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -141,6 +148,10 @@ zip up bag folder, place lipd in target dst, move to original dir, delete tmp</p
     <tr>
       <th>dsn</th>
       <td><p>Dataset name</p></td>
+    </tr>
+    <tr>
+      <th>jsonOnly</th>
+      <td><p>Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)</p></td>
     </tr>
     </table>
 
@@ -159,7 +170,7 @@ zip up bag folder, place lipd in target dst, move to original dir, delete tmp</p
 
       <footer>
       <div class="copyright">
-  <p>Developed by Chris Heiser.</p>
+  <p>Developed by Nick McKay, Chris Heiser.</p>
 </div>
 
 <div class="pkgdown">

@@ -54,7 +54,7 @@ get_src_or_dst<- function(path){
   tryCatch({
     if (!(isNullOb(path))){
       # If the provided path is not a directory and not a lipd file path, then it's not valid
-      if (!isDirectory(path) && tools::file_ext(path) != "lpd" && !is.url(path)){
+      if (!isDirectory(path) && tools::file_ext(path) != "lpd" && !startsWith(tools::file_ext(path),"json") && !is.url(path)){
         # Not a lipd file and not a directory. Stop execution and quit. 
         stop("Error: The provided path must be a directory, LiPD file, or a direct URL to a LiPD file")
       } 
@@ -74,12 +74,24 @@ get_src_or_dst<- function(path){
 #' @keywords internal
 #' @param path Directory or file path
 #' @return list files File paths to LiPD files
-get_lipd_paths <- function(path){
+get_lipd_paths <- function(path,jsonOnly = FALSE){
   files <- list()
-  if (isDirectory(path)){
-    files <- list.files(path=path, pattern='\\.lpd$', full.names = TRUE)
-  } else if(tools::file_ext(path) == "lpd"){
-    files[[1]] <- path
+  if(jsonOnly){
+    if (isDirectory(path)){
+      if(startsWith(path,"http") | startsWith(path,"www")){
+        files <- path
+      }else{
+        files <- list.files(path=path, pattern='\\.jsonld$', full.names = TRUE)
+      }
+    } else if(grepl(pattern = "jsonld",x = path)){
+      files[[1]] <- path
+    }
+  }else{
+    if (isDirectory(path)){
+      files <- list.files(path=path, pattern='\\.lpd$', full.names = TRUE)
+    } else if(tools::file_ext(path) == "lpd"){
+      files[[1]] <- path
+    }
   }
   return(files)
 }

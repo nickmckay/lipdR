@@ -4,7 +4,7 @@
 \alias{tidyTs}
 \title{create tidy data.frame from TS}
 \usage{
-tidyTs(TS, age.var = "age")
+tidyTs(TS, age.var = NA)
 }
 \arguments{
 \item{TS}{a LiPD Timeseries object}

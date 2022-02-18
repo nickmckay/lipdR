@@ -4,7 +4,7 @@
 \alias{get_lipd_paths}
 \title{Get a list of paths to LiPD files}
 \usage{
-get_lipd_paths(path)
+get_lipd_paths(path, jsonOnly = FALSE)
 }
 \arguments{
 \item{path}{Directory or file path}

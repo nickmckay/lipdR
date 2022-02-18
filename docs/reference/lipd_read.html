@@ -75,7 +75,7 @@ Steps: create tmp, unzip lipd, read files into memory, manipulate data, move to 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -120,7 +120,7 @@ Steps: create tmp, unzip lipd, read files into memory, manipulate data, move to 
 Steps: create tmp, unzip lipd, read files into memory, manipulate data, move to original dir, delete tmp.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>lipd_read</span><span class='op'>(</span><span class='va'>path</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>lipd_read</span><span class='op'>(</span><span class='va'>path</span>, jsonOnly <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -128,6 +128,10 @@ Steps: create tmp, unzip lipd, read files into memory, manipulate data, move to 
     <tr>
       <th>path</th>
       <td><p>Local path OR url location of LiPD file</p></td>
+    </tr>
+    <tr>
+      <th>jsonOnly</th>
+      <td><p>Read data from jsonld only? The data will be included and the json file might be large (Typically only used for web connections)</p></td>
     </tr>
     </table>
 
@@ -146,7 +150,7 @@ Steps: create tmp, unzip lipd, read files into memory, manipulate data, move to 
 
       <footer>
       <div class="copyright">
-  <p>Developed by Chris Heiser.</p>
+  <p>Developed by Nick McKay, Chris Heiser.</p>
 </div>
 
 <div class="pkgdown">

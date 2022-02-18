@@ -5,10 +5,12 @@
 \title{Loads a LiPD file from local path. Unzip, read, and process data
 Steps: create tmp, unzip lipd, read files into memory, manipulate data, move to original dir, delete tmp.}
 \usage{
-lipd_read(path)
+lipd_read(path, jsonOnly = FALSE)
 }
 \arguments{
 \item{path}{Local path OR url location of LiPD file}
+
+\item{jsonOnly}{Read data from jsonld only? The data will be included and the json file might be large (Typically only used for web connections)}
 }
 \value{
 j LiPD file data

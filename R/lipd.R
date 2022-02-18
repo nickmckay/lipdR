@@ -3,11 +3,21 @@
 #' @export
 #' @keywords internal 
 #' @param path Local path OR url location of LiPD file
+#' @param jsonOnly Read data from jsonld only? The data will be included and the json file might be large (Typically only used for web connections)
 #' @return j LiPD file data
-lipd_read <- function(path){
+lipd_read <- function(path,jsonOnly = FALSE){
   j <- new_lipd()
   dir_original = getwd()
   tryCatch({
+    if(jsonOnly){
+      j.string <- readLines(path)
+      # Remove all invalid unicode chars that would break fromJSON()
+      j.string.clean <- gsub("[\001-\037]", "", j.string)
+      # Parse the jsonld string data as a list
+      j <- jsonlite::fromJSON(j.string.clean, simplifyDataFrame = FALSE)
+      j <- rm_empty_fields(j)
+      j <- update_lipd_version(j)
+    }else{
     dir_tmp <- create_tmp_dir()
     unzipper(path, dir_tmp)
     setwd(dir_tmp)
@@ -22,10 +32,13 @@ lipd_read <- function(path){
     # j = put_tsids(j)
     setwd(dir_original)
     unlink(dir_tmp, recursive=TRUE)
+    }
   }, error = function(cond){
     print(paste0("Error: lipd_read: ", cond))
     setwd(dir_original)
-    unlink(dir_tmp, recursive=TRUE)
+    if(exists("dir_tmp")){
+      unlink(dir_tmp, recursive=TRUE)
+    }
   })
 
   return(j)
@@ -39,11 +52,13 @@ lipd_read <- function(path){
 #' @param j Metadata
 #' @param path Destination path
 #' @param dsn Dataset name
+#' @param jsonOnly Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)
 #' @return none:
-lipd_write <- function(j, path, dsn, ignore.warnings,removeNamesFromLists = FALSE){
+lipd_write <- function(j, path, dsn, ignore.warnings,removeNamesFromLists = FALSE,jsonOnly = FALSE){
   tryCatch({
     # dsn <- replace_invalid_chars(dsn)
     dir_original <- getwd()
+    if(!jsonOnly){
     dir_tmp <- create_tmp_dir()
     setwd(dir_tmp)
     # Create a lipd dir
@@ -76,9 +91,15 @@ lipd_write <- function(j, path, dsn, ignore.warnings,removeNamesFromLists = FALS
     zipper(path, dir_tmp, dsn)
     unlink(dir_tmp, recursive=TRUE)
     setwd(dir_original)
+    }else{
+      j <- jsonlite::toJSON(j, pretty=TRUE, auto_unbox = TRUE)
+      write(j, file=file.path(path,paste0(dsn,".jsonld")))
+    }
   }, error=function(cond){
     print(paste0("Error: lipd_write: ", cond))
+    if(exists("dir_tmp")){
     unlink(dir_tmp, recursive=TRUE)
+    }
     setwd(dir_original)
   })
 }

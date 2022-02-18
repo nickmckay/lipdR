@@ -24,10 +24,11 @@ stripExtension <- function(filename){
 #' Read LiPD files into R workspace
 #' @export
 #' @author Chris Heiser
+#' @author Nick McKay
 #' @import stringr
 #' @keywords internal
 #' @param path Source path (optional)  char
-#' @usage readLipd(path)
+#' @param jsonOnly Load data from json only (not lpd file? Typically only used for web connections)
 #' @return D : LiPD dataset(s)
 #' @examples
 #' \dontrun{
@@ -43,7 +44,7 @@ stripExtension <- function(filename){
 #' read in one dataset - with path argument
 #' L <- readLipd("/Users/bobsmith/Desktop/lipd_files/dataset.lpd")
 #' }
-readLipd <- function(path=NULL){
+readLipd <- function(path=NULL,jsonOnly = FALSE){
   #remember the starting wd
   swd <- getwd()
   D = list()
@@ -55,8 +56,14 @@ readLipd <- function(path=NULL){
   # If this is a URL, download the file and return the local path where the file is saved. 
   path <- download_from_url(path)
   
+  if(startsWith(tolower(tools::file_ext(path)),"json")){
+    jsonOnly <- TRUE
+  }else if(startsWith(tolower(tools::file_ext(path)),"lpd")){
+    jsonOnly <- FALSE
+  }
+
   # Get the explicit full paths for each lipd file
-  entries <- get_lipd_paths(path)
+  entries <- get_lipd_paths(path,jsonOnly = jsonOnly)
   
   if (isNullOb(entries)){
     # Files is empty. Either not lipd files were in that path, or we had an error somewhere
@@ -68,11 +75,13 @@ readLipd <- function(path=NULL){
       # Entry is one file path
       entry <- entries[[i]]
       print(paste0("reading: ", basename(entry)))
-      # Do initial set up
-      dir_source <- dirname(entry)
-      # assign("directory_source", directory_source, envir = lipdEnv)
-      setwd(dir_source)
-      j <- lipd_read(entry)
+      if(!jsonOnly){
+        # Do initial set up
+        dir_source <- dirname(entry)
+        # assign("directory_source", directory_source, envir = lipdEnv)
+        setwd(dir_source)
+      }
+      j <- lipd_read(entry,jsonOnly = jsonOnly)
       # Get the datasetname
       dsn <- get_datasetname(j, stripExtension(entry))
       # Set the data in D using the datasetname
@@ -80,6 +89,7 @@ readLipd <- function(path=NULL){
     }
     if(length(D) == 1){
       D <- D[[1]]
+      D <- new_lipd(D)
     }else{
       D <- new_multiLipd(D)
     }
@@ -97,6 +107,7 @@ readLipd <- function(path=NULL){
 #' @keywords internal
 #' @param D LiPD datasets  list
 #' @param path Destination path  char
+#' @param jsonOnly Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)
 #' @importFrom pkgbuild find_rtools
 #' @return none
 #' @examples 
@@ -107,7 +118,7 @@ readLipd <- function(path=NULL){
 #' # write - with path argument
 #' writeLipd(D, "/Users/bobsmith/Desktop/lipd_files")
 #' }
-writeLipd <- function(D, path=NULL, ignore.warnings=FALSE,removeNamesFromLists = FALSE){
+writeLipd <- function(D, path=NULL, ignore.warnings=FALSE,removeNamesFromLists = FALSE,jsonOnly = FALSE){
   if(get_os() == "windows" & pkgbuild::find_rtools() == FALSE){
     stop("Rtools package required to use writeLipd. Please go to https://cran.r-project.org/bin/windows/Rtools/ and install Rtools.")
   }
@@ -128,13 +139,13 @@ writeLipd <- function(D, path=NULL, ignore.warnings=FALSE,removeNamesFromLists =
     set_bagit()
     if ("paleoData" %in% names(D)){
       print(paste0("writing: ", D[["dataSetName"]]))
-      lipd_write(D, path, D[["dataSetName"]], ignore.warnings, removeNamesFromLists = removeNamesFromLists)
+      lipd_write(D, path, D[["dataSetName"]], ignore.warnings, removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
     } else {
       dsns <- names(D)
       for (i in 1:length(dsns)){
         print(paste0("writing: ", basename(dsns[i])))
         entry <- dsns[[i]]
-        lipd_write(D[[entry]], path, entry, ignore.warnings,removeNamesFromLists = removeNamesFromLists)
+        lipd_write(D[[entry]], path, entry, ignore.warnings,removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
       }
     }
   }, error=function(cond){

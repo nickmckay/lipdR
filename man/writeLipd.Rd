@@ -8,13 +8,16 @@ writeLipd(
   D,
   path = NULL,
   ignore.warnings = FALSE,
-  removeNamesFromLists = FALSE
+  removeNamesFromLists = FALSE,
+  jsonOnly = FALSE
 )
 }
 \arguments{
 \item{D}{LiPD datasets  list}
 
 \item{path}{Destination path  char}
+
+\item{jsonOnly}{Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)}
 }
 \value{
 none

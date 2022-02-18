@@ -163,7 +163,8 @@ hasData <- function(path, i){
 #' @param x Path or URL string
 #' @return bool
 is.url <-function(x) {
-  return(grepl("www.|http:|https:", x))
+  x <- stringr::str_remove_all(x,"[?=]")
+  return(grepl("www.|http:|https:", x) & !startsWith(tools::file_ext(x),"json"))
 }
 
 #' Checks if an object is null/empty

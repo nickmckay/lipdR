@@ -4,10 +4,12 @@
 \alias{readLipd}
 \title{Read LiPD files into R workspace}
 \usage{
-readLipd(path)
+readLipd(path = NULL, jsonOnly = FALSE)
 }
 \arguments{
 \item{path}{Source path (optional)  char}
+
+\item{jsonOnly}{Load data from json only (not lpd file? Typically only used for web connections)}
 }
 \value{
 D : LiPD dataset(s)
@@ -32,5 +34,7 @@ L <- readLipd("/Users/bobsmith/Desktop/lipd_files/dataset.lpd")
 }
 \author{
 Chris Heiser
+
+Nick McKay
 }
 \keyword{internal}

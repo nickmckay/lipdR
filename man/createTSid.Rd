@@ -6,6 +6,9 @@
 \usage{
 createTSid(prefix = "")
 }
+\arguments{
+\item{prefix}{Optionally pre-pend a string}
+}
 \value{
 TSid
 }

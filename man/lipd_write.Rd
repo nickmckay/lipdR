@@ -6,7 +6,14 @@
 Steps: create tmp, create bag dir, get dsn, splice csv from json, write csv, clean json, write json, create bagit,
 zip up bag folder, place lipd in target dst, move to original dir, delete tmp}
 \usage{
-lipd_write(j, path, dsn, ignore.warnings, removeNamesFromLists = FALSE)
+lipd_write(
+  j,
+  path,
+  dsn,
+  ignore.warnings,
+  removeNamesFromLists = FALSE,
+  jsonOnly = FALSE
+)
 }
 \arguments{
 \item{j}{Metadata}
@@ -14,6 +21,8 @@ lipd_write(j, path, dsn, ignore.warnings, removeNamesFromLists = FALSE)
 \item{path}{Destination path}
 
 \item{dsn}{Dataset name}
+
+\item{jsonOnly}{Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)}
 }
 \value{
 none:
