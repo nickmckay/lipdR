@@ -54,6 +54,6 @@ lipdSummary <- function(L){
 createCitation <- function(pub){
   
 }
-L$pub
+
 
 

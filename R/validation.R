@@ -370,6 +370,12 @@ validVariable <- function(V){
   
   #check vector
   if(!is.vector(V$values)){
+    #check for 1 column matrix
+    if(is.matrix(V$values)){
+      if(ncol(V$values) == 1){
+        return(TRUE)
+      }
+    }
     print(glue::glue("variable values must be a vector ({V$TSid} - {V$variableName})"))
     return(FALSE)
   }
