@@ -51,6 +51,8 @@ Imports:
     tidyselect,
     pkgbuild,
     glue,
-    lubridate
-Suggests: testthat,
-    neotoma2
+    lubridate,
+    neotoma2,
+    magrittr
+Suggests: testthat
+Remotes: neotomadb/neotoma2

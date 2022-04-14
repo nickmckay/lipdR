@@ -1,6 +1,6 @@
 #' Create a data table from a lipd-ts-tibble object
 #'
-#' @param ts 
+#' @param ts Any lipd class
 #' @param time.var What's the name of the time var (default = "age")
 #' @importFrom dplyr select 
 #' @importFrom tidyr pivot_wider unchop

@@ -7,7 +7,7 @@
 tabulateTs(ts, time.var = "age")
 }
 \arguments{
-\item{ts}{}
+\item{ts}{Any lipd class}
 
 \item{time.var}{What's the name of the time var (default = "age")}
 }

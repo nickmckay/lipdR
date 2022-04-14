@@ -312,8 +312,9 @@ getPaleoDataNeotoma2 <- function(site){
 #'
 #' @examples
 #' 
-#' site <- neotoma2::get_downloads(24)
-#' L <- neotoma2lipd(site)
+#' B <- neotoma2::get_sites(sitename = "Bambili 2")
+#' D <- neotoma2::get_downloads(B)
+#' L <- neotoma2lipd(D)
 #' 
 neotoma2lipd <- function(site){
   #initialize LiPD
