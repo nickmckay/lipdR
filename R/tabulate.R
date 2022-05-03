@@ -7,8 +7,6 @@
 #' @importFrom magrittr `%>%`
 #' @return
 #' @export
-#'
-#' @examples
 tabulateTs <- function(ts,time.var = "age"){
   ts <- as.lipdTsTibble(ts)
   out <- dplyr::select(ts,{{time.var}},paleoData_variableName,paleoData_values) %>%
