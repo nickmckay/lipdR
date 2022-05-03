@@ -69,8 +69,8 @@ clean_csv <- function(csvs){
 #' @importFrom utils count.fields
 #' @keywords internal
 #' @return data.list List of data for one LiPD file
-read_csv_from_file <- function(){
-  c <- list_files_recursive("csv")
+read_csv_from_file <- function(path){
+  c <- list_files_recursive("csv",path = path)
   c.data <- vector(mode="list",length=length(c))
   # import each csv file
   for (ci in seq_along(c)){
@@ -121,12 +121,17 @@ read_csv_from_file <- function(){
       for(j in seq_along(df)){
         tmp[[j]] <- as.double(rep(NA,8)) 
       }
-      c.data[[c[ci]]]=tmp
+      c.data[[ci]]=tmp
     } else {
       # Normal case: all data is here
-      c.data[[c[ci]]]=df[goodRows,]
+      c.data[[ci]]=df[goodRows,]
     }
+    #pause here
+    
   }
+  
+  names(c.data) <- basename(c)
+  
   return(c.data)
 }
 
@@ -138,7 +143,7 @@ read_csv_from_file <- function(){
 #' @keywords internal
 #' @param csvs CSV data
 #' @return bool success: CSV write success or fail
-write_csv_to_file <- function(csvs){
+write_csv_to_file <- function(csvs,path){
   tryCatch({
     success <- TRUE
     # csvs <- clean_csv(csvs)
@@ -204,7 +209,7 @@ write_csv_to_file <- function(csvs){
       }
       if (!is.null(tmp)){
         success <- tryCatch({
-          write.table(tmp, file=entry, col.names = FALSE, row.names=FALSE, sep=",")
+          write.table(tmp, file=file.path(path,entry), col.names = FALSE, row.names=FALSE, sep=",")
           success <- TRUE
         }, error=function(cond){
           print(paste0("Error: write_csv_to_file: write.table: ", entry, cond))

@@ -45,10 +45,8 @@ stripExtension <- function(filename){
 #' L <- readLipd("/Users/bobsmith/Desktop/lipd_files/dataset.lpd")
 #' }
 readLipd <- function(path=NULL,jsonOnly = FALSE){
-  #remember the starting wd
-  swd <- getwd()
   D = list()
-  # Warnings are annoying, we don't want them
+  # Silence warnings
   options(warn = -1)
   # Ask user where files are stored, or sort the given path parameter
   path <- get_src_or_dst(path)
@@ -79,7 +77,6 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
         # Do initial set up
         dir_source <- dirname(entry)
         # assign("directory_source", directory_source, envir = lipdEnv)
-        setwd(dir_source)
       }
       j <- lipd_read(entry,jsonOnly = jsonOnly)
       # Get the datasetname
@@ -94,8 +91,7 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
       D <- new_multiLipd(D)
     }
   }
-  #reset the wd
-  setwd(swd)
+  
   return(D)
 }
 
@@ -124,28 +120,36 @@ writeLipd <- function(D, path=NULL, ignore.warnings=FALSE,removeNamesFromLists =
   }
   
   tryCatch({
+    fileSelect <- FALSE
+    
     if(missing(path)){
       path <- browse_dialog("d")
-      setwd(path)
+      fileSelect <- TRUE
     }
     
     #normalize the path
+    path <- normalizePath(path,mustWork = FALSE)
+    
     if(isDirectory(path)){
-      path <- normalizePath(path,mustWork = FALSE)
+      dir_original <- path
     }else{
-      path <- normalizePath(dirname(path),mustWork = FALSE)
+      dir_original <- dirname(path)
     }
+    
     
     set_bagit()
     if ("paleoData" %in% names(D)){
-      print(paste0("writing: ", D[["dataSetName"]]))
-      lipd_write(D, path, D[["dataSetName"]], ignore.warnings, removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
+      print(paste0("writing: ", D[["dataSetName"]]," to ",path))
+      lipd_write(D, dir_original, path, D[["dataSetName"]], ignore.warnings, removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
     } else {
+      if(!isDirectory(path)){
+        path <- dir_original
+      }
       dsns <- names(D)
       for (i in 1:length(dsns)){
         print(paste0("writing: ", basename(dsns[i])))
         entry <- dsns[[i]]
-        lipd_write(D[[entry]], path, entry, ignore.warnings,removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
+        lipd_write(D[[entry]],dir_original, path, entry, ignore.warnings,removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
       }
     }
   }, error=function(cond){

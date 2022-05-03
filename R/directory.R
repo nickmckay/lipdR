@@ -101,11 +101,11 @@ get_lipd_paths <- function(path,jsonOnly = FALSE){
 #' @keywords internal
 #' @param x File type
 #' @return char files: Matching file paths
-list_files_recursive <- function(x){
+list_files_recursive <- function(x,path){
   # create the file type filter string
   ft <- paste0("\\.", x, "$")
   # get the list of filenames from the current directory and below
-  files <- list.files(path=getwd(), pattern=ft, recursive=TRUE)
+  files <- list.files(path=path, pattern=ft, recursive=TRUE,full.names = TRUE)
   return(files)
 }
 
@@ -115,9 +115,9 @@ list_files_recursive <- function(x){
 #' @keywords internal
 #' @param x File type
 #' @return char files: Matching file paths
-find_data_dir <- function(){
+find_data_dir <- function(path){
   # If there is a jsonld file, then that means we're in the data directory
-  files <- list.files(path=getwd(), pattern="\\.jsonld$", recursive=TRUE)
+  files <- list.files(path=path, pattern="\\.jsonld$", recursive=TRUE,full.names = TRUE)
   if (isNullOb(files)){
     stop("Error: Unable to find the 'data' directory in the LiPD file")
   }
