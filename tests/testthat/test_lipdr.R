@@ -10,6 +10,18 @@ test_lipdread <- function(path){
   })
 }
 
+test_lipdreadwrite <- function(path){
+  tryCatch({
+    D <- readLipd(path)
+    writeLipd(D,path = file.path(tempdir(),"test.lpd"))
+    writeLipd(D,path = file.path(tempdir()))
+    return(0)
+  }, error=function(cond){
+    print(cond)
+    return(-1)
+  })
+}
+
 
 test_extractTs <- function(path){
   tryCatch({
@@ -35,11 +47,11 @@ test_extractTsCorrectCount <- function(path){
 }
 
 test_extractTsUniqueTsids <- function(path){
-  skip("needs to be updated")
   tryCatch({
     L <- readLipd(path)
     ts <- extractTs(L)
-    ids <- geoChronR::pullTsVariable(ts, "paleoData_TSid")
+    tts <- ts2tibble(ts)
+    ids <- tts$paleoData_TSid
     if(any(duplicated(ids))){
       return(-1)
     }
@@ -89,21 +101,9 @@ test_that("Time Series has unique TSids", {
 test_that("LiPD Write: v1.3 with all table types", {
   print("LiPD Write: v1.3 with all table types")
   sink("log")
-  # expect_equal(test_lipdwrite("./ODP1098B13.lpd"), 0)
+  expect_equal(test_lipdreadwrite("./ODP1098B13.lpd"), 0)
   sink()
 })
 
-test_that("Filter Time Series", {
-  print("Filter Time Series")
-  sink("log")
-  # expect_equal(test_filterts("./ODP1098B13.lpd"), 0)
-  sink()
-})
 
-test_that("Query Time Series", {
-  print("Query Time Series")
-  sink("log")
-  # expect_equal(test_queryts("./ODP1098B13.lpd"), 0)
-  sink()
-})
 
