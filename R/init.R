@@ -114,7 +114,11 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
 #' # write - with path argument
 #' writeLipd(D, "/Users/bobsmith/Desktop/lipd_files")
 #' }
-writeLipd <- function(D, path=NULL, ignore.warnings=FALSE,removeNamesFromLists = FALSE,jsonOnly = FALSE){
+writeLipd <- function(D, 
+                      path=NULL, 
+                      ignore.warnings=FALSE,
+                      removeNamesFromLists = FALSE,
+                      jsonOnly = FALSE){
   if(get_os() == "windows" & pkgbuild::find_rtools() == FALSE){
     stop("Rtools package required to use writeLipd. Please go to https://cran.r-project.org/bin/windows/Rtools/ and install Rtools.")
   }
@@ -123,8 +127,22 @@ writeLipd <- function(D, path=NULL, ignore.warnings=FALSE,removeNamesFromLists =
     fileSelect <- FALSE
     
     if(missing(path)){
-      path <- browse_dialog("d")
+      if(is.lipd(D)){
+        path <- browse_dialog("s")
+      }else if(is.multiLipd(D)){
+        path <- browse_dialog("d")
+      }else{
+        stop("The input object should be of class lipd or multiLipd")
+      }
       fileSelect <- TRUE
+    }
+    
+    if(fileSelect & is.lipd(D)){
+      if(stripExtension(basename(path)) != D$dataSetName){
+        ans <- askYesNo(glue::glue("Your selected file name: '{path}' does not match the dataSetName: '{D$dataSetName}'.\n Do you want to continue?"))
+        if(!ans){stop("You chose not to continue")}
+      }
+      
     }
     
     #normalize the path
