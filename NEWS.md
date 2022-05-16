@@ -1,3 +1,5 @@
+# lipdR 0.3.2
+
 # lipdR 0.3.1
 
 * Can now read/write json objects in pure jsonld
