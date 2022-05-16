@@ -68,11 +68,16 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
     print("LiPD file(s) not found in the given path")
     print(paste0("Path: ", path))
   } else {
+    
+    print(paste0("Loading ", length(entries)," datasets from ",path,"..."))
+
     for (i in 1:length(entries)){
       j <- list()
       # Entry is one file path
       entry <- entries[[i]]
-      print(paste0("reading: ", basename(entry)))
+      if(length(entries) < 20){
+        print(paste0("reading: ", basename(entry)))
+      }
       if(!jsonOnly){
         # Do initial set up
         dir_source <- dirname(entry)
@@ -89,6 +94,10 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
       D <- new_lipd(D)
     }else{
       D <- new_multiLipd(D)
+      succ <- length(D)
+      failed <- length(entries) - length(D)
+      print(paste0("Successfully loaded ", succ," datasets, with ",failed," failures."))
+      
     }
   }
   
@@ -164,12 +173,19 @@ writeLipd <- function(D,
         path <- dir_original
       }
       dsns <- names(D)
+      print(paste0("Writing ", length(dsns)," datasets to ",path,"..."))
+      
       for (i in 1:length(dsns)){
-        print(paste0("writing: ", basename(dsns[i])))
+        if(length(dsns) < 20){
+          print(paste0("writing: ", basename(dsns[i])))
+        }
         entry <- dsns[[i]]
         lipd_write(D[[entry]],dir_original, path, entry, ignore.warnings,removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
       }
+      
     }
+    
+    
   }, error=function(cond){
     print(paste0("Error: writeLipd: ", cond))
   })
