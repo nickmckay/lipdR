@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add createdBy key to metdata — add_created_by • lipdR</title>
+<title>Create a data table from a lipd-ts-tibble object — tabulateTs • lipdR</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Add createdBy key to metdata — add_created_by" />
-<meta property="og:description" content="Add createdBy key to metdata" />
+<meta property="og:title" content="Create a data table from a lipd-ts-tibble object — tabulateTs" />
+<meta property="og:description" content="Create a data table from a lipd-ts-tibble object" />
 
 
 
@@ -106,29 +106,35 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add createdBy key to metdata</h1>
+    <h1>Create a data table from a lipd-ts-tibble object</h1>
     
-    <div class="hidden name"><code>add_created_by.Rd</code></div>
+    <div class="hidden name"><code>tabulateTs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Add createdBy key to metdata</p>
+    <p>Create a data table from a lipd-ts-tibble object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>add_created_by</span><span class='op'>(</span><span class='va'>d</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>tabulateTs</span><span class='op'>(</span><span class='va'>ts</span>, time.var <span class='op'>=</span> <span class='st'>"age"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>d</th>
-      <td><p>Metadata</p></td>
+      <th>ts</th>
+      <td><p>Any lipd class</p></td>
+    </tr>
+    <tr>
+      <th>time.var</th>
+      <td><p>What's the name of the time var (default = "age")</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>list d: Metadata</p>
+    
+
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

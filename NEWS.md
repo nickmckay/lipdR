@@ -1,5 +1,7 @@
 # lipdR 0.3.2
 
+* Fix metadata mismatch error in `getPaleoDataNeotoma2()`. Thanks to Sarah Ivory for the bug report.
+
 # lipdR 0.3.1
 
 * Can now read/write json objects in pure jsonld
