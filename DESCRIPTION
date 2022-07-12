@@ -54,5 +54,8 @@ Imports:
     lubridate,
     neotoma2,
     magrittr
-Suggests: testthat
+Suggests: 
+    rmarkdown,
+    testthat
 Remotes: neotomadb/neotoma2
+VignetteBuilder: knitr
