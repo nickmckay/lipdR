@@ -335,6 +335,34 @@ validChron <- function(L){
           return(FALSE)
         }
         
+        #check that age, depth and year are numeric
+        isNum <- purrr::map_lgl(LS, ~ all(is.numeric(.x$values)))
+        
+        depthCol <- which(names(isNum) == "depth")
+        if(length(depthCol) >= 1){
+          if(!all(isNum[depthCol])){
+            print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} depth values are not numeric"))
+            return(FALSE)
+          }
+        }
+        
+        
+        ageCol <- which(names(isNum) == "age")
+        if(length(ageCol) >= 1){
+          if(!all(isNum[ageCol])){
+            print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} age values are not numeric"))
+            return(FALSE)
+          }
+        }
+        
+        
+        yearCol <- which(names(isNum) == "year")
+        if(length(yearCol) >= 1){
+          if(!all(isNum[yearCol])){
+            print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} year values are not numeric"))
+            return(FALSE)
+          }
+        }
         
       }
     }
