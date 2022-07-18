@@ -6,7 +6,7 @@
 [![R build status](https://github.com/nickmckay/lipdR/workflows/R-CMD-check/badge.svg)](https://github.com/nickmckay/lipdR/actions)
 <!-- badges: end -->
 
-# LiPD Utilities in = R
+# lipdR
 
 Welcome to the lipdR package, a set of LiPD Utilities in R . This guide will provide everything you need to get up and running with the LiPD Utilities in R,  and show you how to use the core functions in the LiPD package. 
 
