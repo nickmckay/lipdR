@@ -25,7 +25,6 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
           - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -67,13 +66,13 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
+          remotes::install_cran("devtools")
         shell: Rscript {0}
 
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+        run: devtools::check(manual = FALSE, cran = TRUE)
         shell: Rscript {0}
 
       - name: Upload check results
