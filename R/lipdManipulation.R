@@ -1,4 +1,117 @@
 
+#' Create a column in a LiPD object
+#'
+#' @param L a LiPD object
+#' @param paleo.or.chron is this column for a "paleo" or "chron" table?
+#' @param paleo.or.chron.number what number is this paleo or chron object (default = 1)
+#' @param table.type "measurement", "ensemble" or "summary" table? (default = "measurement")
+#' @param table.number what number is this table object (default = 1)
+#' @param variableName what is the variableName (e.g. "depth")
+#' @param units what are the units
+#' @param values a vector of the values for the column, must be the same length as other columns in the table
+#' @param additional.metadata an optional named list of additional metadata to add to the column
+#' @importFrom purrr map map_chr map_dbl
+#' @importFrom glue glue
+#' @importFrom stringr str_remove_all
+#' @return updated Lipd object
+#' @export
+createColumn <- function(L,
+                         paleo.or.chron = "paleo",
+                         paleo.or.chron.number = 1,
+                         table.type = "measurement",
+                         table.number = 1,
+                         variableName = NA,
+                         units = NA,
+                         values = NA, 
+                         additional.metadata = NA){
+  
+  #get the relevant table
+  toi <- L[[paste0(paleo.or.chron,"Data")]][[paleo.or.chron.number]][[paste0(table.type,"Table")]][[table.number]]
+  
+  #get existing variablenames
+  vn <- purrr::map(toi,purrr::pluck,"variableName")
+  
+  #which are columns?
+  isCol <- which(!purrr::map_lgl(vn,is.null))
+  
+  if(length(isCol) == 0){
+    stop("No valid columns")
+  }
+  
+  
+  #check variableNames
+  vn <- purrr::map_chr(toi[isCol],purrr::pluck,"variableName")
+  if(is.na(variableName)){
+    stop("You must enter a variableName for this column")
+  }
+  
+  if(variableName %in% vn){
+    stop(glue::glue("The variableName {variableName} is already present in the table. Please enter a new one."))
+  }
+  
+  #check units
+  if(is.na(units)){
+    stop("You must enter units for this column. 'unitless' is an acceptable entry.")
+  }
+  
+  #check column length
+  colLength <- unique(purrr::map_dbl(toi[isCol],~length(.x$values)))
+  
+  
+  if(length(colLength) != 1){
+    stop("The columns aren't all the same length!")
+  }
+  
+  if(length(values) == 1 & colLength > 1){
+    print(glue::glue("Replicating the input value ({values}) {colLength} times to match table length"))
+    values = rep(values, colLength)
+  }
+  
+  
+  if(length(values) != colLength){
+    stop(glue::glue("The new values vector has {length(values)} entries, but the rest of table has {colLength} observations. These must be the same."))
+  }
+  
+  #put everything together
+  cleanVariableName <- stringr::str_remove_all(variableName,"[^A-Za-z0-9]")
+  toi[[cleanVariableName]] <- list()
+  
+  toi[[cleanVariableName]]$variableName <- variableName
+  toi[[cleanVariableName]]$values <- values
+  #B$chronData[[1]]$measurementTable[[1]]$reservoir$values[c(1,3)] <- 0 #for non 14C dates
+  toi[[cleanVariableName]]$units <- units
+  toi[[cleanVariableName]]$TSid <- lipdR::createTSid()
+  
+  if(!is.na(additional.metadata)){
+    #make sure this is a named list
+    if(!is.list(additional.metadata)){
+      stop("additional.metadata must be a named list of parameters")
+    }
+    
+    if(length(names(additional.metadata)) != length(additional.metadata)){
+      stop("additional.metadata must be a named list of parameters - the length of the names and the list don't match")
+    }
+    
+    mdname <- names(additional.metadata)
+    
+    for(i in 1:length(additional.metadata)){
+      cleanParameterName <- stringr::str_remove_all(mdname[i],"[^A-Za-z0-9]")
+      toi[[cleanVariableName]][[mdname[i]]] <- additional.metadata[[i]]
+    }
+  }
+  
+  #add back in
+  
+  L[[paste0(paleo.or.chron,"Data")]][[paleo.or.chron.number]][[paste0(table.type,"Table")]][[table.number]] <- toi
+  
+  # print update
+  
+  print(glue::glue("Added '{variableName}' column (TSid = {toi[[cleanVariableName]]$TSid}) with {length(toi[[cleanVariableName]]$values)} values, to {paleo.or.chron}Data {paleo.or.chron.number}, {table.type}Table {table.number}"))
+  
+  return(L)
+  
+}
+
 #' Duplicate a table in a LiPD file
 #'
 #' @param L a LiPD object

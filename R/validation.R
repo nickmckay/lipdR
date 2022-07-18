@@ -1,4 +1,4 @@
-validLipd <- function(L){
+validLipd <- function(L,allow.ensemble = TRUE){
   good <- TRUE
   
   #is list
@@ -60,13 +60,13 @@ validLipd <- function(L){
   }
   
   # Check paleo measurement contents ---------------------------------------------------
-  if(!validPaleo(L)){
+  if(!validPaleo(L,allow.ensemble = allow.ensemble)){
     print(glue::glue("{L$dataSetName}: invalid paleoData section"))
     good <- FALSE
   }
   
   # Check chron measurement contents ---------------------------------------------------
-  if(!validChron(L)){
+  if(!validChron(L,allow.ensemble = allow.ensemble)){
     print(glue::glue("{L$dataSetName}: invalid chronData section"))
     good <- FALSE
   }
@@ -193,7 +193,7 @@ validGeo <- function(L){
   
 }
 
-validPaleo <- function(L){
+validPaleo <- function(L,allow.ensemble = TRUE){
   if(!"paleoData" %in% names(L)){
     warning(glue::glue("{L$dataSetName}: No paleoData metadata present"))
     return(TRUE) #pubs not required
@@ -239,13 +239,13 @@ validPaleo <- function(L){
         }
         
         #check for valid variable
-        if(!all(purrr::map_lgl(LS,validVariable))){
+        if(!all(purrr::map_lgl(LS,validVariable,allow.ensemble = allow.ensemble))){
           print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} has invalid variables"))
           return(FALSE)
         }
         
         #check that all values are the same length
-        lengths <- purrr::map_dbl(LS, ~ length(.x$values))
+        lengths <- purrr::map_dbl(LS, variableLength)
         
         if(any(lengths < 1)){
           print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} variable values are missing"))
@@ -257,6 +257,34 @@ validPaleo <- function(L){
           return(FALSE)
         }
         
+        #check that age, depth and year are numeric
+        isNum <- purrr::map_lgl(LS, ~ all(is.numeric(.x$values)))
+        
+        depthCol <- which(names(isNum) == "depth")
+        if(length(depthCol) >= 1){
+          if(!all(isNum[depthCol])){
+            print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} depth values are not numeric"))
+            return(FALSE)
+          }
+        }
+        
+        
+        ageCol <- which(names(isNum) == "age")
+        if(length(ageCol) >= 1){
+          if(!all(isNum[ageCol])){
+            print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} age values are not numeric"))
+            return(FALSE)
+          }
+        }
+        
+        
+        yearCol <- which(names(isNum) == "year")
+        if(length(yearCol) >= 1){
+          if(!all(isNum[yearCol])){
+            print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} year values are not numeric"))
+            return(FALSE)
+          }
+        }
         
       }
     }
@@ -266,7 +294,7 @@ validPaleo <- function(L){
   
 }
 
-validChron <- function(L){
+validChron <- function(L,allow.ensemble = TRUE){
   if(!"chronData" %in% names(L)){
     warning(glue::glue("{L$dataSetName}: No chronData metadata present"))
     return(TRUE) #pubs not required
@@ -317,7 +345,7 @@ validChron <- function(L){
         }
         
         #check for valid variable
-        if(!all(purrr::map_lgl(LS,validVariable))){
+        if(!all(purrr::map_lgl(LS,validVariable,allow.ensemble = allow.ensemble))){
           print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} has invalid variables"))
           return(FALSE)
         }
@@ -335,6 +363,34 @@ validChron <- function(L){
           return(FALSE)
         }
         
+        #check that age, depth and year are numeric
+        isNum <- purrr::map_lgl(LS, ~ all(is.numeric(.x$values)))
+        
+        depthCol <- which(names(isNum) == "depth")
+        if(length(depthCol) >= 1){
+          if(!all(isNum[depthCol])){
+            print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} depth values are not numeric"))
+            return(FALSE)
+          }
+        }
+        
+        
+        ageCol <- which(names(isNum) == "age")
+        if(length(ageCol) >= 1){
+          if(!all(isNum[ageCol])){
+            print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} age values are not numeric"))
+            return(FALSE)
+          }
+        }
+        
+        
+        yearCol <- which(names(isNum) == "year")
+        if(length(yearCol) >= 1){
+          if(!all(isNum[yearCol])){
+            print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} year values are not numeric"))
+            return(FALSE)
+          }
+        }
         
       }
     }
@@ -348,7 +404,7 @@ validChron <- function(L){
 
 
 
-validVariable <- function(V){
+validVariable <- function(V,allow.ensemble = TRUE){
   reqNames <- c("TSid","variableName","values","number")
   for(r in reqNames){
     if(! r %in% names(V)){
@@ -374,6 +430,13 @@ validVariable <- function(V){
     if(is.matrix(V$values)){
       if(ncol(V$values) == 1){
         return(TRUE)
+      }else if(ncol(V$values) > 1){
+        if(allow.ensemble){
+          return(TRUE)
+        }else{
+          print(glue::glue("variable values must be a one column vector (allow.ensemble = FALSE) and ({V$TSid} - {V$variableName}) is a multicolumn"))
+          return(FALSE)
+        }
       }
     }
     print(glue::glue("variable values must be a vector ({V$TSid} - {V$variableName})"))
@@ -386,4 +449,13 @@ validVariable <- function(V){
 
 validMultiLipd <- function(D){
   all(purrr::map_lgl(D,validLipd))
+}
+
+variableLength <- function(VL){
+  if(is.matrix(VL$values)){
+    return(NROW(VL$values))
+  }else{
+    return(length(VL$values))
+  }
+  
 }
