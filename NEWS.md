@@ -1,3 +1,5 @@
+# lipdR 0.3.3
+
 # lipdR 0.3.2
 
 * Fix metadata mismatch error in `getPaleoDataNeotoma2()`. Thanks to Sarah Ivory for the bug report.
