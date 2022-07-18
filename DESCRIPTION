@@ -3,7 +3,7 @@ Type: Package
 Title: LiPD utilities for R
 Version: 0.3.3
 Date: 2015-06-05
-Updated: 2022-01-26
+Updated: 2022-07-18
 Authors@R: 
     c(person(given = "Nick",
            family = "McKay",
@@ -57,5 +57,6 @@ Imports:
 Suggests: 
     rmarkdown,
     testthat
-Remotes: neotomadb/neotoma2
+Remotes: 
+    github::neotomadb/neotoma2
 VignetteBuilder: knitr
