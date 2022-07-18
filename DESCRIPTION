@@ -58,5 +58,5 @@ Suggests:
     rmarkdown,
     testthat
 Remotes: 
-    github::neotomadb/neotoma2
+    neotomadb/neotoma2
 VignetteBuilder: knitr
