@@ -52,10 +52,10 @@ Imports:
     pkgbuild,
     glue,
     lubridate,
+    neotoma2,
     magrittr
 Suggests: 
     rmarkdown,
-    neotoma2,
     testthat
 Remotes: neotomadb/neotoma2
 VignetteBuilder: knitr
