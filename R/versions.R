@@ -242,7 +242,8 @@ update_lipd_v1_3_keys <- function(d){
       old_key <- keys[[i]]
       # Dive down first
       if(typeof(d[[old_key]]) == "list"){
-        d[[old_key]] <- update_lipd_v1_3_keys(d[[old_key]])
+        stop("this shouldn't be a list")
+#        d[[old_key]] <- update_lipd_v1_3_keys(d[[old_key]])
       } 
       # When you bubble back up, then check if this key should be switched
       if(old_key %in% v12keys){
@@ -256,16 +257,7 @@ update_lipd_v1_3_keys <- function(d){
       }
     }
   } else {
-    # For any lists that are indexed by number
-    if(typeof(d)=="list"){
-      for(i in 1:length(d)){
-        tryCatch({
-          d[[i]] <- update_lipd_v1_3_keys(d[[i]])
-        }, error=function(cond){
-          print(paste0("Error: update_lipd_v1_3_keys: ", cond))
-        })
-      }
-    }
+    stop("Keys should not be indexed by number")
   }
   return(d)
 }
