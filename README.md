@@ -3,7 +3,6 @@
 [![R](https://img.shields.io/badge/R-1.0.136-blue.svg)]()
 [![R Studio](https://img.shields.io/badge/RStudio-3.3.1-blue.svg)]()
 [![license](https://img.shields.io/badge/license-GPL-brightgreen.svg)]()
-[![R build status](https://github.com/nickmckay/lipdR/workflows/R-CMD-check/badge.svg)](https://github.com/nickmckay/lipdR/actions)
 [![R-CMD-check](https://github.com/nickmckay/lipdR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nickmckay/lipdR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
