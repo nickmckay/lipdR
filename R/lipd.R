@@ -30,10 +30,10 @@ lipd_read <- function(path,jsonOnly = FALSE){
     unlink(dir_tmp, recursive=TRUE)
     }
   }, error = function(cond){
-    print(paste0("Error: lipd_read: ", cond))
     if(exists("dir_tmp")){
       unlink(dir_tmp, recursive=TRUE)
     }
+    message(paste0("Error: lipd_read: ", cond))
   })
 
   return(j)

@@ -98,7 +98,8 @@ read_csv_from_file <- function(path){
                             col_names = FALSE,
                             na = c("nan", "NaN", "NAN", "NA", ""),
                             col_types = readr::cols(), 
-                            guess_max = n.rows)
+                            guess_max = n.rows,
+                            progress = FALSE)
 
     
     

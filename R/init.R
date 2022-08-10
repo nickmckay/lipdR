@@ -71,21 +71,52 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
     
     print(paste0("Loading ", length(entries)," datasets from ",path,"..."))
 
+    if(length(entries) < 20){
+      few <- TRUE
+    }else{
+      few <- FALSE
+      pb <- txtProgressBar(min = 0,      # Minimum value of the progress bar
+                           max = length(entries), # Maximum value of the progress bar
+                           style = 3,    # Progress bar style (also available style = 1 and style = 2)
+                           char = "=")   # Character used to create the bar
+    }
+    
+    errors <- parseFail <- c()
+    
+    
     for (i in 1:length(entries)){
       j <- list()
       # Entry is one file path
       entry <- entries[[i]]
-      if(length(entries) < 20){
+      
+      if(few){
         print(paste0("reading: ", basename(entry)))
+      }else{
+        setTxtProgressBar(pb, i)
       }
+      
       if(!jsonOnly){
         # Do initial set up
         dir_source <- dirname(entry)
         # assign("directory_source", directory_source, envir = lipdEnv)
       }
-      j <- lipd_read(entry,jsonOnly = jsonOnly)
+      
+      J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly)
+      j <- J[[1]]$result
+
       # Get the datasetname
       dsn <- get_datasetname(j, stripExtension(entry))
+      
+      parseFail[i] <- ifelse(
+        any(grepl(pattern = "parsing fail",J[[1]]$warnings)),
+        yes = dsn,
+        no = NA)
+      errors[i] <- ifelse(
+      length(J[[1]]$messages) > 0,
+        yes = dsn,
+        no = NA)
+        
+        
       # Set the data in D using the datasetname
       D[[dsn]] <- j
     }
@@ -95,8 +126,22 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
     }else{
       D <- new_multiLipd(D)
       succ <- length(D)
-      failed <- length(entries) - length(D)
-      print(paste0("Successfully loaded ", succ," datasets, with ",failed," failures."))
+      parsingFailures <- sum(!is.na(parseFail))
+      failed <- sum(!is.na(errors))
+      cat("\n\n")
+      
+      if(parsingFailures > 0){
+        print(paste0("Loaded ", succ," datasets, with ",failed," error(s) and ",parsingFailures," parsing failure(s) in datasets:"))
+        print(as.character(na.omit(parseFail)))
+      }else{
+        print(paste0("Successfully loaded ", succ," datasets, with ",failed," failure(s)."))
+      }
+      
+      if(failed > 0){
+        cat("\n")
+        print(paste0("The following dataset(s) loaded with errors:"))
+        print(as.character(na.omit(errors)))
+      }
       
     }
   }
