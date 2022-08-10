@@ -6,9 +6,6 @@
 \usage{
 find_data_dir()
 }
-\arguments{
-\item{x}{File type}
-}
 \value{
 char files: Matching file paths
 }
