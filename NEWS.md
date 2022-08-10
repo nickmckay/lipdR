@@ -1,3 +1,5 @@
+# lipdR 0.3.4
+
 # lipdR 0.3.3
 
 * Added a `createColumn()` function
