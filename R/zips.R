@@ -21,23 +21,31 @@ unzipper <- function(path, dir_tmp){
 #' @param dir_original Directory to move the LiPD to
 #' @param dir_tmp  Temp directory
 #' @return none
-zipper <- function(dir_original, dir_tmp, dsn){
+zipper <- function(dir_original, dir_tmp, dsn, path){
   # zip the top lipd directory. zip file is create one level up
-  setwd(file.path(dir_tmp, "zip"))
-  include.files <- list.files(getwd(), recursive = TRUE)
+  zipPath <- file.path(dir_tmp, "zip")
+  orig_dir <- getwd()
+  include.files <- list.files(zipPath, recursive = TRUE,full.names = FALSE)
   tryCatch({
-    zip(getwd(), include.files)
-    setwd(dir_tmp)
+    setwd(zipPath)#I think I have to do this
+    zip(zipPath, include.files,flags="-q")
+    setwd(orig_dir)
     # rename
-    if (file.exists("zip.zip")){
-      file.rename("zip.zip", paste0(dsn, ".lpd"))
+    if (file.exists(file.path(dir_tmp,"zip.zip"))){
+      if(isDirectory(path)){#then name by dataset name
+        path <- file.path(path,paste0(dsn,".lpd"))
+      }
+      
+      file.rename(file.path(dir_tmp,"zip.zip"), file.path(dir_tmp,basename(path)))
+      file.copy(file.path(dir_tmp,basename(path)),file.path(path),overwrite=TRUE)
+      
+    }else{
+      stop("zip file not created")
     }
-    # move
-    if(file.exists(paste0(dsn, ".lpd"))){
-      file.copy(paste0(dsn, ".lpd"), dir_original, overwrite=TRUE)
-    }
+    
   }, error=function(cond){
+    setwd(orig_dir)
     print(paste0("Zipping failed: ", cond))
   })
-
+  
 }
