@@ -113,7 +113,7 @@ list_files_recursive <- function(x,path){
 #' Use a recursive file search to find the "data" directory of a LiPD file
 #' @export
 #' @keywords internal
-#' @param x File type
+#' @param path what is the path to the jsonld
 #' @return char files: Matching file paths
 find_data_dir <- function(path){
   # If there is a jsonld file, then that means we're in the data directory
