@@ -4,7 +4,10 @@
 \alias{find_data_dir}
 \title{Use a recursive file search to find the "data" directory of a LiPD file}
 \usage{
-find_data_dir()
+find_data_dir(path)
+}
+\arguments{
+\item{path}{what is the path to the jsonld}
 }
 \value{
 char files: Matching file paths

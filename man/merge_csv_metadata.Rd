@@ -5,7 +5,7 @@
 \title{Using the given metadata dictionary, retrieve CSV data from CSV files, and insert the CSV
 values into their respective metadata columns.}
 \usage{
-merge_csv_metadata(d)
+merge_csv_metadata(d, path)
 }
 \arguments{
 \item{d}{Metadata}

@@ -4,7 +4,7 @@
 \alias{zipper}
 \title{Zip a directory, and move up a level}
 \usage{
-zipper(dir_original, dir_tmp, dsn)
+zipper(dir_original, dir_tmp, dsn, path)
 }
 \arguments{
 \item{dir_original}{Directory to move the LiPD to}

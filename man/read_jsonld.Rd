@@ -2,14 +2,17 @@
 % Please edit documentation in R/jsons.R
 \name{read_jsonld}
 \alias{read_jsonld}
-\title{Find jsonld file in the cwd (or within a 2 levels below cwd), and load it in.}
+\title{Find jsonld file in the cwd (or within a 2 levels below path), and load it in.}
 \usage{
-read_jsonld()
+read_jsonld(path)
+}
+\arguments{
+\item{path}{path to unzipped directory}
 }
 \value{
 data.list List of data for one LiPD file
 }
 \description{
-Find jsonld file in the cwd (or within a 2 levels below cwd), and load it in.
+Find jsonld file in the cwd (or within a 2 levels below path), and load it in.
 }
 \keyword{internal}

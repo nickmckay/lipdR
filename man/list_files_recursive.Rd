@@ -4,7 +4,7 @@
 \alias{list_files_recursive}
 \title{Recursive file list for current directory and below}
 \usage{
-list_files_recursive(x)
+list_files_recursive(x, path)
 }
 \arguments{
 \item{x}{File type}
