@@ -1,5 +1,9 @@
 # lipdR 0.3.4
 
+* Make lipdR read/write files without changing the working directory.
+* Improve messages during reading, including parsing and error warnings
+
+
 # lipdR 0.3.3
 
 * Added a `createColumn()` function
