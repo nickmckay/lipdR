@@ -4,10 +4,12 @@
 \alias{addTSidToLipd}
 \title{Add TSid where missing in a LiPD file}
 \usage{
-addTSidToLipd(L)
+addTSidToLipd(L, prefix = "add")
 }
 \arguments{
 \item{L}{LiPD file}
+
+\item{prefix}{a prefix to prepend to the randomized TSid}
 }
 \value{
 a Lipd file

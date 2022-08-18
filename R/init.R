@@ -26,8 +26,8 @@ stripExtension <- function(filename){
 #' @author Chris Heiser
 #' @author Nick McKay
 #' @import stringr
-#' @keywords internal
-#' @param path Source path (optional)  char
+#' @keywords high-level
+#' @param path A string specifying a file, url, or directory, or a vector of strings specifying files or urls. Alternatively, no entry (default) will open a selection windw.. 
 #' @param jsonOnly Load data from json only (not lpd file? Typically only used for web connections)
 #' @return D : LiPD dataset(s)
 #' @examples
@@ -69,7 +69,11 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
     print(paste0("Path: ", path))
   } else {
     
-    print(paste0("Loading ", length(entries)," datasets from ",path,"..."))
+    if(length(path) > 1){
+      print(paste0("Loading ", length(entries)," datasets from the supplied list of paths..."))
+    }else{
+      print(paste0("Loading ", length(entries)," datasets from ",path,"..."))
+    }
 
     if(length(entries) < 20){
       few <- TRUE
@@ -212,20 +216,53 @@ writeLipd <- function(D,
     set_bagit()
     if ("paleoData" %in% names(D)){
       print(paste0("writing: ", D[["dataSetName"]]," to ",path))
-      lipd_write(D, dir_original, path, D[["dataSetName"]], ignore.warnings, removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
+      lipd_write(D, 
+                 dir_original, 
+                 path,
+                 D[["dataSetName"]], 
+                 ignore.warnings, 
+                 removeNamesFromLists = removeNamesFromLists, 
+                 jsonOnly = jsonOnly)
     } else {
       if(!isDirectory(path)){
         path <- dir_original
       }
+      
       dsns <- names(D)
       print(paste0("Writing ", length(dsns)," datasets to ",path,"..."))
       
+      pbc<- txtProgressBar(min = 0,      # Minimum value of the progress bar
+                           max = length(dsns), # Maximum value of the progress bar
+                           style = 3,    # Progress bar style (also available style = 1 and style = 2)
+                           char = "=")   # Character used to create the bar
+      
+      error <- c()
       for (i in 1:length(dsns)){
-        if(length(dsns) < 20){
+        if(length(dsns) < 10){
           print(paste0("writing: ", basename(dsns[i])))
+        }else{
+          setTxtProgressBar(pbc, i)
         }
         entry <- dsns[[i]]
-        lipd_write(D[[entry]],dir_original, path, entry, ignore.warnings,removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
+        o <- lipd_write(D[[entry]],
+                   dir_original, 
+                   path, 
+                   entry, 
+                   ignore.warnings,
+                   removeNamesFromLists = removeNamesFromLists, 
+                   jsonOnly = jsonOnly)
+        
+        if(o != 0){
+          error <- dsns[[i]]
+        }
+      }
+      nerror <- length(error)
+      nsuccess <- length(dsns)-nerror
+      print(glue::glue("Successfully wrote {nsuccess} files with {nerror} failure(s)."))
+      if(length(error) > 0){
+        cat("\n\n")
+        print("The following files had issues writing:")
+        print(error)
       }
       
     }

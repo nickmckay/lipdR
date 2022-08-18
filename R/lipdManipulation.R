@@ -1,4 +1,30 @@
 
+#' Remove ensembles from a LiPD object
+#'
+#' @param L a LiPD objec
+#'
+#' @return a LiPD object without paleo or chron ensembles
+#' @export
+removeEnsembles <- function(L){
+  #check for paleo ensembles
+  for(p in 1:length(L$paleoData)){
+    for(pm in 1:length(L$paleoData[[p]]$model)){
+      L$paleoData[[p]]$model[[pm]]$ensembleTable <- NULL
+    }
+  }
+  
+  #check for chron ensembles
+  for(p in 1:length(L$chronData)){
+    for(pm in 1:length(L$chronData[[p]]$model)){
+      L$chronData[[p]]$model[[pm]]$ensembleTable <- NULL
+    }
+  }
+
+  return(L)
+  
+}
+
+
 #' Create a column in a LiPD object
 #'
 #' @param L a LiPD object

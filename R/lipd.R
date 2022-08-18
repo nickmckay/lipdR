@@ -90,5 +90,6 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
     if(exists("dir_tmp")){
     unlink(dir_tmp, recursive=TRUE)
     }
+    return(1)
   })
 }
