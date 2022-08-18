@@ -1,7 +1,7 @@
 Package: lipdR
 Type: Package
 Title: LiPD utilities for R
-Version: 0.3.5
+Version: 0.3.6
 Date: 2015-06-05
 Updated: 2022-07-18
 Authors@R: 
