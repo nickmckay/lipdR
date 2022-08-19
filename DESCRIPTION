@@ -55,6 +55,7 @@ Imports:
     neotoma2,
     magrittr
 Suggests: 
+    covr,
     rmarkdown,
     testthat
 Remotes: 
