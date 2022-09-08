@@ -15,7 +15,13 @@
 printCitations <- function(pub){
   numPubs <- length(pub)
   
-  cat(crayon::bold("### Publications (printing first 3 citations of ", numPubs, " total) ###\n\n"))
+  numPrint <- if(numPubs < 3){
+    numPubs}else{
+      3
+    }
+
+  
+  cat(crayon::bold("### Publications (printing first", numPrint, "citations of ", numPubs, " total) ###\n\n"))
   for (i in 1:numPubs){
     if ("citation" %in% attributes(pub[[i]])$names){
       cat(pub[[i]]$citation, "\n\n")
@@ -286,7 +292,7 @@ printModel <- function(chronModel){
 #' @family summary
 #'
 #' @examples
-lipdDirSummary <- function(D, printLen=20){
+lipdDirSummary <- function(D, printLen=20, ageUnits="AD", retTable = FALSE){
   
   numLipd <- length(D)
   
@@ -295,8 +301,8 @@ lipdDirSummary <- function(D, printLen=20){
   archiveTypes <- list()
   lons <- list()
   lats <- list()
-  dataCounts <- data.frame(matrix(ncol = 6, nrow = numLipd, data=NA))
-  colnames(dataCounts) <- c("File Name", "Archive Type", "PaleoData", "ChronData", "Model", "Paleo Vars")
+  dataCounts <- data.frame(matrix(ncol = 8, nrow = numLipd, data=NA))
+  colnames(dataCounts) <- c("Dataset", "Archive Type", "NumPalTabs", "NumChrTabs", "NumEns","AgeMin","AgeMax", "Paleo Vars")
   
   for (qqq in 1:numLipd){
     L <- D[[qqq]]
@@ -307,11 +313,9 @@ lipdDirSummary <- function(D, printLen=20){
     archiveTypes[[qqq]] <- L$archiveType
     dataCounts[qqq,2] <- L$archiveType
     
-    
     #geographic region as bounded by the min/max lat/lon
     lats[[qqq]] <- L$geo$latitude
     lons[[qqq]] <- L$geo$longitude
-    
     
     #paleodata
     totalPD <- 0
@@ -330,11 +334,7 @@ lipdDirSummary <- function(D, printLen=20){
       }
     }
     allPaleoVars <- unlist(strsplit(paleoVars,", "))
-    # first5 <- if (length(allPaleoVars) > 5){
-    #   allPaleoVars[1:5]
-    # }else{allPaleoVars}
-    dataCounts[qqq,6] <- paste(allPaleoVars, collapse = ', ')
-    # dataCounts[qqq,5] <- paste(first5, collapse = ', ')
+    dataCounts[qqq,8] <- paste(allPaleoVars, collapse = ', ')
     dataCounts[qqq,3] <- totalPD
     
     
@@ -349,32 +349,37 @@ lipdDirSummary <- function(D, printLen=20){
     }
     dataCounts[qqq,4] <- totalCD
     
-    
-    
+    #age info
+    if (!is.null(L$paleoData[[1]]$measurementTable[[1]]$year$values)){
+      if (ageUnits == "AD"){
+        dataCounts[qqq,6] <- paste(round(max(L$paleoData[[1]]$measurementTable[[1]]$year$values), 2), L$paleoData[[1]]$measurementTable[[1]]$year$units, sep=' ')
+        dataCounts[qqq,7] <- paste(round(min(L$paleoData[[1]]$measurementTable[[1]]$year$values), 2), L$paleoData[[1]]$measurementTable[[1]]$year$units, sep=' ')
+      }
+    }else if (!is.null(L$paleoData[[1]]$measurementTable[[1]]$age$values)){
+      dataCounts[qqq,6] <- paste(round(min(L$paleoData[[1]]$measurementTable[[1]]$age$values), 2), L$paleoData[[1]]$measurementTable[[1]]$age$units, sep=' ')
+      dataCounts[qqq,7] <- paste(round(max(L$paleoData[[1]]$measurementTable[[1]]$age$values), 2), L$paleoData[[1]]$measurementTable[[1]]$age$units, sep=' ')
+    }else{
+      message("No age data found for:", L$dataSetName ,"\n")
+    }
+ 
     #models
-    totalModels <- 0
+    ensTables <- 0
     if (!is.null(L$chronData)){
       for (fff in 1:length (L$chronData)){
         if(!is.null(L$chronData[[fff]]$model)){
-          totalModels <- totalModels + length(L$chronData[[fff]]$model)
+          for (vvv in 1:length (L$chronData[[fff]]$model)){
+            if(!is.null(L$chronData[[fff]]$model[[vvv]])){
+              ensTables <- ensTables + length(L$chronData[[fff]]$model[[vvv]]$ensembleTable)
+            }
+          }
         }
       }
     }
-    dataCounts[qqq,5] <- totalModels
-    
-    if(length(L$paleoData)>0){
-      
-      
-    }
-    
-    
-    
+    dataCounts[qqq,5] <- ensTables
   }
   
   uniqueArchives <- unique(unlist(archiveTypes))
   numUniqueArchives <- length(uniqueArchives)
-  
-  
   
   #archiveType
   cat(crayon::bold(glue::glue("### Archive Types ###\n\n")))
@@ -391,6 +396,7 @@ lipdDirSummary <- function(D, printLen=20){
   cat(crayon::bold(glue::glue("### Measurement tables and models ###\n\n")))
   dataCounts <- tibble::as_tibble(dataCounts)
   print(dataCounts, n=printLen)
+  cat("*Age values gathered from PaleoData Object 1, Measurement Table 1")
   
   return(dataCounts)
 }
