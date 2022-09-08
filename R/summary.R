@@ -130,15 +130,21 @@ matchCols <- function(df1,df2){
 #' @export
 #'
 #' @examples
-printSummaryData <- function(dataIn){
+printSummaryData <- function(dataIn, runQuiet = FALSE){
   
   PDnum <- length(dataIn)
+  
+  allTables <- list()
+  
+  tableCount <- 0
   
   for (i in 1:PDnum){
     
     measTabNum <- length(dataIn[[i]]$measurementTable)
     
     for (j in 1:measTabNum){
+      
+      tableCount <- tableCount + 1
       
       measTab <- dataIn[[i]]$measurementTable[[j]]
       
@@ -168,8 +174,11 @@ printSummaryData <- function(dataIn){
       
       numObs <- dim(paleoMeasTableDF)[1]
       numVars <- dim(paleoMeasTableDF)[2]
-      cat(crayon::bold(paste0("\nSummary data for object ", i, ","), "Measurement Table", j, "of", paste0(measTabNum, ":\n")))
-      cat("Measurement table contains", numObs, "observations of", numVars, "variables\n\n")
+      if(runQuiet==FALSE){
+        cat(crayon::bold(paste0("\nSummary data for object ", i, ","), "Measurement Table", j, "of", paste0(measTabNum, ":\n")))
+        cat("Measurement table contains", numObs, "observations of", numVars, "variables\n\n")
+      }
+      
       
       varsTableMatch <- matchCols(paleoMeasTableDF, tableVars)
       paleoMeasTableDF <- varsTableMatch[[1]]
@@ -177,6 +186,8 @@ printSummaryData <- function(dataIn){
       
       
       paleoMeasTableDF <- paleoMeasTableDF[ ,names(tableVars)]
+      
+      allTables[[tableCount]] <- paleoMeasTableDF
       
       tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) min(as.numeric(x), na.rm = TRUE)))
       tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) mean(as.numeric(x), na.rm = TRUE)))
@@ -188,14 +199,18 @@ printSummaryData <- function(dataIn){
         tableVars <- cbind(c("units", "min", "mean", "max"),tableVars)
       }
       colnames(tableVars)[1] <- " "
-      tableVars <- as_tibble(tableVars)
+      tableVars <- tibble::as_tibble(tableVars)
       
       if(dim(tableVars)[1]>0){
-        print(tableVars, row.names = FALSE)
+        if (runQuiet==FALSE){
+          print(tableVars, row.names = FALSE)
+        }
+        
       }
       
     }
   }
+  return(allTables)
 }
 
 
@@ -253,6 +268,132 @@ printModel <- function(chronModel){
   }
 }
 
+
+
+################################################################################################
+################################################################################################
+################################################################################################
+
+#' Print a summary of the contents of a LiPD directory
+#'
+#' @param L 
+#' @importFrom glue glue
+#' @importFrom crayon bold
+#' @author David Edge
+#' @import cran
+#' @return
+#' @export
+#' @family summary
+#'
+#' @examples
+lipdDirSummary <- function(D, printLen=20){
+  
+  numLipd <- length(D)
+  
+  cat(crayon::bold("Directory contains", numLipd, "LiPD files.\n\n"))
+  
+  archiveTypes <- list()
+  lons <- list()
+  lats <- list()
+  dataCounts <- data.frame(matrix(ncol = 6, nrow = numLipd, data=NA))
+  colnames(dataCounts) <- c("File Name", "Archive Type", "PaleoData", "ChronData", "Model", "Paleo Vars")
+  
+  for (qqq in 1:numLipd){
+    L <- D[[qqq]]
+    
+    dataCounts[qqq,1] <- as.character(L$dataSetName)
+    
+    #number of each unique archive type
+    archiveTypes[[qqq]] <- L$archiveType
+    dataCounts[qqq,2] <- L$archiveType
+    
+    
+    #geographic region as bounded by the min/max lat/lon
+    lats[[qqq]] <- L$geo$latitude
+    lons[[qqq]] <- L$geo$longitude
+    
+    
+    #paleodata
+    totalPD <- 0
+    paleoVars <- character()
+    if (!is.null(L$paleoData)){
+      for (fff in 1:length (L$paleoData)){
+        if(!is.null(L$paleoData[[fff]]$measurementTable)){
+          numTables <- length(L$paleoData[[fff]]$measurementTable)
+          totalPD <- totalPD + numTables
+          getTable <- printSummaryData(L$paleoData, runQuiet=TRUE)
+          
+          for (ddd in 1:numTables){
+            paleoVars <- c(paleoVars, attributes(getTable[[ddd]])$names)
+          }
+        }
+      }
+    }
+    allPaleoVars <- unlist(strsplit(paleoVars,", "))
+    # first5 <- if (length(allPaleoVars) > 5){
+    #   allPaleoVars[1:5]
+    # }else{allPaleoVars}
+    dataCounts[qqq,6] <- paste(allPaleoVars, collapse = ', ')
+    # dataCounts[qqq,5] <- paste(first5, collapse = ', ')
+    dataCounts[qqq,3] <- totalPD
+    
+    
+    #chronData
+    totalCD <- 0
+    if (!is.null(L$chronData)){
+      for (fff in 1:length (L$chronData)){
+        if(!is.null(L$chronData[[fff]]$measurementTable)){
+          totalCD <- totalCD + length(L$chronData[[fff]]$measurementTable)
+        }
+      }
+    }
+    dataCounts[qqq,4] <- totalCD
+    
+    
+    
+    #models
+    totalModels <- 0
+    if (!is.null(L$chronData)){
+      for (fff in 1:length (L$chronData)){
+        if(!is.null(L$chronData[[fff]]$model)){
+          totalModels <- totalModels + length(L$chronData[[fff]]$model)
+        }
+      }
+    }
+    dataCounts[qqq,5] <- totalModels
+    
+    if(length(L$paleoData)>0){
+      
+      
+    }
+    
+    
+    
+  }
+  
+  uniqueArchives <- unique(unlist(archiveTypes))
+  numUniqueArchives <- length(uniqueArchives)
+  
+  
+  
+  #archiveType
+  cat(crayon::bold(glue::glue("### Archive Types ###\n\n")))
+  for (uuu in 1:numUniqueArchives){
+    cat(sum(unlist(archiveTypes) %in% uniqueArchives[uuu]), uniqueArchives[uuu], "records\n")
+  }
+  cat("\n")
+  cat(crayon::bold(glue::glue("### Geographic Bounds ###\n\n")))
+  maxLat <- max(unlist(lats))
+  minLat <- min(unlist(lats))
+  maxLon <- max(unlist(lons))
+  minLon <- min(unlist(lons))
+  cat("All sites located between", paste0(minLat,"N"), "to", paste0(maxLat, "N"), "and", paste0(minLon, "E"), "to", paste0(maxLon, "E"), "\n\n")
+  cat(crayon::bold(glue::glue("### Measurement tables and models ###\n\n")))
+  dataCounts <- tibble::as_tibble(dataCounts)
+  print(dataCounts, n=printLen)
+  
+  return(dataCounts)
+}
 
 
 ################################################################################################
@@ -317,14 +458,14 @@ lipdSummary <- function(L){
   if (!is.null(L$paleoData)){
     cat(crayon::bold("### Paleo Data ###\n"))
     #printPD(L$paleoData)
-    printSummaryData(L$paleoData)
+    a1 <- printSummaryData(L$paleoData)
   }
   #chronData
   
   if (!is.null(L$chronData)){
     cat(crayon::bold("\n### Chron Data ###\n\n"))
     if (length(L$chronData[[1]]$measurementTable) > 0){
-      printSummaryData(L$chronData)
+      b1 <- printSummaryData(L$chronData)
     }else{
       cat("Chron Data does not include measurement table\n\n")
     }
