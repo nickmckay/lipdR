@@ -438,7 +438,7 @@ lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE){
   
   numTS <- nrow(TS)
   
-  cat("LiPD TS object contains", numTS, "time series and", ncol(TS), "elements.\n\n")
+  if (retTable == FALSE){cat("LiPD TS object contains", numTS, "time series and", ncol(TS), "elements.\n\n")}
   
   #helper function to find invalid entries
   is.blank <- function(x, false.triggers=FALSE){
@@ -467,8 +467,8 @@ lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE){
   totAge <- sum(hasAge)
   
   if (totYear < numTS & totAge < numTS){
-    cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
-    cat(totYear, "variables contain year (AD), while", totAge, "contain age (BP).\n\n")
+    if (retTable == FALSE){cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
+    cat(totYear, "variables contain year (AD), while", totAge, "contain age (BP).\n\n")}
     if (totYear > totAge){
       timePref <- "Year"
     }else{
@@ -477,19 +477,19 @@ lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE){
   }else if (totYear == numTS & totAge == numTS){
     allYear <- TRUE
     allAge <- TRUE
-    cat("All variables contain both age (BP) and year (AD) data.\n\n")
+    if (retTable == FALSE){cat("All variables contain both age (BP) and year (AD) data.\n\n")}
     if (is.null(timePref)){
       timePref <- "Year"
     }
   }else if (totYear == numTS & totAge != numTS){
     allYear <- TRUE
-    cat("All variables contain year (AD) data,", totAge, "variables contain age (BP) data.\n\n")
+    if (retTable == FALSE){cat("All variables contain year (AD) data,", totAge, "variables contain age (BP) data.\n\n")}
     if (is.null(timePref)){
       timePref <- "Year"
     }
   }else{
     allAge <- TRUE
-    cat("All variables contain age (BP) data,", totYear, "variables contain year (AD) data.\n\n")
+    if (retTable == FALSE){cat("All variables contain age (BP) data,", totYear, "variables contain year (AD) data.\n\n")}
     if (is.null(timePref)){
       timePref <- "Age"
     }
@@ -533,26 +533,29 @@ lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE){
   
   #calculate time overlap
   
-  if (allYear == FALSE & allAge ==FALSE){
-    cat("Can not provide interval of time overlap, units not standardized.\n\n")
-  }
-  
-  if(timePref == "Year" & allYear == TRUE){
-    lastOverlap <- min(TSsummary[,6])
-    firstOverlap <- max(TSsummary[,5])
-    if (lastOverlap < firstOverlap){
-      cat("No common time interval.\n\n")
-    }else{
-      cat("All variables contain data in the interval", firstOverlap, "(AD) to", lastOverlap, "(AD).\n\n")
+  if (retTable == FALSE){
+    
+    if (allYear == FALSE & allAge ==FALSE){
+      cat("Can not provide interval of time overlap, units not standardized.\n\n")
     }
-  }
-  if (timePref == "Age" & allAge == TRUE){
-    lastOverlap <- max(TSsummary[,6])
-    firstOverlap <- min(TSsummary[,5])
-    if (lastOverlap > firstOverlap){
-      cat("No common time interval.\n\n")
-    }else{
-      cat("All variables contain data in the interval", firstOverlap, "(BP) to", lastOverlap, "(BP).\n\n")
+    
+    if(timePref == "Year" & allYear == TRUE){
+      lastOverlap <- min(TSsummary[,6])
+      firstOverlap <- max(TSsummary[,5])
+      if (lastOverlap < firstOverlap){
+        cat("No common time interval.\n\n")
+      }else{
+        cat("All variables contain data in the interval", firstOverlap, "(AD) to", lastOverlap, "(AD).\n\n")
+      }
+    }
+    if (timePref == "Age" & allAge == TRUE){
+      lastOverlap <- max(TSsummary[,6])
+      firstOverlap <- min(TSsummary[,5])
+      if (lastOverlap > firstOverlap){
+        cat("No common time interval.\n\n")
+      }else{
+        cat("All variables contain data in the interval", firstOverlap, "(BP) to", lastOverlap, "(BP).\n\n")
+      }
     }
   }
   

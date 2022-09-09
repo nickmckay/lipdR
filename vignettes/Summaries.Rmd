@@ -11,10 +11,15 @@ vignette: >
 
 ```{r setup, include = FALSE}
 devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
+library(xaringanExtra)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+```
+
+```{r xaringanExtra-clipboard, echo=FALSE}
+xaringanExtra::use_clipboard()
 ```
 
 ## Data

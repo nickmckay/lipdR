@@ -57,7 +57,8 @@ Imports:
 Suggests: 
     covr,
     rmarkdown,
-    testthat
+    testthat.
+    klippy
 Remotes: 
     neotomadb/neotoma2
 VignetteBuilder: knitr
