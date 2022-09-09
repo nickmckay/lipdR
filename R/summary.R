@@ -401,6 +401,154 @@ lipdDirSummary <- function(D, printLen=20, ageUnits="AD", retTable = FALSE){
   return(dataCounts)
 }
 
+################################################################################################
+################################################################################################
+################################################################################################
+
+#' Print a summary of the contents of a LiPD directory
+#'
+#' @param TS
+#' @param timePref
+#' @param printLen
+#' @author David Edge
+#' @import cran
+#' @return
+#' @export
+#' @family summary
+#'
+#' @examples
+lipdTSSummary <- function(TS, timePref=NULL, printLen=20){
+  
+  allYear <- FALSE
+  allAge <- FALSE
+  
+  numTS <- nrow(TS)
+  
+  cat("LiPD TS object contains", numTS, "time series and", ncol(TS), "elements.\n\n")
+  
+  #helper function to find invalid entries
+  is.blank <- function(x, false.triggers=FALSE){
+    if(is.function(x)) return(FALSE) # Some of the tests below trigger
+    # warnings when used on functions
+    return(
+      is.null(x) ||                # Actually this line is unnecessary since
+        length(x) == 0 ||            # length(NULL) = 0, but I like to be clear
+        all(is.na(x)) ||
+        all(x=="") ||
+        all(x=="NA") ||
+        (false.triggers && all(!x))
+    )
+  }
+  
+  #look for "age" and "year" variables, do all TS have one or the other?
+  hasYear <- rep(NA, numTS)
+  hasAge <- rep(NA, numTS)
+  if (is.null(timePref)){
+    for (i in 1:length(TS$year)){
+      hasYear[i] <- !is.blank(unlist(TS$year[i]))
+      hasAge[i] <- !is.blank(unlist(TS$age[i]))
+    }
+  }
+  totYear <- sum(hasYear)
+  totAge <- sum(hasAge)
+  
+  if (totYear < numTS & totAge < numTS){
+    cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
+    cat(totYear, "variables contain year (AD), while", totAge, "contain age (BP).\n\n")
+    if (totYear > totAge){
+      timePref <- "Year"
+    }else{
+      timePref <- "Age"
+    }
+  }else if (totYear == numTS & totAge == numTS){
+    allYear <- TRUE
+    allAge <- TRUE
+    cat("All variables contain both age (BP) and year (AD) data.\n\n")
+    if (is.null(timePref)){
+      timePref <- "Year"
+    }
+  }else if (totYear == numTS & totAge != numTS){
+    allYear <- TRUE
+    cat("All variables contain year (AD) data,", totAge, "variables contain age (BP) data.\n\n")
+    if (is.null(timePref)){
+      timePref <- "Year"
+    }
+  }else{
+    allAge <- TRUE
+    cat("All variables contain age (BP) data,", totYear, "variables contain year (AD) data.\n\n")
+    if (is.null(timePref)){
+      timePref <- "Age"
+    }
+  }
+  
+  
+  #return tibble with: dataset name, TSid, lat, lon, min age, max age, paleodat variable name, min paleodata val, mean paleodata val, max paleodata val
+  TSsummary <- data.frame(matrix(nrow = numTS, ncol = 10, data = NA))
+  if(timePref == "Age"){
+    colnames(TSsummary) <- c("dsName", "TSid", "lat", "lon", "maxAge", "minAge", "varName", "minVal", "medianVal", "maxVal")
+    
+    for (i in 1:nrow(TS)){
+      TSsummary[i,1] <- unlist(TS$dataSetName[i])
+      TSsummary[i,2] <- unlist(TS$paleoData_TSid[i])
+      TSsummary[i,3] <- unlist(TS$geo_latitude[i])
+      TSsummary[i,4] <- unlist(TS$geo_longitude[i])
+      TSsummary[i,5] <- max(unlist(TS$age[i]), na.rm = TRUE)
+      TSsummary[i,6] <- min(unlist(TS$age[i]), na.rm = TRUE)
+      TSsummary[i,7] <- unlist(TS$paleoData_variableName[i])
+      TSsummary[i,8] <- min(unlist(TS$paleoData_values[i]), na.rm = TRUE)
+      TSsummary[i,9] <- median(unlist(TS$paleoData_values[i]), na.rm = TRUE)
+      TSsummary[i,10] <- max(unlist(TS$paleoData_values[i]), na.rm = TRUE)
+    }
+  }else{
+    colnames(TSsummary) <- c("dsName", "TSid", "lat", "lon", "minYear", "maxYear", "varName", "minVal", "medianVal", "maxVal")
+    
+    for (i in 1:nrow(TS)){
+      TSsummary[i,1] <- unlist(TS$dataSetName[i])
+      TSsummary[i,2] <- unlist(TS$paleoData_TSid[i])
+      TSsummary[i,3] <- unlist(TS$geo_latitude[i])
+      TSsummary[i,4] <- unlist(TS$geo_longitude[i])
+      TSsummary[i,5] <- min(unlist(TS$year[i]), na.rm = TRUE)
+      TSsummary[i,6] <- max(unlist(TS$year[i]), na.rm = TRUE)
+      TSsummary[i,7] <- unlist(TS$paleoData_variableName[i])
+      TSsummary[i,8] <- min(unlist(TS$paleoData_values[i]), na.rm = TRUE)
+      TSsummary[i,9] <- median(unlist(TS$paleoData_values[i]), na.rm = TRUE)
+      TSsummary[i,10] <- max(unlist(TS$paleoData_values[i]), na.rm = TRUE)
+    }
+    
+  }
+  
+  #calculate time overlap
+  
+  if (allYear == FALSE & allAge ==FALSE){
+    cat("Can not provide interval of time overlap, units not standardized.\n\n")
+  }
+  
+  if(timePref == "Year" & allYear == TRUE){
+    lastOverlap <- min(TSsummary[,6])
+    firstOverlap <- max(TSsummary[,5])
+    if (lastOverlap < firstOverlap){
+      cat("No common time interval.\n\n")
+    }else{
+      cat("All variables contain data in the interval", firstOverlap, "(AD) to", lastOverlap, "(AD).\n\n")
+    }
+  }
+  if (timePref == "Age" & allAge == TRUE){
+    lastOverlap <- max(TSsummary[,6])
+    firstOverlap <- min(TSsummary[,5])
+    if (lastOverlap > firstOverlap){
+      cat("No common time interval.\n\n")
+    }else{
+      cat("All variables contain data in the interval", firstOverlap, "(BP) to", lastOverlap, "(BP).\n\n")
+    }
+  }
+  
+  
+  tibSummary <- tibble::as_tibble(TSsummary)  
+  
+  print(tibSummary, n=printLen)
+  
+  
+}
 
 ################################################################################################
 ################################################################################################
