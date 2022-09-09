@@ -292,7 +292,7 @@ printModel <- function(chronModel){
 #' @family summary
 #'
 #' @examples
-lipdDirSummary <- function(D, printLen=20, ageUnits="AD", retTable = FALSE){
+lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
   
   numLipd <- length(D)
   
@@ -351,7 +351,7 @@ lipdDirSummary <- function(D, printLen=20, ageUnits="AD", retTable = FALSE){
     
     #age info
     if (!is.null(L$paleoData[[1]]$measurementTable[[1]]$year$values)){
-      if (ageUnits == "AD"){
+      if (timeUnits == "AD"){
         dataCounts[qqq,6] <- paste(round(max(L$paleoData[[1]]$measurementTable[[1]]$year$values), 2), L$paleoData[[1]]$measurementTable[[1]]$year$units, sep=' ')
         dataCounts[qqq,7] <- paste(round(min(L$paleoData[[1]]$measurementTable[[1]]$year$values), 2), L$paleoData[[1]]$measurementTable[[1]]$year$units, sep=' ')
       }
@@ -395,10 +395,17 @@ lipdDirSummary <- function(D, printLen=20, ageUnits="AD", retTable = FALSE){
   cat("All sites located between", paste0(minLat,"N"), "to", paste0(maxLat, "N"), "and", paste0(minLon, "E"), "to", paste0(maxLon, "E"), "\n\n")
   cat(crayon::bold(glue::glue("### Measurement tables and models ###\n\n")))
   dataCounts <- tibble::as_tibble(dataCounts)
-  print(dataCounts, n=printLen)
-  cat("*Age values gathered from PaleoData Object 1, Measurement Table 1")
   
-  return(dataCounts)
+  if (retTable == TRUE){
+    print(dataCounts, n=printLen)
+    cat("*Age values gathered from PaleoData Object 1, Measurement Table 1")
+  }
+  
+  
+  if (retTable == TRUE){
+    return(dataCounts)
+  }
+  
 }
 
 ################################################################################################
