@@ -431,11 +431,11 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
 #' @family summary
 #'
 #' @examples
-lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE){
+lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE, addCol = NULL){
   
   allYear <- FALSE
   allAge <- FALSE
-  
+  totCols <- 10
   numTS <- nrow(TS)
   
   if (retTable == FALSE){cat("LiPD TS object contains", numTS, "time series and", ncol(TS), "elements.\n\n")}
@@ -495,9 +495,16 @@ lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE){
     }
   }
   
+  if(!is.null(addCol)){
+    totCols <- 10 + length(addCol)
+  }
+  
   
   #return tibble with: dataset name, TSid, lat, lon, min age, max age, paleodat variable name, min paleodata val, mean paleodata val, max paleodata val
-  TSsummary <- data.frame(matrix(nrow = numTS, ncol = 10, data = NA))
+  TSsummary <- data.frame(matrix(nrow = numTS, ncol = totCols, data = NA))
+  
+  
+  
   if(timePref == "Age"){
     colnames(TSsummary) <- c("dsName", "TSid", "lat", "lon", "maxAge", "minAge", "varName", "minVal", "medianVal", "maxVal")
     
@@ -530,6 +537,16 @@ lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE){
     }
     
   }
+  
+  if(!is.null(addCol)){
+    colnames(TSsummary)[11:totCols] <- addCol
+    for (i in 1:nrow(TS)){
+      for (k in 1:length(addCol)){
+        TSsummary[i,(10+k)] <- unlist(tibTS[as.name(addCol[k])])[i]
+      }
+    }
+  }
+  
   
   #calculate time overlap
   
@@ -567,8 +584,6 @@ lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE){
   }else{
     return(tibSummary)
   }
-  
-  
   
 }
 

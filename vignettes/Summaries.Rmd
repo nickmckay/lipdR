@@ -9,14 +9,24 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
+
+
+```{r setup, include = FALSE, fig.width=20}
 devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
+options(width = 150)
 library(xaringanExtra)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
+
+<style type="text/css">
+div.main-container {
+  max-width: 1600 ox !important;
+  margin: auto;
+}
+</style>
 
 ```{r xaringanExtra-clipboard, echo=FALSE}
 xaringanExtra::use_clipboard()
@@ -79,6 +89,12 @@ dim(tibTS)
 lipdTSSummary(tibTS, printLen = 10, retTable = FALSE)
 
 ```
+### Add columns to summary
+```{r}
+lipdTSSummary(tibTS, printLen = 10, retTable = FALSE, addCol = c("archiveType", "paleoData_meanValue12k"))
+```
+
+
 
 ### Save summary table and view a specific subset
 ```{r}
