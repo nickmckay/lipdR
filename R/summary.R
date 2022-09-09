@@ -296,7 +296,9 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
   
   numLipd <- length(D)
   
-  cat(crayon::bold("Directory contains", numLipd, "LiPD files.\n\n"))
+  if (retTable == FALSE){
+    cat(crayon::bold("Directory contains", numLipd, "LiPD files.\n\n"))
+  }
   
   archiveTypes <- list()
   lons <- list()
@@ -382,21 +384,26 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
   numUniqueArchives <- length(uniqueArchives)
   
   #archiveType
-  cat(crayon::bold(glue::glue("### Archive Types ###\n\n")))
-  for (uuu in 1:numUniqueArchives){
-    cat(sum(unlist(archiveTypes) %in% uniqueArchives[uuu]), uniqueArchives[uuu], "records\n")
+  if (retTable == FALSE){
+    cat(crayon::bold(glue::glue("### Archive Types ###\n\n")))
+    for (uuu in 1:numUniqueArchives){
+      cat(sum(unlist(archiveTypes) %in% uniqueArchives[uuu]), uniqueArchives[uuu], "records\n")
+    }
+    cat("\n")
+    cat(crayon::bold(glue::glue("### Geographic Bounds ###\n\n")))
   }
-  cat("\n")
-  cat(crayon::bold(glue::glue("### Geographic Bounds ###\n\n")))
+  
   maxLat <- max(unlist(lats))
   minLat <- min(unlist(lats))
   maxLon <- max(unlist(lons))
   minLon <- min(unlist(lons))
-  cat("All sites located between", paste0(minLat,"N"), "to", paste0(maxLat, "N"), "and", paste0(minLon, "E"), "to", paste0(maxLon, "E"), "\n\n")
-  cat(crayon::bold(glue::glue("### Measurement tables and models ###\n\n")))
+  if (retTable == FALSE){
+    cat("All sites located between", paste0(minLat,"N"), "to", paste0(maxLat, "N"), "and", paste0(minLon, "E"), "to", paste0(maxLon, "E"), "\n\n")
+    cat(crayon::bold(glue::glue("### Measurement tables and models ###\n\n")))
+  }
   dataCounts <- tibble::as_tibble(dataCounts)
   
-  if (retTable == TRUE){
+  if (retTable == FALSE){
     print(dataCounts, n=printLen)
     cat("*Age values gathered from PaleoData Object 1, Measurement Table 1")
   }
@@ -424,7 +431,7 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
 #' @family summary
 #'
 #' @examples
-lipdTSSummary <- function(TS, timePref=NULL, printLen=20){
+lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE){
   
   allYear <- FALSE
   allAge <- FALSE
@@ -552,7 +559,12 @@ lipdTSSummary <- function(TS, timePref=NULL, printLen=20){
   
   tibSummary <- tibble::as_tibble(TSsummary)  
   
-  print(tibSummary, n=printLen)
+  if (retTable == FALSE){
+    print(tibSummary, n=printLen)
+  }else{
+    return(tibSummary)
+  }
+  
   
   
 }

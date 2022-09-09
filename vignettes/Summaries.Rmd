@@ -1,5 +1,5 @@
 ---
-title: "Summarize LiPD"
+title: "Exploring LiPD data using lipdR summary functions"
 author: "David Edge"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -10,47 +10,89 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
+devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-#Load LiPD files from lipdverse.org
+## Data
+### Load LiPD files from lipdverse.org
+```{r echo=T, results='hide'}
+
 D <- readLipd("http://lipdverse.org/testData/testData.zip")
 
-#See a detailed summary of the first LiPD
+```
+## Single LiPD
+### See a detailed summary of a single LiPD
+```{r}
+
 L1 <- D[[1]]
 lipdSummary(L1)
 
-#Get a summary of all LiPDs in the directory, details of first 20
-#Return time values in "AD" units if available
+```
+## Multi LiPD
+### Get a summary of all LiPDs in the directory, details of first 20
+### Return time values in "AD" units if available
+```{r}
+
 lipdDirSummary(D, printLen=20, timeUnits="AD", retTable = FALSE)
 
-#save the summary table, sort to find age ensembles
-dirSummary <- lipdDirSummary(D, printLen=20, timeUnits="AD", retTable = TRUE)
-dirSummary[order(dirSummary$NumEns, decreasing=TRUE),]
+```
+### save the summary table
 
-#Format data as a tibble LiPD TS
+```{r}
+
+dirSummary <- lipdDirSummary(D, printLen=20, timeUnits="AD", retTable = TRUE)
+
+```
+### sort table to find age ensembles
+
+```{r}
+dirSummary[order(dirSummary$NumEns, decreasing=TRUE),]
+```
+
+
+## LiPD TS Objects
+### Format data as a tibble LiPD TS
+```{r}
+
 TS1 <- extractTs(D)
 tibTS <- ts2tibble(TS1)
 
-#View dimensions of tibble object
+```
+
+### View dimensions of tibble object
+```{r}
 dim(tibTS)
+```
 
-#Print summary of LiPD TS, first 50 lines only
-lipdTSSummary(tibTS, printLen = 50)
+### Print summary of LiPD TS, detail first 10 only
+```{r}
 
-#Print summary of a specific dataset
-tibTS1 <- tibTS[tibTS$dataSetName == "165_1002C.Herbert.2000",]
-lipdTSSummary(tibTS1)
+lipdTSSummary(tibTS, printLen = 10, retTable = FALSE)
 
-#Find tree-ring data
+```
+
+### Save summary table and view a specific subset
+```{r}
+
+TSsummary <- lipdTSSummary(tibTS, printLen = 10, retTable = TRUE)
+
+tibTS1 <- TSsummary[TSsummary$dsName == "165_1002C.Herbert.2000",]
+tibTS1
+
+```
+### Subset the TS object and view a summary
+
+```{r}
+
 tibTS2 <- tibTS[grep("tree", tibTS$archiveType),]
 lipdTSSummary(tibTS2, printLen = 50)
 
-#Filter for d18O data with time values in year AD
-tibTS3 <- tibTS[grep("18o", tolower(tibTS$paleoData_variableName)),]
-tibTS3 <- tibTS3[!is.blank(unlist(tibTS3$year)),]
-tibTS3 <- tibTS3[unlist(lapply(tibTS3$year, function(x) !is.blank(unlist(x)))),]
-lipdTSSummary(tibTS3, printLen = 50)
+```
+
+
+
+
