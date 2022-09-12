@@ -2,18 +2,26 @@
 title: "Exploring LiPD data using lipdR summary functions"
 author: "David Edge"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Summarize LiPD}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: 
+  html_document:
+    theme: simplex
+    highlight: tango
+    toc: true
+    toc_depth: 2
+    df_print: paged
+    css: doc.css
 ---
 
+<style type="text/css">
+.main-container {
+  max-width: 100% !important;
+  margin: auto;
+}
+</style>
 
-
-```{r setup, include = FALSE, fig.width=20}
+```{r setup, include = FALSE, width.out='100%'}
 devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
-options(width = 150)
+options(width = 500)
 library(xaringanExtra)
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -21,12 +29,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-<style type="text/css">
-div.main-container {
-  max-width: 1600 ox !important;
-  margin: auto;
-}
-</style>
 
 ```{r xaringanExtra-clipboard, echo=FALSE}
 xaringanExtra::use_clipboard()
@@ -34,6 +36,7 @@ xaringanExtra::use_clipboard()
 
 ## Data
 ### Load LiPD files from lipdverse.org
+
 ```{r echo=T, results='hide'}
 
 D <- readLipd("http://lipdverse.org/testData/testData.zip")
@@ -41,6 +44,7 @@ D <- readLipd("http://lipdverse.org/testData/testData.zip")
 ```
 ## Single LiPD
 ### See a detailed summary of a single LiPD
+
 ```{r}
 
 L1 <- D[[1]]
@@ -48,21 +52,26 @@ lipdSummary(L1)
 
 ```
 ## Multi LiPD
-### Get a summary of all LiPDs in the directory, details of first 20
-### Return time values in "AD" units if available
+
+### Get a summary of all LiPDs in the directory, print details of the first 20 datasets
+
+##### Return time values in "AD" units if available
+
 ```{r}
 
 lipdDirSummary(D, printLen=20, timeUnits="AD", retTable = FALSE)
 
 ```
-### save the summary table
+### Save the summary table
 
 ```{r}
 
-dirSummary <- lipdDirSummary(D, printLen=20, timeUnits="AD", retTable = TRUE)
+dirSummary <- lipdDirSummary(D, timeUnits="AD", retTable = TRUE)
 
 ```
-### sort table to find age ensembles
+### The saved table can be investigated further
+
+##### For example, we can sort the table to find datasets with age ensembles
 
 ```{r}
 dirSummary[order(dirSummary$NumEns, decreasing=TRUE),]
@@ -70,7 +79,9 @@ dirSummary[order(dirSummary$NumEns, decreasing=TRUE),]
 
 
 ## LiPD TS Objects
+
 ### Format data as a tibble LiPD TS
+
 ```{r}
 
 TS1 <- extractTs(D)
@@ -79,41 +90,70 @@ tibTS <- ts2tibble(TS1)
 ```
 
 ### View dimensions of tibble object
+
 ```{r}
 dim(tibTS)
 ```
 
-### Print summary of LiPD TS, detail first 10 only
+### Print summary of LiPD TS, show details of first 10 rows
+
+##### The summary returns the dimensions of the TS object, details of the time units, a time interval covered by all varibales (if possible), and a summary table
+
 ```{r}
 
 lipdTSSummary(tibTS, printLen = 10, retTable = FALSE)
 
 ```
 ### Add columns to summary
+
+##### The summary table can be expanded to include any variables of the TS object
+##### The names() function shows the options (here we see the first 5)
+##### Let's add "archiveType" and "paleoData_meanValue12k"
+
 ```{r}
+names(tibTS)[1:5]
+
 lipdTSSummary(tibTS, printLen = 10, retTable = FALSE, addCol = c("archiveType", "paleoData_meanValue12k"))
 ```
 
 
 
 ### Save summary table and view a specific subset
+
+##### By choosing a single dataset, we can view all associated variables
+##### Saving the summary table allows for further investigation
+
 ```{r}
 
-TSsummary <- lipdTSSummary(tibTS, printLen = 10, retTable = TRUE)
+TSsummary <- lipdTSSummary(tibTS, printLen = 10, retTable = TRUE, addCol = c("archiveType", "paleoData_meanValue12k"))
 
 tibTS1 <- TSsummary[TSsummary$dsName == "165_1002C.Herbert.2000",]
 tibTS1
 
 ```
-### Subset the TS object and view a summary
+### Choosing a subset for analysis
+
+##### Let's subset the continental United States (roughly)
+
+##### Let's choose only those datasets covering the late Pleistocene and early Holocene
+
+##### Now, let's pull all the climate interpretation info
+
+##### We can now have a closer look to see which of these data are appropriate
 
 ```{r}
-
-tibTS2 <- tibTS[grep("tree", tibTS$archiveType),]
-lipdTSSummary(tibTS2, printLen = 50)
-
+#Continental U.S. bounds: -125	-70 30	50
+tibTSus <-tibTS[tibTS$geo_latitude > 30 & tibTS$geo_latitude < 50,]
+tibTSus <-tibTSus[tibTSus$geo_longitude > -125 & tibTSus$geo_longitude < -70,]
+#Pleistocene-Holocene transition
+tibTSus <-tibTSus[apply(tibTSus, 1, function(x) max(x$age)>11700),]
+tibTSus <-tibTSus[apply(tibTSus, 1, function(x) min(x$age)>100),]
+#grab interpreation info
+intepIndices <- grep("interpretation", names(tibTSus))
+hasInterp <- intepIndices[apply(tibTSus[,intepIndices], 2, function(x) sum(!is.na(x))>0)]
+#Print summary
+lipdTSSummary(tibTSus, printLen = 50, addCol = names(tibTSus[,hasInterp]))
+#save summary for deeper exploration
+USsummary <- lipdTSSummary(tibTSus, printLen = 50, retTable = TRUE, addCol = names(tibTSus[,hasInterp]))
 ```
-
-
-
 
