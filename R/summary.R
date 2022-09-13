@@ -677,7 +677,7 @@ lipdSummary <- function(L){
   #chronData
   
   if (!is.null(L$chronData)){
-    cat(crayon::bold("\n### Chron Data ###\n\n"))
+    cat(crayon::bold("\n### Chron Data ###\n"))
     if (length(L$chronData[[1]]$measurementTable) > 0){
       b1 <- printSummaryData(L$chronData)
     }else{
