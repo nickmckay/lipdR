@@ -195,14 +195,37 @@ printSummaryData <- function(dataIn, runQuiet = FALSE){
       
       allTables[[tableCount]] <- paleoMeasTableDF
       
-      tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) min(as.numeric(x), na.rm = TRUE)))
-      tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) mean(as.numeric(x), na.rm = TRUE)))
-      tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) max(as.numeric(x), na.rm = TRUE)))
+      #numericCols <- rep(NA, ncol(paleoMeasTableDF))
+      minCol <- rep(NA, ncol(paleoMeasTableDF))
+      medianCol <- rep(NA, ncol(paleoMeasTableDF))
+      maxCol <- rep(NA, ncol(paleoMeasTableDF))
+      
+      for (k4 in 1:ncol(paleoMeasTableDF)){
+        if (is.numeric(paleoMeasTableDF[,k4])){
+          paleoMeasTableDF[,k4] <- as.numeric(paleoMeasTableDF[,k4])
+          minCol[k4] <- min(paleoMeasTableDF[,k4], na.rm = TRUE)
+          medianCol[k4] <- median(paleoMeasTableDF[,k4], na.rm = TRUE)
+          maxCol[k4] <- max(paleoMeasTableDF[,k4], na.rm = TRUE)
+        }else{
+          minCol[k4] <- sort(paleoMeasTableDF[,k4])[1]
+          medianCol[k4] <- sort(paleoMeasTableDF[,k4])[round(length(paleoMeasTableDF[,k4])/2)]
+          maxCol[k4] <- sort(paleoMeasTableDF[,k4])[length(paleoMeasTableDF[,k4])]
+        }
+      }
+      
+      tableVars <- rbind(tableVars, minCol)
+      tableVars <- rbind(tableVars, medianCol)
+      tableVars <- rbind(tableVars, maxCol)
+      
+      
+      # tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) sort(x)[1]))
+      # tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) sort(x)[round(length(x)/2)]))
+      # tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) sort(x)[length(x)]))
       
       if(sum(hasDescr)>0){
-        tableVars <- cbind(c("units", "description", "min", "mean", "max"),tableVars)
+        tableVars <- cbind(c("units", "description", "min", "median", "max"),tableVars)
       }else{
-        tableVars <- cbind(c("units", "min", "mean", "max"),tableVars)
+        tableVars <- cbind(c("units", "min", "median", "max"),tableVars)
       }
       colnames(tableVars)[1] <- " "
       tableVars <- tibble::as_tibble(tableVars)

@@ -135,7 +135,7 @@ tibTS1
 
 ##### Let's subset the continental United States (roughly)
 
-##### Let's choose only those datasets covering the late Pleistocene and early Holocene
+##### Let's choose only those datasets covering the early Holocene
 
 ##### Now, let's pull all the climate interpretation info
 
@@ -145,7 +145,7 @@ tibTS1
 #Continental U.S. bounds: -125	-70 30	50
 tibTSus <-tibTS[tibTS$geo_latitude > 30 & tibTS$geo_latitude < 50,]
 tibTSus <-tibTSus[tibTSus$geo_longitude > -125 & tibTSus$geo_longitude < -70,]
-#Pleistocene-Holocene transition
+#Early Holocene
 tibTSus <-tibTSus[apply(tibTSus, 1, function(x) max(x$age)>11700),]
 tibTSus <-tibTSus[apply(tibTSus, 1, function(x) min(x$age)>100),]
 #grab interpreation info
