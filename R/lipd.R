@@ -17,17 +17,17 @@ lipd_read <- function(path,jsonOnly = FALSE){
       j <- rm_empty_fields(j)
       j <- update_lipd_version(j)
     }else{
-    dir_tmp <- create_tmp_dir()
-    unzipper(path, dir_tmp)
-    data_dir <- find_data_dir(dir_tmp)
-    j <- read_jsonld(data_dir)
-    # j = rm_empty_doi(j)
-    j <- rm_empty_fields(j)
-    j <- update_lipd_version(j)
-    j <- merge_csv_metadata(j,data_dir)
-    j <- idx_num_to_name(j)
-    # j = put_tsids(j)
-    unlink(dir_tmp, recursive=TRUE)
+      dir_tmp <- create_tmp_dir()
+      unzipper(path, dir_tmp)
+      data_dir <- find_data_dir(dir_tmp)
+      j <- read_jsonld(data_dir)
+      # j = rm_empty_doi(j)
+      j <- rm_empty_fields(j)
+      j <- update_lipd_version(j)
+      j <- merge_csv_metadata(j,data_dir)
+      j <- idx_num_to_name(j)
+      # j = put_tsids(j)
+      unlink(dir_tmp, recursive=TRUE)
     }
   }, error = function(cond){
     if(exists("dir_tmp")){
@@ -35,7 +35,7 @@ lipd_read <- function(path,jsonOnly = FALSE){
     }
     message(paste0("Error: lipd_read: ", cond))
   })
-
+  
   return(j)
 }
 
@@ -53,34 +53,34 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
   tryCatch({
     # dsn <- replace_invalid_chars(dsn)
     if(!jsonOnly){
-    dir_tmp <- create_tmp_dir()
-    # Create a lipd dir
-    dir_zip <- file.path(dir_tmp, "zip")
-    dir.create(dir_zip, showWarnings=FALSE)
-    
-    # Need an extra (identical) level for zipping later.
-    dir.create(file.path(dir_zip,"bag"), showWarnings=FALSE)
-    dir_bag <- file.path(dir_zip, "bag")
-
-        #remove names from lists in key spots, since these cause errors in the json
-    if(removeNamesFromLists){
-    j <- remove_names_from_lists(j)
-    }
-    
-    # look for ensemble data in PaleoData, and ask if you want to remove this data before writing the file.
-    j <- warn_ensembles_in_paleo(j, ignore.warnings)
-  
-    j <- idx_name_to_num(j)
-    tmp <- get_lipd_version(j)
-    j <- tmp[["meta"]]
-    dat <- get_csv_from_metadata(j, dsn)
-    write_csv_to_file(dat[["csvs"]],dir_bag)
-    j <- rm_empty_fields(dat[["meta"]])
-    j <- jsonlite::toJSON(j, pretty=TRUE, auto_unbox = TRUE)
-    write(j, file=file.path(dir_bag,"metadata.jsonld"))
-    bagit(dir_bag)
-    zipper(dir_original, dir_tmp, dsn, path)
-    unlink(dir_tmp, recursive=TRUE)
+      dir_tmp <- create_tmp_dir()
+      # Create a lipd dir
+      dir_zip <- file.path(dir_tmp, "zip")
+      dir.create(dir_zip, showWarnings=FALSE)
+      
+      # Need an extra (identical) level for zipping later.
+      dir.create(file.path(dir_zip,"bag"), showWarnings=FALSE)
+      dir_bag <- file.path(dir_zip, "bag")
+      
+      #remove names from lists in key spots, since these cause errors in the json
+      if(removeNamesFromLists){
+        j <- remove_names_from_lists(j)
+      }
+      
+      # look for ensemble data in PaleoData, and ask if you want to remove this data before writing the file.
+      j <- warn_ensembles_in_paleo(j, ignore.warnings)
+      
+      j <- idx_name_to_num(j)
+      tmp <- get_lipd_version(j)
+      j <- tmp[["meta"]]
+      dat <- get_csv_from_metadata(j, dsn)
+      write_csv_to_file(dat[["csvs"]],dir_bag)
+      j <- rm_empty_fields(dat[["meta"]])
+      j <- jsonlite::toJSON(j, pretty=TRUE, auto_unbox = TRUE)
+      write(j, file=file.path(dir_bag,"metadata.jsonld"))
+      bagit(dir_bag)
+      zipper(dir_original, dir_tmp, dsn, path)
+      unlink(dir_tmp, recursive=TRUE)
     }else{
       j <- jsonlite::toJSON(j, pretty=TRUE, auto_unbox = TRUE)
       write(j, file=file.path(path,paste0(dsn,".jsonld")))
@@ -88,7 +88,7 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
   }, error=function(cond){
     print(paste0("Error: lipd_write: ", cond))
     if(exists("dir_tmp")){
-    unlink(dir_tmp, recursive=TRUE)
+      unlink(dir_tmp, recursive=TRUE)
     }
     return(1)
   })

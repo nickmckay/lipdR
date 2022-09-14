@@ -1,5 +1,7 @@
 # lipdR 0.3.6
 
+* Fixed bug introduced in 0.3.4 that prevented proper conversion of old LiPD versions
+
 # lipdR 0.3.5
 
 * new function `removeEnsembles()` that will strip all ensembles from a LiPD object for portability
@@ -10,7 +12,6 @@
 
 * Make lipdR read/write files without changing the working directory.
 * Improve messages during reading, including parsing and error warnings
-
 
 # lipdR 0.3.3
 

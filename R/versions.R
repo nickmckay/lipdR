@@ -241,10 +241,10 @@ update_lipd_v1_3_keys <- function(d){
     for(i in 1:length(keys)){
       old_key <- keys[[i]]
       # Dive down first
-      if(typeof(d[[old_key]]) == "list"){
-        stop("this shouldn't be a list")
-#        d[[old_key]] <- update_lipd_v1_3_keys(d[[old_key]])
-      } 
+#       if(typeof(d[[old_key]]) == "list"){
+#         #this is legacy code that was bad. It doesn't seem necessary.
+#         d[[old_key]] <- update_lipd_v1_3_keys(d[[old_key]])
+#       } 
       # When you bubble back up, then check if this key should be switched
       if(old_key %in% v12keys){
         # Set the old
