@@ -1,3 +1,5 @@
+# lipdR 0.3.6
+
 # lipdR 0.3.5
 
 * new function `removeEnsembles()` that will strip all ensembles from a LiPD object for portability
