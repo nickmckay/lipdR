@@ -256,7 +256,16 @@ update_lipd_v1_3_keys <- function(d){
       }
     }
   } else {
-    stop("Keys should not be indexed by number")
+    # For any lists that are indexed by number
+    if(typeof(d)=="list"){
+      for(i in 1:length(d)){
+        tryCatch({
+          d[[i]] <- update_lipd_v1_3_keys(d[[i]])
+        }, error=function(cond){
+          print(paste0("Error: update_lipd_v1_3_keys: ", cond))
+        })
+      }
+    }  
   }
   return(d)
 }
