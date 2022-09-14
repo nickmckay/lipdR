@@ -133,7 +133,7 @@ update_lipd_version <- function(d){
   }, error=function(cond){
     print(paste0("Error: update_lipd_version: v", version, ": ", cond))
   })
-    return(d)
+  return(d)
 }
 
 
@@ -237,14 +237,13 @@ update_lipd_v1_3_keys <- function(d){
   keys <- names(d)
   
   # For any lists that are indexed by name 
-  if(all(!isNullOb(keys)) && all(!is.na(keys))){
+  if(!isNullOb(keys) && !is.na(keys)){
     for(i in 1:length(keys)){
       old_key <- keys[[i]]
       # Dive down first
-#       if(typeof(d[[old_key]]) == "list"){
-#         #this is legacy code that was bad. It doesn't seem necessary.
-#         d[[old_key]] <- update_lipd_v1_3_keys(d[[old_key]])
-#       } 
+      if(typeof(d[[old_key]]) == "list"){
+        d[[old_key]] <- update_lipd_v1_3_keys(d[[old_key]])
+      } 
       # When you bubble back up, then check if this key should be switched
       if(old_key %in% v12keys){
         # Set the old
