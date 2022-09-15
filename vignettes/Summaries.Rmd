@@ -20,7 +20,11 @@ output:
 </style>
 
 ```{r setup, include = FALSE, width.out='100%'}
-devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
+# devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
+library(lipdR)
+source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\summary.R")
+source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\is_blank.R")
+source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\cbind_NA.R")
 options(width = 500)
 library(xaringanExtra)
 knitr::opts_chunk$set(
@@ -36,51 +40,70 @@ xaringanExtra::use_clipboard()
 
 ## Data
 ### Load LiPD files from lipdverse.org
+##### From the Pages 2k collection, let's look at the Moose Lake dataset
+##### You can download the file first or simply use the url in readLipd()
 
 ```{r echo=T, results='hide'}
-
-D <- readLipd("http://lipdverse.org/testData/testData.zip")
+L <- readLipd("https://lipdverse.org/data/MD6jkgwSxsq0oilgYUjM/1_0_0//Arc-MooseLake.Clegg.2010-ensemble.lpd")
 
 ```
 ## Single LiPD
 ### See a detailed summary of a single LiPD
+##### The single lipd summary provides detail on the location, publications(s), paleo data, chron data, and model ensembles
 
 ```{r}
 
-L1 <- D[[1]]
-lipdSummary(L1)
+lipdSummary(L)
 
 ```
 ## Multi LiPD
 
-### Get a summary of all LiPDs in the directory, print details of the first 20 datasets
+### Let's use a large library of lipd files
 
-##### Return time values in "AD" units if available
+```{r echo = T, results = 'hide'}
+D <- readLipd("http://lipdverse.org/testData/testData.zip")
+```
+
+
+### Get a summary of all LiPDs in a multi-lipd object
+
+##### We can choose the prefered age units. Let's return time values in years AD if available
+
+##### Leaving return.table set to 'FALSE' will print the table to the screen
+
+##### Let's print the details of the first 20 datasets
 
 ```{r}
 
-lipdDirSummary(D, printLen=20, timeUnits="AD", retTable = FALSE)
+multiLipdSummary(multi.lipd=D, print.length=20, time.units="AD", return.table=FALSE)
 
 ```
 ### Save the summary table
 
+##### Sometimes it is useful to save the table, so it can be sorted and further investigated
+
+##### Simply change return.table to 'TRUE' and save the summary
+
 ```{r}
 
-dirSummary <- lipdDirSummary(D, timeUnits="AD", retTable = TRUE)
+MLSummary <- multiLipdSummary(D, time.units="AD", return.table = TRUE)
 
 ```
-### The saved table can be investigated further
+### The saved table can now be interrogated
 
 ##### For example, we can sort the table to find datasets with age ensembles
 
 ```{r}
-dirSummary[order(dirSummary$NumEns, decreasing=TRUE),]
+MLSummary[order(MLSummary$NumEns, decreasing=TRUE),]
 ```
 
 
 ## LiPD TS Objects
 
 ### Format data as a tibble LiPD TS
+
+##### extractTs() creates a time series from a multi-lipd object
+##### This allows for easier querying and data analysis
 
 ```{r}
 
@@ -89,49 +112,44 @@ tibTS <- ts2tibble(TS1)
 
 ```
 
-### View dimensions of tibble object
+### View the dimensions of the tibble TS object
 
 ```{r}
 dim(tibTS)
 ```
 
-### Print summary of LiPD TS, show details of first 10 rows
+### Print summary of LiPD TS
+
+##### The lipdTSSummary() function accepts both lipd-ts (TS1) and lipd-tib-ts (tibTS) objects
 
 ##### The summary returns the dimensions of the TS object, details of the time units, a time interval covered by all varibales (if possible), and a summary table
 
+##### Let's limit the table to show details of the first 10 rows only
+
 ```{r}
 
-lipdTSSummary(tibTS, printLen = 10, retTable = FALSE)
+lipdTSSummary(ts.object=tibTS, print.length = 10, return.table = FALSE)
 
 ```
 ### Add columns to summary
 
 ##### The summary table can be expanded to include any variables of the TS object
 ##### The names() function shows the options (here we see the first 5)
-##### Let's add "archiveType" and "paleoData_meanValue12k"
+##### Let's add several
+##### The summary function handles numeric and character variables differently
 
 ```{r}
 names(tibTS)[1:5]
 
-lipdTSSummary(tibTS, printLen = 10, retTable = FALSE, addCol = c("archiveType", "paleoData_meanValue12k"))
+lipdTSSummary(tibTS, print.length = 10, return.table = FALSE, add.variable = c("archiveType", "paleoData_meanValue12k","geo_continent", "geo_elevation", "agesPerKyr", "dataSetName"))
+
 ```
 
 
 
 ### Save summary table and view a specific subset
 
-##### By choosing a single dataset, we can view all associated variables
 ##### Saving the summary table allows for further investigation
-
-```{r}
-
-TSsummary <- lipdTSSummary(tibTS, printLen = 10, retTable = TRUE, addCol = c("archiveType", "paleoData_meanValue12k"))
-
-tibTS1 <- TSsummary[TSsummary$dsName == "165_1002C.Herbert.2000",]
-tibTS1
-
-```
-### Choosing a subset for analysis
 
 ##### Let's subset the continental United States (roughly)
 
@@ -151,9 +169,9 @@ tibTSus <-tibTSus[apply(tibTSus, 1, function(x) min(x$age)>100),]
 #grab interpreation info
 intepIndices <- grep("interpretation", names(tibTSus))
 hasInterp <- intepIndices[apply(tibTSus[,intepIndices], 2, function(x) sum(!is.na(x))>0)]
-#Print summary
-lipdTSSummary(tibTSus, printLen = 50, addCol = names(tibTSus[,hasInterp]))
+
 #save summary for deeper exploration
-USsummary <- lipdTSSummary(tibTSus, printLen = 50, retTable = TRUE, addCol = names(tibTSus[,hasInterp]))
+USsummary <- lipdTSSummary(tibTSus, print.length = 10, return.table = TRUE, add.variable = names(tibTSus[,hasInterp]))
+USsummary
 ```
 

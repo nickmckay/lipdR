@@ -136,7 +136,7 @@ matchCols <- function(df1,df2){
 #' @export
 #'
 #' @examples
-printSummaryData <- function(dataIn, runQuiet = FALSE){
+printSummaryData <- function(dataIn, run.quiet = FALSE){
   
   PDnum <- length(dataIn)
   
@@ -180,63 +180,60 @@ printSummaryData <- function(dataIn, runQuiet = FALSE){
       
       numObs <- dim(paleoMeasTableDF)[1]
       numVars <- dim(paleoMeasTableDF)[2]
-      if(runQuiet==FALSE){
+      if(run.quiet==FALSE){
         cat(crayon::bold(paste0("\nSummary data for object ", i, ","), "Measurement Table", j, "of", paste0(measTabNum, ":\n")))
         cat("Measurement table contains", numObs, "observations of", numVars, "variables\n\n")
       }
       
-      
-      varsTableMatch <- matchCols(paleoMeasTableDF, tableVars)
-      paleoMeasTableDF <- varsTableMatch[[1]]
-      tableVars <- varsTableMatch[[2]]
-      
-      
-      paleoMeasTableDF <- paleoMeasTableDF[ ,names(tableVars)]
-      
-      allTables[[tableCount]] <- paleoMeasTableDF
-      
-      #numericCols <- rep(NA, ncol(paleoMeasTableDF))
-      minCol <- rep(NA, ncol(paleoMeasTableDF))
-      medianCol <- rep(NA, ncol(paleoMeasTableDF))
-      maxCol <- rep(NA, ncol(paleoMeasTableDF))
-      
-      for (k4 in 1:ncol(paleoMeasTableDF)){
-        if (is.numeric(paleoMeasTableDF[,k4])){
-          paleoMeasTableDF[,k4] <- as.numeric(paleoMeasTableDF[,k4])
-          minCol[k4] <- min(paleoMeasTableDF[,k4], na.rm = TRUE)
-          medianCol[k4] <- median(paleoMeasTableDF[,k4], na.rm = TRUE)
-          maxCol[k4] <- max(paleoMeasTableDF[,k4], na.rm = TRUE)
-        }else{
-          minCol[k4] <- sort(paleoMeasTableDF[,k4])[1]
-          medianCol[k4] <- sort(paleoMeasTableDF[,k4])[round(length(paleoMeasTableDF[,k4])/2)]
-          maxCol[k4] <- sort(paleoMeasTableDF[,k4])[length(paleoMeasTableDF[,k4])]
-        }
+      if (measTabNum == 0){
+        stop("Could not read measurement table, check format\n")
       }
       
-      tableVars <- rbind(tableVars, minCol)
-      tableVars <- rbind(tableVars, medianCol)
-      tableVars <- rbind(tableVars, maxCol)
-      
-      
-      # tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) sort(x)[1]))
-      # tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) sort(x)[round(length(x)/2)]))
-      # tableVars <- rbind(tableVars, apply(paleoMeasTableDF, 2, function(x) sort(x)[length(x)]))
-      
-      if(sum(hasDescr)>0){
-        tableVars <- cbind(c("units", "description", "min", "median", "max"),tableVars)
-      }else{
-        tableVars <- cbind(c("units", "min", "median", "max"),tableVars)
-      }
-      colnames(tableVars)[1] <- " "
-      tableVars <- tibble::as_tibble(tableVars)
-      
-      if(dim(tableVars)[1]>0){
-        if (runQuiet==FALSE){
-          print(tableVars, row.names = FALSE)
+        varsTableMatch <- matchCols(paleoMeasTableDF, tableVars)
+        paleoMeasTableDF <- varsTableMatch[[1]]
+        tableVars <- varsTableMatch[[2]]
+        
+        
+        paleoMeasTableDF <- paleoMeasTableDF[ ,names(tableVars)]
+        
+        allTables[[tableCount]] <- paleoMeasTableDF
+        
+        #numericCols <- rep(NA, ncol(paleoMeasTableDF))
+        minCol <- rep(NA, ncol(paleoMeasTableDF))
+        medianCol <- rep(NA, ncol(paleoMeasTableDF))
+        maxCol <- rep(NA, ncol(paleoMeasTableDF))
+        
+        for (k4 in 1:ncol(paleoMeasTableDF)){
+          if (is.numeric(paleoMeasTableDF[,k4])){
+            paleoMeasTableDF[,k4] <- as.numeric(paleoMeasTableDF[,k4])
+            minCol[k4] <- min(paleoMeasTableDF[,k4], na.rm = TRUE)
+            medianCol[k4] <- median(paleoMeasTableDF[,k4], na.rm = TRUE)
+            maxCol[k4] <- max(paleoMeasTableDF[,k4], na.rm = TRUE)
+          }else{
+            minCol[k4] <- sort(paleoMeasTableDF[,k4])[1]
+            medianCol[k4] <- sort(paleoMeasTableDF[,k4])[round(length(paleoMeasTableDF[,k4])/2)]
+            maxCol[k4] <- sort(paleoMeasTableDF[,k4])[length(paleoMeasTableDF[,k4])]
+          }
         }
         
-      }
-      
+        tableVars <- rbind(tableVars, minCol)
+        tableVars <- rbind(tableVars, medianCol)
+        tableVars <- rbind(tableVars, maxCol)
+        
+        
+        if(sum(hasDescr)>0){
+          tableVars <- cbind(c("units", "description", "min", "median", "max"),tableVars)
+        }else{
+          tableVars <- cbind(c("units", "min", "median", "max"),tableVars)
+        }
+        colnames(tableVars)[1] <- " "
+        tableVars <- tibble::as_tibble(tableVars)
+        
+        if(dim(tableVars)[1]>0){
+          if (run.quiet==FALSE){
+            print(tableVars, row.names = FALSE)
+          }
+        }
     }
   }
   return(allTables)
@@ -249,7 +246,7 @@ printSummaryData <- function(dataIn, runQuiet = FALSE){
 
 #' Extract and print model info
 #'
-#' @param chronModel 
+#' @param chron.model 
 #' @author David Edge
 #'
 #' @return
@@ -257,9 +254,9 @@ printSummaryData <- function(dataIn, runQuiet = FALSE){
 #' @import cran
 #'
 #' @examples
-printModel <- function(chronModel){
+printModel <- function(chron.model){
   
-  numModels <- length(chronModel)
+  numModels <- length(chron.model)
   
   if(numModels > 0){
     cat(crayon::bold(numModels, "model(s) found"), "\n\n")
@@ -267,12 +264,12 @@ printModel <- function(chronModel){
   
   for (bbb in 1:numModels){
     cat("Model", bbb, "contains: ")
-    cat(attributes(chronModel[[bbb]])$names, "\n\n")
-    if (!is.null(chronModel[[bbb]]$method$algorithm)){
-      cat("Model algorithm:", chronModel[[bbb]]$method$algorithm, "\n")
+    cat(attributes(chron.model[[bbb]])$names, "\n\n")
+    if (!is.null(chron.model[[bbb]]$method$algorithm)){
+      cat("Model algorithm:", chron.model[[bbb]]$method$algorithm, "\n")
     }
-    if (!is.null(chronModel[[bbb]]$method$parameters)){
-      params1 <- chronModel[[bbb]]$method$parameters
+    if (!is.null(chron.model[[bbb]]$method$parameters)){
+      params1 <- chron.model[[bbb]]$method$parameters
       paramNames <- names(params1)
       paramVals <- unlist(params1)
       cat("Model parameters:\n")
@@ -281,11 +278,11 @@ printModel <- function(chronModel){
       }
       cat("\n")
     }
-    if (!is.null(chronModel[[bbb]]$ensembleTable)){
-      numTables <- length(chronModel[[bbb]]$ensembleTable)
+    if (!is.null(chron.model[[bbb]]$ensembleTable)){
+      numTables <- length(chron.model[[bbb]]$ensembleTable)
       cat("Model contains", numTables, "ensemble table(s)\n")
       for (hhh in 1:numTables){
-        ensemble1 <- chronModel[[bbb]]$ensembleTable[[hhh]]
+        ensemble1 <- chron.model[[bbb]]$ensembleTable[[hhh]]
         indexTable <- unlist(lapply(ensemble1, function(x) "values" %in% attributes(x)$names), use.names = FALSE)
         tableLoc <- ensemble1[indexTable]
         ensembleDF <- as.data.frame(sapply(tableLoc, "[", "values"))
@@ -303,7 +300,7 @@ printModel <- function(chronModel){
 ################################################################################################
 ################################################################################################
 
-#' Print a summary of the contents of a LiPD directory
+#' Print a summary of the contents of a Multi-LiPD
 #'
 #' @param L 
 #' @importFrom glue glue
@@ -315,12 +312,16 @@ printModel <- function(chronModel){
 #' @family summary
 #'
 #' @examples
-lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
+multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", return.table = FALSE){
   
-  numLipd <- length(D)
+  if (is.null(multi.lipd)){
+    stop("multi.lipd input required")
+  }
   
-  if (retTable == FALSE){
-    cat(crayon::bold("Directory contains", numLipd, "LiPD files.\n\n"))
+  numLipd <- length(multi.lipd)
+  
+  if (return.table == FALSE){
+    cat(crayon::bold("Multi-LiPD contains", numLipd, "LiPD files.\n\n"))
   }
   
   archiveTypes <- list()
@@ -330,7 +331,12 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
   colnames(dataCounts) <- c("Dataset", "Archive Type", "NumPalTabs", "NumChrTabs", "NumEns","AgeMin","AgeMax", "Paleo Vars")
   
   for (qqq in 1:numLipd){
-    L <- D[[qqq]]
+    L <- multi.lipd[[qqq]]
+    
+    if (is.null(L$paleoData) & is.null(L$chronData)){
+      warning("LiPD", qqq, "in multi-lipd object missing paleoData and chronData\n")
+      next
+    }
     
     dataCounts[qqq,1] <- as.character(L$dataSetName)
     
@@ -350,7 +356,7 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
         if(!is.null(L$paleoData[[fff]]$measurementTable)){
           numTables <- length(L$paleoData[[fff]]$measurementTable)
           totalPD <- totalPD + numTables
-          getTable <- printSummaryData(L$paleoData, runQuiet=TRUE)
+          getTable <- printSummaryData(L$paleoData, run.quiet=TRUE)
           
           for (ddd in 1:numTables){
             paleoVars <- c(paleoVars, attributes(getTable[[ddd]])$names)
@@ -376,7 +382,7 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
     
     #age info
     if (!is.null(L$paleoData[[1]]$measurementTable[[1]]$year$values)){
-      if (timeUnits == "AD"){
+      if (time.units == "AD"){
         dataCounts[qqq,6] <- paste(round(max(L$paleoData[[1]]$measurementTable[[1]]$year$values), 2), L$paleoData[[1]]$measurementTable[[1]]$year$units, sep=' ')
         dataCounts[qqq,7] <- paste(round(min(L$paleoData[[1]]$measurementTable[[1]]$year$values), 2), L$paleoData[[1]]$measurementTable[[1]]$year$units, sep=' ')
       }
@@ -407,7 +413,7 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
   numUniqueArchives <- length(uniqueArchives)
   
   #archiveType
-  if (retTable == FALSE){
+  if (return.table == FALSE){
     cat(crayon::bold(glue::glue("### Archive Types ###\n\n")))
     for (uuu in 1:numUniqueArchives){
       cat(sum(unlist(archiveTypes) %in% uniqueArchives[uuu]), uniqueArchives[uuu], "records\n")
@@ -420,19 +426,19 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
   minLat <- min(unlist(lats))
   maxLon <- max(unlist(lons))
   minLon <- min(unlist(lons))
-  if (retTable == FALSE){
+  if (return.table == FALSE){
     cat("All sites located between", paste0(minLat,"N"), "to", paste0(maxLat, "N"), "and", paste0(minLon, "E"), "to", paste0(maxLon, "E"), "\n\n")
     cat(crayon::bold(glue::glue("### Measurement tables and models ###\n\n")))
   }
   dataCounts <- tibble::as_tibble(dataCounts)
   
-  if (retTable == FALSE){
-    print(dataCounts, n=printLen)
+  if (return.table == FALSE){
+    print(dataCounts, n=print.length)
     cat("*Age values gathered from PaleoData Object 1, Measurement Table 1")
   }
   
   
-  if (retTable == TRUE){
+  if (return.table == TRUE){
     return(dataCounts)
   }
   
@@ -442,11 +448,14 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
 ################################################################################################
 ################################################################################################
 
-#' Print a summary of the contents of a LiPD directory
+#' Print a summary of the contents of a LiPD TS
 #'
-#' @param TS
-#' @param timePref
-#' @param printLen
+#' @param ts.object
+#' @param time.variable
+#' @param print.length
+#' @param return.table
+#' @param add.variable
+#' 
 #' @author David Edge
 #' @import cran
 #' @return
@@ -454,118 +463,63 @@ lipdDirSummary <- function(D, printLen=20, timeUnits="AD", retTable = FALSE){
 #' @family summary
 #'
 #' @examples
-lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE, addCol = NULL){
+lipdTSSummary <- function(ts.object, time.variable=NULL, print.length=10, return.table = FALSE, add.variable = NULL){
+  
+  if (class(ts.object)[1]=="lipd-ts"){
+    ts.object <- ts2tibble(ts.object)
+  }else if (class(ts.object)[1]=="lipd-ts-tibble"){
+    abtl1 <- 1
+  }else{
+    stop("ts.object is not a lipd-ts or lipd-ts-tibble")
+  }
   
   allYear <- FALSE
   allAge <- FALSE
   totCols <- 10
-  numTS <- nrow(TS)
+  numTS <- nrow(ts.object)
   
-  if (retTable == FALSE){cat("LiPD TS object contains", numTS, "time series and", ncol(TS), "elements.\n\n")}
+  if (return.table == FALSE){cat("LiPD TS object contains", numTS, "time series and", ncol(ts.object), "elements.\n\n")}
   
-  #helper function to find invalid entries
-  is.blank <- function(x, false.triggers=FALSE){
-    if(is.function(x)) return(FALSE) # Some of the tests below trigger
-    # warnings when used on functions
-    return(
-      is.null(x) ||                # Actually this line is unnecessary since
-        length(x) == 0 ||            # length(NULL) = 0, but I like to be clear
-        all(is.na(x)) ||
-        all(x=="") ||
-        all(x=="NA") ||
-        (false.triggers && all(!x))
-    )
-  }
+  
   
   #look for "age" and "year" variables, do all TS have one or the other?
   hasYear <- rep(NA, numTS)
   hasAge <- rep(NA, numTS)
-  if (is.null(timePref)){
-    for (i in 1:length(TS$year)){
-      hasYear[i] <- !is.blank(unlist(TS$year[i]))
-      hasAge[i] <- !is.blank(unlist(TS$age[i]))
+  if (is.null(time.variable)){
+    for (i in 1:length(ts.object$year)){
+      hasYear[i] <- !is_blank(unlist(ts.object$year[i]))
+      hasAge[i] <- !is_blank(unlist(ts.object$age[i]))
     }
-  }
-  totYear <- sum(hasYear)
-  totAge <- sum(hasAge)
-  
-  if (totYear < numTS & totAge < numTS){
-    if (retTable == FALSE){cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
-    cat(totYear, "variables contain year (AD), while", totAge, "contain age (BP).\n\n")}
-    if (totYear > totAge){
-      timePref <- "Year"
+    
+    totYear <- sum(hasYear)
+    totAge <- sum(hasAge)
+    
+    if (totYear < numTS & totAge < numTS){
+      if (return.table == FALSE){cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
+        cat(totYear, "variables contain year (AD), while", totAge, "contain age (BP).\n\n")}
+      if (totYear > totAge){
+        time.variable <- "Year"
+      }else{
+        time.variable <- "Age"
+      }
+    }else if (totYear == numTS & totAge == numTS){
+      allYear <- TRUE
+      allAge <- TRUE
+      if (return.table == FALSE){cat("All variables contain both age (BP) and year (AD) data.\n\n")}
+      if (is.null(time.variable)){
+        time.variable <- "Year"
+      }
+    }else if (totYear == numTS & totAge != numTS){
+      allYear <- TRUE
+      if (return.table == FALSE){cat("All variables contain year (AD) data,", totAge, "variables contain age (BP) data.\n\n")}
+      if (is.null(time.variable)){
+        time.variable <- "Year"
+      }
     }else{
-      timePref <- "Age"
-    }
-  }else if (totYear == numTS & totAge == numTS){
-    allYear <- TRUE
-    allAge <- TRUE
-    if (retTable == FALSE){cat("All variables contain both age (BP) and year (AD) data.\n\n")}
-    if (is.null(timePref)){
-      timePref <- "Year"
-    }
-  }else if (totYear == numTS & totAge != numTS){
-    allYear <- TRUE
-    if (retTable == FALSE){cat("All variables contain year (AD) data,", totAge, "variables contain age (BP) data.\n\n")}
-    if (is.null(timePref)){
-      timePref <- "Year"
-    }
-  }else{
-    allAge <- TRUE
-    if (retTable == FALSE){cat("All variables contain age (BP) data,", totYear, "variables contain year (AD) data.\n\n")}
-    if (is.null(timePref)){
-      timePref <- "Age"
-    }
-  }
-  
-  if(!is.null(addCol)){
-    totCols <- 10 + length(addCol)
-  }
-  
-  
-  #return tibble with: dataset name, TSid, lat, lon, min age, max age, paleodat variable name, min paleodata val, mean paleodata val, max paleodata val
-  TSsummary <- data.frame(matrix(nrow = numTS, ncol = totCols, data = NA))
-  
-  
-  
-  if(timePref == "Age"){
-    colnames(TSsummary) <- c("dsName", "TSid", "lat", "lon", "maxAge", "minAge", "varName", "minVal", "medianVal", "maxVal")
-    
-    for (i in 1:nrow(TS)){
-      TSsummary[i,1] <- unlist(TS$dataSetName[i])
-      TSsummary[i,2] <- unlist(TS$paleoData_TSid[i])
-      TSsummary[i,3] <- unlist(TS$geo_latitude[i])
-      TSsummary[i,4] <- unlist(TS$geo_longitude[i])
-      TSsummary[i,5] <- max(unlist(TS$age[i]), na.rm = TRUE)
-      TSsummary[i,6] <- min(unlist(TS$age[i]), na.rm = TRUE)
-      TSsummary[i,7] <- unlist(TS$paleoData_variableName[i])
-      TSsummary[i,8] <- min(unlist(TS$paleoData_values[i]), na.rm = TRUE)
-      TSsummary[i,9] <- median(unlist(TS$paleoData_values[i]), na.rm = TRUE)
-      TSsummary[i,10] <- max(unlist(TS$paleoData_values[i]), na.rm = TRUE)
-    }
-  }else{
-    colnames(TSsummary) <- c("dsName", "TSid", "lat", "lon", "minYear", "maxYear", "varName", "minVal", "medianVal", "maxVal")
-    
-    for (i in 1:nrow(TS)){
-      TSsummary[i,1] <- unlist(TS$dataSetName[i])
-      TSsummary[i,2] <- unlist(TS$paleoData_TSid[i])
-      TSsummary[i,3] <- unlist(TS$geo_latitude[i])
-      TSsummary[i,4] <- unlist(TS$geo_longitude[i])
-      TSsummary[i,5] <- min(unlist(TS$year[i]), na.rm = TRUE)
-      TSsummary[i,6] <- max(unlist(TS$year[i]), na.rm = TRUE)
-      TSsummary[i,7] <- unlist(TS$paleoData_variableName[i])
-      TSsummary[i,8] <- min(unlist(TS$paleoData_values[i]), na.rm = TRUE)
-      TSsummary[i,9] <- median(unlist(TS$paleoData_values[i]), na.rm = TRUE)
-      TSsummary[i,10] <- max(unlist(TS$paleoData_values[i]), na.rm = TRUE)
-    }
-    
-  }
-  
-  if(!is.null(addCol)){
-    colnames(TSsummary)[11:totCols] <- addCol
-    for (i in 1:nrow(TS)){
-      for (k in 1:length(addCol)){
-        TSsummary[i,(10+k)] <- unlist(tibTS[as.name(addCol[k])])[i]
+      allAge <- TRUE
+      if (return.table == FALSE){cat("All variables contain age (BP) data,", totYear, "variables contain year (AD) data.\n\n")}
+      if (is.null(time.variable)){
+        time.variable <- "Age"
       }
     }
   }
@@ -573,37 +527,78 @@ lipdTSSummary <- function(TS, timePref=NULL, printLen=20, retTable = FALSE, addC
   
   #calculate time overlap
   
-  if (retTable == FALSE){
-    
-    if (allYear == FALSE & allAge ==FALSE){
-      cat("Can not provide interval of time overlap, units not standardized.\n\n")
+  maxAges <- max(unlist(ts.object$age[i]), na.rm = TRUE)
+  minAges <- min(unlist(ts.object$age[i]), na.rm = TRUE)
+  
+  if (allYear == FALSE & allAge ==FALSE){
+    cat("Can not provide interval of time overlap, units not standardized.\n\n")
+  }
+  
+  if(time.variable == "Year" & allYear == TRUE){
+    lastOverlap <- min(minAges)
+    firstOverlap <- max(maxAges)
+    if (lastOverlap < firstOverlap){
+      cat("No common time interval.\n\n")
+    }else{
+      cat("All variables contain data in the interval", firstOverlap, "(AD) to", lastOverlap, "(AD).\n\n")
     }
-    
-    if(timePref == "Year" & allYear == TRUE){
-      lastOverlap <- min(TSsummary[,6])
-      firstOverlap <- max(TSsummary[,5])
-      if (lastOverlap < firstOverlap){
-        cat("No common time interval.\n\n")
-      }else{
-        cat("All variables contain data in the interval", firstOverlap, "(AD) to", lastOverlap, "(AD).\n\n")
-      }
+  }
+  if (time.variable == "Age" & allAge == TRUE){
+    lastOverlap <- max(minAges)
+    firstOverlap <- min(maxAges)
+    if (lastOverlap > firstOverlap){
+      cat("No common time interval.\n\n")
+    }else{
+      cat("All variables contain data in the interval", firstOverlap, "(BP) to", lastOverlap, "(BP).\n\n")
     }
-    if (timePref == "Age" & allAge == TRUE){
-      lastOverlap <- max(TSsummary[,6])
-      firstOverlap <- min(TSsummary[,5])
-      if (lastOverlap > firstOverlap){
-        cat("No common time interval.\n\n")
+  }
+  
+  #Start TS summary df with variable names as factors
+  if(!is.null(add.variable)){
+    totCols <- 2 + length(add.variable)
+  }
+  
+  factorizedVarnames <- as.factor(ts.object$paleoData_variableName)
+  
+  frequency <- summary(factorizedVarnames)
+  ageYearIndices <- c(grep("age", tolower(names(frequency))), grep("year", tolower(names(frequency))), grep("depth", tolower(names(frequency))))
+  varFreq <- frequency[!1:length(frequency) %in% ageYearIndices]
+  
+  #return tibble with: dataset name, TSid, lat, lon, min age, max age, paleodat variable name, min paleodata val, mean paleodata val, max paleodata val
+  TSsummary <- data.frame("paleoData_variableName" = names(varFreq),
+                          "varName_freq" = varFreq)
+  
+  
+  #Extend TS summary with character variables as factors
+  #Print numeric variables separately
+  if (length(add.variable)>0){
+    for (jkl in 1:length(add.variable)){
+      newVar <- unlist(ts.object[add.variable[jkl]])
+      goodIndex <- is.valid.vec(newVar)
+      isNumOrNA <- !is.na(as.numeric(newVar[goodIndex]))
+      
+      if (sum(isNumOrNA) > (sum(goodIndex) * 0.9)){
+        quantileInfo <- quantile(as.numeric(newVar[goodIndex]))
+        cat(add.variable[jkl], " min:", quantileInfo[1], " 25%:", quantileInfo[2], " median:", quantileInfo[3], " 75%:", quantileInfo[4], " max:", quantileInfo[5], "\n\n")
       }else{
-        cat("All variables contain data in the interval", firstOverlap, "(BP) to", lastOverlap, "(BP).\n\n")
+        factorizedVarnames1 <- as.factor(newVar)
+        
+        frequency1 <- sort(summary(factorizedVarnames1), decreasing = TRUE)
+        ageYearIndices <- c(grep("age", tolower(names(frequency1))), grep("year", tolower(names(frequency1))), grep("depth", tolower(names(frequency1))))
+        varFreq1 <- frequency1[!1:length(frequency1) %in% ageYearIndices]
+        TSsummaryNew <- data.frame(names(varFreq1), varFreq1)
+        colnames(TSsummaryNew) <- c(as.character(add.variable[jkl]), paste0(substr(as.character(add.variable[jkl]), 1,4), "_freq"))
+        TSsummary <- cbind.NA(TSsummary, TSsummaryNew)
       }
     }
   }
   
   
+  #Format TS summary as tibble for printing
   tibSummary <- tibble::as_tibble(TSsummary)  
   
-  if (retTable == FALSE){
-    print(tibSummary, n=printLen)
+  if (return.table == FALSE){
+    print(tibSummary, n=print.length)
   }else{
     return(tibSummary)
   }
