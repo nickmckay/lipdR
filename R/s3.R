@@ -271,8 +271,22 @@ as.lipdTsTibbleLong <- function(x){
 }
 
 
+print.lipd <- function(x){
+  cat(x$dataSetName,"\n")
+  cat(x$datasetId,"\n")
+  cat(x$changelog[[length(x$changelog)]]$version,"\n")
+  cat("\n")
+  cat("use summary() to see details\n")
+}
+
 summary.lipd <- function (x){
   lipdSummary(x)
+}
+
+
+`print.multi-lipd` <- function (x){
+  cat(paste0("multi lipd object containing ", length(x), " individual lipds\n"))
+  cat("use summary() to see details")
 }
 
 
