@@ -269,3 +269,27 @@ as.lipdTsTibbleLong <- function(x){
     stop(glue::glue("I don't know how to convert class: {class(x)} to LiPD-TS-tibble object."))
   }
 }
+
+
+summary.lipd <- function (x, ...){
+  lipdSummary(x, ...)
+}
+
+
+`summary.multi-lipd` <- function (x, ...){
+  multiLipdSummary(x, ...)
+}
+
+
+`summary.lipd-ts` <- function(x, ...) {
+  lipdTSSummary(x, ...)
+}
+
+
+`summary.lipd-ts-tibble` <- function(x, ...) {
+  lipdTSSummary(x, ...)
+}
+
+
+
+
