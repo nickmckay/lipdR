@@ -271,8 +271,8 @@ as.lipdTsTibbleLong <- function(x){
 }
 
 
-summary.lipd <- function (x, ...){
-  lipdSummary(x, ...)
+summary.lipd <- function (x){
+  lipdSummary(x)
 }
 
 
