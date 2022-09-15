@@ -560,7 +560,7 @@ lipdTSSummary <- function(ts.object, time.variable=NULL, print.length=10, return
   
   factorizedVarnames <- as.factor(ts.object$paleoData_variableName)
   
-  frequency <- summary(factorizedVarnames)
+  frequency <- sort(summary(factorizedVarnames), decreasing = TRUE)
   ageYearIndices <- c(grep("age", tolower(names(frequency))), grep("year", tolower(names(frequency))), grep("depth", tolower(names(frequency))))
   varFreq <- frequency[!1:length(frequency) %in% ageYearIndices]
   
@@ -587,7 +587,7 @@ lipdTSSummary <- function(ts.object, time.variable=NULL, print.length=10, return
         ageYearIndices <- c(grep("age", tolower(names(frequency1))), grep("year", tolower(names(frequency1))), grep("depth", tolower(names(frequency1))))
         varFreq1 <- frequency1[!1:length(frequency1) %in% ageYearIndices]
         TSsummaryNew <- data.frame(names(varFreq1), varFreq1)
-        colnames(TSsummaryNew) <- c(as.character(add.variable[jkl]), paste0(substr(as.character(add.variable[jkl]), 1,4), "_freq"))
+        colnames(TSsummaryNew) <- c(as.character(add.variable[jkl]), paste0(as.character(add.variable[jkl]), "_freq"))
         TSsummary <- cbind.NA(TSsummary, TSsummaryNew)
       }
     }
