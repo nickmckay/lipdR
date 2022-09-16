@@ -20,11 +20,12 @@ output:
 </style>
 
 ```{r setup, include = FALSE, width.out='100%'}
-# devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
-library(lipdR)
-source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\summary.R")
-source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\is_blank.R")
-source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\cbind_NA.R")
+devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
+#library(lipdR)
+#source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\summary.R")
+#source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\is_blank.R")
+#source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\cbind_NA.R")
+#source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\s3.R")
 options(width = 500)
 library(xaringanExtra)
 knitr::opts_chunk$set(
@@ -53,7 +54,7 @@ L <- readLipd("https://lipdverse.org/data/MD6jkgwSxsq0oilgYUjM/1_0_0//Arc-MooseL
 
 ```{r}
 
-lipdSummary(L)
+summary(L)
 
 ```
 ## Multi LiPD
@@ -110,6 +111,8 @@ MLSummary[order(MLSummary$NumEns, decreasing=TRUE),]
 TS1 <- extractTs(D)
 tibTS <- ts2tibble(TS1)
 
+class(TS1)
+
 ```
 
 ### View the dimensions of the tibble TS object
@@ -127,7 +130,7 @@ dim(tibTS)
 ##### Let's limit the table to show details of the first 10 rows only
 
 ```{r}
-
+class(tibTS)
 lipdTSSummary(ts.object=tibTS, print.length = 10, return.table = FALSE)
 
 ```

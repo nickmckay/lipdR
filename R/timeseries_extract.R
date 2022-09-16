@@ -58,7 +58,7 @@ extractTs= function(D, whichtables = "all", mode = "paleo"){
       }
     }
   }
-  structure(TS,class = c("lipd-ts",class(list()))) %>% 
+  structure(TS,class = c("lipd_ts",class(list()))) %>% 
   return()
 }
 
@@ -382,7 +382,7 @@ extract_geo=function(L,root){
 
 #' Split interpretation by scope
 #' @export
-#' @param TS a lipd-TS object
+#' @param TS a lipd_ts object
 #' @import stringr
 #' @return split TS
 #' @export

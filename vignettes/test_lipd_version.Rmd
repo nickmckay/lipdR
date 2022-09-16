@@ -1,0 +1,31 @@
+---
+title: "lipd version"
+author: "Dave"
+date: "2022-09-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## setup
+
+```{r}
+library(lipdR)
+source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\summary.R")
+
+sessionInfo()
+
+```
+## test
+```{r}
+L <- readLipd("https://www.ncei.noaa.gov/pub/data/paleo/pages2k/pages2k-temperature-v2-2017/data-current-version/Ant-JamesRossIsland.Mulvaney.2013.lpd")
+
+lipdSummary(L)
+
+length(L$paleoData[[1]]$paleoMeasurementTable[[1]]$columns)
+
+L$lipdVersion
+```
+

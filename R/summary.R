@@ -321,7 +321,7 @@ multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", retur
   numLipd <- length(multi.lipd)
   
   if (return.table == FALSE){
-    cat(crayon::bold("Multi-LiPD contains", numLipd, "LiPD files.\n\n"))
+    cat(crayon::bold("Multi LiPD contains", numLipd, "LiPD files.\n\n"))
   }
   
   archiveTypes <- list()
@@ -334,7 +334,7 @@ multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", retur
     L <- multi.lipd[[qqq]]
     
     if (is.null(L$paleoData) & is.null(L$chronData)){
-      warning("LiPD", qqq, "in multi-lipd object missing paleoData and chronData\n")
+      warning("LiPD", qqq, "in multi_lipd object missing paleoData and chronData\n")
       next
     }
     
@@ -465,12 +465,12 @@ multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", retur
 #' @examples
 lipdTSSummary <- function(ts.object, time.variable=NULL, print.length=10, return.table = FALSE, add.variable = NULL){
   
-  if (class(ts.object)[1]=="lipd-ts"){
+  if (is.lipdTs(ts.object)){
     ts.object <- ts2tibble(ts.object)
-  }else if (class(ts.object)[1]=="lipd-ts-tibble"){
+  }else if (is.lipdTsTibble(ts.object)){
     abtl1 <- 1
   }else{
-    stop("ts.object is not a lipd-ts or lipd-ts-tibble")
+    stop("ts.object is not a lipd_ts or lipd_ts_tibble, check class(ts.object)")
   }
   
   allYear <- FALSE

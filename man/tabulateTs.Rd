@@ -11,9 +11,6 @@ tabulateTs(ts, time.var = "age")
 
 \item{time.var}{What's the name of the time var (default = "age")}
 }
-\value{
-
-}
 \description{
 Create a data table from a lipd-ts-tibble object
 }
