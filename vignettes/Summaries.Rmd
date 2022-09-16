@@ -9,7 +9,6 @@ output:
     toc: true
     toc_depth: 2
     df_print: paged
-    css: doc.css
 ---
 
 <style type="text/css">
@@ -63,6 +62,7 @@ summary(L)
 
 ```{r echo = T, results = 'hide'}
 D <- readLipd("http://lipdverse.org/testData/testData.zip")
+
 ```
 
 
@@ -111,7 +111,6 @@ MLSummary[order(MLSummary$NumEns, decreasing=TRUE),]
 TS1 <- extractTs(D)
 tibTS <- ts2tibble(TS1)
 
-class(TS1)
 
 ```
 
@@ -130,7 +129,6 @@ dim(tibTS)
 ##### Let's limit the table to show details of the first 10 rows only
 
 ```{r}
-class(tibTS)
 lipdTSSummary(ts.object=tibTS, print.length = 10, return.table = FALSE)
 
 ```

@@ -4,7 +4,6 @@
 #'
 #' @param pub 
 #' @importFrom crayon bold
-#' @import cran
 #' @family summary
 #' @return
 #' @export
@@ -40,7 +39,6 @@ printCitations <- function(pub){
 #'
 #' @param pub
 #' @family summary
-#' @import cran
 #'
 #' @return
 #' @export
@@ -96,7 +94,6 @@ formatCitation <- function(pub){
 #' @param df2 
 #' @family summary
 #' @author David Edge
-#' @import cran
 #'
 #' @return
 #' @export
@@ -127,7 +124,6 @@ matchCols <- function(df1,df2){
 #'
 #' @param dataIn 
 #' @family summary
-#' @import cran
 #' @importFrom crayon bold
 #' @importFrom tibble as_tibble
 #' @author David Edge
@@ -251,7 +247,6 @@ printSummaryData <- function(dataIn, run.quiet = FALSE){
 #'
 #' @return
 #' @export
-#' @import cran
 #'
 #' @examples
 printModel <- function(chron.model){
@@ -306,7 +301,6 @@ printModel <- function(chron.model){
 #' @importFrom glue glue
 #' @importFrom crayon bold
 #' @author David Edge
-#' @import cran
 #' @return
 #' @export
 #' @family summary
@@ -457,7 +451,6 @@ multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", retur
 #' @param add.variable
 #' 
 #' @author David Edge
-#' @import cran
 #' @return
 #' @export
 #' @family summary
@@ -615,7 +608,6 @@ lipdTSSummary <- function(ts.object, time.variable=NULL, print.length=10, return
 #' @importFrom glue glue
 #' @importFrom crayon bold
 #' @author David Edge
-#' @import cran
 #' @return
 #' @export
 #' @family summary
