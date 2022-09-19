@@ -7,7 +7,12 @@
 printSummaryData(dataIn, run.quiet = FALSE)
 }
 \arguments{
-\item{dataIn}{}
+\item{dataIn}{paleoData or chronData objects from a lipd}
+
+\item{run.quiet}{suppress printing}
+}
+\value{
+measurement tables
 }
 \description{
 Print summary data from Paleo/Chron measurement tables

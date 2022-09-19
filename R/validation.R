@@ -3,7 +3,7 @@
 #' @param L a lipd object
 #' @param allow.ensemble Check for ensemble variables as well
 #'
-#' @return
+#' @return T/F
 #' @export
 validLipd <- function(L,allow.ensemble = TRUE){
   good <- TRUE

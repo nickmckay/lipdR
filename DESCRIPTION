@@ -18,12 +18,27 @@ Maintainer: Nicholas McKay <nick@nau.edu>
 Description: Functions to open, modify, analyze, and save LiPD data. 
 Depends: R (>= 3.1.0)
 License: MIT + file LICENSE
-LazyData: TRUE
 RoxygenNote: 7.2.1
 URL: www.lipd.net
-Imports:
+Encoding: UTF-8
+Imports: 
     stringr,
+    crayon,
     readr,
+    arsenal,
+    rlang,
+    dplyr,
+    tibble,
+    purrr,
+    tidyr,
+    tidyselect,
+    glue,
+    pkgbuild,
+    magrittr,
+    data.table,
+    methods,
+    sets
+Suggests: 
     tools,
     base,
     Rcpp,
@@ -32,33 +47,22 @@ Imports:
     grid,
     knitr,
     markdown,
-    methods,
     stats,
     utils,
     checkmate,
     chron,
-    data.table,
     RJSONIO,
     jsonlite,
     BBmisc,
-    arsenal,
-    rlang,
-    dplyr,
-    tibble,
-    purrr,
-    tidyr,
     usethis,
-    tidyselect,
-    pkgbuild,
-    glue,
     lubridate,
     neotoma2,
-    magrittr
-Suggests: 
     covr,
     rmarkdown,
-    testthat.
-    klippy
+    testthat,
+    klippy,
+    xaringanExtra,
+    devtools
 Remotes: 
     neotomadb/neotoma2
 VignetteBuilder: knitr

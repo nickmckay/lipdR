@@ -4,10 +4,12 @@
 \alias{summary.lipd}
 \title{Full summary detail of single lipd}
 \usage{
-\method{summary}{lipd}(x)
+\method{summary}{lipd}(object, ...)
 }
 \arguments{
-\item{x}{}
+\item{object}{a lipd object}
+
+\item{...}{additional arguments passed to generic summary function}
 }
 \description{
 Full summary detail of single lipd

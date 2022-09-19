@@ -273,13 +273,12 @@ as.lipdTsTibbleLong <- function(x){
 
 #' short print out of single lipd
 #'
-#' @param x 
+#' @param x a lipd object
+#' @param ... additional arguments passed to generic print function
 #'
-#' @return
 #' @export
 #'
-#' @examples
-print.lipd <- function(x){
+print.lipd <- function(x, ...){
   cat(x$dataSetName,"\n")
   cat(x$datasetId,"\n")
   cat(x$changelog[[length(x$changelog)]]$version,"\n")
@@ -289,26 +288,24 @@ print.lipd <- function(x){
 
 #' Full summary detail of single lipd
 #'
-#' @param x 
+#' @param object a lipd object
+#' @param ... additional arguments passed to generic summary function
 #'
-#' @return
 #' @export
 #'
-#' @examples
-summary.lipd <- function (x){
-  lipdSummary(x)
+summary.lipd <- function (object, ...){
+  lipdSummary(object)
 }
 
 
 #' short print out of multi lipd
 #'
-#' @param x 
+#' @param x a multi_lipd object
+#' @param ... additional arguments passed to generic print function
 #'
-#' @return
 #' @export
 #'
-#' @examples
-print.multi_lipd <- function (x){
+print.multi_lipd <- function (x, ...){
   cat(paste0("multi lipd object containing ", length(x), " individual lipds\n"))
   cat("use summary() to see details")
 }
@@ -316,43 +313,43 @@ print.multi_lipd <- function (x){
 
 #' full summary of multi lipd
 #'
-#' @param x 
-#' @param ... 
+#' @param object a multi_lipd object
+#' @param ... other arguments passed to multiLipdSummary()
+#' 
+#' @return a summary table if return.table = TRUE
 #'
-#' @return
 #' @export
 #'
-#' @examples
-summary.multi_lipd <- function (x, ...){
-  multiLipdSummary(x, ...)
+summary.multi_lipd <- function (object, ...){
+  multiLipdSummary(object, ...)
 }
 
 
 #' full summary of lipd ts
 #'
-#' @param x 
-#' @param ... 
+#' @param object a lipd_ts object
+#' @param ... other arguments passed to lipdTSSummary()
+#' 
+#' @return a summary table if return.table = TRUE
 #'
-#' @return
 #' @export
 #'
-#' @examples
-summary.lipd_ts <- function(x, ...) {
-  lipdTSSummary(x, ...)
+summary.lipd_ts <- function(object, ...) {
+  lipdTSSummary(object, ...)
 }
 
 
-#' full simary of lipd ts tibble
+#' full summary of lipd ts tibble
 #'
-#' @param x 
-#' @param ... 
+#' @param object a lipd_ts_tibble object
+#' @param ... other arguments passed to lipdTSSummary()
+#' 
+#' @return a summary table if return.table = TRUE
 #'
-#' @return
 #' @export
 #'
-#' @examples
-summary.lipd_ts_tibble <- function(x, ...) {
-  lipdTSSummary(x, ...)
+summary.lipd_ts_tibble <- function(object, ...) {
+  lipdTSSummary(object, ...)
 }
 
 

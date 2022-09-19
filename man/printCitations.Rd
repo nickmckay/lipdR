@@ -7,7 +7,7 @@
 printCitations(pub)
 }
 \arguments{
-\item{pub}{}
+\item{pub}{a pub object from a lipd}
 }
 \description{
 print formatted citations to stdout

@@ -11,6 +11,9 @@ validLipd(L, allow.ensemble = TRUE)
 
 \item{allow.ensemble}{Check for ensemble variables as well}
 }
+\value{
+T/F
+}
 \description{
 Is this a valid LiPD
 }

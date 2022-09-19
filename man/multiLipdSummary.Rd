@@ -12,7 +12,16 @@ multiLipdSummary(
 )
 }
 \arguments{
-\item{L}{}
+\item{multi.lipd}{a multi_lipd object}
+
+\item{print.length}{length of printed summary table}
+
+\item{time.units}{reporting preference if data contain both "year" and "age"}
+
+\item{return.table}{save summary table}
+}
+\value{
+a summary table if return.table=TRUE
 }
 \description{
 Print a summary of the contents of a Multi-LiPD

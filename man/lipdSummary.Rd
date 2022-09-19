@@ -7,7 +7,7 @@
 lipdSummary(L)
 }
 \arguments{
-\item{L}{}
+\item{L}{a lipd object}
 }
 \description{
 Print a summary of the contents of a LiPD file

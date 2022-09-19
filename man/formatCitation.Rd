@@ -6,6 +6,12 @@
 \usage{
 formatCitation(pub)
 }
+\arguments{
+\item{pub}{pub object from a lipd}
+}
+\value{
+formatted APA citation
+}
 \description{
 Format citation from 'pub' portion of LiPD file
 }

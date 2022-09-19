@@ -6,14 +6,22 @@
 \usage{
 lipdTSSummary(
   ts.object,
-  time.variable = NULL,
   print.length = 10,
   return.table = FALSE,
   add.variable = NULL
 )
 }
 \arguments{
-\item{add.variable}{}
+\item{ts.object}{a lipd_ts or lipd_ts_tibble}
+
+\item{print.length}{length of printed summary table}
+
+\item{return.table}{save the summary table}
+
+\item{add.variable}{include additional variables from ts object in summary}
+}
+\value{
+a summary table if return.table = TRUE
 }
 \description{
 Print a summary of the contents of a LiPD TS

@@ -4,12 +4,15 @@
 \alias{summary.lipd_ts}
 \title{full summary of lipd ts}
 \usage{
-\method{summary}{lipd_ts}(x, ...)
+\method{summary}{lipd_ts}(object, ...)
 }
 \arguments{
-\item{x}{}
+\item{object}{a lipd_ts object}
 
-\item{...}{}
+\item{...}{other arguments passed to lipdTSSummary()}
+}
+\value{
+a summary table if return.table = TRUE
 }
 \description{
 full summary of lipd ts

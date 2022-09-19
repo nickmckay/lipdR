@@ -4,10 +4,12 @@
 \alias{print.lipd}
 \title{short print out of single lipd}
 \usage{
-\method{print}{lipd}(x)
+\method{print}{lipd}(x, ...)
 }
 \arguments{
-\item{x}{}
+\item{x}{a lipd object}
+
+\item{...}{additional arguments passed to generic print function}
 }
 \description{
 short print out of single lipd

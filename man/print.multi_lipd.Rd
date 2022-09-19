@@ -4,10 +4,12 @@
 \alias{print.multi_lipd}
 \title{short print out of multi lipd}
 \usage{
-\method{print}{multi_lipd}(x)
+\method{print}{multi_lipd}(x, ...)
 }
 \arguments{
-\item{x}{}
+\item{x}{a multi_lipd object}
+
+\item{...}{additional arguments passed to generic print function}
 }
 \description{
 short print out of multi lipd

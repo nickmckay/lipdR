@@ -7,9 +7,12 @@
 matchCols(df1, df2)
 }
 \arguments{
-\item{df1}{}
+\item{df1}{data.frame}
 
-\item{df2}{}
+\item{df2}{data.frame}
+}
+\value{
+data frames with all rows/columns conserved
 }
 \description{
 Extends data frames to conserve all columns when merging

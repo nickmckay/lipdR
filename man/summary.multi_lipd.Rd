@@ -4,12 +4,15 @@
 \alias{summary.multi_lipd}
 \title{full summary of multi lipd}
 \usage{
-\method{summary}{multi_lipd}(x, ...)
+\method{summary}{multi_lipd}(object, ...)
 }
 \arguments{
-\item{x}{}
+\item{object}{a multi_lipd object}
 
-\item{...}{}
+\item{...}{other arguments passed to multiLipdSummary()}
+}
+\value{
+a summary table if return.table = TRUE
 }
 \description{
 full summary of multi lipd

@@ -7,7 +7,7 @@
 printModel(chron.model)
 }
 \arguments{
-\item{chron.model}{}
+\item{chron.model}{model object from chron data of lipd object}
 }
 \description{
 Extract and print model info

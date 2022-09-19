@@ -2,13 +2,10 @@
 
 #' print formatted citations to stdout
 #'
-#' @param pub 
+#' @param pub a pub object from a lipd
 #' @importFrom crayon bold
 #' @family summary
-#' @return
-#' @export
 #'
-#' @examples
 #' @author David Edge
 #' 
 printCitations <- function(pub){
@@ -37,14 +34,13 @@ printCitations <- function(pub){
 
 #' Format citation from 'pub' portion of LiPD file
 #'
-#' @param pub
+#' @param pub pub object from a lipd
 #' @family summary
 #'
-#' @return
+#' @return formatted APA citation
 #' @export
 #' @author David Edge
 #'
-#' @examples
 formatCitation <- function(pub){
   if ("author" %in% attributes(pub)$names){
     if(!is.null(pub$author)){
@@ -90,15 +86,13 @@ formatCitation <- function(pub){
 ################################################################################################
 #' Extends data frames to conserve all columns when merging
 #'
-#' @param df1 
-#' @param df2 
+#' @param df1 data.frame
+#' @param df2 data.frame
 #' @family summary
 #' @author David Edge
 #'
-#' @return
-#' @export
+#' @return data frames with all rows/columns conserved
 #'
-#' @examples
 matchCols <- function(df1,df2){
   newCol1 <- names(df2)[!(names(df2) %in% names(df1))]
   if(length(newCol1) > 0){
@@ -122,16 +116,15 @@ matchCols <- function(df1,df2){
 
 #' Print summary data from Paleo/Chron measurement tables
 #'
-#' @param dataIn 
+#' @param dataIn paleoData or chronData objects from a lipd
+#' @param run.quiet suppress printing
 #' @family summary
 #' @importFrom crayon bold
 #' @importFrom tibble as_tibble
 #' @author David Edge
 #'
-#' @return
-#' @export
+#' @return measurement tables
 #'
-#' @examples
 printSummaryData <- function(dataIn, run.quiet = FALSE){
   
   PDnum <- length(dataIn)
@@ -242,13 +235,10 @@ printSummaryData <- function(dataIn, run.quiet = FALSE){
 
 #' Extract and print model info
 #'
-#' @param chron.model 
+#' @param chron.model model object from chron data of lipd object
 #' @author David Edge
 #'
-#' @return
-#' @export
 #'
-#' @examples
 printModel <- function(chron.model){
   
   numModels <- length(chron.model)
@@ -297,15 +287,17 @@ printModel <- function(chron.model){
 
 #' Print a summary of the contents of a Multi-LiPD
 #'
-#' @param L 
+#' @param multi.lipd a multi_lipd object
+#' @param print.length length of printed summary table
+#' @param time.units reporting preference if data contain both "year" and "age"
+#' @param return.table save summary table
 #' @importFrom glue glue
 #' @importFrom crayon bold
 #' @author David Edge
-#' @return
+#' @return a summary table if return.table=TRUE
 #' @export
 #' @family summary
 #'
-#' @examples
 multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", return.table = FALSE){
   
   if (is.null(multi.lipd)){
@@ -444,19 +436,19 @@ multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", retur
 
 #' Print a summary of the contents of a LiPD TS
 #'
-#' @param ts.object
-#' @param time.variable
-#' @param print.length
-#' @param return.table
-#' @param add.variable
+#' @param ts.object a lipd_ts or lipd_ts_tibble
+#' @param print.length length of printed summary table
+#' @param return.table save the summary table
+#' @param add.variable include additional variables from ts object in summary
 #' 
 #' @author David Edge
-#' @return
+#' @return a summary table if return.table = TRUE
 #' @export
 #' @family summary
 #'
-#' @examples
-lipdTSSummary <- function(ts.object, time.variable=NULL, print.length=10, return.table = FALSE, add.variable = NULL){
+lipdTSSummary <- function(ts.object, print.length=10, return.table = FALSE, add.variable = NULL){
+  
+  time.variable <- "Age"
   
   if (is.lipdTs(ts.object)){
     ts.object <- ts2tibble(ts.object)
@@ -478,7 +470,6 @@ lipdTSSummary <- function(ts.object, time.variable=NULL, print.length=10, return
   #look for "age" and "year" variables, do all TS have one or the other?
   hasYear <- rep(NA, numTS)
   hasAge <- rep(NA, numTS)
-  if (is.null(time.variable)){
     for (i in 1:length(ts.object$year)){
       hasYear[i] <- !is_blank(unlist(ts.object$year[i]))
       hasAge[i] <- !is_blank(unlist(ts.object$age[i]))
@@ -487,35 +478,35 @@ lipdTSSummary <- function(ts.object, time.variable=NULL, print.length=10, return
     totYear <- sum(hasYear)
     totAge <- sum(hasAge)
     
-    if (totYear < numTS & totAge < numTS){
-      if (return.table == FALSE){cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
-        cat(totYear, "variables contain year (AD), while", totAge, "contain age (BP).\n\n")}
-      if (totYear > totAge){
-        time.variable <- "Year"
-      }else{
-        time.variable <- "Age"
-      }
-    }else if (totYear == numTS & totAge == numTS){
-      allYear <- TRUE
-      allAge <- TRUE
-      if (return.table == FALSE){cat("All variables contain both age (BP) and year (AD) data.\n\n")}
-      if (is.null(time.variable)){
-        time.variable <- "Year"
-      }
-    }else if (totYear == numTS & totAge != numTS){
-      allYear <- TRUE
-      if (return.table == FALSE){cat("All variables contain year (AD) data,", totAge, "variables contain age (BP) data.\n\n")}
-      if (is.null(time.variable)){
-        time.variable <- "Year"
-      }
+  if (totYear < numTS & totAge < numTS){
+    if (return.table == FALSE){cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
+      cat(totYear, "variables contain year (AD), while", totAge, "contain age (BP).\n\n")}
+    if (totYear > totAge){
+      time.variable <- "Year"
     }else{
-      allAge <- TRUE
-      if (return.table == FALSE){cat("All variables contain age (BP) data,", totYear, "variables contain year (AD) data.\n\n")}
-      if (is.null(time.variable)){
-        time.variable <- "Age"
-      }
+      time.variable <- "Age"
+    }
+  }else if (totYear == numTS & totAge == numTS){
+    allYear <- TRUE
+    allAge <- TRUE
+    if (return.table == FALSE){cat("All variables contain both age (BP) and year (AD) data.\n\n")}
+    if (is.null(time.variable)){
+      time.variable <- "Year"
+    }
+  }else if (totYear == numTS & totAge != numTS){
+    allYear <- TRUE
+    if (return.table == FALSE){cat("All variables contain year (AD) data,", totAge, "variables contain age (BP) data.\n\n")}
+    if (is.null(time.variable)){
+      time.variable <- "Year"
+    }
+  }else{
+    allAge <- TRUE
+    if (return.table == FALSE){cat("All variables contain age (BP) data,", totYear, "variables contain year (AD) data.\n\n")}
+    if (is.null(time.variable)){
+      time.variable <- "Age"
     }
   }
+  
   
   
   #calculate time overlap
@@ -604,15 +595,13 @@ lipdTSSummary <- function(ts.object, time.variable=NULL, print.length=10, return
 
 #' Print a summary of the contents of a LiPD file
 #'
-#' @param L 
+#' @param L a lipd object
 #' @importFrom glue glue
 #' @importFrom crayon bold
 #' @author David Edge
-#' @return
 #' @export
 #' @family summary
 #'
-#' @examples
 lipdSummary <- function(L){
   #Name
   cat("################################################################################################\n")

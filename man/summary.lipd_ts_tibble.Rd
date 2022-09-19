@@ -2,15 +2,18 @@
 % Please edit documentation in R/s3.R
 \name{summary.lipd_ts_tibble}
 \alias{summary.lipd_ts_tibble}
-\title{full simary of lipd ts tibble}
+\title{full summary of lipd ts tibble}
 \usage{
-\method{summary}{lipd_ts_tibble}(x, ...)
+\method{summary}{lipd_ts_tibble}(object, ...)
 }
 \arguments{
-\item{x}{}
+\item{object}{a lipd_ts_tibble object}
 
-\item{...}{}
+\item{...}{other arguments passed to lipdTSSummary()}
+}
+\value{
+a summary table if return.table = TRUE
 }
 \description{
-full simary of lipd ts tibble
+full summary of lipd ts tibble
 }

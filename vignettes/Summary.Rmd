@@ -1,22 +1,12 @@
 ---
-title: "Exploring LiPD data using lipdR summary functions"
-author: "David Edge"
-date: "`r Sys.Date()`"
-output: 
-  html_document:
-    theme: simplex
-    highlight: tango
-    toc: true
-    toc_depth: 2
-    df_print: paged
+title: "LiPD Summaries"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{createColumn}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-<style type="text/css">
-.main-container {
-  max-width: 100% !important;
-  margin: auto;
-}
-</style>
 
 ```{r setup, include = FALSE, width.out='100%'}
 devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
@@ -26,7 +16,6 @@ devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
 #source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\cbind_NA.R")
 #source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\s3.R")
 options(width = 500)
-library(xaringanExtra)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
