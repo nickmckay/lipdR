@@ -7,14 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
 ```{r setup, include = FALSE, width.out='100%'}
-devtools::load_all("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize")
-#library(lipdR)
-#source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\summary.R")
-#source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\is_blank.R")
-#source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\cbind_NA.R")
-#source("C:\\Users\\dce72\\Documents\\LiPDsandbox\\lipdR-Summarize\\R\\s3.R")
 options(width = 500)
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -23,145 +16,160 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r xaringanExtra-clipboard, echo=FALSE}
-xaringanExtra::use_clipboard()
-```
+# Quick summaries for LiPD objects
 
-## Data
-### Load LiPD files from lipdverse.org
-##### From the Pages 2k collection, let's look at the Moose Lake dataset
-##### You can download the file first or simply use the url in readLipd()
+LiPD datasets can contain a lot of data and metadata, and it's often useful to get a quick summary of one or more datasets that you've loaded into R. Let's load in a file from lipdverse.org and see how this works. 
+
+
+## LiPD objects
+Let's first look at a single LiPD the Moose Lake dataset from Clegg et al. (2010) that's part of the PAGES2k Temperature compilation.
 
 ```{r echo=T, results='hide'}
-L <- readLipd("https://lipdverse.org/data/MD6jkgwSxsq0oilgYUjM/1_0_0//Arc-MooseLake.Clegg.2010-ensemble.lpd")
+library(lipdR)
 
+L <- readLipd("https://lipdverse.org/data/MD6jkgwSxsq0oilgYUjM/1_0_0//Arc-MooseLake.Clegg.2010-ensemble.lpd")
 ```
-## Single LiPD
-### See a detailed summary of a single LiPD
-##### The single lipd summary provides detail on the location, publications(s), paleo data, chron data, and model ensembles
+
+First, let's get a quick summary using the `print()` function, or by just returning the object:
 
 ```{r}
-
-summary(L)
-
+L
 ```
-## Multi LiPD
 
-### Let's use a large library of lipd files
+This is handy, as we can quickly see...
+
+*NPM - I think that print should include all of the printed text in summary, just not the tables*
+
+To get more detail about the dataset, let's use `summary()`
+
+```{r}
+summary(L)
+```
+In addition to the information printed by `print()`,  `summary()` includes tables with basic metadata about each of the columns in the measurement tables. In the Moose Lake dataset's paleoData measurement table, we see two variables, **temperature** and **year**, and the table shows the units, description, and some stats about the contents. Similarly, we get information about the radiocarbon dates included in the chronData measurement table. 
+
+## Multi LiPD objects
+
+LiPD datasets are often most powerful when many datasets are analyzed together, and it's common to load multiple datasets into a "multi_lipd" object. It's nice to get useful summaries for these data too. Let's explore this functionality using a diverse collection of LiPD files pulled at random from around the LiPDverse.
 
 ```{r echo = T, results = 'hide'}
 D <- readLipd("http://lipdverse.org/testData/testData.zip")
-
 ```
 
-
-### Get a summary of all LiPDs in a multi-lipd object
-
-##### We can choose the prefered age units. Let's return time values in years AD if available
-
-##### Leaving return.table set to 'FALSE' will print the table to the screen
-
-##### Let's print the details of the first 20 datasets
+Once again, we can `print()` for an overview:
 
 ```{r}
-
-multiLipdSummary(multi.lipd=D, print.length=20, time.units="AD", return.table=FALSE)
-
+D
 ```
-### Save the summary table
 
-##### Sometimes it is useful to save the table, so it can be sorted and further investigated
+*NPM - here too, I think that print should include all of the printed text in summary, just not the tables*
 
-##### Simply change return.table to 'TRUE' and save the summary
+and see the number of datasets included, their archiveTypes and geographic boundaries. 
+
+For more information, we can use `summary()`
 
 ```{r}
-
-MLSummary <- multiLipdSummary(D, time.units="AD", return.table = TRUE)
-
+summary(D)
 ```
-### The saved table can now be interrogated
-
-##### For example, we can sort the table to find datasets with age ensembles
+And also get tables that give us some basic information on each of the datasets included. There are few options that customize the output of summary, here we will choose the preferred time units, and limit the number of datasets summarized to 20:
 
 ```{r}
-MLSummary[order(MLSummary$NumEns, decreasing=TRUE),]
+summary(D, print.length=20, time.units="AD")
 ```
+These options limit the printed information on the table to 20 rows, and gives us time summary information in AD units where possible. 
 
+### Storing the summary table
 
-## LiPD TS Objects
-
-### Format data as a tibble LiPD TS
-
-##### extractTs() creates a time series from a multi-lipd object
-##### This allows for easier querying and data analysis
+Sometimes it is useful to save the table, so it can be sorted and further investigated. Simply change return.table to TRUE and assign an output:"
 
 ```{r}
+MLSummary <- summary(D, return.table = TRUE)
+```
 
-TS1 <- extractTs(D)
-tibTS <- ts2tibble(TS1)
+We can now explore this table as a standard data frame. Here we do so using `dplyr` tools to sort by datasets with age ensembles
 
+```{r}
+library(dplyr)
+arrange(MLSummary,desc(NumEns))
+```
+
+With a well curated dataset (this example doesn't quite fit those criteria), a few commands can get you pretty close to a publishable table.
+
+*NPM: we might have to kill this section because of the gt package, or just not show that. *
+```{r}
+library(gt)
+MLSummary %>% 
+  select(-starts_with("Num"),-"Paleo Vars") %>% 
+  gt()
 
 ```
 
-### View the dimensions of the tibble TS object
+## LiPD Timeseries objects
 
+Typically, when we load multiple LiPD datasets, it's convenient to convert them into timeseries objects, as it greatly simplifies analyzing the data. There are print and summary methods for these objects too. There are a couple different representations of these objects availabe in R - namely, as a list (lipd_ts) or as a nested tibble (lipd_ts_tibble). If you're used to working with tibbles and tidyverse you'll probably prefer the latter, so we'll do that here:
+
+```{r}
+tibTS <- as.lipdTsTibble(D)
+```
+
+Let's quickly check the size of this tibble
 ```{r}
 dim(tibTS)
 ```
 
-### Print summary of LiPD TS
+Wow - that's pretty big. That means that there are `r nrow(tibTS)` variables across all our datasets, and `r ncol(tibTS)` data or metadata fields present in one or more of the datasets. 
 
-##### The lipdTSSummary() function accepts both lipd-ts (TS1) and lipd-tib-ts (tibTS) objects
-
-##### The summary returns the dimensions of the TS object, details of the time units, a time interval covered by all varibales (if possible), and a summary table
-
-##### Let's limit the table to show details of the first 10 rows only
+*NPM: Let's add a print method to the TS as well, and again, let's do all the text but no table*
+*NPM: Could we also add the number datasets included in the TS? just length(unique(ts$datasetId))?*
+Again, let's print out a quick overview:
 
 ```{r}
-lipdTSSummary(ts.object=tibTS, print.length = 10, return.table = FALSE)
-
+tibTS
 ```
-### Add columns to summary
 
-##### The summary table can be expanded to include any variables of the TS object
-##### The names() function shows the options (here we see the first 5)
-##### Let's add several
-##### The summary function handles numeric and character variables differently
+*Describe output*
+
+Beyond this quick overview, we can get a lot more information using `summary()`. This works the same for lipd_ts and lipd_ts_tibble objects. Let's limit the table to show details of the first 10 rows only
 
 ```{r}
-names(tibTS)[1:5]
+summary(tibTS, print.length = 10)
+```
+In addition to the overview provided by `print()`, `summary()` gives us a table that shows us which variables are most common in the TS object. We can explore this more by specifying which metadata fields we'd like to summarize using the `add.variable` parameter.
 
-lipdTSSummary(tibTS, print.length = 10, return.table = FALSE, add.variable = c("archiveType", "paleoData_meanValue12k","geo_continent", "geo_elevation", "agesPerKyr", "dataSetName"))
+```{r,warning=FALSE}
+summary(tibTS,
+        print.length = 10, 
+        add.variable = c("archiveType", "paleoData_meanValue12k","geo_continent", "geo_elevation", "agesPerKyr", "dataSetName"))
 
 ```
+Now we get the same summarizing information for those additional six columns. The character or categorical data (archiveType, geo_contintent, and dataSetName) get added to the count table. The numeric data (paleoData_meanValue12k, geo_elevation, and agesPerKyr) are summarized in quantiles above. 
 
+### Filtering the TS object
 
+This summary information is often a great first step towards informing how you will filter or subset your TS object for future analysis. For example, let's grab only the variables that: 
 
-### Save summary table and view a specific subset
-
-##### Saving the summary table allows for further investigation
-
-##### Let's subset the continental United States (roughly)
-
-##### Let's choose only those datasets covering the early Holocene
-
-##### Now, let's pull all the climate interpretation info
-
-##### We can now have a closer look to see which of these data are appropriate
+1. are in the continental US (roughly)
+2. cover the early Holocene
+3. Have some climate interpretation
 
 ```{r}
-#Continental U.S. bounds: -125	-70 30	50
-tibTSus <-tibTS[tibTS$geo_latitude > 30 & tibTS$geo_latitude < 50,]
-tibTSus <-tibTSus[tibTSus$geo_longitude > -125 & tibTSus$geo_longitude < -70,]
-#Early Holocene
-tibTSus <-tibTSus[apply(tibTSus, 1, function(x) max(x$age)>11700),]
-tibTSus <-tibTSus[apply(tibTSus, 1, function(x) min(x$age)>100),]
-#grab interpreation info
-intepIndices <- grep("interpretation", names(tibTSus))
-hasInterp <- intepIndices[apply(tibTSus[,intepIndices], 2, function(x) sum(!is.na(x))>0)]
-
-#save summary for deeper exploration
-USsummary <- lipdTSSummary(tibTSus, print.length = 10, return.table = TRUE, add.variable = names(tibTSus[,hasInterp]))
-USsummary
+library(magrittr) #We'll use the pipe for clarity
+subsetTs <- tibTS %>% 
+  filter(between(geo_latitude,30,50),
+         between(geo_longitude,-125,-70),
+         maxYear > 11700,
+         minYear < 8000,
+         !is.na(interpretation1_variable))
 ```
+
+Great - we found `r nrow(subsetTs)` timeseries that meet these criteria. Let's explore their interpretations in a bit more detail by saving the table output.
+
+```{r}
+sumTable <- summary(subsetTs,
+                    return.table = TRUE,
+                    add.variable = c("interpretation1_variable",
+                                     "interpretation1_variableDetail",
+                                     "interpretation1_seasonality"))
+print(sumTable)
+```
+
 
