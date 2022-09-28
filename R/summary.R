@@ -341,20 +341,17 @@ printModel <- function(chron.model){
 #' @param multi.lipd a multi_lipd object
 #' @param print.length length of printed summary table
 #' @param time.units reporting preference if data contain both "year" and "age"
-#' @param return.table save summary table
 #' @param skip.table print a short summary without the table
 #' @importFrom glue glue
 #' @importFrom crayon bold
 #' @author David Edge
-#' @return a summary table if return.table=TRUE
+#' @return a summary table
 #' @export
 #' @family summary
 #'
-multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", return.table = FALSE, skip.table = FALSE){
+multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", skip.table = FALSE){
 
-  if (skip.table == TRUE){
-    return.table <- FALSE
-  }
+
 
   if (is.null(multi.lipd)){
     stop("multi.lipd input required")
@@ -362,9 +359,8 @@ multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", retur
 
   numLipd <- length(multi.lipd)
 
-  if (return.table == FALSE){
-    cat(crayon::bold("Multi LiPD contains", numLipd, "LiPD files.\n\n"))
-  }
+  cat(crayon::bold("Multi LiPD contains", numLipd, "LiPD files.\n\n"))
+
 
   archiveTypes <- list()
   lons <- list()
@@ -455,36 +451,32 @@ multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", retur
   numUniqueArchives <- length(uniqueArchives)
 
   #archiveType
-  if (return.table == FALSE){
-    cat(crayon::bold(glue::glue("### Archive Types ###\n\n")))
-    for (uuu in 1:numUniqueArchives){
-      cat(sum(unlist(archiveTypes) %in% uniqueArchives[uuu]), uniqueArchives[uuu], "records\n")
-    }
-    cat("\n")
-    cat(crayon::bold(glue::glue("### Geographic Bounds ###\n\n")))
+  cat(crayon::bold(glue::glue("### Archive Types ###\n\n")))
+  for (uuu in 1:numUniqueArchives){
+    cat(sum(unlist(archiveTypes) %in% uniqueArchives[uuu]), uniqueArchives[uuu], "records\n")
   }
+  cat("\n")
+  cat(crayon::bold(glue::glue("### Geographic Bounds ###\n\n")))
 
   maxLat <- max(unlist(lats))
   minLat <- min(unlist(lats))
   maxLon <- max(unlist(lons))
   minLon <- min(unlist(lons))
-  if (return.table == FALSE){
-    cat("All sites located between", paste0(minLat,"N"), "to", paste0(maxLat, "N"), "and", paste0(minLon, "E"), "to", paste0(maxLon, "E"), "\n\n")
+  cat("All sites located between", paste0(minLat,"N"), "to", paste0(maxLat, "N"), "and", paste0(minLon, "E"), "to", paste0(maxLon, "E"), "\n\n")
 
-  }
+
   dataCounts <- tibble::as_tibble(dataCounts)
 
   if (skip.table == TRUE){
     z=1
-  }else if (return.table == FALSE){
+  }else{
     cat(crayon::bold(glue::glue("### Measurement tables and models ###\n\n")))
+    cat("*Age values gathered from PaleoData Object 1, Measurement Table 1\n")
     print(dataCounts, n=print.length)
-    cat("*Age values gathered from PaleoData Object 1, Measurement Table 1")
-  }else if (return.table == TRUE){
-    return(dataCounts)
+    invisible(dataCounts)
   }
-
 }
+
 
 ################################################################################################
 ################################################################################################
@@ -494,20 +486,16 @@ multiLipdSummary <- function(multi.lipd, print.length=20, time.units="AD", retur
 #'
 #' @param ts.object a lipd_ts or lipd_ts_tibble
 #' @param print.length length of printed summary table
-#' @param return.table save the summary table
 #' @param add.variable include additional variables from ts object in summary
 #' @param skip.table print a short summary without the table
 #'
 #' @author David Edge
-#' @return a summary table if return.table = TRUE
+#' @return a summary table
 #' @export
 #' @family summary
 #'
-lipdTSSummary <- function(ts.object, print.length=10, return.table = FALSE, add.variable = NULL, skip.table = FALSE){
+lipdTSSummary <- function(ts.object, print.length=10, add.variable = NULL, skip.table = FALSE){
 
-  if (skip.table == TRUE){
-    return.table <- FALSE
-  }
 
   time.variable <- "Age"
 
@@ -524,7 +512,8 @@ lipdTSSummary <- function(ts.object, print.length=10, return.table = FALSE, add.
   totCols <- 10
   numTS <- nrow(ts.object)
 
-  if (return.table == FALSE){cat("LiPD TS object containing", numTS, "variables and", ncol(ts.object), "data and metadata fields.\n\n")}
+  cat("LiPD TS object containing",length(unique(ts.object$datasetId)), "datasets\n")
+  cat(numTS, "variables and", ncol(ts.object), "data and metadata fields.\n\n")
 
 
 
@@ -540,8 +529,8 @@ lipdTSSummary <- function(ts.object, print.length=10, return.table = FALSE, add.
     totAge <- sum(hasAge)
 
   if (totYear < numTS & totAge < numTS){
-    if (return.table == FALSE){cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
-      cat(totYear, "variables contain year (AD), while", totAge, "contain age (BP).\n\n")}
+    cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
+    cat(totYear, "variables contain year (AD), while", totAge, "contain age (BP).\n\n")
     if (totYear > totAge){
       time.variable <- "Year"
     }else{
@@ -550,19 +539,19 @@ lipdTSSummary <- function(ts.object, print.length=10, return.table = FALSE, add.
   }else if (totYear == numTS & totAge == numTS){
     allYear <- TRUE
     allAge <- TRUE
-    if (return.table == FALSE){cat("All variables contain both age (BP) and year (AD) data.\n\n")}
+    cat("All variables contain both age (BP) and year (AD) data.\n\n")
     if (is.null(time.variable)){
       time.variable <- "Year"
     }
   }else if (totYear == numTS & totAge != numTS){
     allYear <- TRUE
-    if (return.table == FALSE){cat("All variables contain year (AD) data,", totAge, "variables contain age (BP) data.\n\n")}
+    cat("All variables contain year (AD) data,", totAge, "variables contain age (BP) data.\n\n")
     if (is.null(time.variable)){
       time.variable <- "Year"
     }
   }else{
     allAge <- TRUE
-    if (return.table == FALSE){cat("All variables contain age (BP) data,", totYear, "variables contain year (AD) data.\n\n")}
+    cat("All variables contain age (BP) data,", totYear, "variables contain year (AD) data.\n\n")
     if (is.null(time.variable)){
       time.variable <- "Age"
     }
@@ -641,6 +630,7 @@ lipdTSSummary <- function(ts.object, print.length=10, return.table = FALSE, add.
 
 
     #Format TS summary as tibble for printing
+
     tibSummary <- tibble::as_tibble(TSsummary)
   }
 
@@ -648,10 +638,9 @@ lipdTSSummary <- function(ts.object, print.length=10, return.table = FALSE, add.
 
   if (skip.table == TRUE){
     z=1
-  }else if (return.table == FALSE){
+  }else {
     print(tibSummary, n=print.length)
-  }else{
-    return(tibSummary)
+    invisible(tibSummary)
   }
 
 }
