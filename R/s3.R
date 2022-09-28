@@ -4,6 +4,10 @@ new_lipd <- function(x = list()){
 
 new_multiLipd <- function(x = list()){
   structure(x,class = c("multi_lipd",class(list())))
+  for (i in 1:length(x)){
+    class(x[[i]]) <- c("lipd",class(list()))
+  }
+  return(x)
 }
 
 new_lipdTs <- function(x = list()){
@@ -99,28 +103,28 @@ as.lipd <- function(x){
     return(x)
   }else if(is.lipdTs(x)){
     x <- quiet(collapseTs(x,force = "if necessary"))
-    
+
     if(any("dataSetName" %in% names(x))){
-      structure(x,class = c("multi_lipd",class(list()))) %>% 
+      structure(x,class = c("multi_lipd",class(list()))) %>%
         return()
     }else{
       stop("Tried to convert from a lipd_ts to a multi_lipd, but it looks like more than one dataset was represented, so cannot convert this to lipd class. Perhaps you want as.multiLipd?")
     }
   }else if(is.lipdTsTibble(x)){
-    x <- purrr::transpose(x) %>% 
-      collapseTs(force = "if necessary") %>% 
+    x <- purrr::transpose(x) %>%
+      collapseTs(force = "if necessary") %>%
       suppressMessages()
     if(any("dataSetName" %in% names(x))){
-      structure(x,class = c("multi_lipd",class(list()))) %>% 
+      structure(x,class = c("multi_lipd",class(list()))) %>%
         return()
     }else{
       stop("Tried to convert from a lipd_ts_tibble to a multi_lipd, but it looks like more than one dataset was represented, so cannot convert this to lipd class. Perhaps you want as.multiLipd?")
     }
   }else if(is.lipdTsTibbleLong(x)){
-    x <- untidyTs(x) 
-    
+    x <- untidyTs(x)
+
     if(any("dataSetName" %in% names(x))){
-      structure(x,class = c("multi_lipd",class(list()))) %>% 
+      structure(x,class = c("multi_lipd",class(list()))) %>%
         return()
     }else{
       stop("Tried to convert from a lipd_ts_tibble_long to a multi_lipd, but it looks like more than one dataset was represented, so cannot convert this to lipd class. Perhaps you want as.multiLipd?")
@@ -147,31 +151,31 @@ as.multiLipd <- function(x){
     return(x)
   }else if(is.lipd(x)){
     stop("Cannot convert a single lipd to a multi_lipd. use multiLipd() to create a multi_lipd from a collection of lipd objects.")
-    
+
   }else if(is.lipdTs(x)){
     x <- quiet(collapseTs(x,force = "if necessary"))
-    
+
     if(!any("dataSetName" %in% names(x))){
-      structure(x,class = c("multi_lipd",class(list()))) %>% 
+      structure(x,class = c("multi_lipd",class(list()))) %>%
         return()
     }else{
       stop("Tried to convert from a lipd_ts to a multi_lipd, but it looks like only one dataset was represented, so cannot convert this to a multi_lipd")
     }
   }else if(is.lipdTsTibble(x)){
-    x <- purrr::transpose(x) %>% 
-      collapseTs(force = "if necessary") %>% 
+    x <- purrr::transpose(x) %>%
+      collapseTs(force = "if necessary") %>%
       quiet()
     if(!any("dataSetName" %in% names(x))){
-      structure(x,class = c("multi_lipd",class(list()))) %>% 
+      structure(x,class = c("multi_lipd",class(list()))) %>%
         return()
     }else{
       stop("Tried to convert from a lipd_ts_tibble to a multi_lipd, but it looks like only one dataset was represented, so cannot convert this to a multi_lipd")
     }
   }else if(is.lipdTsTibbleLong(x)){
-    x <- untidyTs(x) 
-    
+    x <- untidyTs(x)
+
     if(!any("dataSetName" %in% names(x))){
-      structure(x,class = c("multi_lipd",class(list()))) %>% 
+      structure(x,class = c("multi_lipd",class(list()))) %>%
         return()
     }else if(is.list(x)){
       if(validMultiLipd(x)){
@@ -180,7 +184,7 @@ as.multiLipd <- function(x){
         stop("Tried to convert a list to a LiPD object, but it failed validMultiLipd(). Check ?validMultiLipd for details")
       }
     }else{
-      
+
       stop("Tried to convert from a lipd_ts_tibble_long to a multi_lipd, but it looks like only one dataset was represented, so cannot convert this to a multi_lipd")
     }
   }else{
@@ -196,18 +200,18 @@ as.multiLipd <- function(x){
 #' @export
 as.lipdTs <- function(x){
   if(is.lipd(x) | is.multiLipd(x)){
-    extractTs(x) %>% 
-      structure(class = c("lipd_ts",class(list()))) %>% 
+    extractTs(x) %>%
+      structure(class = c("lipd_ts",class(list()))) %>%
       return()
   }else if(is.lipdTs(x)){
     return(x)
   }else if(is.lipdTsTibble(x)){
-    purrr::transpose(x) %>% 
-      structure(class = c("lipd_ts",class(list()))) %>% 
+    purrr::transpose(x) %>%
+      structure(class = c("lipd_ts",class(list()))) %>%
       return()
   }else if(is.lipdTsTibbleLong(x)){
-    untidyTs(x) %>% 
-      structure(class = c("lipd_ts",class(list()))) %>% 
+    untidyTs(x) %>%
+      structure(class = c("lipd_ts",class(list()))) %>%
       return()
   }else{
     stop(glue::glue("I don't know how to convert class: {class(x)} to lipd_ts object."))
@@ -222,20 +226,20 @@ as.lipdTs <- function(x){
 #' @export
 as.lipdTsTibble <- function(x){
   if(is.lipd(x) | is.multiLipd(x)){
-    extractTs(x) %>% 
-      ts2tibble() %>% 
-      structure(class = c("lipd_ts_tibble",class(tibble::tibble()))) %>% 
+    extractTs(x) %>%
+      ts2tibble() %>%
+      structure(class = c("lipd_ts_tibble",class(tibble::tibble()))) %>%
       return()
   }else if(is.lipdTs(x)){
-    ts2tibble(x) %>% 
-      structure(class = c("lipd_ts_tibble",class(tibble::tibble()))) %>% 
+    ts2tibble(x) %>%
+      structure(class = c("lipd_ts_tibble",class(tibble::tibble()))) %>%
       return()
   }else if(is.lipdTsTibble(x)){
     return(x)
   }else if(is.lipdTsTibbleLong(x)){
-    untidyTs(x) %>% 
-      ts2tibble() %>% 
-      structure(class = c("lipd_ts_tibble",class(tibble::tibble()))) %>% 
+    untidyTs(x) %>%
+      ts2tibble() %>%
+      structure(class = c("lipd_ts_tibble",class(tibble::tibble()))) %>%
       return()
   }else{
     stop(glue::glue("I don't know how to convert class: {class(x)} to lipd_ts_tibble object."))
@@ -250,19 +254,19 @@ as.lipdTsTibble <- function(x){
 #' @export
 as.lipdTsTibbleLong <- function(x){
   if(is.lipd(x) | is.multiLipd(x)){
-    extractTs(x) %>% 
-      tidyTs() %>% 
-      structure(class = c("lipd_ts_tibble_long",class(tibble::tibble()))) %>% 
+    extractTs(x) %>%
+      tidyTs() %>%
+      structure(class = c("lipd_ts_tibble_long",class(tibble::tibble()))) %>%
       return()
   }else if(is.lipdTs(x)){
-    tidyTs(x) %>% 
-      structure(class = c("lipd_ts_tibble_long",class(tibble::tibble()))) %>% 
+    tidyTs(x) %>%
+      structure(class = c("lipd_ts_tibble_long",class(tibble::tibble()))) %>%
       return()
   }else if(is.lipdTsTibble(x)){
-    purrr::transpose(x) %>% 
-      tidyTs() %>% 
-      structure(class = c("lipd_ts_tibble_long",class(tibble::tibble()))) %>% 
-      return() 
+    purrr::transpose(x) %>%
+      tidyTs() %>%
+      structure(class = c("lipd_ts_tibble_long",class(tibble::tibble()))) %>%
+      return()
   }else if(is.lipdTsTibbleLong(x)){
     return(x)
   }else{
@@ -279,11 +283,7 @@ as.lipdTsTibbleLong <- function(x){
 #' @export
 #'
 print.lipd <- function(x, ...){
-  cat(x$dataSetName,"\n")
-  cat(x$datasetId,"\n")
-  cat(x$changelog[[length(x$changelog)]]$version,"\n")
-  cat("\n")
-  cat("use summary() to see details\n")
+  lipdSummary(x, skip.table = TRUE)
 }
 
 #' Full summary detail of single lipd
@@ -306,8 +306,7 @@ summary.lipd <- function (object, ...){
 #' @export
 #'
 print.multi_lipd <- function (x, ...){
-  cat(paste0("multi lipd object containing ", length(x), " individual lipds\n"))
-  cat("use summary() to see details")
+  multiLipdSummary(x, skip.table = TRUE)
 }
 
 
@@ -315,7 +314,7 @@ print.multi_lipd <- function (x, ...){
 #'
 #' @param object a multi_lipd object
 #' @param ... other arguments passed to multiLipdSummary()
-#' 
+#'
 #' @return a summary table if return.table = TRUE
 #'
 #' @export
@@ -324,12 +323,23 @@ summary.multi_lipd <- function (object, ...){
   multiLipdSummary(object, ...)
 }
 
+#' short print out of lipd ts
+#'
+#' @param x a lipd_ts object
+#' @param ... additional arguments passed to generic print function
+#'
+#' @export
+#'
+print.lipd_ts <- function (x, ...){
+  lipdTSSummary(x, skip.table = TRUE)
+}
+
 
 #' full summary of lipd ts
 #'
 #' @param object a lipd_ts object
 #' @param ... other arguments passed to lipdTSSummary()
-#' 
+#'
 #' @return a summary table if return.table = TRUE
 #'
 #' @export
@@ -339,11 +349,22 @@ summary.lipd_ts <- function(object, ...) {
 }
 
 
+#' short print out of lipd ts tibble
+#'
+#' @param x a lipd_ts_tibble object
+#' @param ... additional arguments passed to generic print function
+#'
+#' @export
+#'
+print.lipd_ts_tibble <- function (x, ...){
+  lipdTSSummary(x, skip.table = TRUE)
+}
+
 #' full summary of lipd ts tibble
 #'
 #' @param object a lipd_ts_tibble object
 #' @param ... other arguments passed to lipdTSSummary()
-#' 
+#'
 #' @return a summary table if return.table = TRUE
 #'
 #' @export

@@ -4,10 +4,12 @@
 \alias{lipdSummary}
 \title{Print a summary of the contents of a LiPD file}
 \usage{
-lipdSummary(L)
+lipdSummary(L, skip.table = FALSE)
 }
 \arguments{
 \item{L}{a lipd object}
+
+\item{skip.table}{print a shorter summary without the table}
 }
 \description{
 Print a summary of the contents of a LiPD file

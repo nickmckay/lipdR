@@ -8,7 +8,8 @@ multiLipdSummary(
   multi.lipd,
   print.length = 20,
   time.units = "AD",
-  return.table = FALSE
+  return.table = FALSE,
+  skip.table = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ multiLipdSummary(
 \item{time.units}{reporting preference if data contain both "year" and "age"}
 
 \item{return.table}{save summary table}
+
+\item{skip.table}{print a short summary without the table}
 }
 \value{
 a summary table if return.table=TRUE
