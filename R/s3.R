@@ -3,11 +3,10 @@ new_lipd <- function(x = list()){
 }
 
 new_multiLipd <- function(x = list()){
-  structure(x,class = c("multi_lipd",class(list())))
   for (i in 1:length(x)){
     class(x[[i]]) <- c("lipd",class(list()))
   }
-  return(x)
+  structure(x,class = c("multi_lipd",class(list())))
 }
 
 new_lipdTs <- function(x = list()){
