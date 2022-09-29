@@ -3,11 +3,23 @@ title: "LiPD Summaries"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{createColumn}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::knitr}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE, width.out='100%'}
+  if (!requireNamespace("devtools", quietly = TRUE)) {
+    stop(
+      "Package 'devtools' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
+      call. = FALSE
+    )
+  }
+  if (!requireNamespace("gt", quietly = TRUE)) {
+    stop(
+      "Package 'gt' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
+      call. = FALSE
+    )
+  }
 options(width = 500)
 knitr::opts_chunk$set(
   collapse = TRUE,

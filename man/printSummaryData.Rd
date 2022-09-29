@@ -10,6 +10,8 @@ printSummaryData(dataIn, run.quiet = FALSE, skip.table = FALSE)
 \item{dataIn}{paleoData or chronData objects from a lipd}
 
 \item{run.quiet}{suppress printing}
+
+\item{skip.table}{print the table?}
 }
 \value{
 measurement tables

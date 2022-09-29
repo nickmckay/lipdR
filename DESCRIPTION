@@ -37,32 +37,23 @@ Imports:
     magrittr,
     data.table,
     methods,
+    jsonlite,
     sets
 Suggests: 
     tools,
+    gt,
     base,
     Rcpp,
-    backports,
-    lattice,
-    grid,
-    knitr,
-    markdown,
     stats,
     utils,
-    checkmate,
-    chron,
-    RJSONIO,
-    jsonlite,
-    BBmisc,
     usethis,
+    knitr,
+    devtools,
     lubridate,
     neotoma2,
     covr,
     rmarkdown,
     testthat,
-    klippy,
-    xaringanExtra,
-    devtools
 Remotes: 
     neotomadb/neotoma2
 VignetteBuilder: knitr

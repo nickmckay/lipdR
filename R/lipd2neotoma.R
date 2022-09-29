@@ -1,11 +1,23 @@
 #' Convert lipd to neotoma
 #'
-#' @param L
+#' @param L lipf object
+#' @importFrom methods new
 #'
 #' @return neotoma site
 #' @export
 #'
+
+#please note that this is a beta version for testing, there are many bugs here still
+
 lipd2neotoma <- function(L){
+
+  if (!requireNamespace("neotoma2", quietly = TRUE)) {
+    stop(
+      "Package 'neotoma2' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
+      call. = FALSE
+    )
+  }
+
   #save measurement tables
   mtabs1 <- getMeasurementTables(L)
 
@@ -104,13 +116,11 @@ lipd2neotoma <- function(L){
 
 
 
-  dataset1 <- set_dataset()
+  dataset1 <- neotoma2::set_dataset(datasetid = strsplit(L$originalDataUrl, "/")[[1]][length(strsplit(L$originalDataUrl, "/")[[1]])])
 
   for (i in 1:length(allSamps)){
     dataset1@samples@samples[[i]] <- allSamps[[i]]
   }
-
-  datasetAll <- list(dataset1)
 
 
   #######################################################################
@@ -129,15 +139,14 @@ lipd2neotoma <- function(L){
   chronos1@chronologies[[1]]@chronologyid <- as.integer(ChronID[[1]][1])
 
 
-  site1 <- set_site()
+  site1 <- neotoma2::set_site()
 
 
 
-  site1@collunits@collunits[[1]] <- set_collunit(datasets = datasetAll, chronologies = chronos1, colldate = as.Date(character(0)))
+  site1@collunits@collunits[[1]] <- neotoma2::set_collunit(datasets = datasetAll, chronologies = chronos1, colldate = as.Date(character(0)))
 
 
   return(site1)
 
 }
-
 

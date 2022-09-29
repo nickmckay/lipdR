@@ -118,6 +118,7 @@ matchCols <- function(df1,df2){
 #'
 #' @param dataIn paleoData or chronData objects from a lipd
 #' @param run.quiet suppress printing
+#' @param skip.table print the table?
 #' @family summary
 #' @importFrom crayon bold
 #' @importFrom tibble as_tibble
