@@ -4,12 +4,14 @@
 \alias{printSummaryData}
 \title{Print summary data from Paleo/Chron measurement tables}
 \usage{
-printSummaryData(dataIn, run.quiet = FALSE)
+printSummaryData(dataIn, run.quiet = FALSE, skip.table = FALSE)
 }
 \arguments{
 \item{dataIn}{paleoData or chronData objects from a lipd}
 
 \item{run.quiet}{suppress printing}
+
+\item{skip.table}{print the table?}
 }
 \value{
 measurement tables

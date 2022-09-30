@@ -3,11 +3,23 @@ title: "LiPD Summaries"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{createColumn}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::knitr}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE, width.out='100%'}
+  if (!requireNamespace("devtools", quietly = TRUE)) {
+    stop(
+      "Package 'devtools' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
+      call. = FALSE
+    )
+  }
+  if (!requireNamespace("gt", quietly = TRUE)) {
+    stop(
+      "Package 'gt' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
+      call. = FALSE
+    )
+  }
 options(width = 500)
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -22,23 +34,22 @@ LiPD datasets can contain a lot of data and metadata, and it's often useful to g
 
 
 ## LiPD objects
-Let's first look at a single LiPD the Moose Lake dataset from Clegg et al. (2010) that's part of the PAGES2k Temperature compilation.
+Let's first grab at a single LiPD the Moose Lake dataset from Clegg et al. (2010) that's part of the PAGES2k Temperature compilation.
 
 ```{r echo=T, results='hide'}
-library(lipdR)
+#library(lipdR)
+devtools::load_all()
 
 L <- readLipd("https://lipdverse.org/data/MD6jkgwSxsq0oilgYUjM/1_0_0//Arc-MooseLake.Clegg.2010-ensemble.lpd")
 ```
 
-First, let's get a quick summary using the `print()` function, or by just returning the object:
+First, let's get a quick look using the `print()` function, or by just returning the object:
 
 ```{r}
 L
 ```
 
 This is handy, as we can quickly see...
-
-*NPM - I think that print should include all of the printed text in summary, just not the tables*
 
 To get more detail about the dataset, let's use `summary()`
 
@@ -61,16 +72,20 @@ Once again, we can `print()` for an overview:
 D
 ```
 
-*NPM - here too, I think that print should include all of the printed text in summary, just not the tables*
-
 and see the number of datasets included, their archiveTypes and geographic boundaries. 
 
-For more information, we can use `summary()`
+We can also have a look at any individual dataset in the collection by subsetting the multi-lipd:
+
+```{r}
+D$`Arc-Agassiz.Vinther.2008`
+```
+
+For more information on the multi-lipd, we can use `summary()`
 
 ```{r}
 summary(D)
 ```
-And also get tables that give us some basic information on each of the datasets included. There are few options that customize the output of summary, here we will choose the preferred time units, and limit the number of datasets summarized to 20:
+And also get tables that give us some basic information on each of the datasets included. There are a few options that customize the output of summary, here we will choose the preferred time units, and limit the number of datasets summarized to 20:
 
 ```{r}
 summary(D, print.length=20, time.units="AD")
@@ -79,10 +94,10 @@ These options limit the printed information on the table to 20 rows, and gives u
 
 ### Storing the summary table
 
-Sometimes it is useful to save the table, so it can be sorted and further investigated. Simply change return.table to TRUE and assign an output:"
+Sometimes it is useful to save the table, so it can be sorted and further investigated. Simply assign an output:"
 
-```{r}
-MLSummary <- summary(D, return.table = TRUE)
+```{r echo=T, results='hide'}
+MLSummary <- summary(D)
 ```
 
 We can now explore this table as a standard data frame. Here we do so using `dplyr` tools to sort by datasets with age ensembles
@@ -118,15 +133,13 @@ dim(tibTS)
 
 Wow - that's pretty big. That means that there are `r nrow(tibTS)` variables across all our datasets, and `r ncol(tibTS)` data or metadata fields present in one or more of the datasets. 
 
-*NPM: Let's add a print method to the TS as well, and again, let's do all the text but no table*
-*NPM: Could we also add the number datasets included in the TS? just length(unique(ts$datasetId))?*
 Again, let's print out a quick overview:
 
 ```{r}
 tibTS
 ```
 
-*Describe output*
+and we see the number of datasets, variables, and data/metadata fields. We also get the time units of all variables and the time interval common to all variables. These data have not been curated, and we see that no time units or time interval is common to all variables.
 
 Beyond this quick overview, we can get a lot more information using `summary()`. This works the same for lipd_ts and lipd_ts_tibble objects. Let's limit the table to show details of the first 10 rows only
 
@@ -165,11 +178,9 @@ Great - we found `r nrow(subsetTs)` timeseries that meet these criteria. Let's e
 
 ```{r}
 sumTable <- summary(subsetTs,
-                    return.table = TRUE,
                     add.variable = c("interpretation1_variable",
                                      "interpretation1_variableDetail",
                                      "interpretation1_seasonality"))
-print(sumTable)
 ```
 
 
