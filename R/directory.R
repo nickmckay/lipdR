@@ -15,7 +15,7 @@ ask_how_many <- function(){
 #' Open a file browsing gui to let the user pick a file or directory
 #' @export
 #' @keywords internal
-#' @param ans single (s) or directory (d) 
+#' @param ans single (s) or directory (d)
 #' @return char path Directory or file path
 browse_dialog <- function(ans){
   tryCatch(
@@ -24,7 +24,7 @@ browse_dialog <- function(ans){
       print("Error: File must be selected")
       quit(1)
     })
-  
+
   # Since R cannot choose directories, we have to manually get the directory path from the file that was chosen
   if (ans == "d" || is.null(ans)){
     path = dirname(path)
@@ -33,10 +33,10 @@ browse_dialog <- function(ans){
 }
 
 #' 'Create' a temp directory (really its the same directory path for the whole R session, so it's not that new)
-#' Recreate it if it's non-existant 
+#' Recreate it if it's non-existant
 #' @export
 #' @keywords internal
-#' @return char path: 
+#' @return char path:
 create_tmp_dir <- function(){
   dir_tmp <- tempfile()
   if(!dir.exists(dir_tmp)){
@@ -56,18 +56,25 @@ get_src_or_dst<- function(path){
       # If the provided path is not a directory and not a lipd file path, then it's not valid
       if(length(path) > 1){
         if(!all(purrr::map_lgl(path,~ tools::file_ext(.x) == "lpd")) |
-           !all(purrr::map_lgl(path,file.exists))){
-          stop("Error: The provided vector of paths must all point to lipd files (.lpd extensions) that exist (check for full paths)")
-        }
+           !all(purrr::map_lgl(path,file.exists)))
+          if(all(purrr::map_lgl(path,is.character))){#all dsids
+            path <- purrr::map_chr(path,convert_dsid_to_path)
+          }else{
+            stop("Error: The provided vector of paths must all point to lipd files (.lpd extensions) that exist (check for full paths), or dsids on lipdverse")
+          }
       }else{
-        
-        if (!isDirectory(path) && 
-            tools::file_ext(path) != "lpd" && 
-            !startsWith(tools::file_ext(path),"json") && 
+
+        if (!isDirectory(path) &&
+            tools::file_ext(path) != "lpd" &&
+            !startsWith(tools::file_ext(path),"json") &&
             !is.url(path)){
-          # Not a lipd file and not a directory. Stop execution and quit. 
-          stop("Error: The provided path must be a directory, LiPD file, a vector of paths to LiPD files, or a direct URL to a LiPD file")
-        } 
+          if(is.character(path)){
+            path <- convert_dsid_to_path(path)
+          }else{
+            # Not a lipd file and not a directory. Stop execution and quit.
+            stop("Error: The provided path must be a directory, LiPD file, a vector of paths to LiPD files, a datasetId on lipdverse, or a direct URL to a LiPD file")
+          }
+        }
       }
     } else {
       # Path was not given. Start prompts
@@ -80,6 +87,20 @@ get_src_or_dst<- function(path){
   return(path)
 }
 
+
+#' Convert datasetId to url to lipdverse lipd file
+#'
+#' @param dsid
+#'
+#' @return path to most recent lipd file
+#' @export
+convert_dsid_to_path <- function(dsid){
+  webpath <- paste0("https://lipdverse.org/data/",dsid)
+  vers <- stringr::str_extract(string = readr::read_file(webpath) , pattern = "[0-9]_[0-9]_[0-9]")
+  path <- file.path(webpath,vers,"lipd.lpd")
+  return(path)
+}
+
 #' Get a list of paths to LiPD files
 #' @export
 #' @keywords internal
@@ -87,9 +108,13 @@ get_src_or_dst<- function(path){
 #' @return list files File paths to LiPD files
 get_lipd_paths <- function(path,jsonOnly = FALSE){
   if(length(path) > 1){
-    files <- path
+    if(length(tools::file_ext(path[1])) > 0){
+      files <- path
+    # }else{#it's a dsid
+    #   files <- purrr::map_chr(path,convert_dsid_to_path)
+    }
   }else{
-    
+
     files <- list()
     if(jsonOnly){
       if (isDirectory(path)){
@@ -106,6 +131,10 @@ get_lipd_paths <- function(path,jsonOnly = FALSE){
         files <- list.files(path=path, pattern='\\.lpd$', full.names = TRUE)
       } else if(tools::file_ext(path) == "lpd"){
         files[[1]] <- path
+      # }else if(tools::file_ext(path) == ""){
+      #   files[[1]] <- convert_dsid_to_path(path)
+      }else{
+        stop("don't recognize input")
       }
     }
   }
@@ -151,10 +180,14 @@ isDirectory <- function(s){
   # Get the basename (last item in file path), and check it for a file extension
   # If there is not a file extension (like below), then we can assume that it's a directory
   if (tools::file_ext(basename(s)) == ""){
-    return(TRUE)
+    if(dir.exists(s)){
+      return(TRUE)
+    }else{
+      return(FALSE)
+    }
   }
   # No file extension. Assume it's a file and not a directory
   return(FALSE)
-} 
+}
 
 

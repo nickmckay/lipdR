@@ -25,9 +25,9 @@ download_from_url <- function(path){
   if(is.url(path)){
     #check to see if the url is https
     path <- stringr::str_replace(path,"http://lipdverse.org","https://lipdverse.org")#replace with https
-    
-    
-    
+
+
+
     #check for libcurl
     if(get_os() == "win"){
       dmeth <- "curl"
@@ -38,18 +38,18 @@ download_from_url <- function(path){
     if(pext == "zip"){#download and unzip
       #create a download dir:
       dp <- file.path(get_download_path(),"lpdDownload")
-      if(dir.exists(dp)){#delete it. 
+      if(dir.exists(dp)){#delete it.
         unlink(dp,recursive = TRUE,force = TRUE)
       }
       #create the directory
       dir.create(file.path(get_download_path(),"lpdDownload"))
-      
+
       #download it
       download.file(path, file.path(get_download_path(), "zippedLipds.zip"), method = dmeth)
-      
+
       #unzip it
       unzip(zipfile = file.path(get_download_path(), "zippedLipds.zip"),exdir = dp)
-      
+
       path <- dp
     }else{
       if(pext == "lpd"){
@@ -57,8 +57,8 @@ download_from_url <- function(path){
       }else{
         dsn <- basename(path)
       }
-      
-      
+
+
       #truncate for linkedearth
       end <- nchar(dsn)
       start <- max(unlist(stringr::str_locate_all(dsn,"=")))+1
@@ -66,17 +66,28 @@ download_from_url <- function(path){
         start <- 1
       }
       dsn <- substr(dsn, start = start, stop = end)
-      
-      
+
+
 
 
       # String together a local download path
-      dir <- get_download_path()
-      local_path <- file.path(dir, paste0(dsn, ".lpd"))
       # Initiate download
-      download.file(path, local_path, method = dmeth)
+      if(length(path) == 1){
+        dir <- get_download_path()
+        local_path <- file.path(dir, paste0(dsn, ".lpd"))
+        download.file(path, local_path, method = dmeth)
+        path <- local_path
+      }else{
+        dir <- file.path(get_download_path(),"lpdDownload")
+        if(dir.exists(dir)){#delete it.
+          unlink(dp,recursive = TRUE,force = TRUE)
+        }
+        dir.create(dir)
+        local_path <- file.path(dir, paste0(basename(dirname(dirname(get_src_or_dst(path)))), ".lpd"))
+        purrr::walk2(path,destfile = local_path,method = dmeth)
+        path <- dir
+      }
       # Set the local path as our output path
-      path <- local_path
     }
   }
   return(path)
@@ -94,7 +105,7 @@ get_download_path <- function(){
   #   dst_path <- "~/Downloads"
   # }
   # else if(os =="windows" || os == "unknown"){
-  #   # Not sure how to get default download folder in windows. Please have user locate a dir. 
+  #   # Not sure how to get default download folder in windows. Please have user locate a dir.
   #   dst_path <- browse_dialog("d")
   # }
   # if(grepl("win",os,ignore.case = TRUE) || os == "unknown"){
@@ -184,7 +195,7 @@ index_geo <- function(d){
   # create a tmp list
   tmp <- list()
   geo <- d$geo
-  
+
   if (!is.null(geo)){
     # properties
     if (!isNullOb(geo$properties)){
@@ -193,7 +204,7 @@ index_geo <- function(d){
         tmp[[gnames[[i]]]] <- geo$properties[[i]]
       }
     } # end properties
-    
+
     # geometry
     if (!isNullOb(geo$geometry)){
       gnames <- names(geo$geometry)
@@ -213,14 +224,14 @@ index_geo <- function(d){
         }
       }
     } # end geometry
-    
+
     # root geo
     gnames <- names(geo)
     for (i in 1:length(gnames))
       if (gnames[[i]] != "geometry" & gnames[[i]] != "properties"){
         tmp[[gnames[[i]]]] <- geo[[gnames[[i]]]]
       }
-    
+
     # set the new data in d
     d$geo <- tmp
   }
@@ -270,17 +281,17 @@ swapGeoCoordinates <- function(d){
 #' @param d Metadata
 #' @return d Modified metadata
 unindex_geo <- function(d){
-  
+
   tmp <- list()
   tmp$geometry <- list()
   tmp$geometry$coordinates <- list()
   tmp$properties <- list()
   geo <- d$geo
-  
+
   if (!is.null(geo)){
     gnames <- names(geo)
     for (i in 1:length(gnames)){
-      
+
       # type goes in root
       if (gnames[[i]] == "type"){
         tmp$type <- geo$type
@@ -292,7 +303,7 @@ unindex_geo <- function(d){
         else if (gnames[[i]] == "elevation"){ tmp$geometry$coordinates[[3]] <- geo$elevation }
         else if (gnames[[i]] == "geometryType"){ tmp$geometry$type <- geo$geometryType}
       }
-      
+
       # properties
       else{
         tmp[[gnames[[i]]]] <- geo[[gnames[[i]]]]
@@ -300,7 +311,7 @@ unindex_geo <- function(d){
     } # end loop
     d$geo <- tmp
   } # end if
-  
+
   return(d)
 }
 
@@ -321,11 +332,11 @@ replace_invalid_chars <- function(dsn){
 #' @keywords internal
 #' @return char: OS name
 get_os <- function() {
-  if (.Platform$OS.type == "windows") { 
+  if (.Platform$OS.type == "windows") {
     return("win")
   } else if (Sys.info()["sysname"] == "Darwin") {
-    return("osx") 
-  } else if (.Platform$OS.type == "unix") { 
+    return("osx")
+  } else if (.Platform$OS.type == "unix") {
     return("unix")
   } else {
     return("unknown")
@@ -333,7 +344,7 @@ get_os <- function() {
 }
 
 #' Warn people about writing ageEnsembles that have been mapped into paleoData. This is a common procedure in GeoChronR,
-#' and thus will come up, however it can greatly increase the size of the LiPD file, and is easily and quickly replicated 
+#' and thus will come up, however it can greatly increase the size of the LiPD file, and is easily and quickly replicated
 #' upon loading with geoChronR::mapAgeEnsembleToPaleoData()
 #' @export
 #' @keywords internal
@@ -343,14 +354,14 @@ warn_ensembles_in_paleo <- function(L, ignore.warnings){
   ans <- NULL
   # Only bother to check for ensembles if ignore.warnings is FALSE
   if(!ignore.warnings){
-    # We're good to go, look for stuff. 
+    # We're good to go, look for stuff.
     ans = "n"#initialize as no
     if(is.null(L$paleoData)){
       stop("There's no paleoData in this file")
     }
     else {
       for(i in 1:length(L$paleoData)){
-        # this should be looking through columns in the measurement table, not the model ensemble table. 
+        # this should be looking through columns in the measurement table, not the model ensemble table.
         # if ("model" %in% names(L$paleoData[[i]])){
         #   for(j in 1:length(L$paleoData[[i]]$model)){
         #     if ("ensembleTable" %in% names(L$paleoData[[i]]$model[[j]])){
@@ -374,7 +385,7 @@ warn_ensembles_in_paleo <- function(L, ignore.warnings){
     }
   }
   return(L)
-  
+
 }
 
 
@@ -400,7 +411,7 @@ remove_names_from_lists <- function(L){
     }
     names(L$paleoData) <- NULL
   }
-  
+
   #repeat for chron
   if(!is.null(L$chronData)){
     for(i in 1:length(L$chronData)){
