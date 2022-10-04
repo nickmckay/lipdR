@@ -4,7 +4,7 @@
 \alias{read_csv_from_file}
 \title{Opens the target CSV file and creates a dictionary with one list for each CSV column.}
 \usage{
-read_csv_from_file()
+read_csv_from_file(path)
 }
 \value{
 data.list List of data for one LiPD file

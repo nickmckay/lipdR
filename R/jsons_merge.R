@@ -9,10 +9,10 @@
 #' @keywords internal
 #' @param d Metadata
 #' @return list d: Metadata
-merge_csv_metadata <- function(d){
+merge_csv_metadata <- function(d,path){
   tryCatch({
     # Read in CSV data
-    csvs <- read_csv_from_file()
+    csvs <- read_csv_from_file(path)
     # Run for each section that exists
     if ("paleoData" %in% names(d)){
       d[["paleoData"]] <- merge_csv_section(d[["paleoData"]], "paleo", csvs)

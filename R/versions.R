@@ -133,7 +133,7 @@ update_lipd_version <- function(d){
   }, error=function(cond){
     print(paste0("Error: update_lipd_version: v", version, ": ", cond))
   })
-    return(d)
+  return(d)
 }
 
 
@@ -237,13 +237,12 @@ update_lipd_v1_3_keys <- function(d){
   keys <- names(d)
   
   # For any lists that are indexed by name 
-  if(all(!isNullOb(keys)) && all(!is.na(keys))){
+  if(!isNullOb(keys) && !is.na(keys)){
     for(i in 1:length(keys)){
       old_key <- keys[[i]]
       # Dive down first
       if(typeof(d[[old_key]]) == "list"){
-        stop("this shouldn't be a list")
-#        d[[old_key]] <- update_lipd_v1_3_keys(d[[old_key]])
+        d[[old_key]] <- update_lipd_v1_3_keys(d[[old_key]])
       } 
       # When you bubble back up, then check if this key should be switched
       if(old_key %in% v12keys){
@@ -257,7 +256,16 @@ update_lipd_v1_3_keys <- function(d){
       }
     }
   } else {
-    stop("Keys should not be indexed by number")
+    # For any lists that are indexed by number
+    if(typeof(d)=="list"){
+      for(i in 1:length(d)){
+        tryCatch({
+          d[[i]] <- update_lipd_v1_3_keys(d[[i]])
+        }, error=function(cond){
+          print(paste0("Error: update_lipd_v1_3_keys: ", cond))
+        })
+      }
+    }  
   }
   return(d)
 }

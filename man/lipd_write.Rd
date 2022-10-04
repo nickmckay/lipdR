@@ -8,6 +8,7 @@ zip up bag folder, place lipd in target dst, move to original dir, delete tmp}
 \usage{
 lipd_write(
   j,
+  dir_original,
   path,
   dsn,
   ignore.warnings,

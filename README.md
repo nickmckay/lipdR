@@ -4,6 +4,7 @@
 [![R Studio](https://img.shields.io/badge/RStudio-3.3.1-blue.svg)]()
 [![license](https://img.shields.io/badge/license-GPL-brightgreen.svg)]()
 [![R-CMD-check](https://github.com/nickmckay/lipdR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nickmckay/lipdR/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/nickmckay/lipdR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/nickmckay/lipdR?branch=main)
 <!-- badges: end -->
 
 # lipdR

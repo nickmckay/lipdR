@@ -26,8 +26,8 @@ stripExtension <- function(filename){
 #' @author Chris Heiser
 #' @author Nick McKay
 #' @import stringr
-#' @keywords internal
-#' @param path Source path (optional)  char
+#' @keywords high-level
+#' @param path A string specifying a file, url, or directory, or a vector of strings specifying files or urls. Alternatively, no entry (default) will open a selection windw.. 
 #' @param jsonOnly Load data from json only (not lpd file? Typically only used for web connections)
 #' @return D : LiPD dataset(s)
 #' @examples
@@ -45,10 +45,8 @@ stripExtension <- function(filename){
 #' L <- readLipd("/Users/bobsmith/Desktop/lipd_files/dataset.lpd")
 #' }
 readLipd <- function(path=NULL,jsonOnly = FALSE){
-  #remember the starting wd
-  swd <- getwd()
   D = list()
-  # Warnings are annoying, we don't want them
+  # Silence warnings
   options(warn = -1)
   # Ask user where files are stored, or sort the given path parameter
   path <- get_src_or_dst(path)
@@ -70,20 +68,59 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
     print("LiPD file(s) not found in the given path")
     print(paste0("Path: ", path))
   } else {
+    
+    if(length(path) > 1){
+      print(paste0("Loading ", length(entries)," datasets from the supplied list of paths..."))
+    }else{
+      print(paste0("Loading ", length(entries)," datasets from ",path,"..."))
+    }
+
+    if(length(entries) < 20){
+      few <- TRUE
+    }else{
+      few <- FALSE
+      pb <- txtProgressBar(min = 0,      # Minimum value of the progress bar
+                           max = length(entries), # Maximum value of the progress bar
+                           style = 3,    # Progress bar style (also available style = 1 and style = 2)
+                           char = "=")   # Character used to create the bar
+    }
+    
+    errors <- parseFail <- c()
+    
+    
     for (i in 1:length(entries)){
       j <- list()
       # Entry is one file path
       entry <- entries[[i]]
-      print(paste0("reading: ", basename(entry)))
+      
+      if(few){
+        print(paste0("reading: ", basename(entry)))
+      }else{
+        setTxtProgressBar(pb, i)
+      }
+      
       if(!jsonOnly){
         # Do initial set up
         dir_source <- dirname(entry)
         # assign("directory_source", directory_source, envir = lipdEnv)
-        setwd(dir_source)
       }
-      j <- lipd_read(entry,jsonOnly = jsonOnly)
+      
+      J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly)
+      j <- J[[1]]$result
+
       # Get the datasetname
       dsn <- get_datasetname(j, stripExtension(entry))
+      
+      parseFail[i] <- ifelse(
+        any(grepl(pattern = "parsing fail",J[[1]]$warnings)),
+        yes = dsn,
+        no = NA)
+      errors[i] <- ifelse(
+      length(J[[1]]$messages) > 0,
+        yes = dsn,
+        no = NA)
+        
+        
       # Set the data in D using the datasetname
       D[[dsn]] <- j
     }
@@ -92,10 +129,27 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
       D <- new_lipd(D)
     }else{
       D <- new_multiLipd(D)
+      succ <- length(D)
+      parsingFailures <- sum(!is.na(parseFail))
+      failed <- sum(!is.na(errors))
+      cat("\n\n")
+      
+      if(parsingFailures > 0){
+        print(paste0("Loaded ", succ," datasets, with ",failed," error(s) and ",parsingFailures," parsing failure(s) in datasets:"))
+        print(as.character(na.omit(parseFail)))
+      }else{
+        print(paste0("Successfully loaded ", succ," datasets, with ",failed," failure(s)."))
+      }
+      
+      if(failed > 0){
+        cat("\n")
+        print(paste0("The following dataset(s) loaded with errors:"))
+        print(as.character(na.omit(errors)))
+      }
+      
     }
   }
-  #reset the wd
-  setwd(swd)
+  
   return(D)
 }
 
@@ -118,36 +172,102 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
 #' # write - with path argument
 #' writeLipd(D, "/Users/bobsmith/Desktop/lipd_files")
 #' }
-writeLipd <- function(D, path=NULL, ignore.warnings=FALSE,removeNamesFromLists = FALSE,jsonOnly = FALSE){
+writeLipd <- function(D, 
+                      path=NULL, 
+                      ignore.warnings=FALSE,
+                      removeNamesFromLists = FALSE,
+                      jsonOnly = FALSE){
   if(get_os() == "windows" & pkgbuild::find_rtools() == FALSE){
     stop("Rtools package required to use writeLipd. Please go to https://cran.r-project.org/bin/windows/Rtools/ and install Rtools.")
   }
   
   tryCatch({
+    fileSelect <- FALSE
+    
     if(missing(path)){
-      path <- browse_dialog("d")
-      setwd(path)
+      if(is.lipd(D)){
+        path <- browse_dialog("s")
+      }else if(is.multiLipd(D)){
+        path <- browse_dialog("d")
+      }else{
+        stop("The input object should be of class lipd or multiLipd")
+      }
+      fileSelect <- TRUE
+    }
+    
+    if(fileSelect & is.lipd(D)){
+      if(stripExtension(basename(path)) != D$dataSetName){
+        ans <- askYesNo(glue::glue("Your selected file name: '{path}' does not match the dataSetName: '{D$dataSetName}'.\n Do you want to continue?"))
+        if(!ans){stop("You chose not to continue")}
+      }
+      
     }
     
     #normalize the path
+    path <- normalizePath(path,mustWork = FALSE)
+    
     if(isDirectory(path)){
-      path <- normalizePath(path,mustWork = FALSE)
+      dir_original <- path
     }else{
-      path <- normalizePath(dirname(path),mustWork = FALSE)
+      dir_original <- dirname(path)
     }
+    
     
     set_bagit()
     if ("paleoData" %in% names(D)){
-      print(paste0("writing: ", D[["dataSetName"]]))
-      lipd_write(D, path, D[["dataSetName"]], ignore.warnings, removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
+      print(paste0("writing: ", D[["dataSetName"]]," to ",path))
+      lipd_write(D, 
+                 dir_original, 
+                 path,
+                 D[["dataSetName"]], 
+                 ignore.warnings, 
+                 removeNamesFromLists = removeNamesFromLists, 
+                 jsonOnly = jsonOnly)
     } else {
-      dsns <- names(D)
-      for (i in 1:length(dsns)){
-        print(paste0("writing: ", basename(dsns[i])))
-        entry <- dsns[[i]]
-        lipd_write(D[[entry]], path, entry, ignore.warnings,removeNamesFromLists = removeNamesFromLists, jsonOnly = jsonOnly)
+      if(!isDirectory(path)){
+        path <- dir_original
       }
+      
+      dsns <- names(D)
+      print(paste0("Writing ", length(dsns)," datasets to ",path,"..."))
+      
+      pbc<- txtProgressBar(min = 0,      # Minimum value of the progress bar
+                           max = length(dsns), # Maximum value of the progress bar
+                           style = 3,    # Progress bar style (also available style = 1 and style = 2)
+                           char = "=")   # Character used to create the bar
+      
+      error <- c()
+      for (i in 1:length(dsns)){
+        if(length(dsns) < 10){
+          print(paste0("writing: ", basename(dsns[i])))
+        }else{
+          setTxtProgressBar(pbc, i)
+        }
+        entry <- dsns[[i]]
+        o <- lipd_write(D[[entry]],
+                   dir_original, 
+                   path, 
+                   entry, 
+                   ignore.warnings,
+                   removeNamesFromLists = removeNamesFromLists, 
+                   jsonOnly = jsonOnly)
+        
+        if(o != 0){
+          error <- dsns[[i]]
+        }
+      }
+      nerror <- length(error)
+      nsuccess <- length(dsns)-nerror
+      print(glue::glue("Successfully wrote {nsuccess} files with {nerror} failure(s)."))
+      if(length(error) > 0){
+        cat("\n\n")
+        print("The following files had issues writing:")
+        print(error)
+      }
+      
     }
+    
+    
   }, error=function(cond){
     print(paste0("Error: writeLipd: ", cond))
   })

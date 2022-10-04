@@ -54,17 +54,28 @@ get_src_or_dst<- function(path){
   tryCatch({
     if (!(isNullOb(path))){
       # If the provided path is not a directory and not a lipd file path, then it's not valid
-      if (!isDirectory(path) && tools::file_ext(path) != "lpd" && !startsWith(tools::file_ext(path),"json") && !is.url(path)){
-        # Not a lipd file and not a directory. Stop execution and quit. 
-        stop("Error: The provided path must be a directory, LiPD file, or a direct URL to a LiPD file")
-      } 
+      if(length(path) > 1){
+        if(!all(purrr::map_lgl(path,~ tools::file_ext(.x) == "lpd")) |
+           !all(purrr::map_lgl(path,file.exists))){
+          stop("Error: The provided vector of paths must all point to lipd files (.lpd extensions) that exist (check for full paths)")
+        }
+      }else{
+        
+        if (!isDirectory(path) && 
+            tools::file_ext(path) != "lpd" && 
+            !startsWith(tools::file_ext(path),"json") && 
+            !is.url(path)){
+          # Not a lipd file and not a directory. Stop execution and quit. 
+          stop("Error: The provided path must be a directory, LiPD file, a vector of paths to LiPD files, or a direct URL to a LiPD file")
+        } 
+      }
     } else {
       # Path was not given. Start prompts
       ans <- ask_how_many()
       path <- browse_dialog(ans)
     }
   }, error=function(cond){
-    print(paste0("Error: get_src_or_dst: ", cond))
+    stop(paste0("Error: get_src_or_dst: ", cond))
   })
   return(path)
 }
@@ -75,22 +86,27 @@ get_src_or_dst<- function(path){
 #' @param path Directory or file path
 #' @return list files File paths to LiPD files
 get_lipd_paths <- function(path,jsonOnly = FALSE){
-  files <- list()
-  if(jsonOnly){
-    if (isDirectory(path)){
-      if(startsWith(path,"http") | startsWith(path,"www")){
-        files <- path
-      }else{
-        files <- list.files(path=path, pattern='\\.jsonld$', full.names = TRUE)
-      }
-    } else if(grepl(pattern = "jsonld",x = path)){
-      files[[1]] <- path
-    }
+  if(length(path) > 1){
+    files <- path
   }else{
-    if (isDirectory(path)){
-      files <- list.files(path=path, pattern='\\.lpd$', full.names = TRUE)
-    } else if(tools::file_ext(path) == "lpd"){
-      files[[1]] <- path
+    
+    files <- list()
+    if(jsonOnly){
+      if (isDirectory(path)){
+        if(startsWith(path,"http") | startsWith(path,"www")){
+          files <- path
+        }else{
+          files <- list.files(path=path, pattern='\\.jsonld$', full.names = TRUE)
+        }
+      } else if(grepl(pattern = "jsonld",x = path)){
+        files[[1]] <- path
+      }
+    }else{
+      if (isDirectory(path)){
+        files <- list.files(path=path, pattern='\\.lpd$', full.names = TRUE)
+      } else if(tools::file_ext(path) == "lpd"){
+        files[[1]] <- path
+      }
     }
   }
   return(files)
@@ -101,11 +117,11 @@ get_lipd_paths <- function(path,jsonOnly = FALSE){
 #' @keywords internal
 #' @param x File type
 #' @return char files: Matching file paths
-list_files_recursive <- function(x){
+list_files_recursive <- function(x,path){
   # create the file type filter string
   ft <- paste0("\\.", x, "$")
   # get the list of filenames from the current directory and below
-  files <- list.files(path=getwd(), pattern=ft, recursive=TRUE)
+  files <- list.files(path=path, pattern=ft, recursive=TRUE,full.names = TRUE)
   return(files)
 }
 
@@ -113,11 +129,11 @@ list_files_recursive <- function(x){
 #' Use a recursive file search to find the "data" directory of a LiPD file
 #' @export
 #' @keywords internal
-#' @param x File type
+#' @param path what is the path to the jsonld
 #' @return char files: Matching file paths
-find_data_dir <- function(){
+find_data_dir <- function(path){
   # If there is a jsonld file, then that means we're in the data directory
-  files <- list.files(path=getwd(), pattern="\\.jsonld$", recursive=TRUE)
+  files <- list.files(path=path, pattern="\\.jsonld$", recursive=TRUE,full.names = TRUE)
   if (isNullOb(files)){
     stop("Error: Unable to find the 'data' directory in the LiPD file")
   }

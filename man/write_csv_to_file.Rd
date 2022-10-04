@@ -5,7 +5,7 @@
 \title{Write out each CSV file for this LiPD recorde
 csvs format: [ some_filename.csv $columns.data ]}
 \usage{
-write_csv_to_file(csvs)
+write_csv_to_file(csvs, path)
 }
 \arguments{
 \item{csvs}{CSV data}

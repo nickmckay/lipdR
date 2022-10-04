@@ -7,7 +7,7 @@
 readLipd(path = NULL, jsonOnly = FALSE)
 }
 \arguments{
-\item{path}{Source path (optional)  char}
+\item{path}{A string specifying a file, url, or directory, or a vector of strings specifying files or urls. Alternatively, no entry (default) will open a selection windw..}
 
 \item{jsonOnly}{Load data from json only (not lpd file? Typically only used for web connections)}
 }
@@ -37,4 +37,4 @@ Chris Heiser
 
 Nick McKay
 }
-\keyword{internal}
+\keyword{high-level}
