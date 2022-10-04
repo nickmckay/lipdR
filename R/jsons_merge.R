@@ -127,8 +127,7 @@ merge_csv_columns <- function(csvs, meta){
         # meta[[i]][["values"]] <- as.matrix(as.data.frame(tmp))
         # turn the columns into a matrix - transpose
         # meta[[i]][["values"]] <- t(do.call(rbind, tmp))
-      }
-      else {
+      } else {
         idx <- meta[[i]][["number"]]
         if(is.character(idx)){
           idx <- as.numeric(idx)
@@ -138,7 +137,7 @@ merge_csv_columns <- function(csvs, meta){
       }
     }
   }, error=function(cond){
-    print(paste0("Error: merge_csv_columns: CSV is incorrectly formatted: ", cond))
+    print(paste0("Error: merge_csv_columns: column: ",names(meta[[i]]),". CSV may be incorrectly formatted: ", cond))
   })
   return(meta)
 }
