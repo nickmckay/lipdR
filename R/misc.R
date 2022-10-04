@@ -21,19 +21,18 @@ create_range <- function(start, len){
 #' @return path Local path to downloaded file
 download_from_url <- function(path){
 
+  #check for libcurl
+  if(get_os() == "win"){
+    dmeth <- "curl"
+  }else{
+    dmeth <- "auto"
+  }
+
+  if(length(path) == 1){
   # Test if the string is a URL or not
   if(is.url(path)){
     #check to see if the url is https
     path <- stringr::str_replace(path,"http://lipdverse.org","https://lipdverse.org")#replace with https
-
-
-
-    #check for libcurl
-    if(get_os() == "win"){
-      dmeth <- "curl"
-    }else{
-      dmeth <- "auto"
-    }
     pext <- tools::file_ext(path)
     if(pext == "zip"){#download and unzip
       #create a download dir:
@@ -72,25 +71,29 @@ download_from_url <- function(path){
 
       # String together a local download path
       # Initiate download
-      if(length(path) == 1){
         dir <- get_download_path()
         local_path <- file.path(dir, paste0(dsn, ".lpd"))
         download.file(path, local_path, method = dmeth)
         path <- local_path
-      }else{
-        dir <- file.path(get_download_path(),"lpdDownload")
-        if(dir.exists(dir)){#delete it.
-          unlink(dp,recursive = TRUE,force = TRUE)
-        }
-        dir.create(dir)
-        local_path <- file.path(dir, paste0(basename(dirname(dirname(get_src_or_dst(path)))), ".lpd"))
-        purrr::walk2(path,destfile = local_path,method = dmeth)
-        path <- dir
-      }
+
       # Set the local path as our output path
     }
   }
   return(path)
+  }else if(length(path) > 1){# this is a vector of urls
+    dir <- file.path(get_download_path(),"lpdDownload")
+    if(dir.exists(dir)){#delete it.
+      unlink(dir,recursive = TRUE,force = TRUE)
+    }
+    dir.create(dir)
+    local_path <- file.path(dir, paste0(basename(dirname(dirname(path))), ".lpd"))
+    purrr::walk2(path,local_path,download.file,method = dmeth)
+    path <- dir
+
+  }else{
+    stop("path is empty")
+  }
+
 }
 
 #' Locate a folder to download a file to

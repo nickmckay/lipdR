@@ -55,13 +55,13 @@ get_src_or_dst<- function(path){
     if (!(isNullOb(path))){
       # If the provided path is not a directory and not a lipd file path, then it's not valid
       if(length(path) > 1){
-        if(!all(purrr::map_lgl(path,~ tools::file_ext(.x) == "lpd")) |
-           !all(purrr::map_lgl(path,file.exists)))
+        if(!all(purrr::map_lgl(path,~ tools::file_ext(.x) == "lpd"))){
           if(all(purrr::map_lgl(path,is.character))){#all dsids
             path <- purrr::map_chr(path,convert_dsid_to_path)
           }else{
             stop("Error: The provided vector of paths must all point to lipd files (.lpd extensions) that exist (check for full paths), or dsids on lipdverse")
           }
+        }
       }else{
 
         if (!isDirectory(path) &&

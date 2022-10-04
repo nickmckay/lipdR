@@ -22,6 +22,40 @@ test_lipdreadwrite <- function(path){
   })
 }
 
+test_lipdreaddsid <- function(){
+  tryCatch({
+    L <- readLipd("GkDQ95n4IDauHjdPWhtP")
+    if(!lipdR:::validLipd(L)){
+      stop("Single readLipd DSID fail")
+    }
+    D <- readLipd(c("GkDQ95n4IDauHjdPWhtP","PD0bcb3d51ff3e498d04b365456415c132"))
+    if(!all(purrr::map(D,lipdR:::validLipd))){
+      stop("Multi readLipd DSID fail")
+    }
+    return(0)
+  }, error=function(cond){
+    print(cond)
+    return(-1)
+  })
+}
+
+test_lipdreadurls <- function(){
+  tryCatch({
+    L <- readLipd("https://lipdverse.org/data/PD0bcb3d51ff3e498d04b365456415c132/1_0_3/LittleSaltSpring.Clausen.1979.lpd")
+    if(!lipdR:::validLipd(L)){
+      stop("Single readLipd DSID fail")
+    }
+    D <- readLipd(c("https://lipdverse.org/data/PD0bcb3d51ff3e498d04b365456415c132/1_0_3/LittleSaltSpring.Clausen.1979.lpd","https://lipdverse.org/data/AfgsdvijWJwsyaa8lZLA/1_0_1/Lygne.Hardeng.2022.lpd"))
+    if(!all(purrr::map(D,lipdR:::validLipd))){
+      stop("Multi readLipd DSID fail")
+    }
+    return(0)
+  }, error=function(cond){
+    print(cond)
+    return(-1)
+  })
+}
+
 
 test_extractTs <- function(path){
   tryCatch({
@@ -62,17 +96,24 @@ test_extractTsUniqueTsids <- function(path){
   })
 }
 
-test_that("stripExtension() Works",{ 
+test_that("stripExtension() Works",{
   expect_match(stripExtension("~/asd/asd/asdas.lpd"),"asdas")
   expect_match(stripExtension("~/asd/asd/asdas"),"asdas")
   expect_match(stripExtension("~/asd/as.d/as.asdas.lpd"),"asdas")
-})  
-  
+})
+
 
 test_that("LiPD Read: v1.3 with all table types", {
   print("LiPD Read: v1.3 with all table types")
   sink("log")
   expect_equal(test_lipdread("./ODP1098B13.lpd"), 0)
+  sink()
+})
+
+test_that("LiPD Read: by 1 or more datasetId", {
+  print("LiPD Read: by 1 or more datasetId")
+  sink("log")
+  expect_equal(test_lipdreaddsid(), 0)
   sink()
 })
 
