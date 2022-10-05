@@ -50,7 +50,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/createColumn.html">createColumn</a>
+      <a href="articles/Summary.html">LiPD Summaries</a>
     </li>
   </ul>
 </li>
@@ -262,53 +262,6 @@
 <img src="https://www.dropbox.com/s/dlhjnre66vkan47/collapseTs_expand.png?raw=1" alt=""><p class="caption">collapsets_expand</p>
 </div>
 <p>Expanding <code>L2</code> in the environment shows that the data has returned to the LiPD dataset hierarchy as before.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="querytsts-expression">
-<strong>queryTs(ts, expression)</strong><a class="anchor" aria-label="anchor" href="#querytsts-expression"></a>
-</h3>
-<p><strong>Purpose:</strong> Find all the <em>objects</em> in a time series that match your specified criteria. For example, if you only want data located at a certain latitude, or if you only want data of a certain archive type.</p>
-<p><a href="#helpqueryfilter">How are queryTs and filterTs different?</a></p>
-<p><strong>Parameters:</strong> &gt; <strong>ts</strong> &gt; &gt; A time series &gt; &gt; <strong>expression</strong> &gt; &gt; The criteria that you choose to find data. Only data that matches this expression will be returned. &gt;</p>
-<p><strong>Returns:</strong> &gt; &gt; <strong>matches</strong> &gt; &gt; The index numbers for all <em>time series objects</em> that match the expression. &gt;</p>
-<p>For this example, I’ve read and created a time series using multiple datasets to emphasize the point of querying. All the steps are shown below:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/chg23m4lc7qb7n4/filterTs_prestart.png?raw=1" alt=""><p class="caption">filterts_prestart</p>
-</div>
-<p>I’ll use the expression <code>paleoData_variableName == d18O</code> to get the index numbers of all time series objects that represent d18O measurements.</p>
-<p>Call <code>queryTs</code> as shown below:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/ng62tmjmxxocsvl/queryTs_call.png?raw=1" alt=""><p class="caption">queryts_call</p>
-</div>
-<p>A list of index numbers is returned as <code>matches</code> and shows you all the time series object index numbers that match the <code>paleoData_variableName == d18O</code> expression. The <code>ts</code> time series variable has 9 <em>objects</em> (denoted as <code>elements</code> in the R Studio environment), and 2 of those <em>objects</em> are <code>d18O</code> entries. Index number 1 and index number 3.</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/sud31wot97si34p/queryTs_done.png?raw=1" alt=""><p class="caption">queryts_done</p>
-</div>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="filtertsts-expression">
-<strong>filterTs(ts, expression)</strong><a class="anchor" aria-label="anchor" href="#filtertsts-expression"></a>
-</h3>
-<p><strong>Purpose:</strong> Create a new, smaller, time series that only contains <em>objects</em> that match your specified criteria. For example, if you only want data located at a certain latitude, or if you only want data of a certain archive type.</p>
-<p><a href="#helpqueryfilter">How are queryTs and filterTs different?</a></p>
-<p><strong>Parameters:</strong> &gt; <strong>ts</strong> &gt; &gt; A time series &gt; &gt; <strong>expression</strong> &gt; &gt; The criteria that you choose to find data. Only data that matches this expression will be returned. &gt;</p>
-<p><strong>Returns:</strong> &gt; &gt; <strong>ts</strong> &gt; &gt; A time series &gt;</p>
-<p>For this example, I’ve read and created a time series using multiple datasets to emphasize the point of filtering. All the steps are shown below:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/chg23m4lc7qb7n4/filterTs_prestart.png?raw=1" alt=""><p class="caption">filterts_prestart</p>
-</div>
-<blockquote><p><strong>NOTE:</strong> There are many different criteria to search by, and it’s quite lengthy to list them all. However, if you look at the time series variable in your environment (<code>ts</code>), you’ll be able to see the searchable terms. The image below also shows a small sample of the <code>ts</code> variable that I’m using now.</p></blockquote>
-<p>I’ll use the expression <code>paleoData_variableName == d18O</code> to get all time series objects that represent d18O measurements.</p>
-<p>Call <code>filterTs</code> as shown below:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/cjtx22whffi6yk8/filterTs_call.png?raw=1" alt=""><p class="caption">filterts_call</p>
-</div>
-<p>A new, filtered time series is created as <code>new_ts</code> and the original time series remains as <code>ts</code>.</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/r08c58km4s816id/filterTs_done.png?raw=1" alt=""><p class="caption">filterts_done</p>
-</div>
 <hr>
 </div>
 </div>

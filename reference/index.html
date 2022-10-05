@@ -32,7 +32,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/createColumn.html">createColumn</a>
+      <a href="../articles/Summary.html">LiPD Summaries</a>
     </li>
   </ul></li>
 <li>
@@ -55,6 +55,10 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="abc123.html">abc123()</a></code> </p>
+        </td>
+        <td><p>random imports</p></td>
+      </tr><tr><td>
           <p><code><a href="addTSidToLipd.html">addTSidToLipd()</a></code> </p>
         </td>
         <td><p>Add TSid where missing in a LiPD file</p></td>
@@ -137,6 +141,10 @@ match[[1]][[3]] = second key (ex. "tableName")</p></td>
 and return a new time series with the matching objects
 Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
       </tr><tr><td>
+          <p><code><a href="formatCitation.html">formatCitation()</a></code> </p>
+        </td>
+        <td><p>Format citation from 'pub' portion of LiPD file</p></td>
+      </tr><tr><td>
           <p><code><a href="getChronDataNeotoma2.html">getChronDataNeotoma2()</a></code> </p>
         </td>
         <td><p>get chronData info from neotoma</p></td>
@@ -185,13 +193,61 @@ Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
         </td>
         <td><p>Is this a multiLiPD object?</p></td>
       </tr><tr><td>
+          <p><code><a href="lipd2neotoma.html">lipd2neotoma()</a></code> </p>
+        </td>
+        <td><p>Convert lipd to neotoma</p></td>
+      </tr><tr><td>
+          <p><code><a href="lipdSummary.html">lipdSummary()</a></code> </p>
+        </td>
+        <td><p>Print a summary of the contents of a LiPD file</p></td>
+      </tr><tr><td>
+          <p><code><a href="lipdTSSummary.html">lipdTSSummary()</a></code> </p>
+        </td>
+        <td><p>Print a summary of the contents of a lipd_ts or lipd_ts_tibble</p></td>
+      </tr><tr><td>
           <p><code><a href="lumpTsMetaVariables.html">lumpTsMetaVariables()</a></code> </p>
         </td>
         <td><p>Lump metadata variables with other rows in Ts (treeTS)</p></td>
       </tr><tr><td>
+          <p><code><a href="matchCols.html">matchCols()</a></code> </p>
+        </td>
+        <td><p>Extends data frames to conserve all columns when merging</p></td>
+      </tr><tr><td>
+          <p><code><a href="multiLipdSummary.html">multiLipdSummary()</a></code> </p>
+        </td>
+        <td><p>Print a summary of the contents of a Multi-LiPD</p></td>
+      </tr><tr><td>
           <p><code><a href="neotoma2lipd.html">neotoma2lipd()</a></code> </p>
         </td>
         <td><p>Convert a neotoma dataset into a LiPD object</p></td>
+      </tr><tr><td>
+          <p><code><a href="print.lipd.html">print(<i>&lt;lipd&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>short print out of single lipd</p></td>
+      </tr><tr><td>
+          <p><code><a href="print.lipd_ts.html">print(<i>&lt;lipd_ts&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>short print out of lipd ts</p></td>
+      </tr><tr><td>
+          <p><code><a href="print.lipd_ts_tibble.html">print(<i>&lt;lipd_ts_tibble&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>short print out of lipd ts tibble</p></td>
+      </tr><tr><td>
+          <p><code><a href="print.multi_lipd.html">print(<i>&lt;multi_lipd&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>short print out of multi lipd</p></td>
+      </tr><tr><td>
+          <p><code><a href="printCitations.html">printCitations()</a></code> </p>
+        </td>
+        <td><p>print formatted citations to stdout</p></td>
+      </tr><tr><td>
+          <p><code><a href="printModel.html">printModel()</a></code> </p>
+        </td>
+        <td><p>Extract and print model info</p></td>
+      </tr><tr><td>
+          <p><code><a href="printSummaryData.html">printSummaryData()</a></code> </p>
+        </td>
+        <td><p>Print summary data from Paleo/Chron measurement tables</p></td>
       </tr><tr><td>
           <p><code><a href="process_expression.html">process_expression()</a></code> </p>
         </td>
@@ -244,6 +300,22 @@ Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
         </td>
         <td><p>stripExtension</p></td>
       </tr><tr><td>
+          <p><code><a href="summary.lipd.html">summary(<i>&lt;lipd&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Full summary detail of single lipd</p></td>
+      </tr><tr><td>
+          <p><code><a href="summary.lipd_ts.html">summary(<i>&lt;lipd_ts&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>full summary of lipd ts</p></td>
+      </tr><tr><td>
+          <p><code><a href="summary.lipd_ts_tibble.html">summary(<i>&lt;lipd_ts_tibble&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>full summary of lipd ts tibble</p></td>
+      </tr><tr><td>
+          <p><code><a href="summary.multi_lipd.html">summary(<i>&lt;multi_lipd&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>full summary of multi lipd</p></td>
+      </tr><tr><td>
           <p><code><a href="tabulateTs.html">tabulateTs()</a></code> </p>
         </td>
         <td><p>Create a data table from a lipd-ts-tibble object</p></td>
@@ -267,6 +339,10 @@ Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
           <p><code><a href="untidyTs.html">untidyTs()</a></code> </p>
         </td>
         <td><p>create tidy data.frame from TS</p></td>
+      </tr><tr><td>
+          <p><code><a href="validLipd.html">validLipd()</a></code> </p>
+        </td>
+        <td><p>Is this a valid LiPD</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
