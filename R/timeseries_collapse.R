@@ -76,7 +76,7 @@ collapseTs <- function(ts, force=FALSE){
     for(dd in 1:length(D)){
       D[[dd]] <- structure(D[[dd]],class = c("lipd",class(list())))   
     }
-    D <- structure(D,class = c("multi-lipd",class(list())))
+    D <- structure(D,class = c("multi_lipd",class(list())))
   }
   return(D)
 }

@@ -67,7 +67,7 @@ ts2tibble <- function(TS){
     }
   }
   
-  tibbleTS <- structure(tibbleTS,class = c("lipd-ts-tibble",class(tibble::tibble())))
+  tibbleTS <- structure(tibbleTS,class = c("lipd_ts_tibble",class(tibble::tibble())))
   
   return(tibbleTS)
 }
@@ -78,6 +78,8 @@ ts2tibble <- function(TS){
 #' @description takes a TS object and turns it into a long, tidy, data.frame. Useful for data manipulation and analysis in the tidyverse and plotting. The opposite operation as untidyTs()
 #' @importFrom tidyr unchop
 #' @importFrom tidyselect starts_with
+#' @importFrom magrittr %>%
+#' @importFrom purrr map_lgl
 #' @param TS a LiPD Timeseries object
 #' @param age.var variable name for the time dimension
 #' @return a tidy data.frame
@@ -97,7 +99,7 @@ tidyTs <- function(TS,age.var = NA){
   }else{
     age.var = "age"
   }
-  print(glue::glue("creating a lipdTsTibbleLong using {age.var} as the age.var"))
+  print(glue::glue("creating a lipd_Ts_Tibble_Long using {age.var} as the age.var"))
   }
   
   isNum <- which(purrr::map_lgl(tts$paleoData_values,is.numeric))
@@ -110,8 +112,8 @@ tidyTs <- function(TS,age.var = NA){
   }
   
   
-  tidy <- tidyr::unchop(tts,c(all_of(age.var),tidyselect::starts_with("paleoData_values"))) %>% 
-    structure(class = c("lipd-ts-tibble-long",class(tibble::tibble())))
+  tidy <- tidyr::unchop(tts,c(tidyselect::all_of(age.var),tidyselect::starts_with("paleoData_values"))) %>% 
+    structure(class = c("lipd_ts_tibble_long",class(tibble::tibble())))
   
     return(tidy)
 }
@@ -121,17 +123,20 @@ tidyTs <- function(TS,age.var = NA){
 #' @description takes a long, tidy, data.frame and returns a TS object. This is the opposite of tidyTs().
 #' @importFrom tidyr unchop
 #' @importFrom tidyselect starts_with
+#' @importFrom tidyselect all_of
+#' @importFrom magrittr %>%
+#' @importFrom purrr map_lgl
 #' @param tTS a tidy data frame, such as those created by tidyTs()
 #' @inheritParams tidyTs 
 #' @return a LiPD Timeseries object
 #' @export
 untidyTs <- function(tTS,age.var = "age"){
   
-ut <- tidyr::chop(tTS,cols = c(all_of(age.var),tidyselect::starts_with("paleoData_values")))
+ut <- tidyr::chop(tTS,cols = c(tidyselect::all_of(age.var),tidyselect::starts_with("paleoData_values")))
 
 if("paleoData_values_char" %in% names(ut)){
-  tr <- which(map_lgl(ut$paleoData_values,~all(is.na(.x))) &
-                map_lgl(ut$paleoData_values_char,~!all(is.na(.x))))
+  tr <- which(purrr::map_lgl(ut$paleoData_values,~all(is.na(.x))) &
+                purrr::map_lgl(ut$paleoData_values_char,~!all(is.na(.x))))
   ttt <- vector("list",nrow(ut))
   ttt[tr] <-  ut[tr,]$paleoData_values_char
   ttt[-tr] <- ut[-tr,]$paleoData_values
@@ -140,7 +145,7 @@ if("paleoData_values_char" %in% names(ut)){
 }
 
 TS <- purrr::transpose(ut) %>% 
-  structure(class = c("lipd-ts",class(list())))
+  structure(class = c("lipd_ts",class(list())))
 
   
 return(TS)

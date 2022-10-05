@@ -1,7 +1,7 @@
 Package: lipdR
 Type: Package
 Title: LiPD utilities for R
-Version: 0.3.6
+Version: 0.3.5
 Date: 2015-06-05
 Updated: 2022-08-18
 Authors@R: 
@@ -18,42 +18,47 @@ Maintainer: Nicholas McKay <nick@nau.edu>
 Description: Functions to open, modify, analyze, and save LiPD data. 
 Depends: R (>= 3.1.0)
 License: MIT + file LICENSE
-RoxygenNote: 7.2.1
+LazyData: TRUE
+RoxygenNote: 7.1.2
 URL: www.lipd.net
-Encoding: UTF-8
-Imports: 
+Imports:
     stringr,
-    crayon,
     readr,
+    tools,
+    base,
+    Rcpp,
+    backports,
+    lattice,
+    grid,
+    knitr,
+    markdown,
+    methods,
+    stats,
+    utils,
+    checkmate,
+    chron,
+    data.table,
+    RJSONIO,
+    jsonlite,
+    BBmisc,
     arsenal,
     rlang,
     dplyr,
     tibble,
     purrr,
     tidyr,
-    tidyselect,
-    glue,
-    pkgbuild,
-    magrittr,
-    data.table,
-    methods,
-    jsonlite,
-    sets
-Suggests: 
-    tools,
-    gt,
-    base,
-    Rcpp,
-    stats,
-    utils,
     usethis,
-    knitr,
-    devtools,
+    tidyselect,
+    pkgbuild,
+    glue,
     lubridate,
     neotoma2,
+    magrittr
+Suggests: 
     covr,
     rmarkdown,
-    testthat,
+    testthat.
+    xaringanExtra
 Remotes: 
     neotomadb/neotoma2
 VignetteBuilder: knitr

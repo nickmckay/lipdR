@@ -5,6 +5,7 @@
 #' @param D LiPD data, sorted by dataset name  list
 #' @param whichtables : char: Options: "all", "summ", "meas", "ens"  Table type to output in the time series.
 #' @param mode : char: Options "paleo", "chron"
+#' @importFrom methods is
 #' @return ts:  Time series : list
 #' @examples 
 #' \dontrun{
@@ -51,14 +52,14 @@ extractTs= function(D, whichtables = "all", mode = "paleo"){
     new_entries <- extract(L, whichtables, mode, time_id)
     for(add in 1:length(new_entries)){
       step1 <- try(new_entries[[add]])
-      if(class(step1)=="try-error"){
+      if(methods::is(step1, "try-error")){
         print("uhoh") 
       }else{
         TS[[length(TS)+1]] <- new_entries[[add]] 
       }
     }
   }
-  structure(TS,class = c("lipd-ts",class(list()))) %>% 
+  structure(TS,class = c("lipd_ts",class(list()))) %>% 
   return()
 }
 
@@ -382,7 +383,7 @@ extract_geo=function(L,root){
 
 #' Split interpretation by scope
 #' @export
-#' @param TS a lipd-TS object
+#' @param TS a lipd_ts object
 #' @import stringr
 #' @return split TS
 #' @export
