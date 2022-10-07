@@ -217,7 +217,6 @@ writeLipd <- function(D,
     }
 
 
-    set_bagit()
     if ("paleoData" %in% names(D)){
       print(paste0("writing: ", D[["dataSetName"]]," to ",path))
       lipd_write(D,
