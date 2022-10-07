@@ -1,4 +1,0 @@
-Arc-MooseLake.Clegg.2010.chron1measurement1.csv	cac35cc4bbc033256df35569cc8e990d
-Arc-MooseLake.Clegg.2010.chron1model1ensemble1.csv	9c4d6527e5a20ac6407aee64e63420a0
-Arc-MooseLake.Clegg.2010.paleo1measurement1.csv	6d6a697ba8d787bc57e01c39d5aa97ac
-metadata.jsonld	dec4dd34b999bba6e8a3edb714db89eb
