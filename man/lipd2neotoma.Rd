@@ -7,7 +7,7 @@
 lipd2neotoma(L)
 }
 \arguments{
-\item{L}{lipf object}
+\item{L}{lipd object}
 }
 \value{
 neotoma site
