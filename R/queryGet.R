@@ -39,14 +39,14 @@ queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O
   }
   
   #get remote query table
-  # print("Fetching the query table")
-  # query_url <- "https://github.com/DaveEdge1/lipdverseQuery/raw/main/queryZip.zip"
-  # temp <- tempfile()
-  # download.file(query_url, temp)
-  # filePath <- unzip(temp, list = TRUE)$Name
-  # unzip(temp, filePath)
-  # queryTable1 <- read.csv(filePath)
-  # unlink(temp)
+  print("Fetching the query table")
+  query_url <- "https://github.com/DaveEdge1/lipdverseQuery/raw/main/queryZip.zip"
+  temp <- tempfile()
+  download.file(query_url, temp)
+  filePath <- unzip(temp, list = TRUE)$Name
+  unzip(temp, filePath)
+  queryTable1 <- read.csv(filePath)
+  unlink(temp)
   
   #get local query table
   # filePath <- unzip(temp, list = TRUE)$Name
@@ -54,9 +54,9 @@ queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O
   # queryTable1 <- read.csv(filePath)
   #get('queryTable', envir=lipdEnv)
   
-  queryTable1 <- lipdEnv$queryTable
-  
-  print(dim(queryTable1), "\n\n")
+  # queryTable1 <- lipdEnv$queryTable
+  # 
+  # print(dim(queryTable1), "\n\n")
 
   #Filter by user coordinates
   queryTable1 <- queryTable1[queryTable1$geo_latitude >= coord[1],]
