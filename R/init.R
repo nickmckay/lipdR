@@ -17,7 +17,7 @@ getQueryTable <- function(){
   download.file(query_url, zip_dir)
   unzip(zip_dir, exdir = temp)
   fPth <- paste0(temp, "/queryTable.csv")
-  queryTable <- read.csv(fPth)
+  queryTable <<- read.csv(fPth)
   # unlink(temp)
   assign("queryTable", queryTable, envir = lipdEnv)
   #return(queryTable)
