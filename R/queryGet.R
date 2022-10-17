@@ -13,13 +13,8 @@
 #' @param ocean 
 #' @param interpretation 
 #' 
-#' @importFrom tidyr %>%
-#' @importFrom dplyr filter
-#'
 #' @return
 #' @export
-#'
-#' @examples
 queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O, d13C, treeRing, )
                      archive.type = NULL, #vector of archive types. see unique(queryTable1$archiveType)
                      coord = c(-90,90,-180,180), #lat/lon extent of interest c(latMin, latMax, lonMin, lonMax)
@@ -29,7 +24,9 @@ queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O
                      country = NULL, #Coutnry origin of dataset from unique(queryTable1$country2), based on lat/lon
                      continent = NULL, #Continent origin of dataset from unique(queryTable1$continent), based on lat/lon
                      ocean = FALSE, #Gather datasets from the marine environment, based on lat/lon
-                     interpretation = NULL #vector of interpretations from c(temp, precip, SST)
+                     seasonality = NULL, #list of seasons where items within a list are treated with "AND" logic and
+                     #separate lists are treated with "OR" logic ie. list(list("July", "August"), list("7,8"), list("summer"))
+                     seasonNot = NULL #seasons not desired with input format identical to seasonality
                      ){
 
   stop_quietly <- function() {
@@ -85,7 +82,7 @@ queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O
 
   #Filter by country
   if (!is.null(country)){
-    queryTable1 <- queryTable1[queryTable1$country2 == country,]
+    queryTable1 <- queryTable1[queryTable1$country2 %in% country,]
     queryTable1 <- queryTable1[!is.na(queryTable1$country2),]
   }
   
@@ -129,7 +126,47 @@ queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O
   
   cat("Series remaining after pub.info filter: ", nrow(queryTable1), "\n\n")
   
-
+  
+  #Seasonality
+  seasons1 <- unique(queryTable1$interpretation1_seasonality[!is.na(queryTable1$interpretation1_seasonality)])
+  catchSeasons <- list()
+  for (k in 1:length(seasonality)){
+    x1 <- tolower(seasonality[[k]])
+    y1 <- seasons1
+    
+    test1 <- data.frame(matrix(ncol = length(x1), nrow = length(y1)))
+    for (i in 1:length(x1)){
+      test1[,i] <- grepl(x1[i],gsub(pattern = "[^a-zA-Z0-9]", replacement = "", x = tolower(y1)))
+    }
+    testAll <- rowSums(test1)==ncol(test1)
+    catchSeasons[[k]] <- seasons1[testAll]
+  }
+  
+  results1 <- unlist(lapply(catchSeasons, function(x) which(queryTable1$interpretation1_seasonality %in% x,)))
+  results1
+  
+  if(!is.null(seasonNot)){
+    catchSeasonNot <- list()
+    for (k in 1:length(seasonNot)){
+      x1 <- tolower(seasonNot[[k]])
+      y1 <- seasons1
+      
+      test1 <- data.frame(matrix(ncol = length(x1), nrow = length(y1)))
+      for (i in 1:length(x1)){
+        test1[,i] <- grepl(x1[i],gsub(pattern = "[^a-zA-Z0-9]", replacement = "", x = tolower(y1)))
+      }
+      testAll <- rowSums(test1)==ncol(test1)
+      catchSeasonNot[[k]] <- seasons1[testAll]
+    }
+    results2 <- unlist(lapply(catchSeasonNot, function(x) which(queryTable1$interpretation1_seasonality == x,)))
+    results2
+    results1 <- results1[!results1 %in% results2]
+  }
+  
+  
+  queryTable1 <- queryTable1[results1,]
+  
+  cat("Series remaining after seasonality filter: ", nrow(queryTable1), "\n\n")
   
   
   #Final tally and check-in
