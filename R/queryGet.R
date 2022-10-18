@@ -26,7 +26,10 @@ queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O
                      ocean = FALSE, #Gather datasets from the marine environment, based on lat/lon
                      seasonality = NULL, #list of seasons where items within a list are treated with "AND" logic and
                      #separate lists are treated with "OR" logic ie. list(list("July", "August"), list("7,8"), list("summer"))
-                     seasonNot = NULL #seasons not desired with input format identical to seasonality
+                     season.not = NULL, #seasons not desired with input format identical to seasonality
+                     interp.vars = NULL, #vector of interpretation variables ie. c("SST", "upwelling"), see possible: unique(queryTable$interp_Vars)
+                     interp.details = NULL, #vector of interpretation variables ie. c("sea@surface", "elNino"), see possible: unique(queryTable$interp_Details),
+                     interactive.feedback = TRUE #offer details of filters and get feedback from user
                      ){
 
   stop_quietly <- function() {
@@ -34,22 +37,6 @@ queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O
     on.exit(options(opt))
     stop()
   }
-  
-  #get remote query table
-  # print("Fetching the query table")
-  # query_url <- "https://github.com/DaveEdge1/lipdverseQuery/raw/main/queryZip.zip"
-  # temp <- tempfile()
-  # download.file(query_url, temp)
-  # filePath <- unzip(temp, list = TRUE)$Name
-  # unzip(temp, filePath)
-  # queryTable1 <- read.csv(filePath)
-  # unlink(temp)
-  
-  #get local query table
-  # filePath <- unzip(temp, list = TRUE)$Name
-  # unzip(temp, filePath)
-  # queryTable1 <- read.csv(filePath)
-  #get('queryTable', envir=lipdEnv)
   
   queryTable1 <- queryTable
   # 
@@ -99,23 +86,98 @@ queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O
   cat("Series remaining after time filter: ", nrow(queryTable1), "\n\n")
   
   #Filter by archive.type
-  if(!is.null(archive.type)){
-    for (i in 1:length(archive.type)){
-      queryTable1 <- queryTable1[queryTable1$archiveType %in% archive.type[i],]
+  if (!is.null(archive.type)){
+    archiveTypeIndex <- c()
+    for (i in archive.type){
+      archiveTypeIndex <- c(archiveTypeIndex, which(grepl(tolower(i), tolower(queryTable1$archiveType))))
     }
+    queryTable1 <- queryTable1[archiveTypeIndex,]
   }
-  
+
   cat("Series remaining after archive.type filter: ", nrow(queryTable1), "\n\n")
   
   #Filter for desired variable names
   if (!is.null(variable.name)){
+    varNameInex <- c()
     for (i in variable.name){
-      queryTable1 <- queryTable1[queryTable1$varTags %in% i,]
+      varNameInex <- c(varNameInex, which(grepl(tolower(i), tolower(queryTable1$paleoData_variableName))))
     }
+    queryTable1 <- queryTable1[varNameInex,]
   } 
   
   cat("Series remaining after variable.name filter: ", nrow(queryTable1), "\n\n")
   
+  #Filter for desired interpretation variables
+  if (!is.null(interp.vars)){
+    interpVarInex <- c()
+    for (i in interp.vars){
+      interpVarInex <- c(interpVarInex, which(grepl(i, queryTable1$interp_Vars)))
+    }
+    if(!is.null(interp.details)){
+      queryTable2 <- queryTable1[interpVarInex,]
+    }else{
+      queryTable1 <- queryTable1[interpVarInex,]
+    }
+  } 
+  
+  cat("Series remaining after interp.vars filter: ", nrow(queryTable1), "\n\n")
+  
+  #Filter for desired interpretation details
+  if (!is.null(interp.details)){
+    interpDetailsIndex <- c()
+    for (i in interp.details){
+      interpDetailsIndex <- c(interpDetailsIndex, which(grepl(i, queryTable1$interp_Details)))
+    }
+    if(!is.null(interp.vars)){
+      queryTable1 <- queryTable1[interpDetailsIndex,]
+      queryTable1 <- rbind(queryTable1, queryTable2)
+    }else{
+      queryTable1 <- queryTable1[interpDetailsIndex,]
+    }
+  } 
+  
+  cat("Series remaining after interp.details filter: ", nrow(queryTable1), "\n\n")
+  
+  #Seasonality
+  if(!is.null(seasonality)){
+    seasons1 <- unique(queryTable1$interpretation1_seasonality[!is.na(queryTable1$interpretation1_seasonality)])
+    catchSeasons <- list()
+    for (k in 1:length(seasonality)){
+      x1 <- tolower(seasonality[[k]])
+      y1 <- seasons1
+      
+      test1 <- data.frame(matrix(ncol = length(x1), nrow = length(y1)))
+      for (i in 1:length(x1)){
+        test1[,i] <- grepl(x1[i],gsub(pattern = "[^a-zA-Z0-9]", replacement = "", x = tolower(y1)))
+      }
+      testAll <- rowSums(test1)==ncol(test1)
+      catchSeasons[[k]] <- seasons1[testAll]
+    }
+    
+    results1 <- unlist(lapply(catchSeasons, function(x) which(queryTable1$interpretation1_seasonality %in% x,)))
+    results1
+    
+    if(!is.null(season.not)){
+      catchseason.not <- list()
+      for (k in 1:length(season.not)){
+        x1 <- tolower(season.not[[k]])
+        y1 <- seasons1
+        
+        test1 <- data.frame(matrix(ncol = length(x1), nrow = length(y1)))
+        for (i in 1:length(x1)){
+          test1[,i] <- grepl(x1[i],gsub(pattern = "[^a-zA-Z0-9]", replacement = "", x = tolower(y1)))
+        }
+        testAll <- rowSums(test1)==ncol(test1)
+        catchseason.not[[k]] <- seasons1[testAll]
+      }
+      results2 <- unlist(lapply(catchseason.not, function(x) which(queryTable1$interpretation1_seasonality == x,)))
+      results2
+      results1 <- results1[!results1 %in% results2]
+    }
+    queryTable1 <- queryTable1[results1,]
+  }
+  
+  cat("Series remaining after seasonality filter: ", nrow(queryTable1), "\n\n")
   
   #pub.info
   if (!is.null(pub.info)){
@@ -125,49 +187,6 @@ queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O
   }
   
   cat("Series remaining after pub.info filter: ", nrow(queryTable1), "\n\n")
-  
-  
-  #Seasonality
-  seasons1 <- unique(queryTable1$interpretation1_seasonality[!is.na(queryTable1$interpretation1_seasonality)])
-  catchSeasons <- list()
-  for (k in 1:length(seasonality)){
-    x1 <- tolower(seasonality[[k]])
-    y1 <- seasons1
-    
-    test1 <- data.frame(matrix(ncol = length(x1), nrow = length(y1)))
-    for (i in 1:length(x1)){
-      test1[,i] <- grepl(x1[i],gsub(pattern = "[^a-zA-Z0-9]", replacement = "", x = tolower(y1)))
-    }
-    testAll <- rowSums(test1)==ncol(test1)
-    catchSeasons[[k]] <- seasons1[testAll]
-  }
-  
-  results1 <- unlist(lapply(catchSeasons, function(x) which(queryTable1$interpretation1_seasonality %in% x,)))
-  results1
-  
-  if(!is.null(seasonNot)){
-    catchSeasonNot <- list()
-    for (k in 1:length(seasonNot)){
-      x1 <- tolower(seasonNot[[k]])
-      y1 <- seasons1
-      
-      test1 <- data.frame(matrix(ncol = length(x1), nrow = length(y1)))
-      for (i in 1:length(x1)){
-        test1[,i] <- grepl(x1[i],gsub(pattern = "[^a-zA-Z0-9]", replacement = "", x = tolower(y1)))
-      }
-      testAll <- rowSums(test1)==ncol(test1)
-      catchSeasonNot[[k]] <- seasons1[testAll]
-    }
-    results2 <- unlist(lapply(catchSeasonNot, function(x) which(queryTable1$interpretation1_seasonality == x,)))
-    results2
-    results1 <- results1[!results1 %in% results2]
-  }
-  
-  
-  queryTable1 <- queryTable1[results1,]
-  
-  cat("Series remaining after seasonality filter: ", nrow(queryTable1), "\n\n")
-  
   
   #Final tally and check-in
   cat("Based on your query parameters, there are", nrow(queryTable1), "available time series in", length(unique(queryTable1$dataSetName)), "datasets\n")
