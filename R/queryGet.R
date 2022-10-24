@@ -138,11 +138,18 @@ queryGet <- function(variable.name = NULL, #vector of variable names from c(d18O
   
   cat("Series remaining after interp.details filter: ", nrow(queryTable1), "\n\n")
   
+  
   #Seasonality
+  seasonalityListsCount <- sum(unlist(lapply(seasonality, function(x) methods::is(x, "list"))))
+  if(seasonalityListsCount < 1){
+    seasonalityListsCount <- 1
+  }
+  
   if(!is.null(seasonality)){
     seasons1 <- unique(queryTable1$interpretation1_seasonality[!is.na(queryTable1$interpretation1_seasonality)])
     catchSeasons <- list()
-    for (k in 1:length(seasonality)){
+    for (k in 1:seasonalityListsCount){
+      
       x1 <- tolower(seasonality[[k]])
       y1 <- seasons1
       

@@ -57,3 +57,4 @@ Suggests:
 Remotes: 
     neotomadb/neotoma2
 VignetteBuilder: knitr
+LazyData: true

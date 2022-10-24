@@ -14,14 +14,11 @@ if (!requireNamespace("usethis", quietly = TRUE)) {
   )
 }
 
-#get remote query table
-query_url <- "https://github.com/DaveEdge1/lipdverseQuery/raw/main/queryZip.zip"
-temp <- tempfile()
-download.file(query_url, temp)
-filePath <- unzip(temp, list = TRUE)$Name
-unzip(temp, filePath)
-queryTable <- read.csv(filePath)
-unlink(temp)
+#delete current queryTable in queryTable.rda
+#Install the project
+#run this code to rebuild the rda file
+# usethis::use_data(queryTable)
+# tools::resaveRdaFiles("data/")
 
 nc <- googlesheets4::read_sheet("1Z44xjSxEDlWnThvYLsHFS9aFAN0FnYh2EdroMs9qe_Q")
 

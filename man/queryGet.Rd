@@ -2,7 +2,7 @@
 % Please edit documentation in R/queryGet.R
 \name{queryGet}
 \alias{queryGet}
-\title{download a multilipd from lipdverse based on query parameters}
+\title{Download a mult-ilipd from LiPDverse based on query parameters}
 \usage{
 queryGet(
   variable.name = NULL,
@@ -14,30 +14,54 @@ queryGet(
   country = NULL,
   continent = NULL,
   ocean = FALSE,
-  interpretation = NULL
+  seasonality = NULL,
+  season.not = NULL,
+  interp.vars = NULL,
+  interp.details = NULL,
+  compilation = NULL,
+  grab.data = TRUE,
+  verbose = FALSE,
+  skip.update = FALSE
 )
 }
 \arguments{
-\item{variable.name}{}
+\item{variable.name}{#vector of variable names from c(d18O, d13C, treeRing, etc.)}
 
-\item{archive.type}{}
+\item{archive.type}{#vector of archive types. see unique(queryTable1$archiveType)}
 
-\item{age.min}{}
+\item{coord}{#lat/lon extent of interest c(latMin, latMax, lonMin, lonMax)}
 
-\item{age.max}{}
+\item{age.min}{#Sampling covers at least this recent extent, age BP}
 
-\item{pub.info}{}
+\item{age.max}{#Sampling covers at least this old extent, age BP}
 
-\item{country}{}
+\item{pub.info}{#last name of author, DOI, unique word from title, etc. all lowercase, based on associated publications}
 
-\item{ocean}{}
+\item{country}{#Coutnry origin of dataset from unique(queryTable1$country2), based on lat/lon}
 
-\item{interpretation}{}
+\item{continent}{#Continent origin of dataset from unique(queryTable1$continent), based on lat/lon}
 
-\item{fuzzy}{}
+\item{ocean}{#Gather datasets from the marine environment, based on lat/lon}
 
-\item{longitude}{}
+\item{seasonality}{#list of seasons where items within a list are treated with "AND" logic and separate lists are treated with "OR" logic ie. list(list("July", "August"), list("7,8"), list("summer"))}
+
+\item{season.not}{#seasons not desired with input format identical to seasonality}
+
+\item{interp.vars}{#vector of interpretation variables ie. c("SST", "upwelling"), see possible: unique(queryTable$interp_Vars)}
+
+\item{interp.details}{#vector of interpretation variables ie. c("sea@surface", "elNino"), see possible: unique(queryTable$interp_Details),}
+
+\item{compilation}{#Compilation name as character vector from unique(queryTable$paleoData_mostRecentCompilations), eg. c("temp12k", "wnam")}
+
+\item{grab.data}{#Return the datasets as a multi-lipd object}
+
+\item{verbose}{#offer details of filters and get feedback from user}
+
+\item{skip.update}{#remove update prompt}
+}
+\value{
+D
 }
 \description{
-download a multilipd from lipdverse based on query parameters
+Download a mult-ilipd from LiPDverse based on query parameters
 }
