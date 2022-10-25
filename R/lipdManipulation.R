@@ -13,6 +13,21 @@ removeEnsembles <- function(L){
     }
   }
   
+  #check for paleo measurementTable ensembles
+  for(p in 1:length(L$paleoData)){
+    for(mt in 1:length(L$paleoData[[p]]$measurementTable)){
+      cols <- which(purrr::map(L$paleoData[[p]]$measurementTable[[mt]],is.list))
+      for(co in cols){
+        nr <- nrow(L$paleoData[[p]]$measurementTable[[mt]][[co]]$values)
+        if(!is.null(nr)){
+          if(nr > 1){#than it's an ensemble
+            L$paleoData[[p]]$measurementTable[[mt]][[co]] <- NULL
+          }
+        }
+      }
+    }
+  }
+    
   #check for chron ensembles
   for(p in 1:length(L$chronData)){
     for(pm in 1:length(L$chronData[[p]]$model)){

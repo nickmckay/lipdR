@@ -54,6 +54,9 @@ get_src_or_dst<- function(path){
   tryCatch({
     if (!(isNullOb(path))){
       # If the provided path is not a directory and not a lipd file path, then it's not valid
+      if(is(path,"data.frame")){
+        path <- c(path$datasetId)
+      }
       if(length(path) > 1){
         if(!all(purrr::map_lgl(path,~ tools::file_ext(.x) == "lpd"))){
           if(all(purrr::map_lgl(path,is.character))){#all dsids
