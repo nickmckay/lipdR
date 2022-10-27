@@ -7,6 +7,8 @@
 convert_dsid_to_path(dsid, vers = NA)
 }
 \arguments{
+\item{dsid}{Dataset ID}
+
 \item{vers}{Optionally specify a dataset version as a character string (e.g. "0_1_2"). Default is NA, which will get the most recent version.}
 }
 \value{
