@@ -24,7 +24,7 @@ The filtering relies on a query table, which holds metadata for all time series 
 This query table is built in to, and loaded with lipdR
 
 ```{r echo=T, results='hide'}
-devtools::load_all()
+library(lipdR)
 ```
 
 Let's get a sense for what the table holds
@@ -152,7 +152,7 @@ The `ocean` parameter works on the same basis as the `country` and `continent` p
 We can also grab all the data from a `compilation`, such as the Western North America (WNAm)
 
 ```{r}
-queryGet(compilation = c("wnam"), grab.data = FALSE)
+queryGet(compilation = c("wNAm"), grab.data = FALSE)
 ```
 
 or multiple compilations
