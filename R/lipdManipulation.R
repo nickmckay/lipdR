@@ -200,6 +200,7 @@ return(L)
 #' @importFrom rlang .data
 #' @import tibble
 #' @importFrom purrr map_df
+#' @importFrom sets set
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom data.table as.data.table
 #' @import arsenal
@@ -332,9 +333,10 @@ tidyTsOld <- function(TS){
 
     nm <- match(names(tdf),pcolnames)
     #if(i == 1){
-
-
-    set(tidyData, i= sr:er,j = nm, tdf)
+  
+    
+    sets::set(tidyData, i= sr:er,j = nm, tdf)
+    
 
     # }else{
     #

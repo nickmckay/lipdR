@@ -1,6 +1,7 @@
 #' Loads a LiPD file from local path. Unzip, read, and process data
 #' Steps: create tmp, unzip lipd, read files into memory, manipulate data, move to original dir, delete tmp.
 #' @export
+#' @importFrom jsonlite fromJSON
 #' @keywords internal 
 #' @param path Local path OR url location of LiPD file
 #' @param jsonOnly Read data from jsonld only? The data will be included and the json file might be large (Typically only used for web connections)

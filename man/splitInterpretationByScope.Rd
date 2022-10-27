@@ -7,7 +7,7 @@
 splitInterpretationByScope(TS)
 }
 \arguments{
-\item{TS}{a lipd-TS object}
+\item{TS}{a lipd_ts object}
 }
 \value{
 split TS

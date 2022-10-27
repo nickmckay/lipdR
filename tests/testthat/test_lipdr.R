@@ -10,6 +10,17 @@ test_lipdread <- function(path){
   })
 }
 
+test_lipdSummary <- function(path){
+  tryCatch({
+    L <- readLipd(path)
+    lipdSummary(L)
+    return(0)
+  }, error=function(cond){
+    print(cond)
+    return(-1)
+  })
+}
+
 test_lipdreadwrite <- function(path){
   tryCatch({
     D <- readLipd(path)
@@ -114,6 +125,14 @@ test_that("LiPD Read: by 1 or more datasetId", {
   print("LiPD Read: by 1 or more datasetId")
   sink("log")
   expect_equal(test_lipdreaddsid(), 0)
+  sink()
+})
+
+
+test_that("LiPD Summary: v1.3 with all table types", {
+  print("LiPD Summary: v1.3 with all table types")
+  sink("log")
+  expect_equal(test_lipdSummary("./ODP1098B13.lpd"), 0)
   sink()
 })
 

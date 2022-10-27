@@ -5,7 +5,7 @@
 #' @importFrom dplyr select 
 #' @importFrom tidyr pivot_wider unchop
 #' @importFrom magrittr `%>%`
-#' @return
+#' @return a data table
 #' @export
 tabulateTs <- function(ts,time.var = "age"){
   ts <- as.lipdTsTibble(ts)

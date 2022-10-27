@@ -2,3 +2,8 @@
 [1] "reading: ODP1098B13.lpd"
 [1] "writing: ODP1098B13 to /Volumes/data/tempdir//RtmpdNuUSj/test.lpd"
 [1] "writing: ODP1098B13 to /Volumes/data/tempdir/RtmpdNuUSj"
+[1] "writing: ODP1098B13 to C:\\Users\\dce72\\AppData\\Local\\Temp\\RtmpCiUnoM\\test.lpd"
+[1] "Warning: bagit: There was an error while prepping for Bagit: \n Continuing to write LiPD file without bagging Error in get(\"bagit.script\", lipdEnv): object 'bagit.script' not found\n"
+[1] "writing: ODP1098B13 to C:\\Users\\dce72\\AppData\\Local\\Temp\\RtmpCiUnoM"
+[1] "Warning: bagit: There was an error while prepping for Bagit: \n Continuing to write LiPD file without bagging Error in get(\"bagit.script\", lipdEnv): object 'bagit.script' not found\n"
+
