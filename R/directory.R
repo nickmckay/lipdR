@@ -54,13 +54,22 @@ get_src_or_dst<- function(path){
   tryCatch({
     if (!(isNullOb(path))){
       # If the provided path is not a directory and not a lipd file path, then it's not valid
+      vers <- NA #initialize as NULL for future testing
       if(is(path,"data.frame")){
+        if(!any("datasetId" %in% names(path))){
+          stop("To use a data.frame as input, one of the columns must be named 'datasetId' and include datasetIds from the LiPDverse.")
+        }
         path <- c(path$datasetId)
+        if(any("datasetVersion" %in% names(path))){
+          vers <- c(path$datasetVersion)
+        }else{
+          vers <- rep(NA,length(path))
+        }
       }
       if(length(path) > 1){
         if(!all(purrr::map_lgl(path,~ tools::file_ext(.x) == "lpd"))){
           if(all(purrr::map_lgl(path,is.character))){#all dsids
-            path <- purrr::map_chr(path,convert_dsid_to_path)
+            path <- purrr::map2_chr(path,vers,convert_dsid_to_path)
           }else{
             stop("Error: The provided vector of paths must all point to lipd files (.lpd extensions) that exist (check for full paths), or dsids on lipdverse")
           }
@@ -72,7 +81,7 @@ get_src_or_dst<- function(path){
             !startsWith(tools::file_ext(path),"json") &&
             !is.url(path)){
           if(is.character(path)){
-            path <- convert_dsid_to_path(path)
+            path <- convert_dsid_to_path(path,vers)
           }else{
             # Not a lipd file and not a directory. Stop execution and quit.
             stop("Error: The provided path must be a directory, LiPD file, a vector of paths to LiPD files, a datasetId on lipdverse, or a direct URL to a LiPD file")
@@ -93,13 +102,15 @@ get_src_or_dst<- function(path){
 
 #' Convert datasetId to url to lipdverse lipd file
 #'
-#' @param dsid
-#'
+#' @param dsid Dataset ID
+#' @param vers Optionally specify a dataset version as a character string (e.g. "0_1_2"). Default is NA, which will get the most recent version.
 #' @return path to most recent lipd file
 #' @export
-convert_dsid_to_path <- function(dsid){
+convert_dsid_to_path <- function(dsid,vers = NA){
   webpath <- paste0("https://lipdverse.org/data/",dsid)
-  vers <- stringr::str_extract(string = readr::read_file(webpath) , pattern = "[0-9]_[0-9]_[0-9]")
+  if(is.na(vers)){#get most recent
+    vers <- stringr::str_extract(string = readr::read_file(webpath) , pattern = "\\d{1,}_\\d{1,}_\\d{1,}")
+  }
   path <- file.path(webpath,vers,"lipd.lpd")
   return(path)
 }

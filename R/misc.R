@@ -87,7 +87,8 @@ download_from_url <- function(path){
     }
     dir.create(dir)
     local_path <- file.path(dir, paste0(basename(dirname(dirname(path))), ".lpd"))
-    purrr::walk2(path,local_path,download.file,method = dmeth)
+    print(glue::glue("Downloading {length(path)} datasets from lipdverse.org..."))
+    purrr::walk2(path,local_path,download.file,method = dmeth,quiet = TRUE)
     path <- dir
 
   }else{
