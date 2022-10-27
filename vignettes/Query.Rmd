@@ -40,10 +40,8 @@ If you have used the LiPD format, you will recognize some of these names
 
 Let's try a simple query
 
-We'll set grab.data to FALSE since we aren't ready to download anything yet
-
 ```{r}
-queryLipdverse(variable.name = c("δ18O"))
+qt <- queryLipdverse(variable.name = c("δ18O"))
 ```
 huh, there must be more Oxygen-18 time series
 
@@ -58,7 +56,7 @@ unique(queryTable$paleoData_variableName)[1:250]
 There's quite a few notation styles, but they all have "18o" in common, so let's try that
 
 ```{r}
-queryLipdverse(variable.name = c("18o"))
+qt <- queryLipdverse(variable.name = c("18o"))
 ```
 
 Now that is a lot more data
@@ -71,7 +69,7 @@ For the `variable.name` parameter, multiple entries are combined with "OR" logic
 so more entries will generally pull more datasets
 
 ```{r}
-queryLipdverse(variable.name = c("δ18O", "d18O"))
+qt <- queryLipdverse(variable.name = c("δ18O", "d18O"))
 ```
 
 This gets us almost the same result, but we see the simplified filter is still pulling one more dataset
@@ -89,12 +87,12 @@ Note that we have distinct options: "Lake", "LakeSediment", "LakeDeposits", "Lak
 We can grab the `archive.type` names and search for all of them like this
 
 ```{r}
-queryLipdverse(archive.type = unique(queryTable$archiveType)[c(2,3,5,6,39)])
+qt <- queryLipdverse(archive.type = unique(queryTable$archiveType)[c(2,3,5,6,39)])
 ```
 Or we can use the simplification strategy again
 
 ```{r}
-queryLipdverse(archive.type = c("lake"))
+qt <- queryLipdverse(archive.type = c("lake"))
 ```
 
 As we saw last time, the results are similar
@@ -102,7 +100,7 @@ As we saw last time, the results are similar
 We can also filter based on publications: Author, DOI, Title, etc. using `pub.info`
 
 ```{r}
-queryLipdverse(pub.info = c("10.1029/2008PA0016718K7NFLXQ1"))
+qt <- queryLipdverse(pub.info = c("10.1029/2008PA0016718K7NFLXQ1"))
 ```
 
 This query can be a little slow if you don't narrow the results with another parameter first
@@ -114,13 +112,13 @@ There are four different parameters used for this: `coord`, `country`, `continen
 Let's grab all the North American datasets
 
 ```{r}
-queryLipdverse(continent = "North America")
+qt <- queryLipdverse(continent = "North America")
 ```
 
 Let's grab just those from Mexico
 
 ```{r}
-queryLipdverse(country = c("Mexico"))
+qt <- queryLipdverse(country = c("Mexico"))
 ```
 Note that the country and contient filters are not filtered based on LiPD content. A function in R uses the coordinates associated with the datasets to associate them with countries and the results can be unreliable near country borders
 
@@ -129,12 +127,12 @@ Again, we can see all of the options for `country` and `continent` with `unique(
 We can also use latitude and longitude directly with a bounding box
 
 ```{r}
-queryLipdverse(coord = c(0,90,-180,-110))
+qt <- queryLipdverse(coord = c(0,90,-180,-110))
 ```
 We can limit this to only marine data by setting `ocean` to `TRUE`
 
 ```{r}
-queryLipdverse(coord = c(0,90,-180,-110),
+qt <- queryLipdverse(coord = c(0,90,-180,-110),
          ocean = TRUE)
 ```
 The `ocean` parameter works on the same basis as the `country` and `continent` parameters and can be unreliable in coastal areas
@@ -142,13 +140,13 @@ The `ocean` parameter works on the same basis as the `country` and `continent` p
 We can also grab all the data from a `compilation`, such as the Western North America (WNAm)
 
 ```{r}
-queryLipdverse(compilation = c("wNAm"), grab.data = FALSE)
+qt <- queryLipdverse(compilation = c("wNAm"), grab.data = FALSE)
 ```
 
 or multiple compilations
 
 ```{r}
-queryLipdverse(compilation = c("wnam", "temp12k"), grab.data = FALSE)
+qt <- queryLipdverse(compilation = c("wnam", "temp12k"), grab.data = FALSE)
 ```
 the `compilation` filter uses "OR" logic
 
@@ -159,7 +157,7 @@ We can pull summer, commonly defined as June, July, and August, for the Northern
 `seasonality` input is taken as a list
 
 ```{r}
-queryLipdverse(continent = "North America",
+qt <- queryLipdverse(continent = "North America",
                seasonality = list("June", "July", "August"))
 ```
 
@@ -184,7 +182,7 @@ would filter for season data with ANY of these months
 Let's try to get all of the summer datasets by entering a few different notations
 
 ```{r}
-queryLipdverse(continent = "North America",
+qt <- queryLipdverse(continent = "North America",
                seasonality = list(list("6", "7", "8"), list("summer"), list("JJA")))
 ```
 
@@ -196,7 +194,7 @@ Let's exclude the annual and winter datasets by using `season.not`
 
 The input for for `season.not` works the same as `seasonality`
 ```{r}
-queryLipdverse(continent = "North America",
+qt <- queryLipdverse(continent = "North America",
                seasonality = list(list("6", "7", "8"), list("summer"), list("JJA")),
                season.not = list(list("annual"), list("December"), list("12","1","2"), list("winter"), list("cold")))
 ```
@@ -218,7 +216,7 @@ unique(queryTable$interp_Details)
 Let's look at some marine `interp.vars` in the northeast Pacific
 
 ```{r}
-queryLipdverse(coord = c(0,90,-180,-110),
+qt <- queryLipdverse(coord = c(0,90,-180,-110),
                ocean = TRUE,
                interp.vars =  c("SST", "upwelling", "SSS"))
 ```
@@ -228,7 +226,7 @@ That gives us just a few datasets
 Perhaps we'll have more luck with `interp.details`, which is more standardized
 
 ```{r,warning=FALSE}
-queryLipdverse(coord = c(0,90,-180,-110),
+qt <- queryLipdverse(coord = c(0,90,-180,-110),
                ocean = TRUE,
                interp.details = c("sea@surface", "elNino"))
 
@@ -239,7 +237,7 @@ let's see if we grab more using both
 These inputs combine with "OR" logic, so we may gather more datasets by using both parameters
 
 ```{r}
-queryLipdverse(coord = c(0,90,-180,-110),
+qt <- queryLipdverse(coord = c(0,90,-180,-110),
                ocean = TRUE,
                interp.details = c("sea@surface", "elNino"),
                interp.vars =  c("SST", "upwelling", "SSS"))
@@ -253,7 +251,7 @@ We'll look for marine archives in the northeast Pacific, with interpretations
 related to marine climate variables in the summer months only
 
 ```{r}
-queryLipdverse(coord = c(0,90,-180,-110),
+qt <- queryLipdverse(coord = c(0,90,-180,-110),
                archive.type = c("marine", "ocean"),
                ocean = TRUE,
                interp.details = c("sea@surface", "elNino"),
@@ -267,7 +265,7 @@ To fine-tune your query, set verbose to TRUE to see which parameters have what e
 We'll narrow the results further by adding author names to find within the publication info
 
 ```{r}
-queryLipdverse(coord = c(0,90,-180,-110),
+qt <- queryLipdverse(coord = c(0,90,-180,-110),
                archive.type = c("marine", "ocean"),
                ocean = TRUE,
                interp.details = c("sea@surface", "elNino"),
@@ -278,17 +276,8 @@ queryLipdverse(coord = c(0,90,-180,-110),
                verbose = TRUE)
 ```
 
-When you're satisfied with the query results, change grab.data to TRUE and assign the function to download the LiPD datasets
+When you're satisfied with the query results, we can simply put the filtered query table into the `readLipd()` function to download the datasets
 
 ```{r}
-D <- queryLipdverse(coord = c(0,90,-180,-110),
-               archive.type = c("marine", "ocean"),
-               ocean = TRUE,
-               interp.details = c("sea@surface", "elNino"),
-               interp.vars =  c("SST", "upwelling", "SSS"),
-               seasonality = list(list("6", "7", "8"), list("summer"), list("JJA")),
-               season.not = list(list("annual"), list("December"), list("12","1","2"), list("winter"), list("cold")),
-               pub.info = c("mix", "caissie"),
-               verbose = FALSE
-              )
+D <- readLipd(qt)
 ```
