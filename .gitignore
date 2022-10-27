@@ -41,4 +41,6 @@ vignettes/*.pdf
 R/.DS_Store
 inst/doc
 .DS_Store
-tests/testthat/log
+.DS_Store
+*.Rproj
+.DS_Store

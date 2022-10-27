@@ -1,3 +1,10 @@
+#' Is this a valid LiPD
+#'
+#' @param L a lipd object
+#' @param allow.ensemble Check for ensemble variables as well
+#'
+#' @return T/F
+#' @export
 validLipd <- function(L,allow.ensemble = TRUE){
   good <- TRUE
   

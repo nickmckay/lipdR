@@ -237,7 +237,7 @@ update_lipd_v1_3_keys <- function(d){
   keys <- names(d)
   
   # For any lists that are indexed by name 
-  if(!isNullOb(keys) && !is.na(keys)){
+  if(!isNullOb(keys) && sum(!is.na(keys)) > 0){
     for(i in 1:length(keys)){
       old_key <- keys[[i]]
       # Dive down first
@@ -285,7 +285,7 @@ update_lipd_v1_3_structure <- function(d){
   keys <- names(d)
   
   # For any lists that are indexed by name 
-  if(!isNullOb(keys) && !is.na(keys)){
+  if(!isNullOb(keys) && sum(!is.na(keys)) > 0){
     for(i in 1:length(keys)){
       curr_key <- keys[[i]]
       # Dive down first
