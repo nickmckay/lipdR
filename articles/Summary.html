@@ -84,18 +84,23 @@
 <div class="section level2">
 <h2 id="quick-summaries-for-lipd-objects">Quick summaries for LiPD objects<a class="anchor" aria-label="anchor" href="#quick-summaries-for-lipd-objects"></a>
 </h2>
-<p>LiPD datasets can contain a lot of data and metadata, and it’s often useful to get a quick summary of one or more datasets that you’ve loaded into R. Let’s load in a file from lipdverse.org and see how this works.</p>
+<p>LiPD datasets can contain a lot of data and metadata, and it’s often
+useful to get a quick summary of one or more datasets that you’ve loaded
+into R. Let’s load in a file from lipdverse.org and see how this
+works.</p>
 <div class="section level3">
 <h3 id="lipd-objects">LiPD objects<a class="anchor" aria-label="anchor" href="#lipd-objects"></a>
 </h3>
-<p>Let’s first grab at a single LiPD the Moose Lake dataset from Clegg et al. (2010) that’s part of the PAGES2k Temperature compilation.</p>
+<p>Let’s first grab at a single LiPD the Moose Lake dataset from Clegg
+et al. (2010) that’s part of the PAGES2k Temperature compilation.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#library(lipdR)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Loading <span style="color: #0000BB;">lipdR</span></span></span>
 <span></span>
 <span><span class="va">L</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readLipd.html">readLipd</a></span><span class="op">(</span><span class="st">"https://lipdverse.org/data/MD6jkgwSxsq0oilgYUjM/1_0_0//Arc-MooseLake.Clegg.2010-ensemble.lpd"</span><span class="op">)</span></span></code></pre></div>
-<p>First, let’s get a quick look using the <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> function, or by just returning the object:</p>
+<p>First, let’s get a quick look using the <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>
+function, or by just returning the object:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">L</span></span>
 <span><span class="co">#&gt; ################################################################################################</span></span>
@@ -135,7 +140,8 @@
 <span><span class="co">#&gt; Model contains 1 ensemble table(s)</span></span>
 <span><span class="co">#&gt; dimensions of ensemble table 1 of 1 : 85 x 6297</span></span></code></pre></div>
 <p>This is handy, as we can quickly see…</p>
-<p>To get more detail about the dataset, let’s use <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code></p>
+<p>To get more detail about the dataset, let’s use
+<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">L</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ################################################################################################</span></span>
@@ -189,12 +195,23 @@
 <span><span class="co">#&gt; Model algorithm: Bacon2.2 </span></span>
 <span><span class="co">#&gt; Model contains 1 ensemble table(s)</span></span>
 <span><span class="co">#&gt; dimensions of ensemble table 1 of 1 : 85 x 6297</span></span></code></pre></div>
-<p>In addition to the information printed by <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> includes tables with basic metadata about each of the columns in the measurement tables. In the Moose Lake dataset’s paleoData measurement table, we see two variables, <strong>temperature</strong> and <strong>year</strong>, and the table shows the units, description, and some stats about the contents. Similarly, we get information about the radiocarbon dates included in the chronData measurement table.</p>
+<p>In addition to the information printed by <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>,
+<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> includes tables with basic metadata about each of
+the columns in the measurement tables. In the Moose Lake dataset’s
+paleoData measurement table, we see two variables,
+<strong>temperature</strong> and <strong>year</strong>, and the table
+shows the units, description, and some stats about the contents.
+Similarly, we get information about the radiocarbon dates included in
+the chronData measurement table.</p>
 </div>
 <div class="section level3">
 <h3 id="multi-lipd-objects">Multi LiPD objects<a class="anchor" aria-label="anchor" href="#multi-lipd-objects"></a>
 </h3>
-<p>LiPD datasets are often most powerful when many datasets are analyzed together, and it’s common to load multiple datasets into a “multi_lipd” object. It’s nice to get useful summaries for these data too. Let’s explore this functionality using a diverse collection of LiPD files pulled at random from around the LiPDverse.</p>
+<p>LiPD datasets are often most powerful when many datasets are analyzed
+together, and it’s common to load multiple datasets into a “multi_lipd”
+object. It’s nice to get useful summaries for these data too. Let’s
+explore this functionality using a diverse collection of LiPD files
+pulled at random from around the LiPDverse.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">D</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readLipd.html">readLipd</a></span><span class="op">(</span><span class="st">"http://lipdverse.org/testData/testData.zip"</span><span class="op">)</span></span></code></pre></div>
 <p>Once again, we can <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> for an overview:</p>
@@ -217,8 +234,10 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">### Geographic Bounds ###</span></span></span>
 <span><span class="co"><span style="font-weight: bold;">#&gt; </span>All sites located between -75.0025N to 80.7N and -162.13E to 146.8749E</span></span></code></pre></div>
-<p>and see the number of datasets included, their archiveTypes and geographic boundaries.</p>
-<p>We can also have a look at any individual dataset in the collection by subsetting the multi-lipd:</p>
+<p>and see the number of datasets included, their archiveTypes and
+geographic boundaries.</p>
+<p>We can also have a look at any individual dataset in the collection
+by subsetting the multi-lipd:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">D</span><span class="op">$</span><span class="va">`Arc-Agassiz.Vinther.2008`</span></span>
 <span><span class="co">#&gt; ################################################################################################</span></span>
@@ -255,7 +274,8 @@
 <span><span class="co">#&gt; Model algorithm: BAM </span></span>
 <span><span class="co">#&gt; Model contains 1 ensemble table(s)</span></span>
 <span><span class="co">#&gt; dimensions of ensemble table 1 of 1 : 1973 x 1000</span></span></code></pre></div>
-<p>For more information on the multi-lipd, we can use <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code></p>
+<p>For more information on the multi-lipd, we can use
+<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">D</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Multi LiPD contains 47 LiPD files.</span></span></span>
@@ -302,7 +322,10 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> GeoB5901_2.Kim.2004                MarineSediment          1          1      0 1130 BP       9920 BP          depth, ageDuplicate, ageOriginal, Uk37, temperature, ageMedianBacon, age                                                                                                                                                                                                                                                                                                                           </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">20</span> Glattalp.Wirth.2013                LakeSediment            1          0      0 1960 AD       -8099 AD         floods, year, age                                                                                                                                                                                                                                                                                                                                                                                  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 27 more rows</span></span></span></code></pre></div>
-<p>And also get tables that give us some basic information on each of the datasets included. There are a few options that customize the output of summary, here we will choose the preferred time units, and limit the number of datasets summarized to 20:</p>
+<p>And also get tables that give us some basic information on each of
+the datasets included. There are a few options that customize the output
+of summary, here we will choose the preferred time units, and limit the
+number of datasets summarized to 20:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">D</span>, print.length<span class="op">=</span><span class="fl">20</span>, time.units<span class="op">=</span><span class="st">"AD"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Multi LiPD contains 47 LiPD files.</span></span></span>
@@ -349,14 +372,18 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> GeoB5901_2.Kim.2004                MarineSediment          1          1      0 1130 BP       9920 BP          depth, ageDuplicate, ageOriginal, Uk37, temperature, ageMedianBacon, age                                                                                                                                                                                                                                                                                                                           </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">20</span> Glattalp.Wirth.2013                LakeSediment            1          0      0 1960 AD       -8099 AD         floods, year, age                                                                                                                                                                                                                                                                                                                                                                                  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 27 more rows</span></span></span></code></pre></div>
-<p>These options limit the printed information on the table to 20 rows, and gives us time summary information in AD units where possible.</p>
+<p>These options limit the printed information on the table to 20 rows,
+and gives us time summary information in AD units where possible.</p>
 <div class="section level4">
 <h4 id="storing-the-summary-table">Storing the summary table<a class="anchor" aria-label="anchor" href="#storing-the-summary-table"></a>
 </h4>
-<p>Sometimes it is useful to save the table, so it can be sorted and further investigated. Simply assign an output:”</p>
+<p>Sometimes it is useful to save the table, so it can be sorted and
+further investigated. Simply assign an output:”</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">MLSummary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">D</span><span class="op">)</span></span></code></pre></div>
-<p>We can now explore this table as a standard data frame. Here we do so using <code>dplyr</code> tools to sort by datasets with age ensembles</p>
+<p>We can now explore this table as a standard data frame. Here we do so
+using <code>dplyr</code> tools to sort by datasets with age
+ensembles</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -385,8 +412,11 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Ant-SiteDML05.Graf.2002  glacier ice             1          0      0 1996 AD       166 AD           d18O, year                                                                                                                                                                                                                                                                                                                                                                                                   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Asi-MONG033.Jacoby.2010  tree                    1          0      0 1997 AD       1550 AD          year, trsgi                                                                                                                                                                                                                                                                                                                                                                                                  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 37 more rows</span></span></span></code></pre></div>
-<p>With a well curated dataset (this example doesn’t quite fit those criteria), a few commands can get you pretty close to a publishable table.</p>
-<p><em>NPM: we might have to kill this section because of the gt package, or just not show that. </em></p>
+<p>With a well curated dataset (this example doesn’t quite fit those
+criteria), a few commands can get you pretty close to a publishable
+table.</p>
+<p><em>NPM: we might have to kill this section because of the gt
+package, or just not show that. </em></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://gt.rstudio.com/" class="external-link">gt</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -397,12 +427,12 @@
 <span><span class="va">MLSummary</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">"Num"</span><span class="op">)</span>,<span class="op">-</span><span class="st">"Paleo Vars"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html" class="external-link">gt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div id="cebytcogic" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="uloojkcnua" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#cebytcogic .gt_table {
+#uloojkcnua .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -427,7 +457,7 @@
   border-left-color: #D3D3D3;
 }
 
-#cebytcogic .gt_heading {
+#uloojkcnua .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -439,7 +469,7 @@
   border-right-color: #D3D3D3;
 }
 
-#cebytcogic .gt_title {
+#uloojkcnua .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -451,7 +481,7 @@
   border-bottom-width: 0;
 }
 
-#cebytcogic .gt_subtitle {
+#uloojkcnua .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -463,13 +493,13 @@
   border-top-width: 0;
 }
 
-#cebytcogic .gt_bottom_border {
+#uloojkcnua .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#cebytcogic .gt_col_headings {
+#uloojkcnua .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -484,7 +514,7 @@
   border-right-color: #D3D3D3;
 }
 
-#cebytcogic .gt_col_heading {
+#uloojkcnua .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -504,7 +534,7 @@
   overflow-x: hidden;
 }
 
-#cebytcogic .gt_column_spanner_outer {
+#uloojkcnua .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -516,15 +546,15 @@
   padding-right: 4px;
 }
 
-#cebytcogic .gt_column_spanner_outer:first-child {
+#uloojkcnua .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#cebytcogic .gt_column_spanner_outer:last-child {
+#uloojkcnua .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#cebytcogic .gt_column_spanner {
+#uloojkcnua .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -536,7 +566,7 @@
   width: 100%;
 }
 
-#cebytcogic .gt_group_heading {
+#uloojkcnua .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -561,7 +591,7 @@
   vertical-align: middle;
 }
 
-#cebytcogic .gt_empty_group_heading {
+#uloojkcnua .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -576,15 +606,15 @@
   vertical-align: middle;
 }
 
-#cebytcogic .gt_from_md > :first-child {
+#uloojkcnua .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#cebytcogic .gt_from_md > :last-child {
+#uloojkcnua .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#cebytcogic .gt_row {
+#uloojkcnua .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -603,7 +633,7 @@
   overflow-x: hidden;
 }
 
-#cebytcogic .gt_stub {
+#uloojkcnua .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -616,7 +646,7 @@
   padding-right: 5px;
 }
 
-#cebytcogic .gt_stub_row_group {
+#uloojkcnua .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -630,11 +660,11 @@
   vertical-align: top;
 }
 
-#cebytcogic .gt_row_group_first td {
+#uloojkcnua .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#cebytcogic .gt_summary_row {
+#uloojkcnua .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -644,16 +674,16 @@
   padding-right: 5px;
 }
 
-#cebytcogic .gt_first_summary_row {
+#uloojkcnua .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#cebytcogic .gt_first_summary_row.thick {
+#uloojkcnua .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#cebytcogic .gt_last_summary_row {
+#uloojkcnua .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -663,7 +693,7 @@
   border-bottom-color: #D3D3D3;
 }
 
-#cebytcogic .gt_grand_summary_row {
+#uloojkcnua .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -673,7 +703,7 @@
   padding-right: 5px;
 }
 
-#cebytcogic .gt_first_grand_summary_row {
+#uloojkcnua .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -683,11 +713,11 @@
   border-top-color: #D3D3D3;
 }
 
-#cebytcogic .gt_striped {
+#uloojkcnua .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#cebytcogic .gt_table_body {
+#uloojkcnua .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -696,7 +726,7 @@
   border-bottom-color: #D3D3D3;
 }
 
-#cebytcogic .gt_footnotes {
+#uloojkcnua .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -710,7 +740,7 @@
   border-right-color: #D3D3D3;
 }
 
-#cebytcogic .gt_footnote {
+#uloojkcnua .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -719,7 +749,7 @@
   padding-right: 5px;
 }
 
-#cebytcogic .gt_sourcenotes {
+#uloojkcnua .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -733,7 +763,7 @@
   border-right-color: #D3D3D3;
 }
 
-#cebytcogic .gt_sourcenote {
+#uloojkcnua .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -741,64 +771,64 @@
   padding-right: 5px;
 }
 
-#cebytcogic .gt_left {
+#uloojkcnua .gt_left {
   text-align: left;
 }
 
-#cebytcogic .gt_center {
+#uloojkcnua .gt_center {
   text-align: center;
 }
 
-#cebytcogic .gt_right {
+#uloojkcnua .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#cebytcogic .gt_font_normal {
+#uloojkcnua .gt_font_normal {
   font-weight: normal;
 }
 
-#cebytcogic .gt_font_bold {
+#uloojkcnua .gt_font_bold {
   font-weight: bold;
 }
 
-#cebytcogic .gt_font_italic {
+#uloojkcnua .gt_font_italic {
   font-style: italic;
 }
 
-#cebytcogic .gt_super {
+#uloojkcnua .gt_super {
   font-size: 65%;
 }
 
-#cebytcogic .gt_footnote_marks {
+#uloojkcnua .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#cebytcogic .gt_asterisk {
+#uloojkcnua .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#cebytcogic .gt_indent_1 {
+#uloojkcnua .gt_indent_1 {
   text-indent: 5px;
 }
 
-#cebytcogic .gt_indent_2 {
+#uloojkcnua .gt_indent_2 {
   text-indent: 10px;
 }
 
-#cebytcogic .gt_indent_3 {
+#uloojkcnua .gt_indent_3 {
   text-indent: 15px;
 }
 
-#cebytcogic .gt_indent_4 {
+#uloojkcnua .gt_indent_4 {
   text-indent: 20px;
 }
 
-#cebytcogic .gt_indent_5 {
+#uloojkcnua .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1100,14 +1130,22 @@
 <div class="section level3">
 <h3 id="lipd-timeseries-objects">LiPD Timeseries objects<a class="anchor" aria-label="anchor" href="#lipd-timeseries-objects"></a>
 </h3>
-<p>Typically, when we load multiple LiPD datasets, it’s convenient to convert them into timeseries objects, as it greatly simplifies analyzing the data. There are print and summary methods for these objects too. There are a couple different representations of these objects availabe in R - namely, as a list (lipd_ts) or as a nested tibble (lipd_ts_tibble). If you’re used to working with tibbles and tidyverse you’ll probably prefer the latter, so we’ll do that here:</p>
+<p>Typically, when we load multiple LiPD datasets, it’s convenient to
+convert them into timeseries objects, as it greatly simplifies analyzing
+the data. There are print and summary methods for these objects too.
+There are a couple different representations of these objects availabe
+in R - namely, as a list (lipd_ts) or as a nested tibble
+(lipd_ts_tibble). If you’re used to working with tibbles and tidyverse
+you’ll probably prefer the latter, so we’ll do that here:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tibTS</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as.lipdTsTibble.html">as.lipdTsTibble</a></span><span class="op">(</span><span class="va">D</span><span class="op">)</span></span></code></pre></div>
 <p>Let’s quickly check the size of this tibble</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">tibTS</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 583 381</span></span></code></pre></div>
-<p>Wow - that’s pretty big. That means that there are 583 variables across all our datasets, and 381 data or metadata fields present in one or more of the datasets.</p>
+<p>Wow - that’s pretty big. That means that there are 583 variables
+across all our datasets, and 381 data or metadata fields present in one
+or more of the datasets.</p>
 <p>Again, let’s print out a quick overview:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tibTS</span></span>
@@ -1118,8 +1156,15 @@
 <span><span class="co">#&gt; 139 variables contain year (AD), while 486 contain age (BP).</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Can not provide interval of time overlap, units not standardized.</span></span></code></pre></div>
-<p>and we see the number of datasets, variables, and data/metadata fields. We also get the time units of all variables and the time interval common to all variables. These data have not been curated, and we see that no time units or time interval is common to all variables.</p>
-<p>Beyond this quick overview, we can get a lot more information using <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>. This works the same for lipd_ts and lipd_ts_tibble objects. Let’s limit the table to show details of the first 10 rows only</p>
+<p>and we see the number of datasets, variables, and data/metadata
+fields. We also get the time units of all variables and the time
+interval common to all variables. These data have not been curated, and
+we see that no time units or time interval is common to all
+variables.</p>
+<p>Beyond this quick overview, we can get a lot more information using
+<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>. This works the same for lipd_ts and
+lipd_ts_tibble objects. Let’s limit the table to show details of the
+first 10 rows only</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tibTS</span>, print.length <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; LiPD TS object containing 47 datasets</span></span>
@@ -1144,7 +1189,11 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> SrCa                                4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> uncertaintyHigh                     4</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 59 more rows</span></span></span></code></pre></div>
-<p>In addition to the overview provided by <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> gives us a table that shows us which variables are most common in the TS object. We can explore this more by specifying which metadata fields we’d like to summarize using the <code>add.variable</code> parameter.</p>
+<p>In addition to the overview provided by <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>,
+<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> gives us a table that shows us which variables
+are most common in the TS object. We can explore this more by specifying
+which metadata fields we’d like to summarize using the
+<code>add.variable</code> parameter.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tibTS</span>,</span>
 <span>        print.length <span class="op">=</span> <span class="fl">10</span>, </span>
@@ -1177,11 +1226,17 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> SrCa                                4 tree                         21 <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span> TriangleLakeBog.Jensen.2021                          31</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> uncertaintyHigh                     4 lake sediment                12 <span style="color: #BB0000;">NA</span>                                    <span style="color: #BB0000;">NA</span> CO03COPM                                             25</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 59 more rows</span></span></span></code></pre></div>
-<p>Now we get the same summarizing information for those additional six columns. The character or categorical data (archiveType, geo_contintent, and dataSetName) get added to the count table. The numeric data (paleoData_meanValue12k, geo_elevation, and agesPerKyr) are summarized in quantiles above.</p>
+<p>Now we get the same summarizing information for those additional six
+columns. The character or categorical data (archiveType, geo_contintent,
+and dataSetName) get added to the count table. The numeric data
+(paleoData_meanValue12k, geo_elevation, and agesPerKyr) are summarized
+in quantiles above.</p>
 <div class="section level4">
 <h4 id="filtering-the-ts-object">Filtering the TS object<a class="anchor" aria-label="anchor" href="#filtering-the-ts-object"></a>
 </h4>
-<p>This summary information is often a great first step towards informing how you will filter or subset your TS object for future analysis. For example, let’s grab only the variables that:</p>
+<p>This summary information is often a great first step towards
+informing how you will filter or subset your TS object for future
+analysis. For example, let’s grab only the variables that:</p>
 <ol style="list-style-type: decimal">
 <li>are in the continental US (roughly)</li>
 <li>cover the early Holocene</li>
@@ -1203,7 +1258,9 @@
 <span>         <span class="va">maxYear</span> <span class="op">&gt;</span> <span class="fl">11700</span>,</span>
 <span>         <span class="va">minYear</span> <span class="op">&lt;</span> <span class="fl">8000</span>,</span>
 <span>         <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">interpretation1_variable</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Great - we found 29 timeseries that meet these criteria. Let’s explore their interpretations in a bit more detail by saving the table output.</p>
+<p>Great - we found 29 timeseries that meet these criteria. Let’s
+explore their interpretations in a bit more detail by saving the table
+output.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sumTable</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">subsetTs</span>,</span>
 <span>                    add.variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"interpretation1_variable"</span>,</span>

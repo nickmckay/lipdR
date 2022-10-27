@@ -278,27 +278,65 @@
 <p><strong>1-to-1 ratio</strong> 1 time series object = 1 measurement table column</p>
 <p>Each <em>object</em> within a time series is made from one column of data in a <strong>measurement</strong> table. It’s important to note that this only pertains to measurement table data. All model data (ensemble, distribution, summary) are not included when creating a time series.</p>
 <p><strong>Example 1: One dataset</strong></p>
-<ul><li>ODP1098B13<ul><li>1 measurement table<ul><li>5 columns<ul><li>depth, depth1, SST, TEX86, age</li></ul>
-</li></ul>
-</li></ul>
-</li></ul>
+<ul>
+<li>ODP1098B13
+<ul>
+<li>1 measurement table
+<ul>
+<li>5 columns
+<ul>
+<li>depth, depth1, SST, TEX86, age</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <p><code>extractTs</code> creates a time series (<code>ts</code>) of <strong>5</strong> objects</p>
 <p><strong>Example 2: Multiple datasets</strong></p>
 <ul>
 <li>
-<code>ODP1098B13</code><ul><li>1 measurement table<ul><li>5 columns<ul><li>depth, depth1, SST, TEX86, age</li></ul>
-</li></ul>
-</li></ul>
+<code>ODP1098B13</code>
+<ul>
+<li>1 measurement table
+<ul>
+<li>5 columns
+<ul>
+<li>depth, depth1, SST, TEX86, age</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li>
-<code>Ant-CoastalDML.Thamban.2006</code><ul><li>1 measurement table<ul><li>2 columns<ul><li>d18O, year</li></ul>
-</li></ul>
-</li></ul>
+<code>Ant-CoastalDML.Thamban.2006</code>
+<ul>
+<li>1 measurement table
+<ul>
+<li>2 columns
+<ul>
+<li>d18O, year</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li>
-<code>CO00COKY</code><ul><li>1 measurement table<ul><li>2 columns<ul><li>d18O, year</li></ul>
-</li></ul>
-</li></ul>
+<code>CO00COKY</code>
+<ul>
+<li>1 measurement table
+<ul>
+<li>2 columns
+<ul>
+<li>d18O, year</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 <p><code>extractTs</code> creates a time series (<code>ts</code>) of <strong>9</strong> objects</p>
@@ -317,7 +355,7 @@
 </div>
 </div>
 <div class="section level2">
-<h2 id="-how-to-cite-this-code">## How to Cite this code<a class="anchor" aria-label="anchor" href="#-how-to-cite-this-code"></a>
+<h2 id="id_-how-to-cite-this-code">## How to Cite this code<a class="anchor" aria-label="anchor" href="#id_-how-to-cite-this-code"></a>
 </h2>
 <p><a href="http://doi.org/10.5281/zenodo.60813" class="external-link"><img src="https://zenodo.org/badge/24036/nickmckay/LiPD-utilities.svg"></a></p>
 <p>Use this link to visit the Zenodo website. It provides citation information in many popular formats.</p>
