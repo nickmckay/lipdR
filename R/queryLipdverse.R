@@ -17,7 +17,6 @@
 #' @param interp.vars #vector of interpretation variables ie. c("SST", "upwelling"), see possible: unique(queryTable$interp_Vars)
 #' @param interp.details #vector of interpretation variables ie. c("sea@surface", "elNino"), see possible: unique(queryTable$interp_Details),
 #' @param compilation #Compilation name as character vector from unique(queryTable$paleoData_mostRecentCompilations), eg. c("temp12k", "wnam")
-#' @param grab.data #Return the datasets as a multi-lipd object
 #' @param verbose #offer details of filters and get feedback from user
 #' @param skip.update #remove update prompt
 #'
@@ -38,7 +37,6 @@ queryLipdverse <- function(variable.name = NULL,
                      interp.vars = NULL, 
                      interp.details = NULL, 
                      compilation = NULL, 
-                     grab.data = TRUE, 
                      verbose = FALSE, 
                      skip.update = FALSE 
                      ){

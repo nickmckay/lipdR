@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-The `queryGet()` function in `lipdR` allows users to download LiPD files based on various filter parameters
+The `queryLipdverse()` function in `lipdR` allows users to download LiPD files based on various filter parameters
 
 The filtering relies on a query table, which holds metadata for all time series available on LiPDverse
 
@@ -43,8 +43,7 @@ Let's try a simple query
 We'll set grab.data to FALSE since we aren't ready to download anything yet
 
 ```{r}
-queryGet(variable.name = c("δ18O"),
-               grab.data = FALSE)
+queryLipdverse(variable.name = c("δ18O"))
 ```
 huh, there must be more Oxygen-18 time series
 
@@ -59,8 +58,7 @@ unique(queryTable$paleoData_variableName)[1:250]
 There's quite a few notation styles, but they all have "18o" in common, so let's try that
 
 ```{r}
-queryGet(variable.name = c("18o"),
-               grab.data = FALSE)
+queryLipdverse(variable.name = c("18o"))
 ```
 
 Now that is a lot more data
@@ -73,8 +71,7 @@ For the `variable.name` parameter, multiple entries are combined with "OR" logic
 so more entries will generally pull more datasets
 
 ```{r}
-queryGet(variable.name = c("δ18O", "d18O"),
-               grab.data = FALSE)
+queryLipdverse(variable.name = c("δ18O", "d18O"))
 ```
 
 This gets us almost the same result, but we see the simplified filter is still pulling one more dataset
@@ -92,14 +89,12 @@ Note that we have distinct options: "Lake", "LakeSediment", "LakeDeposits", "Lak
 We can grab the `archive.type` names and search for all of them like this
 
 ```{r}
-queryGet(archive.type = unique(queryTable$archiveType)[c(2,3,5,6,39)],
-               grab.data = FALSE)
+queryLipdverse(archive.type = unique(queryTable$archiveType)[c(2,3,5,6,39)])
 ```
 Or we can use the simplification strategy again
 
 ```{r}
-queryGet(archive.type = c("lake"),
-               grab.data = FALSE)
+queryLipdverse(archive.type = c("lake"))
 ```
 
 As we saw last time, the results are similar
@@ -107,8 +102,7 @@ As we saw last time, the results are similar
 We can also filter based on publications: Author, DOI, Title, etc. using `pub.info`
 
 ```{r}
-queryGet(pub.info = c("10.1029/2008PA0016718K7NFLXQ1"),
-               grab.data = FALSE)
+queryLipdverse(pub.info = c("10.1029/2008PA0016718K7NFLXQ1"))
 ```
 
 This query can be a little slow if you don't narrow the results with another parameter first
@@ -120,15 +114,13 @@ There are four different parameters used for this: `coord`, `country`, `continen
 Let's grab all the North American datasets
 
 ```{r}
-queryGet(continent = "North America",
-               grab.data = FALSE)
+queryLipdverse(continent = "North America")
 ```
 
 Let's grab just those from Mexico
 
 ```{r}
-queryGet(country = c("Mexico"),
-         grab.data = FALSE)
+queryLipdverse(country = c("Mexico"))
 ```
 Note that the country and contient filters are not filtered based on LiPD content. A function in R uses the coordinates associated with the datasets to associate them with countries and the results can be unreliable near country borders
 
@@ -137,28 +129,26 @@ Again, we can see all of the options for `country` and `continent` with `unique(
 We can also use latitude and longitude directly with a bounding box
 
 ```{r}
-queryGet(coord = c(0,90,-180,-110),
-         grab.data = FALSE)
+queryLipdverse(coord = c(0,90,-180,-110))
 ```
 We can limit this to only marine data by setting `ocean` to `TRUE`
 
 ```{r}
-queryGet(coord = c(0,90,-180,-110),
-         ocean = TRUE,
-         grab.data = FALSE)
+queryLipdverse(coord = c(0,90,-180,-110),
+         ocean = TRUE)
 ```
 The `ocean` parameter works on the same basis as the `country` and `continent` parameters and can be unreliable in coastal areas
 
 We can also grab all the data from a `compilation`, such as the Western North America (WNAm)
 
 ```{r}
-queryGet(compilation = c("wNAm"), grab.data = FALSE)
+queryLipdverse(compilation = c("wNAm"), grab.data = FALSE)
 ```
 
 or multiple compilations
 
 ```{r}
-queryGet(compilation = c("wnam", "temp12k"), grab.data = FALSE)
+queryLipdverse(compilation = c("wnam", "temp12k"), grab.data = FALSE)
 ```
 the `compilation` filter uses "OR" logic
 
@@ -169,9 +159,8 @@ We can pull summer, commonly defined as June, July, and August, for the Northern
 `seasonality` input is taken as a list
 
 ```{r}
-queryGet(continent = "North America",
-               seasonality = list("June", "July", "August"),
-               grab.data = FALSE)
+queryLipdverse(continent = "North America",
+               seasonality = list("June", "July", "August"))
 ```
 
 Okay, so this must not be a good choice of format, let's see how LiPD authors define their seasons
@@ -195,9 +184,8 @@ would filter for season data with ANY of these months
 Let's try to get all of the summer datasets by entering a few different notations
 
 ```{r}
-queryGet(continent = "North America",
-               seasonality = list(list("6", "7", "8"), list("summer"), list("JJA")),
-               grab.data = FALSE)
+queryLipdverse(continent = "North America",
+               seasonality = list(list("6", "7", "8"), list("summer"), list("JJA")))
 ```
 
 This returns quite a few datasets
@@ -208,10 +196,9 @@ Let's exclude the annual and winter datasets by using `season.not`
 
 The input for for `season.not` works the same as `seasonality`
 ```{r}
-queryGet(continent = "North America",
+queryLipdverse(continent = "North America",
                seasonality = list(list("6", "7", "8"), list("summer"), list("JJA")),
-               season.not = list(list("annual"), list("December"), list("12","1","2"), list("winter"), list("cold")),
-               grab.data = FALSE)
+               season.not = list(list("annual"), list("December"), list("12","1","2"), list("winter"), list("cold")))
 ```
 
 Now we've narrowed it down to summer-specific datasets
@@ -231,10 +218,9 @@ unique(queryTable$interp_Details)
 Let's look at some marine `interp.vars` in the northeast Pacific
 
 ```{r}
-queryGet(coord = c(0,90,-180,-110),
+queryLipdverse(coord = c(0,90,-180,-110),
                ocean = TRUE,
-               interp.vars =  c("SST", "upwelling", "SSS"),
-               grab.data = FALSE)
+               interp.vars =  c("SST", "upwelling", "SSS"))
 ```
 
 That gives us just a few datasets
@@ -242,10 +228,9 @@ That gives us just a few datasets
 Perhaps we'll have more luck with `interp.details`, which is more standardized
 
 ```{r,warning=FALSE}
-queryGet(coord = c(0,90,-180,-110),
+queryLipdverse(coord = c(0,90,-180,-110),
                ocean = TRUE,
-               interp.details = c("sea@surface", "elNino"),
-               grab.data = FALSE)
+               interp.details = c("sea@surface", "elNino"))
 
 ```
 
@@ -254,11 +239,10 @@ let's see if we grab more using both
 These inputs combine with "OR" logic, so we may gather more datasets by using both parameters
 
 ```{r}
-queryGet(coord = c(0,90,-180,-110),
+queryLipdverse(coord = c(0,90,-180,-110),
                ocean = TRUE,
                interp.details = c("sea@surface", "elNino"),
-               interp.vars =  c("SST", "upwelling", "SSS"),
-               grab.data = FALSE)
+               interp.vars =  c("SST", "upwelling", "SSS"))
 ```
 
 looks like we get a few extra datasets with this approach
@@ -269,14 +253,13 @@ We'll look for marine archives in the northeast Pacific, with interpretations
 related to marine climate variables in the summer months only
 
 ```{r}
-queryGet(coord = c(0,90,-180,-110),
+queryLipdverse(coord = c(0,90,-180,-110),
                archive.type = c("marine", "ocean"),
                ocean = TRUE,
                interp.details = c("sea@surface", "elNino"),
                interp.vars =  c("SST", "upwelling", "SSS"),
                seasonality = list(list("6", "7", "8"), list("summer"), list("JJA")),
-               season.not = list(list("annual"), list("December"), list("12","1","2"), list("winter"), list("cold")),
-               grab.data = FALSE)
+               season.not = list(list("annual"), list("December"), list("12","1","2"), list("winter"), list("cold")))
 ```
 
 To fine-tune your query, set verbose to TRUE to see which parameters have what effect on filtering
@@ -284,14 +267,13 @@ To fine-tune your query, set verbose to TRUE to see which parameters have what e
 We'll narrow the results further by adding author names to find within the publication info
 
 ```{r}
-queryGet(coord = c(0,90,-180,-110),
+queryLipdverse(coord = c(0,90,-180,-110),
                archive.type = c("marine", "ocean"),
                ocean = TRUE,
                interp.details = c("sea@surface", "elNino"),
                interp.vars =  c("SST", "upwelling", "SSS"),
                seasonality = list(list("6", "7", "8"), list("summer"), list("JJA")),
                season.not = list(list("annual"), list("December"), list("12","1","2"), list("winter"), list("cold")),
-               grab.data = FALSE,
                pub.info = c("mix", "caissie"),
                verbose = TRUE)
 ```
@@ -299,15 +281,14 @@ queryGet(coord = c(0,90,-180,-110),
 When you're satisfied with the query results, change grab.data to TRUE and assign the function to download the LiPD datasets
 
 ```{r}
-D <- queryGet(coord = c(0,90,-180,-110),
+D <- queryLipdverse(coord = c(0,90,-180,-110),
                archive.type = c("marine", "ocean"),
                ocean = TRUE,
                interp.details = c("sea@surface", "elNino"),
                interp.vars =  c("SST", "upwelling", "SSS"),
                seasonality = list(list("6", "7", "8"), list("summer"), list("JJA")),
                season.not = list(list("annual"), list("December"), list("12","1","2"), list("winter"), list("cold")),
-               grab.data = TRUE,
                pub.info = c("mix", "caissie"),
-               verbose = FALSE,
+               verbose = FALSE
               )
 ```
