@@ -1,7 +1,8 @@
 ###############################################
 ## Read/Write Lipds
 ###############################################
-
+#create an environment for package variables
+lipdEnv <- new.env()
 
 #' update the query table with most recent lipdverse version
 #'
