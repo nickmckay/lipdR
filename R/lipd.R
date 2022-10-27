@@ -118,7 +118,7 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
       write(paste0("Bag-Software-Agent: lipd_write <https://github.com/nickmckay/lipdR/tree/main/R/lipd.R>\n",
                    "Bagging-Date: ", Sys.Date(), "\n",
                    "Payload-Oxum: ", payloadOxum), 
-            file=file.path(dir_bag,"bagit-info.txt"))
+            file=file.path(dir_bag,"bag-info.txt"))
       
       #write MD5 tag manifest
       manifest2 <- tools::md5sum(paste(dir_bag, list.files(dir_bag), sep = "/"))
