@@ -10,6 +10,9 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
+    <loc>/articles/Query.html</loc>
+  </url>
+  <url>
     <loc>/articles/Summary.html</loc>
   </url>
   <url>
@@ -50,9 +53,6 @@
   </url>
   <url>
     <loc>/reference/ask_how_many.html</loc>
-  </url>
-  <url>
-    <loc>/reference/bagit.html</loc>
   </url>
   <url>
     <loc>/reference/browse_dialog.html</loc>
@@ -116,9 +116,6 @@
   </url>
   <url>
     <loc>/reference/extractTs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fake_bagit.html</loc>
   </url>
   <url>
     <loc>/reference/filterTs.html</loc>
@@ -334,6 +331,9 @@
     <loc>/reference/put_table.html</loc>
   </url>
   <url>
+    <loc>/reference/queryLipdverse.html</loc>
+  </url>
+  <url>
     <loc>/reference/queryTs.html</loc>
   </url>
   <url>
@@ -359,9 +359,6 @@
   </url>
   <url>
     <loc>/reference/rm_existing_tables.html</loc>
-  </url>
-  <url>
-    <loc>/reference/set_bagit.html</loc>
   </url>
   <url>
     <loc>/reference/splitInterpretationByScope.html</loc>
@@ -428,6 +425,9 @@
   </url>
   <url>
     <loc>/reference/update_lipd_version.html</loc>
+  </url>
+  <url>
+    <loc>/reference/update_queryTable.html</loc>
   </url>
   <url>
     <loc>/reference/validLipd.html</loc>
