@@ -14,13 +14,22 @@ if (!requireNamespace("usethis", quietly = TRUE)) {
   )
 }
 
-#delete current queryTable in queryTable.rda
-#Install the project
-#run this code to rebuild the rda file
-# usethis::use_data(queryTable)
-# tools::resaveRdaFiles("data/")
 
 nc <- googlesheets4::read_sheet("1Z44xjSxEDlWnThvYLsHFS9aFAN0FnYh2EdroMs9qe_Q")
 
 cconv <- googlesheets4::read_sheet(ss = "1Z44xjSxEDlWnThvYLsHFS9aFAN0FnYh2EdroMs9qe_Q",sheet = "chronColumns")
 usethis::use_data(nc,cconv,queryTable, overwrite = TRUE,internal = TRUE)
+
+
+
+#Download and use the queryTable
+
+query_url <- "https://github.com/DaveEdge1/lipdverseQuery/raw/main/queryZip.zip"
+temp <- tempdir()
+zip_dir <- paste0(temp, "/queryTable.zip")
+download.file(query_url, zip_dir)
+unzip(zip_dir, exdir = temp)
+fPth <- paste0(temp, "/queryTable.csv")
+queryTable <- read.csv(fPth)
+usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
+

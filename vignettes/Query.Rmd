@@ -2,7 +2,7 @@
 title: "LiPD Queries"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{createColumn}
+  %\VignetteIndexEntry{LiPD Queries}
   %\VignetteEngine{knitr::knitr}
   %\VignetteEncoding{UTF-8}
 ---

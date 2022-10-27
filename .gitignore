@@ -2,6 +2,9 @@
 .Rhistory
 .Rapp.history
 
+#raw data
+/data-raw
+
 # Session Data files
 .RData
 
