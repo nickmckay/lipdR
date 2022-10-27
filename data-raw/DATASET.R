@@ -14,7 +14,13 @@ if (!requireNamespace("usethis", quietly = TRUE)) {
   )
 }
 
+#delete current queryTable in queryTable.rda
+#Install the project
+#run this code to rebuild the rda file
+# usethis::use_data(queryTable)
+# tools::resaveRdaFiles("data/")
+
 nc <- googlesheets4::read_sheet("1Z44xjSxEDlWnThvYLsHFS9aFAN0FnYh2EdroMs9qe_Q")
 
 cconv <- googlesheets4::read_sheet(ss = "1Z44xjSxEDlWnThvYLsHFS9aFAN0FnYh2EdroMs9qe_Q",sheet = "chronColumns")
-usethis::use_data(nc,cconv, overwrite = TRUE,internal = TRUE)
+usethis::use_data(nc,cconv,queryTable, overwrite = TRUE,internal = TRUE)

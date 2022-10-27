@@ -59,27 +59,80 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
       dir_zip <- file.path(dir_tmp, "zip")
       dir.create(dir_zip, showWarnings=FALSE)
       
-      # Need an extra (identical) level for zipping later.
-      dir.create(file.path(dir_zip,"bag"), showWarnings=FALSE)
-      dir_bag <- file.path(dir_zip, "bag")
+      
       
       #remove names from lists in key spots, since these cause errors in the json
       if(removeNamesFromLists){
         j <- remove_names_from_lists(j)
       }
       
-      # look for ensemble data in PaleoData, and ask if you want to remove this data before writing the file.
-      j <- warn_ensembles_in_paleo(j, ignore.warnings)
+      # Need an extra (identical) level for zipping later.
+      dir.create(file.path(dir_zip,"bag"), showWarnings=FALSE)
+      dir_bag <- file.path(dir_zip, "bag")
       
+      
+      # write csvs and metadata
+      j <- warn_ensembles_in_paleo(j, ignore.warnings)
       j <- idx_name_to_num(j)
       tmp <- get_lipd_version(j)
       j <- tmp[["meta"]]
       dat <- get_csv_from_metadata(j, dsn)
-      write_csv_to_file(dat[["csvs"]],dir_bag)
+      write_csv_to_file(dat[["csvs"]],dir_zip)
       j <- rm_empty_fields(dat[["meta"]])
       j <- jsonlite::toJSON(j, pretty=TRUE, auto_unbox = TRUE)
-      write(j, file=file.path(dir_bag,"metadata.jsonld"))
-      bagit(dir_bag)
+      write(j, file=file.path(dir_zip,"metadata.jsonld"))
+      
+      #Calculate Payload-Oxum
+      OctetCount <- sum(nchar(tmp[["meta"]], type = "bytes"),
+                        nchar(dat[["csvs"]], type = "bytes"))
+      
+      StreamCount <- length(list.files(dir_zip))
+      payloadOxum <- paste(OctetCount, StreamCount, sep = ".")
+      
+      
+      #create data subfolder and move payload files
+      dir.create(file.path(dir_bag,"data"), showWarnings=FALSE)
+      dir_data <- file.path(dir_bag, "data")
+      
+      payloadFiles <- list.files(dir_zip)["bag" != list.files(dir_zip)]
+      
+      file.copy(from = paste0(dir_zip, "/", payloadFiles),
+                to = paste0(dir_data, "/", payloadFiles))
+      
+      file.remove(from = paste0(dir_zip, "/", payloadFiles))
+      
+      #write MD5 payload manifest
+      manifest1 <- tools::md5sum(paste(dir_data, list.files(dir_data), sep = "/"))
+      manifest1 <- data.frame(manifest1, list.files(dir_data))
+      write.table(x = manifest1, 
+                  file = file.path(dir_bag, "manifest-md5.txt"), 
+                  row.names = F, 
+                  col.names = F, 
+                  quote = F, 
+                  sep = '\t')
+      
+      #write bagit.txt - we're just faking this one
+      write("BagIt-Version: 0.97\nTag-File-Character-Encoding: UTF-8", file=file.path(dir_bag,"bagit.txt"))
+      
+      #write bag-info.txt
+      write(paste0("Bag-Software-Agent: lipd_write <https://github.com/nickmckay/lipdR/tree/main/R/lipd.R>\n",
+                   "Bagging-Date: ", Sys.Date(), "\n",
+                   "Payload-Oxum: ", payloadOxum), 
+            file=file.path(dir_bag,"bag-info.txt"))
+      
+      #write MD5 tag manifest
+      manifest2 <- tools::md5sum(paste(dir_bag, list.files(dir_bag), sep = "/"))
+      manifest2 <- data.frame(manifest2, list.files(dir_bag))
+      manifest2 <- manifest2[complete.cases(manifest2),]
+      write.table(x = manifest2, 
+                  file = file.path(dir_bag, "tagmanifest-md5.txt"), 
+                  row.names = F, 
+                  col.names = F, 
+                  quote = F, 
+                  sep = '\t')
+      
+      
+      
       zipper(dir_original, dir_tmp, dsn, path)
       unlink(dir_tmp, recursive=TRUE)
     }else{
