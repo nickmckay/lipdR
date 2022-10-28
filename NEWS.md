@@ -1,3 +1,5 @@
+# lipdR 0.4.0
+
 # lipdR 0.3.6
 
 * Fixed bug introduced in 0.3.4 that prevented proper conversion of old LiPD versions
