@@ -33,3 +33,20 @@ fPth <- paste0(temp, "/queryTable.csv")
 queryTable <- read.csv(fPth)
 usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
 
+# badChecks <- data.frame(col = NA,
+#                         row=NA)
+# imax<-ncol(queryTable) * nrow(queryTable)
+# pb <- txtProgressBar(min = 0, max = imax, style = 3)
+# its <- 0
+# for (i in 1:ncol(queryTable)){
+#   for (j in 1:nrow(queryTable)){
+#     its <- its+1
+#     setTxtProgressBar(pb, its)
+#     flagNonASCII <- grepl("[^ -~]", queryTable[j,i])
+#     if (flagNonASCII){
+#       badChecks <- rbind(badChecks, c(i,j))
+#
+#     }
+#   }
+# }
+# queryTable[397,13]

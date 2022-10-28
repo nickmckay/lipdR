@@ -15,7 +15,6 @@ A data frame with 98,054 rows and 16 columns:
   \item{geo_latitude}{latitude}
   \item{geo_longitude}{longitude}
   \item{interpretation1_seasonality}{Interpreted seasonality of proxy}
-  \item{lipdverseLink}{LiPDverse URL}
   \item{mostRecentYear}{Last year of record}
   \item{paleoData_mostRecentCompilations}{Most recent compilations}
   \item{paleoData_variableName}{paleo-data variable name}

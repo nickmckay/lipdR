@@ -12,7 +12,6 @@
 #'   \item{geo_latitude}{latitude}
 #'   \item{geo_longitude}{longitude}
 #'   \item{interpretation1_seasonality}{Interpreted seasonality of proxy}
-#'   \item{lipdverseLink}{LiPDverse URL}
 #'   \item{mostRecentYear}{Last year of record}
 #'   \item{paleoData_mostRecentCompilations}{Most recent compilations}
 #'   \item{paleoData_variableName}{paleo-data variable name}
@@ -24,3 +23,5 @@
 #' }
 #' @source <https://github.com/DaveEdge1/lipdverseQuery/raw/main/queryZip.zip>
 "queryTable"
+
+
