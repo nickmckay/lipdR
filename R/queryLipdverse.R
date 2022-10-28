@@ -38,7 +38,7 @@ queryLipdverse <- function(variable.name = NULL,
                      skip.update = FALSE
                      ){
 
-  if(.lipdRquery$queryUpdated == 0){
+  if(.lipdRquery$queryUpdated == 0 & skip.update == FALSE){
     ans1 <- askYesNo("Would you like to update the query table (recommended)?")
     if(ans1){
       update_queryTable()

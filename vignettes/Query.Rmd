@@ -40,8 +40,11 @@ If you have used the LiPD format, you will recognize some of these names
 
 Let's try a simple query
 
+We'll set `skip.update = FALSE` for this demonstration, but it's a good idea to check for updates each time you start a new session
+
 ```{r}
-qt <- queryLipdverse(variable.name = c("δ18O"))
+qt <- queryLipdverse(variable.name = c("δ18O"),
+                     skip.update = TRUE)
 ```
 huh, there must be more Oxygen-18 time series
 
