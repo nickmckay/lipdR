@@ -42,6 +42,8 @@ Let's try a simple query
 
 We'll set `skip.update = FALSE` for this demonstration, but it's a good idea to check for updates each time you start a new session
 
+If you tell `queryLipdverse` to `skip.update` once, it will not prompt you again in a given R session
+
 ```{r}
 qt <- queryLipdverse(variable.name = c("δ18O"),
                      skip.update = TRUE)
