@@ -1,11 +1,11 @@
 # lipdR 0.4.0
 
-*new `summary()` and `print()` functions allow for a quick look at LiPDs in all formats
-*a new vignette demonstrates these new functions
-*a new function, `queryLipdverse()`, allows for searching all of LiPDverse with many filter arguments
-*`readLipd()` now allows for input as a vector of dataset IDs
-*`readLipd()` and `queryLipdverse()` can be combined to download a target set of LiPDs
-*a second new vignette showcases the query functionality
+* new `summary()` and `print()` functions allow for a quick look at LiPDs in all formats
+* a new vignette demonstrates these new functions
+* a new function, `queryLipdverse()`, allows for searching all of LiPDverse with many filter arguments
+* `readLipd()` now allows for input as a vector of dataset IDs
+* `readLipd()` and `queryLipdverse()` can be combined to download a target set of LiPDs
+* a second new vignette showcases the query functionality
 
 
 # lipdR 0.3.6
