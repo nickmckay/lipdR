@@ -14,4 +14,4 @@ abc123 <- function(x){
 
 utils::globalVariables(c("depth", "agelimityounger", "agelimitolder", "chroncontrolage", "chroncontroltype", "uncertainty",
                          "chroncontrolid", "thickness", "age", "everything", "collunitid", "paleoData_variableName", "paleoData_values",
-                         "queryTable"))
+                         "queryTable", "ZIPmd5Local"))
