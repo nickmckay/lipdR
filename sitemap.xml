@@ -28,6 +28,9 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/ZIPmd5Local.html</loc>
+  </url>
+  <url>
     <loc>/reference/abc123.html</loc>
   </url>
   <url>
@@ -59,6 +62,9 @@
   </url>
   <url>
     <loc>/reference/build_structure.html</loc>
+  </url>
+  <url>
+    <loc>/reference/checkZIPmd5.html</loc>
   </url>
   <url>
     <loc>/reference/check_match.html</loc>
@@ -293,6 +299,9 @@
   </url>
   <url>
     <loc>/reference/neotoma2lipd.html</loc>
+  </url>
+  <url>
+    <loc>/reference/newQueryTable.html</loc>
   </url>
   <url>
     <loc>/reference/print.lipd.html</loc>
