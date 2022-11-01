@@ -10,11 +10,14 @@ lipdEnv <- new.env()
 #'
 update_queryTable <- function(){
 
-  #download queryTable
-  queryTable <- newQueryTable()
-  #Replace local copy
-  usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
-
+  if(checkZIPmd5() == FALSE){
+    #download queryTable
+    queryTable <- newQueryTable()
+    #Replace local copy
+    usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
+    #replace local MD5
+    replaceLocalZipMD5()
+  }
 }
 
 #' Download the remote query table
@@ -43,6 +46,9 @@ checkZIPmd5 <- function(){
     {
       ZIPmd5Remote <- readLines("https://raw.githubusercontent.com/DaveEdge1/lipdverseQuery/main/ZIPmd5.txt")
 
+      if(ZIPmd5Local == ZIPmd5Remote){
+        message("Query Table up to date")
+      }
       ZIPmd5Local == ZIPmd5Remote
     },
     error=function(cond){
