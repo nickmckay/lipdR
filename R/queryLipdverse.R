@@ -41,10 +41,11 @@ queryLipdverse <- function(variable.name = NULL,
   if (skip.update == TRUE){
     .lipdRquery$queryUpdated <- 1
   }
-  if(.lipdRquery$queryUpdated == 0){
+  if(.lipdRquery$queryUpdated == 0 & checkZIPmd5() == FALSE){
     ans1 <- askYesNo("Would you like to update the query table (recommended)?")
     if(ans1){
       update_queryTable()
+      replaceLocalZipMD5()
     }
 
     .lipdRquery$queryUpdated <- 1

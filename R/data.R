@@ -25,3 +25,9 @@
 "queryTable"
 
 
+#' MD5 sums for Query Table Zip File
+#'
+#' @format ## `ZIPmd5Local`
+#' A set of 32-character hexadecimal letters and numbers:
+#' @source <https://raw.githubusercontent.com/DaveEdge1/lipdverseQuery/main/ZIPmd5.txt>
+"ZIPmd5Local"

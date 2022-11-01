@@ -9,14 +9,18 @@ lipdEnv <- new.env()
 #' @export
 #'
 update_queryTable <- function(){
-  
+
   #download queryTable
   queryTable <- newQueryTable()
   #Replace local copy
   usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
-  
+
 }
 
+#' Download the remote query table
+#'
+#' @return queryTable
+#'
 newQueryTable <- function(){
   query_url <- "https://github.com/DaveEdge1/lipdverseQuery/raw/main/queryZip.zip"
   temp <- tempdir()
@@ -29,6 +33,41 @@ newQueryTable <- function(){
   #assign("queryTable", queryTable, envir = lipdEnv)
   return(queryTable)
 }
+
+#' Compare the MD5 sums for the queryTable zip between locally stored and current remote
+#'
+#' @return out
+#'
+checkZIPmd5 <- function(){
+  out <- tryCatch(
+    {
+      ZIPmd5Remote <- readLines("https://raw.githubusercontent.com/DaveEdge1/lipdverseQuery/main/ZIPmd5.txt")
+
+      ZIPmd5Local == ZIPmd5Remote
+    },
+    error=function(cond){
+      return(FALSE)
+    },
+    warning = function(cond){
+      return(FALSE)
+    },
+    finally = {}
+  )
+  return(out)
+}
+
+checkZIPmd5()
+
+
+#' Replace the query zip file MD5 sums after replacing the query table
+#'
+#'
+replaceLocalZipMD5 <- function(){
+  ZIPmd5Remote <- readLines("https://raw.githubusercontent.com/DaveEdge1/lipdverseQuery/main/ZIPmd5.txt")
+  ZIPmd5Local <- ZIPmd5Remote
+  usethis::use_data(ZIPmd5Local, overwrite = TRUE)
+}
+
 
 
 
