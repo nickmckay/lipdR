@@ -3,10 +3,10 @@
 #' @param variable.name vector of variable names from c(d18O, d13C, treeRing, etc.)
 #' @param archive.type vector of archive types. see unique(queryTable1$archiveType)
 #' @param coord lat/lon extent of interest c(latMin, latMax, lonMin, lonMax)
-#' @param age.min Sampling covers at least this recent extent, age BP
-#' @param age.max Sampling covers at least this old extent, age BP
+#' @param age.min The youngest portion of the record comes up to at least this age, age BP
+#' @param age.max The oldest part of the record extends to at least this age, age BP
 #' @param pub.info last name of author, DOI, unique word from title, etc. all lowercase, based on associated publications
-#' @param country Coutnry origin of dataset from unique(queryTable1$country2), based on lat/lon
+#' @param country Coutnry origin of dataset from unique(queryTable1$country), based on lat/lon
 #' @param continent Continent origin of dataset from unique(queryTable1$continent), based on lat/lon
 #' @param ocean Gather datasets from the marine environment, based on lat/lon
 #' @param seasonality list of seasons where items within a list are treated with "AND" logic and separate lists are treated with "OR" logic ie. list(list("July", "August"), list("7,8"), list("summer"))
@@ -69,7 +69,7 @@ queryLipdverse <- function(variable.name = NULL,
       stop("Cannot process ocean=TRUE alongside continent/country inputs.
            Use only coord input if both marine and terrestrial datasets are desired.")
     }
-    queryTable1 <- queryTable1[is.na(queryTable1$country2)==TRUE,]
+    queryTable1 <- queryTable1[is.na(queryTable1$country)==TRUE,]
   }
 
   if(verbose){cat("Series remaining after marine filter: ", nrow(queryTable1), "\n\n")}
@@ -82,18 +82,20 @@ queryLipdverse <- function(variable.name = NULL,
 
   #Filter by country
   if (!is.null(country)){
-    queryTable1 <- queryTable1[queryTable1$country2 %in% country,]
-    queryTable1 <- queryTable1[!is.na(queryTable1$country2),]
+    queryTable1 <- queryTable1[queryTable1$country %in% country,]
+    queryTable1 <- queryTable1[!is.na(queryTable1$country),]
   }
 
   if(verbose){cat("Series remaining after country filter: ", nrow(queryTable1), "\n\n")}
 
   #Filter by time
   if (!is.null(age.max)){
-    queryTable1 <- queryTable1[queryTable1$earliestYear < age.max,]
+    queryTable1 <- queryTable1[!is.na(queryTable1$earliestYear),]
+    queryTable1 <- queryTable1[queryTable1$earliestYear >= age.max,]
   }
   if (!is.null(age.min)){
-    queryTable1 <- queryTable1[queryTable1$mostRecentYear > age.min,]
+    queryTable1 <- queryTable1[!is.na(queryTable1$mostRecentYear),]
+    queryTable1 <- queryTable1[queryTable1$mostRecentYear <= age.min,]
   }
 
   if(verbose){cat("Series remaining after time filter: ", nrow(queryTable1), "\n\n")}

@@ -30,13 +30,13 @@ queryLipdverse(
 
 \item{coord}{lat/lon extent of interest c(latMin, latMax, lonMin, lonMax)}
 
-\item{age.min}{Sampling covers at least this recent extent, age BP}
+\item{age.min}{The youngest portion of the record comes up to at least this age, age BP}
 
-\item{age.max}{Sampling covers at least this old extent, age BP}
+\item{age.max}{The oldest part of the record extends to at least this age, age BP}
 
 \item{pub.info}{last name of author, DOI, unique word from title, etc. all lowercase, based on associated publications}
 
-\item{country}{Coutnry origin of dataset from unique(queryTable1$country2), based on lat/lon}
+\item{country}{Coutnry origin of dataset from unique(queryTable1$country), based on lat/lon}
 
 \item{continent}{Continent origin of dataset from unique(queryTable1$continent), based on lat/lon}
 

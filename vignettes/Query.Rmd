@@ -105,7 +105,7 @@ As we saw last time, the results are similar
 We can also filter based on publications: Author, DOI, Title, etc. using `pub.info`
 
 ```{r}
-qt <- queryLipdverse(pub.info = c("10.1029/2008PA0016718K7NFLXQ1"))
+qt <- queryLipdverse(pub.info = c("10.1016/j.quascirev.2008.09.005"))
 ```
 
 This query can be a little slow if you don't narrow the results with another parameter first
@@ -145,13 +145,13 @@ The `ocean` parameter works on the same basis as the `country` and `continent` p
 We can also grab all the data from a `compilation`, such as the Western North America (WNAm)
 
 ```{r}
-qt <- queryLipdverse(compilation = c("wNAm"), grab.data = FALSE)
+qt <- queryLipdverse(compilation = c("wNAm"))
 ```
 
 or multiple compilations
 
 ```{r}
-qt <- queryLipdverse(compilation = c("wnam", "temp12k"), grab.data = FALSE)
+qt <- queryLipdverse(compilation = c("wnam", "temp12k"))
 ```
 the `compilation` filter uses "OR" logic
 
