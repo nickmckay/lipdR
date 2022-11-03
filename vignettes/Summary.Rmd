@@ -2,7 +2,7 @@
 title: "LiPD Summaries"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{createColumn}
+  %\VignetteIndexEntry{LiPD Summaries}
   %\VignetteEngine{knitr::knitr}
   %\VignetteEncoding{UTF-8}
 ---

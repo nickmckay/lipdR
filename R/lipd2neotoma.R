@@ -1,6 +1,6 @@
 #' Convert lipd to neotoma
 #'
-#' @param L lipf object
+#' @param L lipd object
 #' @importFrom methods new
 #'
 #' @return neotoma site

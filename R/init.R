@@ -4,6 +4,77 @@
 #create an environment for package variables
 lipdEnv <- new.env()
 
+#' update the query table with most recent lipdverse version
+#'
+#' @export
+#'
+update_queryTable <- function(){
+
+  if(checkZIPmd5() == FALSE){
+    message("Updating Query Table")
+    #download queryTable
+    queryTable <- newQueryTable()
+    #Replace local copy
+    usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
+    #replace local MD5
+    replaceLocalZipMD5()
+  }else{
+    message("Query Table up to date")
+  }
+}
+
+#' Download the remote query table
+#'
+#' @return queryTable
+#'
+newQueryTable <- function(){
+  query_url <- "http://lipdverse.org/lipdverse/lipdverseQuery.zip"
+  temp <- tempdir()
+  zip_dir <- paste0(temp, "/queryTable.zip")
+  download.file(query_url, zip_dir)
+  unzip(zipfile = zip_dir, files = "Users/nicholas/Dropbox/lipdverse/html/lipdverse/lipdverseQuery.csv", exdir = temp)
+  fPth <- paste0(temp, "/Users/nicholas/Dropbox/lipdverse/html/lipdverse/lipdverseQuery.csv")
+  queryTable <- read.csv(fPth)
+  unlink(temp)
+  #assign("queryTable", queryTable, envir = lipdEnv)
+  return(queryTable)
+}
+
+#' Compare the MD5 sums for the queryTable zip between locally stored and current remote
+#'
+#' @return out
+#'
+checkZIPmd5 <- function(){
+  out <- tryCatch(
+    {
+      ZIPmd5Remote <- readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5")
+
+      ZIPmd5Local == ZIPmd5Remote
+    },
+    error=function(cond){
+      return(FALSE)
+    },
+    warning = function(cond){
+      return(TRUE)
+    },
+    finally = {}
+  )
+  return(out)
+}
+
+
+
+#' Replace the query zip file MD5 sums after replacing the query table
+#'
+#'
+replaceLocalZipMD5 <- function(){
+  ZIPmd5Remote <- readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5")
+  ZIPmd5Local <- ZIPmd5Remote
+  usethis::use_data(ZIPmd5Local, overwrite = TRUE)
+}
+
+
+
 
 #' stripExtension
 #'
@@ -217,7 +288,6 @@ writeLipd <- function(D,
     }
 
 
-    set_bagit()
     if ("paleoData" %in% names(D)){
       print(paste0("writing: ", D[["dataSetName"]]," to ",path))
       lipd_write(D,

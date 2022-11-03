@@ -4,7 +4,7 @@
 #'
 #' @importFrom stats median quantile
 #' @importFrom utils askYesNo packageVersion
-#' 
+#'
 abc123 <- function(x){
   median(x)
   quantile(x)
@@ -13,4 +13,5 @@ abc123 <- function(x){
 }
 
 utils::globalVariables(c("depth", "agelimityounger", "agelimitolder", "chroncontrolage", "chroncontroltype", "uncertainty",
-                         "chroncontrolid", "thickness", "age", "everything", "collunitid", "paleoData_variableName", "paleoData_values"))
+                         "chroncontrolid", "thickness", "age", "everything", "collunitid", "paleoData_variableName", "paleoData_values",
+                         "queryTable", "ZIPmd5Local"))
