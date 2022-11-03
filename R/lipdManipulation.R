@@ -16,7 +16,7 @@ removeEnsembles <- function(L){
   #check for paleo measurementTable ensembles
   for(p in 1:length(L$paleoData)){
     for(mt in 1:length(L$paleoData[[p]]$measurementTable)){
-      cols <- which(purrr::map(L$paleoData[[p]]$measurementTable[[mt]],is.list))
+      cols <- which(purrr::map_lgl(L$paleoData[[p]]$measurementTable[[mt]],is.list))
       for(co in cols){
         nr <- nrow(L$paleoData[[p]]$measurementTable[[mt]][[co]]$values)
         if(!is.null(nr)){
@@ -333,10 +333,10 @@ tidyTsOld <- function(TS){
 
     nm <- match(names(tdf),pcolnames)
     #if(i == 1){
-  
-    
+
+
     sets::set(tidyData, i= sr:er,j = nm, tdf)
-    
+
 
     # }else{
     #
@@ -400,7 +400,7 @@ pullTsVariable = function(TS,variable,strict.search = FALSE){
   var <- sapply(TS,"[[",variable)
 
 
-  if(is.list(var) & !grepl("author",variable) &!grepl("inCompilationBeta\\d{1,}+_compilationVersion",variable)){#if it's a list, try to unpack it. Unless it's author then don't
+  if(is.list(var) & !grepl("author",variable) &!stringr::str_detect(pattern = "inCompilationBeta\\d{1,}+_compilationVersion",variable)){#if it's a list, try to unpack it. Unless it's author then don't
     if(length(unlist(var)) < length(var)){#there are some NULlS
       newVar <- matrix(NA,nrow = length(var))
       isNull <- sapply(var, is.null)
