@@ -16,7 +16,7 @@ Authors@R:
            email = "heiser@nau.edu"))
 Maintainer: Nicholas McKay <nick@nau.edu>
 Description: Functions to open, modify, analyze, and save LiPD data. 
-Depends: R (>= 3.1.0)
+Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 RoxygenNote: 7.2.1
 URL: www.lipd.net
