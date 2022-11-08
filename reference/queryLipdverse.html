@@ -63,6 +63,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">queryLipdverse</span><span class="op">(</span></span>
 <span>  variable.name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  archive.type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  paleo.proxy <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  paleo.units <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">90</span>, <span class="fl">90</span>, <span class="op">-</span><span class="fl">180</span>, <span class="fl">180</span><span class="op">)</span>,</span>
 <span>  age.min <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  age.max <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -88,6 +90,14 @@
 
 <dt>archive.type</dt>
 <dd><p>vector of archive types. see unique(queryTable1$archiveType)</p></dd>
+
+
+<dt>paleo.proxy</dt>
+<dd><p>proxy type c(d18O, mg/ca)</p></dd>
+
+
+<dt>paleo.units</dt>
+<dd><p>proxy units c(per mil, degC)</p></dd>
 
 
 <dt>coord</dt>
@@ -135,7 +145,7 @@
 
 
 <dt>compilation</dt>
-<dd><p>#ompilation name as character vector from unique(queryTable$paleoData_mostRecentCompilations), eg. c("temp12k", "wnam")</p></dd>
+<dd><p>#compilation name as character vector from unique(queryTable$paleoData_mostRecentCompilations), eg. c("temp12k", "wnam")</p></dd>
 
 
 <dt>verbose</dt>
