@@ -32,8 +32,8 @@ newQueryTable <- function(){
   temp <- tempdir()
   zip_dir <- paste0(temp, "/queryTable.zip")
   download.file(query_url, zip_dir)
-  unzip(zipfile = zip_dir, files = "Users/nicholas/Dropbox/lipdverse/html/lipdverse/lipdverseQuery.csv", exdir = temp)
-  fPth <- paste0(temp, "/Users/nicholas/Dropbox/lipdverse/html/lipdverse/lipdverseQuery.csv")
+  unzip(zipfile = zip_dir, files = "lipdverseQuery.csv", exdir = temp)
+  fPth <- paste0(temp, "/lipdverseQuery.csv")
   queryTable <- read.csv(fPth)
   unlink(temp)
   #assign("queryTable", queryTable, envir = lipdEnv)
@@ -47,7 +47,7 @@ newQueryTable <- function(){
 checkZIPmd5 <- function(){
   out <- tryCatch(
     {
-      ZIPmd5Remote <- readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5")
+      ZIPmd5Remote <- readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5", warn=FALSE)
 
       ZIPmd5Local == ZIPmd5Remote
     },
@@ -55,7 +55,7 @@ checkZIPmd5 <- function(){
       return(FALSE)
     },
     warning = function(cond){
-      return(TRUE)
+      return(FALSE)
     },
     finally = {}
   )
