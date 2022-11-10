@@ -1,3 +1,5 @@
+# lipdR 0.4.1
+
 # lipdR 0.4.0
 
 * new `summary()` and `print()` functions allow for a quick look at LiPDs in all formats
