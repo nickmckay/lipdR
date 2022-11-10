@@ -144,6 +144,10 @@ get_lipd_paths <- function(path,jsonOnly = FALSE){
       if (isDirectory(path)){
         files <- list.files(path=path, pattern='\\.lpd$', full.names = TRUE)
       } else if(tools::file_ext(path) == "lpd"){
+        path <- path.expand(path)
+        if(!file.exists(path)){
+          stop("No file found at the given path: ", path)
+        }
         files[[1]] <- path
       # }else if(tools::file_ext(path) == ""){
       #   files[[1]] <- convert_dsid_to_path(path)
