@@ -57,7 +57,7 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
     if(!jsonOnly){
       dir_tmp <- create_tmp_dir()
       # Create a lipd dir
-      dir_zip <- file.path(dir_tmp, "zip")
+      dir_zip <- file.path(dir_tmp, dsn)
       dir.create(dir_zip, showWarnings=FALSE)
 
 
@@ -133,7 +133,7 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
                   sep = '\t')
 
 
-      file.copy(dir_tmp, path)
+      file.copy(dir_zip, path, recursive = TRUE)
 
 
       #zipper(dir_original, dir_tmp, dsn, path)
