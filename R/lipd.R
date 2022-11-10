@@ -133,8 +133,10 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
                   sep = '\t')
 
 
+      file.copy(dir_tmp, path)
 
-      zipper(dir_original, dir_tmp, dsn, path)
+
+      #zipper(dir_original, dir_tmp, dsn, path)
       unlink(dir_tmp, recursive=TRUE)
     }else{
       j <- jsonlite::toJSON(j, pretty=TRUE, auto_unbox = TRUE)
