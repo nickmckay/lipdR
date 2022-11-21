@@ -7,6 +7,8 @@
 queryLipdverse(
   variable.name = NULL,
   archive.type = NULL,
+  paleo.proxy = NULL,
+  paleo.units = NULL,
   coord = c(-90, 90, -180, 180),
   age.min = NULL,
   age.max = NULL,
@@ -27,6 +29,10 @@ queryLipdverse(
 \item{variable.name}{vector of variable names from c(d18O, d13C, treeRing, etc.)}
 
 \item{archive.type}{vector of archive types. see unique(queryTable1$archiveType)}
+
+\item{paleo.proxy}{proxy type c(d18O, mg/ca)}
+
+\item{paleo.units}{proxy units c(per mil, degC)}
 
 \item{coord}{lat/lon extent of interest c(latMin, latMax, lonMin, lonMax)}
 
@@ -50,7 +56,7 @@ queryLipdverse(
 
 \item{interp.details}{vector of interpretation variables ie. c("sea@surface", "elNino"), see possible: unique(queryTable$interp_Details),}
 
-\item{compilation}{#ompilation name as character vector from unique(queryTable$paleoData_mostRecentCompilations), eg. c("temp12k", "wnam")}
+\item{compilation}{#compilation name as character vector from unique(queryTable$paleoData_mostRecentCompilations), eg. c("temp12k", "wnam")}
 
 \item{verbose}{offer details of filters and get feedback from user}
 

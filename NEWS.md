@@ -1,3 +1,9 @@
+# lipdR 0.4.1
+
+* package now loads with a more compact query table to reduce loading time
+* the full query table is added to your local version with `update_queryTable()`
+* future updates to the query table are checked for with each subsequent user query
+
 # lipdR 0.4.0
 
 * new `summary()` and `print()` functions allow for a quick look at LiPDs in all formats

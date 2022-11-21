@@ -2,6 +2,8 @@
 #'
 #' @param variable.name vector of variable names from c(d18O, d13C, treeRing, etc.)
 #' @param archive.type vector of archive types. see unique(queryTable1$archiveType)
+#' @param paleo.proxy proxy type c(d18O, mg/ca)
+#' @param paleo.units proxy units c(per mil, degC)
 #' @param coord lat/lon extent of interest c(latMin, latMax, lonMin, lonMax)
 #' @param age.min The youngest portion of the record comes up to at least this age, age BP
 #' @param age.max The oldest part of the record extends to at least this age, age BP
@@ -13,7 +15,7 @@
 #' @param season.not seasons not desired with input format identical to seasonality
 #' @param interp.vars vector of interpretation variables ie. c("SST", "upwelling"), see possible: unique(queryTable$interp_Vars)
 #' @param interp.details vector of interpretation variables ie. c("sea@surface", "elNino"), see possible: unique(queryTable$interp_Details),
-#' @param compilation #ompilation name as character vector from unique(queryTable$paleoData_mostRecentCompilations), eg. c("temp12k", "wnam")
+#' @param compilation #compilation name as character vector from unique(queryTable$paleoData_mostRecentCompilations), eg. c("temp12k", "wnam")
 #' @param verbose offer details of filters and get feedback from user
 #' @param skip.update remove update prompt
 #'
@@ -22,6 +24,8 @@
 #'
 queryLipdverse <- function(variable.name = NULL,
                      archive.type = NULL,
+                     paleo.proxy = NULL,
+                     paleo.units = NULL,
                      coord = c(-90,90,-180,180),
                      age.min = NULL,
                      age.max = NULL,
@@ -99,6 +103,28 @@ queryLipdverse <- function(variable.name = NULL,
   }
 
   if(verbose){cat("Series remaining after time filter: ", nrow(queryTable1), "\n\n")}
+
+  #Filter by paleo.proxy
+  if (!is.null(paleo.proxy)){
+    proxyIndex <- c()
+    for (i in paleo.proxy){
+      proxyIndex <- c(proxyIndex, which(grepl(tolower(i), tolower(queryTable1$paleoData_proxy))))
+    }
+    queryTable1 <- queryTable1[proxyIndex,]
+  }
+
+  if(verbose){cat("Series remaining after paleo.proxy filter: ", nrow(queryTable1), "\n\n")}
+
+  #Filter by paleo.units
+  if (!is.null(paleo.units)){
+    unitsIndex <- c()
+    for (i in paleo.units){
+      unitsIndex <- c(unitsIndex, which(grepl(tolower(i), tolower(queryTable1$paleoData_units))))
+    }
+    queryTable1 <- queryTable1[unitsIndex,]
+  }
+
+  if(verbose){cat("Series remaining after paleo.units filter: ", nrow(queryTable1), "\n\n")}
 
   #Filter by archive.type
   if (!is.null(archive.type)){
