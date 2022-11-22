@@ -7,15 +7,15 @@
 #' @export
 validLipd <- function(L,allow.ensemble = TRUE){
   good <- TRUE
-  
+
   #is list
   if(!is.list(L)){
     print(glue::glue("{L$dataSetName}: LiPD object must be a list"))
     return(FALSE)
   }
-  
-  
-  
+
+
+
   #check root
   rootRequired <- c("archiveType",
                     "dataSetName",
@@ -23,17 +23,17 @@ validLipd <- function(L,allow.ensemble = TRUE){
                     "changelog",
                     "geo",
                     "lipdVersion",
-                    "createdBy")   
-  
+                    "createdBy")
+
   rootRecommended <- c("paleoData",
                        "chronData",
                        "pub")
-  
+
   if(!("paleoData" %in% names(L) | "chronData" %in% names(L))){
     print(glue::glue("{L$dataSetName}: LiPD object must contain paleoData and/or chronData"))
     good <- FALSE
   }
-  
+
   for(rr in rootRequired){
     if(!(rr %in% names(L))){
       print(glue::glue("{L$dataSetName}: LiPD object must contain {rr}"))
@@ -45,41 +45,41 @@ validLipd <- function(L,allow.ensemble = TRUE){
       warning(glue::glue("LiPD object should ideally contain {rr}"))
     }
   }
-  
-  
-  
-  
+
+
+
+
   # Check pub ---------------------------------------------------------------
-  
+
   if(!validPub(L)){
     print(glue::glue("{L$dataSetName}: invalid pub section"))
     good <- FALSE
   }
-  
+
   # check funding -----------------------------------------------------------
   # not used enough to worry about yet
-  
+
   # Check Geo ---------------------------------------------------------------
-  
+
   if(!validGeo(L)){
     print(glue::glue("{L$dataSetName}: invalid geo section"))
     good <- FALSE
   }
-  
+
   # Check paleo measurement contents ---------------------------------------------------
   if(!validPaleo(L,allow.ensemble = allow.ensemble)){
     print(glue::glue("{L$dataSetName}: invalid paleoData section"))
     good <- FALSE
   }
-  
+
   # Check chron measurement contents ---------------------------------------------------
   if(!validChron(L,allow.ensemble = allow.ensemble)){
     print(glue::glue("{L$dataSetName}: invalid chronData section"))
     good <- FALSE
   }
-  
-  
-  
+
+
+
   #if it passes everything
   if(good){
     return(TRUE)
@@ -87,8 +87,8 @@ validLipd <- function(L,allow.ensemble = TRUE){
     print(L$dataSetName)
     return(FALSE)
   }
-  
-  
+
+
 }
 
 
@@ -98,28 +98,28 @@ validPub <- function(L){
     return(TRUE) #pubs not required
   }
   pub <- L$pub
-  
+
   if(!is.list(pub)){
     print(glue::glue("{L$dataSetName}: Publication must be a list"))
     return(FALSE)
   }
-  
+
   if(!is.null(names(pub))){
     print(glue::glue("{L$dataSetName}: Publication must be an unnamed list"))
     return(FALSE)
-    
+
   }
-  
+
   if(length(pub) < 1){
     print(glue::glue("{L$dataSetName}: Publication must have length >1"))
     return(FALSE)
   }
-  
+
   for(i in 1:length(pub)){
     p <- pub[[i]]
     if(!all(purrr::map_lgl(p,is.character) | purrr::map_lgl(p,is.numeric) | names(p) == "author")){
       print(glue::glue("{L$dataSetName} pub{i}: All fields except author must be character or numeric fields"))
-      
+
     }
     if(any(names(p) == "author")){
       if(!is.list(p$author)){
@@ -127,7 +127,7 @@ validPub <- function(L){
         return(FALSE)
       }
     }
-    
+
     forbidden <- c("authors")
     for(f in 1:length(forbidden)){
       if(any(names(p) == forbidden[f])){
@@ -135,39 +135,39 @@ validPub <- function(L){
         return(FALSE)
       }
     }
-    
+
   }
-  
+
   return(TRUE)
-  
-  
+
+
 }
 
 validGeo <- function(L){
   if(!"geo" %in% names(L)){
     warning(glue::glue("{L$dataSetName}: No geo metadata present"))
-    return(FALSE) 
+    return(FALSE)
   }
   geo <- L$geo
-  
+
   if(!is.list(geo)){
     print(glue::glue("{L$dataSetName}: Geo metadata must be a list"))
     return(FALSE)
   }
-  
-  
+
+
   reqNames <- c("latitude","longitude")
-  
+
   for(rn in reqNames){
     if(!rn %in% names(geo)){
       print(glue::glue("{rn} must be in geo object"))
       return(FALSE)
     }
   }
-  
-  
+
+
   mustNumeric <- c("latitude","longitude","elevation","sisalSiteId")
-  
+
   for(mn in mustNumeric){
     if(mn %in% names(geo)){
       if(!is.numeric(geo[[mn]])){
@@ -176,16 +176,25 @@ validGeo <- function(L){
       }
     }
   }
-  
-  
+
+
   otherNames <- setdiff(names(geo),mustNumeric)
+  #remove some common exceptions
+  probablyOk <- stringr::str_detect(tolower(otherNames),"depth") |
+    stringr::str_detect(tolower(otherNames),"volume") |
+    stringr::str_detect(tolower(otherNames),"area")
+
+  if(any(probablyOk)){
+    otherNames <- otherNames[-which(probablyOk)]
+  }
+
   for(on in otherNames){
     if(!is.character(geo[[on]])){
       print(glue::glue("{on} must be character"))
       return(FALSE)
     }
   }
-  
+
   #check lat and long
   if(geo$latitude < -90 | geo$latitude > 90){
     print("geo$latitude is outside plausible boundaries")
@@ -193,11 +202,11 @@ validGeo <- function(L){
   if(geo$longitude < -180 | geo$longitude > 360){
     print("geo$longitude is outside plausible boundaries")
   }
-  
-  
-  
+
+
+
   return(TRUE)
-  
+
 }
 
 validPaleo <- function(L,allow.ensemble = TRUE){
@@ -206,31 +215,31 @@ validPaleo <- function(L,allow.ensemble = TRUE){
     return(TRUE) #pubs not required
   }
   paleo <- L$paleoData
-  
+
   if(!is.list(paleo)){
     print(glue::glue("{L$dataSetName}: Publication must be a list"))
     return(FALSE)
   }
-  
+
   if(!is.null(names(paleo))){
     print(glue::glue("{L$dataSetName}: paleoData must be an unnamed list"))
     return(FALSE)
-    
+
   }
-  
+
   if(length(paleo) < 1){
     print(glue::glue("{L$dataSetName}: paleoData must have length >1"))
     return(FALSE)
   }
-  
-  
+
+
   tn <- purrr::map(paleo,names) %>% unlist()
   if(any(!tn %in% c("measurementTable","ensembleTable","distributionTable","model"))){
-    print(glue::glue("{L$dataSetName}:Invalid table names in paleoData"))
+    print(glue::glue("{L$dataSetName}:Invalid object names in paleoData"))
     return(FALSE)
   }
-  
-  
+
+
   for(p in 1:length(paleo)){
     P <- paleo[[p]]
     #check measurementTable structure
@@ -244,29 +253,29 @@ validPaleo <- function(L,allow.ensemble = TRUE){
           print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} has fewer than two variables"))
           return(FALSE)
         }
-        
+
         #check for valid variable
         if(!all(purrr::map_lgl(LS,validVariable,allow.ensemble = allow.ensemble))){
           print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} has invalid variables"))
           return(FALSE)
         }
-        
+
         #check that all values are the same length
         lengths <- purrr::map_dbl(LS, variableLength)
-        
+
         if(any(lengths < 1)){
           print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} variable values are missing"))
           return(FALSE)
         }
-        
+
         if(!all(lengths == lengths[1])){
           print(glue::glue("{L$dataSetName}: paleoData {p} measurementTable {m} variable values have different lengths"))
           return(FALSE)
         }
-        
+
         #check that age, depth and year are numeric
         isNum <- purrr::map_lgl(LS, ~ all(is.numeric(.x$values)))
-        
+
         depthCol <- which(names(isNum) == "depth")
         if(length(depthCol) >= 1){
           if(!all(isNum[depthCol])){
@@ -274,8 +283,8 @@ validPaleo <- function(L,allow.ensemble = TRUE){
             return(FALSE)
           }
         }
-        
-        
+
+
         ageCol <- which(names(isNum) == "age")
         if(length(ageCol) >= 1){
           if(!all(isNum[ageCol])){
@@ -283,8 +292,8 @@ validPaleo <- function(L,allow.ensemble = TRUE){
             return(FALSE)
           }
         }
-        
-        
+
+
         yearCol <- which(names(isNum) == "year")
         if(length(yearCol) >= 1){
           if(!all(isNum[yearCol])){
@@ -292,13 +301,13 @@ validPaleo <- function(L,allow.ensemble = TRUE){
             return(FALSE)
           }
         }
-        
+
       }
     }
   }
-  
+
   return(TRUE)
-  
+
 }
 
 validChron <- function(L,allow.ensemble = TRUE){
@@ -307,36 +316,36 @@ validChron <- function(L,allow.ensemble = TRUE){
     return(TRUE) #pubs not required
   }
   chron <- L$chronData
-  
+
   if(!is.list(chron)){
     print(glue::glue("{L$dataSetName}: Publication must be a list"))
     return(FALSE)
   }
-  
+
   if(!is.null(names(chron))){
     print(glue::glue("{L$dataSetName}: chronData must be an unnamed list"))
     return(FALSE)
-    
+
   }
-  
+
   if(length(chron) < 1){
     print(glue::glue("{L$dataSetName}: chronData must have length >1"))
     return(FALSE)
   }
-  
-  
+
+
   tn <- purrr::map(chron,names) %>% unlist()
   if(any(is.null(tn))){
     print(glue::glue("{L$dataSetName}:Invalid table names in chronData"))
-    return(FALSE)  
+    return(FALSE)
   }
-  
+
   if(any(! tn %in% c("measurementTable","ensembleTable","distributionTable","model"))){
     print(glue::glue("{L$dataSetName}:Invalid table names in chronData"))
     return(FALSE)
   }
-  
-  
+
+
   for(p in 1:length(chron)){
     P <- chron[[p]]
     #check measurementTable structure
@@ -350,29 +359,29 @@ validChron <- function(L,allow.ensemble = TRUE){
           print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} has fewer than two variables"))
           return(FALSE)
         }
-        
+
         #check for valid variable
         if(!all(purrr::map_lgl(LS,validVariable,allow.ensemble = allow.ensemble))){
           print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} has invalid variables"))
           return(FALSE)
         }
-        
+
         #check that all values are the same length
         lengths <- purrr::map_dbl(LS, ~ length(.x$values))
-        
+
         if(any(lengths < 1)){
           print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} variable values are missing"))
           return(FALSE)
         }
-        
+
         if(!all(lengths == lengths[1])){
           print(glue::glue("{L$dataSetName}: chronData {p} measurementTable {m} variable values have different lengths"))
           return(FALSE)
         }
-        
+
         #check that age, depth and year are numeric
         isNum <- purrr::map_lgl(LS, ~ all(is.numeric(.x$values)))
-        
+
         depthCol <- which(names(isNum) == "depth")
         if(length(depthCol) >= 1){
           if(!all(isNum[depthCol])){
@@ -380,8 +389,8 @@ validChron <- function(L,allow.ensemble = TRUE){
             return(FALSE)
           }
         }
-        
-        
+
+
         ageCol <- which(names(isNum) == "age")
         if(length(ageCol) >= 1){
           if(!all(isNum[ageCol])){
@@ -389,8 +398,8 @@ validChron <- function(L,allow.ensemble = TRUE){
             return(FALSE)
           }
         }
-        
-        
+
+
         yearCol <- which(names(isNum) == "year")
         if(length(yearCol) >= 1){
           if(!all(isNum[yearCol])){
@@ -398,12 +407,12 @@ validChron <- function(L,allow.ensemble = TRUE){
             return(FALSE)
           }
         }
-        
+
       }
     }
   }
   return(TRUE)
-  
+
 }
 
 
@@ -421,7 +430,7 @@ validVariable <- function(V,allow.ensemble = TRUE){
       return(FALSE)
     }
   }
-  
+
   #check class
   reqChar <- c("TSid","variableName")
   for(on in reqChar){
@@ -430,7 +439,7 @@ validVariable <- function(V,allow.ensemble = TRUE){
       return(FALSE)
     }
   }
-  
+
   #check vector
   if(!is.vector(V$values)){
     #check for 1 column matrix
@@ -449,7 +458,7 @@ validVariable <- function(V,allow.ensemble = TRUE){
     print(glue::glue("variable values must be a vector ({V$TSid} - {V$variableName})"))
     return(FALSE)
   }
-  
+
   return(TRUE)
 }
 
@@ -464,5 +473,5 @@ variableLength <- function(VL){
   }else{
     return(length(VL$values))
   }
-  
+
 }
