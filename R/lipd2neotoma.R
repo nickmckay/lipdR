@@ -33,7 +33,8 @@ lipd2neotoma <- function(L){
   allSamps <- list()
 
   #iterate over all ages (sample layers)
-  for (k in 1:length(PD1$age)){
+  for (k in 1:(length(PD1$age)-1)){
+    #cat(k, "\n")
 
     sampleTab <- PD1[k,!is.na(PD1[k,])]
 
@@ -69,14 +70,14 @@ lipd2neotoma <- function(L){
         neoSamples[rowCt,10] <- ecologicalgroup1
       }
 
-      neoVars <- str_split(sampleTabNames[i], "_")[[1]]
+      neoVars <- strsplit(sampleTabNames[i], "_")[[1]]
       numVars <- length(neoVars)
       neoSamples[rowCt,2] <- as.integer(sampleTab[i])
       if(length(grep("undiff", neoVars[1])) > 0){
-        neoVars[1] <- paste0(str_split(neoVars[1], "undiff")[[1]][1], " undiff.")
+        neoVars[1] <- paste0(strsplit(neoVars[1], "undiff")[[1]][1], " undiff.")
       }
       if(length(grep("type", neoVars[1])) > 0){
-        neoVars[1] <- paste0(str_split(neoVars[1], "type")[[1]][1], "-type")
+        neoVars[1] <- paste0(strsplit(neoVars[1], "type")[[1]][1], "-type")
       }
       if(numVars == 1){
         neoSamples[rowCt,9] <- neoVars[1]
