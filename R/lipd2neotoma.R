@@ -26,19 +26,21 @@ lipd2neotoma <- function(L){
   #save measurement tables
   mtabs1 <- getMeasurementTables(L)
 
+
   #######################################################################
   #paleoData
   #######################################################################
 
   #grab paleoData names and dataframe
-  for (j in 1:length(L$paleoData[[1]]$measurementTable)){
-    PD1 <- L$paleoData[[1]]$measurementTable[[j]]
+  for (j in 1:sum(grepl("paleo", attributes(mtabs1)$names))){
+    paleoTabIndex <- grep("paleo", attributes(mtabs1)$names)[j]
+    PD1 <- mtabs1[[paleoTabIndex]]
 
     #initiate list for neotoma "samples"
     allSamps <- list()
 
     #iterate over all ages (sample layers)
-    for (k in 1:(length(PD1$age)-1)){
+    for (k in 1:sum(!is.na(PD1$age))){
       #cat(k, "\n")
 
       sampleTab <- PD1[k,!is.na(PD1[k,])]
@@ -140,10 +142,14 @@ lipd2neotoma <- function(L){
 
   chronos1 <- new("chronologies")
 
-  for (j in 1:length(L$chronData[[1]]$measurementTable)){
+  for (j in 1:sum(grepl("chron", attributes(mtabs1)$names))){
+
+    chronTabIndex <- grep("chron", attributes(mtabs1)$names)[j]
+    CD1 <- mtabs1[[chronTabIndex]]
+
     chronos1@chronologies[[j]] <- new("chronology")
 
-    chronos1@chronologies[[j]]@chroncontrols <- mtabs1$chron1meas1
+    chronos1@chronologies[[j]]@chroncontrols <- CD1
 
     chronos1@chronologies[[j]]@chronologyid <- as.integer(ChronID[[1]][1])
   }
