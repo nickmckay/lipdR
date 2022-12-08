@@ -72,6 +72,7 @@ replaceLocalZipMD5 <- function(){
   ZIPmd5Remote <- readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5", warn = FALSE)
   ZIPmd5Local <- ZIPmd5Remote
   usethis::use_data(ZIPmd5Local, overwrite = TRUE)
+
 }
 
 
