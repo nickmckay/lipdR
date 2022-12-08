@@ -517,7 +517,6 @@ D &lt;- neotoma2::get_downloads(B)</code></pre>
 ## 5 max         1239.5 -Inf    -Inf    &lt;NA&gt;    88350 51467  42882   Radioc… 4464  
 ## # … with 1 more variable: neotomaChronConrolId &lt;chr&gt;, and abbreviated variable
 ## #   names ¹​depth_top, ²​depth_bottom, ³​thickness, ⁴​ageYoung, ⁵​age_type</code></pre>
-<p>notice that the record is poorly suited to the LiPD format</p>
 </div>
 <div id="neotoma" class="section level3">
 <h3>Neotoma</h3>
@@ -636,6 +635,7 @@ rather than a <code>sites</code></p>
 <p>Aside from some loss in the <code>variablename</code>, these data
 frames look identical Improved <code>variablename</code> fidelity is
 possible with alteration to the <code>neotoma2lipd()</code> function</p>
+<p>What’s the difference between element and elementtype?</p>
 <p>Let’s jump to the last <code>datum</code> to see if this fidelity
 holds</p>
 <pre class="r"><code class="hljs">length(D@sites[[<span class="hljs-number">1</span>]]@collunits@collunits[[<span class="hljs-number">1</span>]]@datasets@datasets[[<span class="hljs-number">1</span>]]@samples@samples)</code></pre>
