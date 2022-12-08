@@ -2,17 +2,12 @@
 #'
 #' @param L lipd object
 #' @importFrom methods new
+#' @importFrom sf st_as_sf st_sfc st_point
 #'
 #' @return neotoma site
 #' @export
 #'
 
-#please note that this is a beta version for testing, there are many bugs here still
-
-# library(lipdR)
-# B <- neotoma2::get_sites(sitename = "Bambili 2")
-# D <- neotoma2::get_downloads(B)
-# L <- neotoma2lipd(D)
 
 lipd2neotoma <- function(L){
 
@@ -98,6 +93,9 @@ lipd2neotoma <- function(L){
         }
       }
 
+      neoSamples$element <- neoSamples$elementtype
+      neoSamples <- neoSamples[order(neoSamples$units, neoSamples$value, neoSamples$context, neoSamples$element, as.numeric(neoSamples$taxonid)),]
+
       ageType <- L$paleoData[[1]]$measurementTable[[1]]$age$units
       split1 <- strsplit(L$chronData[[1]]$measurementTable[[1]]$ageYoung$TSid, "_")
       ChronID <- strsplit(split1[[1]][2], "ageYoung")
@@ -163,6 +161,13 @@ lipd2neotoma <- function(L){
 
   site1@collunits@collunits[[1]] <- neotoma2::set_collunit(datasets = datasetAll, chronologies = chronos1, colldate = as.Date(character(0)))
 
+  site1$siteid <- lipdR:::getGeoNeotoma2(D@sites[[1]])$neotomaSiteId
+  site1$sitename <- lipdR:::getGeoNeotoma2(D@sites[[1]])$siteName
+  # site1$lat <- lipdR:::getGeoNeotoma2(D@sites[[1]])$latitude
+  # site1$long <- lipdR:::getGeoNeotoma2(D@sites[[1]])$longitude
+  site1$altitude <- lipdR:::getGeoNeotoma2(D@sites[[1]])$elevation
+
+  site1@geography = st_as_sf(st_sfc(st_point(c(lipdR:::getGeoNeotoma2(D@sites[[1]])$longitude,lipdR:::getGeoNeotoma2(D@sites[[1]])$latitude))))
 
   return(site1)
 
