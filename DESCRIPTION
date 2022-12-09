@@ -53,6 +53,7 @@ Suggests:
     neotoma2,
     covr,
     rmarkdown,
+    sf,
     testthat,
 Remotes: 
     neotomadb/neotoma2
