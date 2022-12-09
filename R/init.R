@@ -11,11 +11,12 @@ lipdEnv <- new.env()
 update_queryTable <- function(){
 
   if(checkZIPmd5() == FALSE){
-    message("Updating Query Table")
+    message("Updating Query Table\n")
     #download queryTable
     queryTable <- newQueryTable()
     #Replace local copy
     usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
+    load("~/R Projects/lipdR/data/queryTable.rda", .GlobalEnv)
     #replace local MD5
     replaceLocalZipMD5()
   }else{
@@ -68,9 +69,11 @@ checkZIPmd5 <- function(){
 #'
 #'
 replaceLocalZipMD5 <- function(){
-  ZIPmd5Remote <- readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5")
+  ZIPmd5Remote <- readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5", warn = FALSE)
   ZIPmd5Local <- ZIPmd5Remote
+  message("New MD5: ", ZIPmd5Local)
   usethis::use_data(ZIPmd5Local, overwrite = TRUE)
+  load("~/R Projects/lipdR/data/ZIPmd5Local.rda", .GlobalEnv)
 }
 
 
