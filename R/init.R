@@ -18,7 +18,6 @@ update_queryTable <- function(){
     usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
     #replace local MD5
     replaceLocalZipMD5()
-    load("~/R Projects/lipdR/data/ZIPmd5Local.rda")
   }else{
     message("Query Table up to date")
   }
@@ -72,6 +71,7 @@ replaceLocalZipMD5 <- function(){
   ZIPmd5Remote <- readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5", warn = FALSE)
   ZIPmd5Local <- ZIPmd5Remote
   usethis::use_data(ZIPmd5Local, overwrite = TRUE)
+  load("~/R Projects/lipdR/data/ZIPmd5Local.rda")
 
 }
 
