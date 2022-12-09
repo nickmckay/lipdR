@@ -38,6 +38,7 @@ Imports:
     data.table,
     methods,
     jsonlite,
+    sf,
     sets
 Suggests: 
     tools,
@@ -53,7 +54,6 @@ Suggests:
     neotoma2,
     covr,
     rmarkdown,
-    sf,
     testthat,
 Remotes: 
     neotomadb/neotoma2
