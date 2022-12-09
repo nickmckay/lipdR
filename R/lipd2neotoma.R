@@ -5,7 +5,6 @@
 #' @importFrom sf st_as_sf st_sfc st_point
 #'
 #' @return neotoma site
-#' @export
 #'
 
 
