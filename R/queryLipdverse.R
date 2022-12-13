@@ -94,13 +94,14 @@ queryLipdverse <- function(variable.name = NULL,
 
   #Filter by time
   if (!is.null(age.max)){
-    queryTable1 <- queryTable1[!is.na(queryTable1$earliestYear),]
-    queryTable1 <- queryTable1[queryTable1$earliestYear >= age.max,]
+    queryTable1 <- queryTable1[!is.na(queryTable1$maxAge),]
+    queryTable1 <- queryTable1[queryTable1$maxAge >= age.max,]
   }
   if (!is.null(age.min)){
-    queryTable1 <- queryTable1[!is.na(queryTable1$mostRecentYear),]
-    queryTable1 <- queryTable1[queryTable1$mostRecentYear <= age.min,]
+    queryTable1 <- queryTable1[!is.na(queryTable1$minAge),]
+    queryTable1 <- queryTable1[queryTable1$minAge <= age.min,]
   }
+
 
   if(verbose){cat("Series remaining after time filter: ", nrow(queryTable1), "\n\n")}
 

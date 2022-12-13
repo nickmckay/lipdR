@@ -16,7 +16,7 @@ update_queryTable <- function(){
     queryTable <- newQueryTable()
     #Replace local copy
     usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
-    load("~/R Projects/lipdR/data/queryTable.rda", .GlobalEnv)
+    load("~data/queryTable.rda", .GlobalEnv)
     #replace local MD5
     replaceLocalZipMD5()
   }else{
