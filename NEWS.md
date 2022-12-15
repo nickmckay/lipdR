@@ -1,3 +1,5 @@
+# lipdR 0.5.1
+
 # lipdR 0.4.1
 
 * package now loads with a more compact query table to reduce loading time
