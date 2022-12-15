@@ -1,4 +1,6 @@
-# lipdR 0.5.1
+# lipdR 0.4.2
+
+* repaired bug in query table update
 
 # lipdR 0.4.1
 
