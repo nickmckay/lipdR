@@ -132,10 +132,12 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
   # If this is a URL, download the file and return the local path where the file is saved.
   path <- download_from_url(path)
 
-  if(startsWith(tolower(tools::file_ext(path)),"json")){
+  if(all(startsWith(tolower(tools::file_ext(path)),"json"))){
     jsonOnly <- TRUE
-  }else if(startsWith(tolower(tools::file_ext(path)),"lpd")){
+  }else if(all(startsWith(tolower(tools::file_ext(path)),"lpd"))){
     jsonOnly <- FALSE
+  }else{
+    stop("needs to be all json or all lpd")
   }
 
   # Get the explicit full paths for each lipd file

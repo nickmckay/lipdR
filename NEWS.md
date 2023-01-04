@@ -1,3 +1,7 @@
+# lipdR 0.4.3
+
+* Fixed bug to load a vector of local files
+
 # lipdR 0.4.2
 
 * repaired bug in query table update
