@@ -160,13 +160,15 @@ lipd2neotoma <- function(L){
 
   site1@collunits@collunits[[1]] <- neotoma2::set_collunit(datasets = datasetAll, chronologies = chronos1, colldate = as.Date(character(0)))
 
-  site1$siteid <- getGeoNeotoma2(D@sites[[1]])$neotomaSiteId
-  site1$sitename <- getGeoNeotoma2(D@sites[[1]])$siteName
+  site1$siteid <- L$geo$neotomaSiteId
+  site1$sitename <- L$geo$siteName
   # site1$lat <- lipdR:::getGeoNeotoma2(D@sites[[1]])$latitude
   # site1$long <- lipdR:::getGeoNeotoma2(D@sites[[1]])$longitude
-  site1$altitude <- getGeoNeotoma2(D@sites[[1]])$elevation
+  site1$altitude <- L$geo$elevation
 
-  site1@geography = st_as_sf(st_sfc(st_point(c(getGeoNeotoma2(D@sites[[1]])$longitude,getGeoNeotoma2(D@sites[[1]])$latitude))))
+  site1@geography = st_as_sf(st_sfc(st_point(c(L$geo$longitude,L$geo$latitude))))
+
+  site1@decription <- L$geo$description
 
   return(site1)
 
