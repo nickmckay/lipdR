@@ -168,7 +168,7 @@ lipd2neotoma <- function(L){
 
   site1@geography = st_as_sf(st_sfc(st_point(c(L$geo$longitude,L$geo$latitude))))
 
-  site1@decription <- L$geo$description
+  site1@description <- L$geo$description
 
   return(site1)
 
