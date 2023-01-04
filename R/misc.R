@@ -80,7 +80,9 @@ download_from_url <- function(path){
     }
   }
   return(path)
-  }else if(length(path) > 1){# this is a vector of urls
+  }else if(length(path) > 1){# this is a vector of urls or files!
+    isUrl <- purrr::map_lgl(path,is.url)
+    if(all(isUrl)){
     dir <- file.path(get_download_path(),"lpdDownload")
     if(dir.exists(dir)){#delete it.
       unlink(dir,recursive = TRUE,force = TRUE)
@@ -90,6 +92,11 @@ download_from_url <- function(path){
     print(glue::glue("Downloading {length(path)} datasets from lipdverse.org..."))
     purrr::walk2(path,local_path,download.file,method = dmeth,quiet = TRUE)
     path <- dir
+    }else if(all(!isUrl)){
+      path <- path
+    }else{
+      stop("The vector of paths must all be urls, or local paths, it can't be a mix")
+    }
 
   }else{
     stop("path is empty")
