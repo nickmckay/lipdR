@@ -177,7 +177,7 @@ list_files_recursive <- function(x,path){
 find_data_dir <- function(path){
   # If there is a jsonld file, then that means we're in the data directory
   files <- list.files(path=path, pattern="\\.jsonld$", recursive=TRUE,full.names = TRUE)
-  if (isNullOb(files)){
+  if (any(isNullOb(files))){
     stop("Error: Unable to find the 'data' directory in the LiPD file")
   }
   # Use the directory name from the jsonld path
@@ -193,8 +193,8 @@ find_data_dir <- function(path){
 isDirectory <- function(s){
   # Get the basename (last item in file path), and check it for a file extension
   # If there is not a file extension (like below), then we can assume that it's a directory
-  if (tools::file_ext(basename(s)) == ""){
-    if(dir.exists(s)){
+  if (all(tools::file_ext(basename(s)) == "")){
+    if(all(dir.exists(s))){
       return(TRUE)
     }else{
       return(FALSE)
