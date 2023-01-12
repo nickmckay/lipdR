@@ -144,6 +144,10 @@ lipd2neotoma <- function(L){
     chronTabIndex <- grep("chron", attributes(mtabs1)$names)[j]
     CD1 <- mtabs1[[chronTabIndex]]
 
+    CD1 <- CD1[,c(1,3,6,10,7,5,8)]
+
+    names(CD1) <- c("depth", "thickness", "agelimitolder", "chroncontrolid", "agelimityounger", "chroncontrolage", "chroncontroltype")
+
     chronos1@chronologies[[j]] <- new("chronology")
 
     chronos1@chronologies[[j]]@chroncontrols <- CD1
