@@ -6,16 +6,16 @@
 #' @param force Attempt to collapse time series when lipd ts_storage is not provided: bool
 #'
 #' @return D: LiPD data, sorted by dataset name : list
-#' @examples 
+#' @examples
 #' \dontrun{
 #' D <- readLipd()
 #' ts <- extractTs(D)
 #' D <- collapseTs(ts)
 #' }
-#' 
+#'
 collapseTs <- function(ts, force=FALSE){
   #before doing anything else, reorder the data by dataset name.
-  dsn <- sapply(ts,"[[","dataSetName")
+  dsn <- pullTsVariable(ts,"dataSetName",strict.search = TRUE)
   ts <- ts[order(dsn)]
   ts_storage <- list()
   timeID <- NA
@@ -29,8 +29,8 @@ collapseTs <- function(ts, force=FALSE){
       force <- TRUE
     }
   }
-  
-  
+
+
   # Use the time_id to get the corresponding raw data from lipd envir ts storage
   if(!force){
     timeID <- ts[[1]]$timeID
@@ -59,22 +59,22 @@ collapseTs <- function(ts, force=FALSE){
         D[[dsn]] <- collapse_root(D[[dsn]], ts[[i]], pc)
       }
       # Use the time series entry to overwrite the (old) raw data for this column
-      D[[dsn]] <- collapse_table(D[[dsn]], ts[[i]], pc) 
-      
-      D[[dsn]] <- structure(D[[dsn]],class = c("lipd",class(list())))   
+      D[[dsn]] <- collapse_table(D[[dsn]], ts[[i]], pc)
+
+      D[[dsn]] <- structure(D[[dsn]],class = c("lipd",class(list())))
     }
   }, error=function(cond){
     print(paste0("Error: collapseTs: ", cond))
   })
-  D <- rm_empty_fields(D) 
-  # Is there only one dataset after all this? Set it directly in D. 
+  D <- rm_empty_fields(D)
+  # Is there only one dataset after all this? Set it directly in D.
   if(length(D)==1){
-    D <- D[[1]] 
+    D <- D[[1]]
     D <- structure(D,class = c("lipd",class(list())))
-    
+
   }else{
     for(dd in 1:length(D)){
-      D[[dd]] <- structure(D[[dd]],class = c("lipd",class(list())))   
+      D[[dd]] <- structure(D[[dd]],class = c("lipd",class(list())))
     }
     D <- structure(D,class = c("multi_lipd",class(list())))
   }
@@ -87,37 +87,37 @@ is_include_key <- function(key, pc){
                "depthUnits","year","yearUnits")
   match_idx <- stringr::str_match_all(key, "(\\w+)(\\d+)[_](\\w+)")
   match_non_idx <- stringr::str_match_all(key, "(\\w+)[_](\\w+)")
-  
+
   # Check for exact match
   if(key %in% exclude){
     return(FALSE)
   }
-  
-  # Split any keys that have underscores. (i.e. "interpretation1_scope"). 
-  # Is the prefix (interpretation) in exclude? 
+
+  # Split any keys that have underscores. (i.e. "interpretation1_scope").
+  # Is the prefix (interpretation) in exclude?
   if(!isNullOb(match_idx[[1]])){
     if(match_idx[[1]][[2]] %in% exclude){
       return(FALSE)
     }
   }
-  # Split any keys that have underscores without an index. (i.e. "hasResolution_hasMax"). 
+  # Split any keys that have underscores without an index. (i.e. "hasResolution_hasMax").
   # Is the prefix (hasResolution) in exclude?
   if(!isNullOb(match_non_idx[[1]])){
     if(match_non_idx[[1]][[2]] %in% exclude){
       return(FALSE)
     }
   }
-    
+
   # Catch any stragglers. Is the key an exact match or is the key a data table key? (i.e. "paleoData_<key> " or "chronData_<key> ")
   for(i in 1:length(exclude)){
     if(key == exclude[[i]] || grepl(pc, key)){
       return(FALSE)
     }
   }
-  
+
   # If you made it past all the exclusions, congrats! You're a valid key.
   return(TRUE)
-} 
+}
 
 collapse_root <- function(d, entry, pc){
 
@@ -137,7 +137,7 @@ collapse_root <- function(d, entry, pc){
           m <- stringr::str_match_all(key, "(\\w+)[_](\\w+)")
           g_key = m[[1]][[3]]
           geo[[g_key]] <- entry[[key]]
-          # 
+          #
           # if(g_key == "longitude" || g_key == "meanLon"){
           #   geo[["geometry"]][["coordinates"]][[1]] <- entry[[key]]
           # } else if (g_key == "latitude" || g_key == "meanLat"){
@@ -159,7 +159,7 @@ collapse_root <- function(d, entry, pc){
         }
       }
     }
-    # Only add these lists if they're not empty 
+    # Only add these lists if they're not empty
     if(!isNullOb(pub)){ d[["pub"]] <- pub }
     if(!isNullOb(funding)){ d[["funding"]] <- funding }
     if(!isNullOb(geo)){ d[["geo"]] <- geo }
@@ -174,7 +174,7 @@ collapse_author <- function(d, entry){
   return(d)
 }
 
-#' Collapse time series section; paleo or chron 
+#' Collapse time series section; paleo or chron
 #' @export
 #' @param d Metadata
 #' @param entry Time series entry
@@ -195,7 +195,7 @@ collapse_table <- function(d, entry, pc){
   return(d)
 }
 
-#' Collapse time series table root. All keys listed below are known table root keys. 
+#' Collapse time series table root. All keys listed below are known table root keys.
 #' @export
 #' @param table Metadata
 #' @param entry Time series entry
@@ -212,7 +212,7 @@ collapse_table_root <- function(table, entry, pc){
   return(table)
 }
 
-#' Collapse time series column. Compile column entries and place new column in table. 
+#' Collapse time series column. Compile column entries and place new column in table.
 #' @export
 #' @param table Metadata
 #' @param entry Time series entry
@@ -225,14 +225,14 @@ collapse_column <- function(table, entry, pc){
   res <- list()
   phys <- list()
   inComp <- list()
-  include <- c("paleoData", "chronData", "interpretation", "calibration", "hasResolution","inCompilationBeta") 
+  include <- c("paleoData", "chronData", "interpretation", "calibration", "hasResolution","inCompilationBeta")
   exclude <- c('filename', 'googleWorkSheetKey', 'tableName', "missingValue", "tableMD5", "dataMD5", "googWorkSheetKey", "pub", "geo")
   ts_keys <- names(entry)
-  
+
   tryCatch({
     for(i in 1:length(ts_keys)){
       curr_key <- ts_keys[[i]]
-      # Interpretation is indexed, so it needs special attention an processing. 
+      # Interpretation is indexed, so it needs special attention an processing.
       if (grepl("interpretation", curr_key)){
         interp <- collapse_block_indexed(entry, interp, curr_key)
       } else if (grepl("calibration", curr_key)){
@@ -326,12 +326,12 @@ collapse_block_indexed <- function(entry, l, key){
   return(l)
 }
 
-#' Collapses blocks: calibration, physicalSample, hasResolution, 
+#' Collapses blocks: calibration, physicalSample, hasResolution,
 #' These follow the regex format of "<key1>_<key2>"
 #' match[[1]][[1]] = full key with underscore and index (ex. "physicalSample_tableName")
 #' match[[1]][[2]] = first key (ex. "physicalSample")
 #' match[[1]][[3]] = second key (ex. "tableName")
-#' 
+#'
 #' @export
 #'
 #' @param entry Time series entry
@@ -373,12 +373,12 @@ get_table <- function(d, current, pc){
     } else {
       pcNumber <- current$chronNumber
     }
-    
+
     #Check if the number was missing
     if(is.null(pcNumber) | is.na(pcNumber)){
       pcNumber <- 1#and assume 1 if so
     }
-    
+
     # Measurement table
     if(tt == "meas"){
       tryCatch({
@@ -420,7 +420,7 @@ put_table <- function(d, current, pc, table){
   tt <- current$tableType
   modelNumber <- current$modelNumber
   tableNumber <- current$tableNumber
-  
+
   # Get the pcNumber. Dependent on mode.
   if(pc == "paleoData"){
     pcNumber <- current$paleoNumber
@@ -428,20 +428,20 @@ put_table <- function(d, current, pc, table){
     pcNumber <- current$chronNumber
   }
   d <- build_structure(d, pc, tt, pcNumber, modelNumber, tableNumber)
-  
+
   # Measurement tables
   if(tt == "meas"){
       # Best Case Scenario: The structure for placing this table is already existing, and we can place the table directly into that location.
       d[[pc]][[pcNumber]][["measurementTable"]][[tableNumber]] <- table
   }
-  
+
   # Summary tables
   else if (tt == "summ") {
       # print(paste0("Inserting table: ", pc, pcNumber, "model", modelNumber, "summaryTable", tableNumber))
       # Best Case Scenario: The structure for placing this table is already existing, and we can place the table directly into that location.
       d[[pc]][[pcNumber]][["model"]][[modelNumber]][["summaryTable"]][[tableNumber]] <- table
   }
-  
+
   # Ensemble tables
   else if (tt=="ens"){
       # Best Case Scenario: The structure for placing this table is already existing, and we can place the table directly into that location.
@@ -466,22 +466,22 @@ build_structure <- function(d, pc, table_type, pcNumber, modelNumber, tableNumbe
   if(is.null(d)){
     d <-list()
   }
-  
+
   if(!pc %in% names(d)){
     d[[pc]] <- list()
   }
-  
+
   # Is there a list for this pc section?
   if(!is.list(d[[pc]])){
-    # No, create one. 
+    # No, create one.
     d[[pc]] <- list()
   }
   # Is there a list at pcNumber index?
   if(length(d[[pc]]) < pcNumber){
-    # No, create one. 
+    # No, create one.
     d[[pc]][[pcNumber]] <- list()
   }
-  
+
   # Create Measurement structure
   if (table_type == "meas"){
     if(!"measurementTable" %in% names(d[[pc]][[pcNumber]])){
@@ -494,13 +494,13 @@ build_structure <- function(d, pc, table_type, pcNumber, modelNumber, tableNumbe
       d[[pc]][[pcNumber]][["measurementTable"]][[tableNumber]] <- list()
     }
   }
-  
+
   if (table_type == "ens" || table_type == "summ"){
-    
+
     #See if model exists, and is needed.
    if(!is.null(modelNumber)){
-    
-    # Create the Model indexing if needed 
+
+    # Create the Model indexing if needed
     if(!"model" %in% names(d[[pc]][[pcNumber]])){
       d[[pc]][[pcNumber]][["model"]] <- list()
     }
@@ -510,10 +510,10 @@ build_structure <- function(d, pc, table_type, pcNumber, modelNumber, tableNumbe
     if(length(d[[pc]][[pcNumber]][["model"]]) < modelNumber){
       d[[pc]][[pcNumber]][["model"]][[modelNumber]] <- list()
     }
-    
+
     # Create summary structure
     if (table_type == "summ"){
-      # Create the Model indexing if needed 
+      # Create the Model indexing if needed
       if(!"summaryTable" %in% names(d[[pc]][[pcNumber]][["model"]][[modelNumber]])){
         d[[pc]][[pcNumber]][["model"]][[modelNumber]] <- list()
       }
@@ -524,10 +524,10 @@ build_structure <- function(d, pc, table_type, pcNumber, modelNumber, tableNumbe
         d[[pc]][[pcNumber]][["model"]][[modelNumber]][["summaryTable"]][[tableNumber]] <- list()
       }
     }
-    
+
     # Create ensemble structure
     if (table_type == "ens"){
-      # Create the Model indexing if needed 
+      # Create the Model indexing if needed
       if(!"ensembleTable" %in% names(d[[pc]][[pcNumber]][["model"]][[modelNumber]])){
         d[[pc]][[pcNumber]][["model"]][[modelNumber]] <- list()
       }
@@ -544,7 +544,7 @@ build_structure <- function(d, pc, table_type, pcNumber, modelNumber, tableNumbe
  }
 
 
-#' Remove tables that correspond to 'whichtables' type. These tables will be collapsed next and need a clean slate. 
+#' Remove tables that correspond to 'whichtables' type. These tables will be collapsed next and need a clean slate.
 #' @export
 #' @param d Metadata
 #' @param pc paleoData or chronData
@@ -561,7 +561,7 @@ rm_existing_tables <- function(d, pc, whichtables){
             }
           }
         }
-        
+
         if(whichtables %in% c("ens", "summ","all")){
           if("model" %in% names(d[[pc]][[i]])){
             for(j in 1:length(d[[pc]][[i]][["model"]])){
@@ -592,7 +592,7 @@ rm_existing_tables <- function(d, pc, whichtables){
   return(d)
 }
 
-#' Put in paleoData and chronData as the base for this dataset using the oroginal dataset data.  
+#' Put in paleoData and chronData as the base for this dataset using the oroginal dataset data.
 #' @export
 #'
 #' @param force Build dataset without original data from lipd
@@ -604,20 +604,20 @@ rm_existing_tables <- function(d, pc, whichtables){
 #' @return d: Metadata
 put_base_data <- function(entry, raw_datasets, dsn, force, mode){
   d <- list()
-  
-  # We do not have the original datasets OR the user is requesting a collapseTs without using the original datasets 
+
+  # We do not have the original datasets OR the user is requesting a collapseTs without using the original datasets
   if(force==TRUE || is.null(raw_datasets)){
     print("Attempting to collapse time series without the original raw datasets. Your results may be missing data.")
     d[["paleoData"]] <- list()
     d[["chronData"]] <- list()
     d$dataSetName <- entry$dataSetName
     }
-  
-  # We have the original dataset(s). Use this data as a baseline to build and overwrite onto. 
+
+  # We have the original dataset(s). Use this data as a baseline to build and overwrite onto.
   # Only copy over the data OPPOSITE to the mode.
-  # Example, for paleo mode we will rebuild the paleoData section and copy over the chronData section. 
+  # Example, for paleo mode we will rebuild the paleoData section and copy over the chronData section.
     else {
-      
+
        if(!any(entry$dataSetName %in% names(raw_datasets))){#then it's either new, or the name changed
           #can we find the TSid?
           tmp <- extractTs(raw_datasets)
@@ -652,17 +652,17 @@ put_base_data <- function(entry, raw_datasets, dsn, force, mode){
         if("paleoData" %in% names(L)){
           d[["paleoData"]] <- L[["paleoData"]]
         }
-        
+
         # Is there chronData? Find it and add it
         if("chronData" %in% names(L)){
           d[["chronData"]] <- L[["chronData"]]
         }
-        
+
         # print(names(raw_datasets))
         # # Set the metadata to a variable
         # raw <- list()
         # table_type <- entry$whichtables
-        # # Check if this dataset is n  ested or not. 
+        # # Check if this dataset is n  ested or not.
         # if("paleoData" %in% names(raw_datasets)){
         #   L <- raw_datasets
         # } else if (dsn %in% names(raw_datasets)){
@@ -675,7 +675,7 @@ put_base_data <- function(entry, raw_datasets, dsn, force, mode){
         #     print("Including paleoData")
         #     d[["paleoData"]] <- L[["paleoData"]]
         #   }
-        #   
+        #
         # }
         # # Paleo Mode: Get chronData (all) and paleoData (anything besides the table_type)
         # else if (mode == "paleo"){
@@ -684,15 +684,15 @@ put_base_data <- function(entry, raw_datasets, dsn, force, mode){
         #     print("Including chronData")
         #     d[["chronData"]] <- L[["chronData"]]
         #   }
-        #   
+        #
         # }
 
   }
-  
+
   return(d)
 }
 
-#' Retreieve the original datasets from the lipd R environment  
+#' Retreieve the original datasets from the lipd R environment
 #' @export
 #' @return list tmp_storage: Temporary storage data that holds original datasets
 get_ts_lipd <- function(){
@@ -708,7 +708,7 @@ add_missing_ts_data <- function(entry){
   # Items needed to collapse:
   # mode, whichtables, paleoNumber* ,chronNumber*, tableNumber, modelNumber*, timeID*, tableType
   # *applicable depending on the mode and table type.
-  # If any of these items are missing, add keys with assumed values. 
+  # If any of these items are missing, add keys with assumed values.
   if(!("mode" %in% names(entry))){
     entry$mode = "paleo"
   }
