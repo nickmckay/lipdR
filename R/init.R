@@ -134,7 +134,7 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
 
   if(all(startsWith(tolower(tools::file_ext(path)),"json"))){
     jsonOnly <- TRUE
-  }else if(all(startsWith(tolower(tools::file_ext(path)),"lpd"))){
+  }else if(all(startsWith(tolower(tools::file_ext(path)),"lpd")) | all(isDirectory(path))){
     jsonOnly <- FALSE
   }else{
     stop("needs to be all json or all lpd")
