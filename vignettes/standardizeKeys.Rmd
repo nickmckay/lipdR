@@ -16,7 +16,8 @@ First we grab the ISO2k data and the standardization tables
 
 ```{r}
 load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
-standardTables <- readRDS("C:/Users/dce25/Downloads/standardTables.RDS")
+#standardTables <- readRDS("C:/Users/dce25/Downloads/standardTables.RDS")
+#standardTables now included in package data
 ```
 
 ###Check for valid `archiveType`
