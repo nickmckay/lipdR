@@ -1,0 +1,68 @@
+---
+title: "lipdKeystandardization with ISO2k"
+author: "Dave Edge"
+date: "2023-01-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+devtools::load_all()
+```
+
+###Load Data
+
+First we grab the ISO2k data and the standardization tables
+
+```{r}
+load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
+standardTables <- readRDS("C:/Users/dce25/Downloads/standardTables.RDS")
+```
+
+###Check for valid `archiveType`
+
+`isValidKey()` checks to see if all terms for a given key are valid lipd terms
+
+```{r}
+# print(TS)
+isValidKey(TS, "archiveType")
+```
+
+the function returns a data frame showing invalid terms
+
+
+Now we can standardize the invalid terms by looking for synonyms
+
+`standardizeKey()` looks for matches from previous lipd entries and PaST terms which are know to be synonyms of valid lipd terms
+
+```{r, warning=FALSE}
+TSnew <- standardizeKey(TS, "archiveType")
+```
+
+the function was able to find matches for some, but not all invalid terms
+
+The function returns the TS object (now `TSnew`) with corrections where possible
+
+The user is given the option to make the suggested corrections or abort
+
+
+###Check for valid `variableName`
+
+Same process with a different key
+
+```{r}
+# print(TS)
+isValidKey(TS, "paleoData_variableName")
+```
+
+Wow, there a lot of invalid terms here
+
+```{r}
+TSnew <- standardizeKey(TS, "paleoData_variableName")
+```
+
+And this time we do have synonyms allowing for automated corrections to all invalid terms
+
+
+
+

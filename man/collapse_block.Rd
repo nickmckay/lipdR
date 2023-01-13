@@ -2,7 +2,7 @@
 % Please edit documentation in R/timeseries_collapse.R
 \name{collapse_block}
 \alias{collapse_block}
-\title{Collapses blocks: calibration, physicalSample, hasResolution, 
+\title{Collapses blocks: calibration, physicalSample, hasResolution,
 These follow the regex format of "<key1>_<key2>"
 match[[1]][[1]] = full key with underscore and index (ex. "physicalSample_tableName")
 match[[1]][[2]] = first key (ex. "physicalSample")
@@ -23,7 +23,7 @@ collapse_block(entry, l, key, pc)
 l: Metadata
 }
 \description{
-Collapses blocks: calibration, physicalSample, hasResolution, 
+Collapses blocks: calibration, physicalSample, hasResolution,
 These follow the regex format of "<key1>_<key2>"
 match[[1]][[1]] = full key with underscore and index (ex. "physicalSample_tableName")
 match[[1]][[2]] = first key (ex. "physicalSample")
