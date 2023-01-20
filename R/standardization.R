@@ -1,9 +1,41 @@
-#pull in lipd files
-# load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
-# D <- readLipd("C:/Users/dce25/Downloads/iso2k.lpd")
-# TS <- lipdR::as.lipdTs(D)
-# lipdR::as.lipdTs(D)
-#format as TS
+
+#grab metaData for key
+getValueMetaData <- function(lipdTS, key){
+
+  if (!key %in% names(standardTables)){
+    stop("key must be one of: ", paste(names(standardTables)[1], names(standardTables)[2],
+                                       names(standardTables)[3], names(standardTables)[4],
+                                       names(standardTables)[5],  sep = " "))
+  }
+
+  if (key == "paleoData_variableName"){
+    meta_keys <- c("paleoData_isAssemblage", "paleoData_datum", "paleoData_summaryStatistic", "paleoData_measurementMaterial",
+                   "paleoData_inferrredMaterial", "paleoData_method", "paleoData_isPrimary")
+  }else if (key == "paleoData_proxy"){
+    meta_keys <- c("paleoData_proxyGeneral", "paleoData_measurementMaterial")
+  }else if (key == "paleoData_units"){
+    meta_keys <- c("paleoData_datum")
+  }else(
+    return(NULL)
+  )
+
+
+
+  standardTables
+
+
+
+
+
+  tolower(unname(unlist(standardTables[[eval(key)]][eval(meta_keys)])))
+  standardTables[[eval(key)]][eval(meta_keys)]
+
+  data.frame(standardTables[[eval(key)]][eval(meta_keys)])
+
+  View(standardTables$paleoData_units)
+}
+
+
 
 
 #check standardized keys for valid terms
@@ -17,7 +49,7 @@
 #' @return invalid keys df
 #' @export
 
-isValidKey <- function(lipdTS, key){
+isValidValue <- function(lipdTS, key){
   if (!key %in% names(standardTables)){
     stop("key must be one of: ", paste(names(standardTables)[1], names(standardTables)[2],
                  names(standardTables)[3], names(standardTables)[4],
@@ -49,8 +81,17 @@ isValidKey <- function(lipdTS, key){
 #' @return updated TS
 #' @export
 
-standardizeKey <- function(lipdTS, key){
-  invalidDF <- isValidKey(lipdTS, key)
+standardizeValue <- function(lipdTS, key){
+
+  #update past info
+
+
+
+  #update metadata
+
+
+
+  invalidDF <- isValidValue(lipdTS, key)
 
   possibleSynonyms <- unique(c(tolower(unname(unlist(standardTables[[eval(key)]]["synonym"]))),
                         tolower(unname(unlist(standardTables[[eval(key)]]["pastName"])))))
@@ -96,7 +137,7 @@ standardizeKey <- function(lipdTS, key){
 
 
   message("Rerunning check for invalid keys in: ", key)
-  invalidDFnew <- isValidKey(lipdTS, key)
+  invalidDFnew <- isValidValue(lipdTS, key)
   print(invalidDFnew)
 
   return(lipdTS)

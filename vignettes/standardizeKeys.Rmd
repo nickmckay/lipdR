@@ -1,5 +1,5 @@
 ---
-title: "lipdKeystandardization with ISO2k"
+title: "lipd Values standardization with ISO2k"
 author: "Dave Edge"
 date: "2023-01-13"
 output: html_document
@@ -22,11 +22,11 @@ load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
 
 ###Check for valid `archiveType`
 
-`isValidKey()` checks to see if all terms for a given key are valid lipd terms
+`isValidValue()` checks to see if all terms for a given key are valid lipd terms
 
 ```{r}
 # print(TS)
-isValidKey(TS, "archiveType")
+isValidValue(TS, "archiveType")
 ```
 
 the function returns a data frame showing invalid terms
@@ -34,10 +34,10 @@ the function returns a data frame showing invalid terms
 
 Now we can standardize the invalid terms by looking for synonyms
 
-`standardizeKey()` looks for matches from previous lipd entries and PaST terms which are know to be synonyms of valid lipd terms
+`standardizeValue()` looks for matches from previous lipd entries and PaST terms which are know to be synonyms of valid lipd terms
 
 ```{r, warning=FALSE}
-TSnew <- standardizeKey(TS, "archiveType")
+TSnew <- standardizeValue(TS, "archiveType")
 ```
 
 the function was able to find matches for some, but not all invalid terms
@@ -53,13 +53,13 @@ Same process with a different key
 
 ```{r}
 # print(TS)
-isValidKey(TS, "paleoData_variableName")
+isValidValue(TS, "paleoData_variableName")
 ```
 
 Wow, there a lot of invalid terms here
 
 ```{r}
-TSnew <- standardizeKey(TS, "paleoData_variableName")
+TSnew <- standardizeValue(TS, "paleoData_variableName")
 ```
 
 And this time we do have synonyms allowing for automated corrections to all invalid terms
