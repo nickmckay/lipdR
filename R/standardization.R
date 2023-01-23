@@ -1,11 +1,20 @@
+#
+# load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
+# #load("C:/Users/dce72/Downloads/iso2k1_0_1.RData")
+# key="paleoData_variableName"
+# lipdTS <- TS
 
-#load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
-load("C:/Users/dce72/Downloads/iso2k1_0_1.RData")
-key="paleoData_variableName"
-lipdTS <- TS
 
-#grab metaData for key
-getValueMetaData <- function(lipdTS, key){
+#' grab metaData for given key from standard tables
+#'
+#' @param lipdTS
+#' @param key
+#'
+#' @return list
+#' @export
+updateMetaDataFromStandardTables <- function(lipdTS, key){
+
+  TSorig <- lipdTS
 
 
   #Check for appropriate key
@@ -27,37 +36,59 @@ getValueMetaData <- function(lipdTS, key){
     return(NULL)
   )
 
-  #Check that the metadata keys exist
+  #Check that the metadata keys exist, if not, add them
   if(!sum(unlist(lapply(lipdTS, function(x) all(meta_keys %in% names(x))))) == length(lipdTS)){
     #add keys where necessary
     for (i in 1:length(lipdTS)){
       needAdded <- meta_keys[!meta_keys %in% names(lipdTS[[i]])]
-      for (j in length(needAdded)){
+      for (j in 1:length(needAdded)){
         lipdTS[[i]][eval(needAdded[j])] <- NA
       }
     }
   }
 
   #update metadata
+  #move through each TS, for each metadata field
+  for (i in 1:length(lipdTS)){
+    #find TS synonym in spreadsheet
+    synonymLoc <- which(unlist(unname(lipdTS[[i]][eval(key)])) == standardTables[[eval(key)]]['synonym'])
+    for (j in length(meta_keys)){
+      #If the field is blank, check the spreadsheet for metadata based on the synonym in the TS
+      if (lipdR:::is_blank(lipdTS[[i]][eval(meta_keys[j])])){
+        lipdTS[[i]][eval(meta_keys[j])] <- standardTables[[eval(key)]][synonymLoc,eval(meta_keys[j])]
+      }
+    }
+  }
 
+  #compare original TS to new TS
+  compDF <- data.frame(matrix(nrow = length(lipdTS), ncol = length(meta_keys)))
+  names(compDF) <- meta_keys
+  for (i in 1:length(lipdTS)){
+    for (j in 1:length(unlist(TSorig[[i]][eval(meta_keys)]))){
+      currentKey <- eval(names(unlist(TSorig[[i]][eval(meta_keys)])))[j]
+      compDF[i,eval(currentKey)] <-
+        unlist(lipdTS[[i]][eval(currentKey)]) == unlist(TSorig[[i]][eval(currentKey)])
+    }
+    # if (length(comps)==0){
+    #   compDF[i,] <- rep(NA, length(meta_keys))
+    # }else{
+    #   if (length(comps) != ncol(compDF)){
+    #     stop("Problem at: ", i, " in compDF due to comps = ", paste(comps, collapse = ", "))
+    #   }
+    #   compDF[i,] <- comps
+    # }
+  }
 
+  returns <- list("TS" = lipdTS, "ChangesDF" = compDF)
 
+  return(returns)
 
-  tolower(unname(unlist(standardTables[[eval(key)]][eval(meta_keys)])))
-  standardTables[[eval(key)]][eval(meta_keys)]
-
-  data.frame(standardTables[[eval(key)]][eval(meta_keys)])
-
-  View(standardTables$paleoData_units)
 }
 
 
 
 
-#check standardized keys for valid terms
-#function includes input for which key to check
-
-#' make sure all terms under a controlled key are valied
+#' make sure all terms under a controlled key are valid
 #'
 #' @param lipdTS
 #' @param key
@@ -87,7 +118,8 @@ isValidValue <- function(lipdTS, key){
   return(invalidDF)
 }
 
-#
+
+
 
 #' standardize terms automatically based on known synonyms
 #'
@@ -99,18 +131,10 @@ isValidValue <- function(lipdTS, key){
 
 standardizeValue <- function(lipdTS, key){
 
-  #update past info
-
-
-
-  #update metadata
-
-
-
   invalidDF <- isValidValue(lipdTS, key)
 
   possibleSynonyms <- unique(c(tolower(unname(unlist(standardTables[[eval(key)]]["synonym"]))),
-                        tolower(unname(unlist(standardTables[[eval(key)]]["pastName"])))))
+                        tolower(unname(unlist(standardTables[[eval(key)]]["paleoData_pastName"])))))
   possibleSynonyms <- possibleSynonyms[!is.na(possibleSynonyms)]
 
   validCheck <- lapply(lipdTS, function(x) tolower(unname(unlist(x[eval(key)]))) %in%
@@ -135,12 +159,15 @@ standardizeValue <- function(lipdTS, key){
       synonymTableLoc <- which(synonym == tolower(unname(unlist(standardTables[[eval(key)]]["synonym"]))))
       lipdName <- unname(unlist(standardTables[[eval(key)]]["lipdName"]))[synonymTableLoc]
 
+
+
     }
 
 
     synonymDF[i,] <- c(TSrowNum, lipdTS[[as.numeric(TSrowNum)]]$dataSetName, lipdTS[[as.numeric(TSrowNum)]]$datasetId, invalidDF[i,4], lipdName)
   }
 
+  synonymDForig <- synonymDF
   print(synonymDF)
 
   userResp <- askYesNo(msg = "Replace all?" , default = TRUE)
@@ -156,8 +183,94 @@ standardizeValue <- function(lipdTS, key){
   invalidDFnew <- isValidValue(lipdTS, key)
   print(invalidDFnew)
 
+  returns <- list("TS" = lipdTS, "synonymDF" = synonymDForig)
+
+  return(returns)
+}
+
+
+
+
+#Update notes based on results from `updateMetaDataFromStandardTables()` and `standardizeValue()`
+
+
+#metadataChangesDF <- updateMetaDataFromStandardTables(TS, "paleoData_variableName")$ChangesDF
+#standardizeSynonymDF <- standardizeValue(TS, "paleoData_variableName")$synonymDF
+#updateNotes(TS, metadataChangesDF, standardizeSynonymDF)
+
+#' Update notes and paleoData_notes
+#'
+#' @param lipdTS
+#' @param metadataChangesDF
+#' @param standardizeSynonymDF
+#'
+#' @return lipdTS
+
+
+updateNotes <- function(lipdTS, metadataChangesDF, standardizeSynonymDF){
+  #choose the appropriate notes
+  #for each invalid value from metadataChangesDF, update notes
+  if (sub("\\_.*", "", names(standardizeSynonymDF)[4]) == "paleoData") {
+
+    #note values standardized
+    for (i in 1:nrow(standardizeSynonymDF)){
+      lipdTS[[as.numeric(standardizeSynonymDF$rowNum[i])]]$paleoData_notes <-
+        paste(lipdTS[[as.numeric(standardizeSynonymDF$rowNum[i])]]$paleoData_notes,
+              sub("\\Orig.*", "", names(standardizeSynonymDF)[4]),
+              "updated",
+              sep = " ")
+
+    }
+
+
+    #note metadata updated
+      for (i in 1:nrow(metadataChangesDF)){
+
+        valsChanged <- metadataChangesDF[i,is.na(metadataChangesDF[i,]) | !metadataChangesDF[i,]]
+        valsChanged <- names(valsChanged)
+        valsChanged <- paste(valsChanged, collapse=" ")
+        lipdTS[[as.numeric(i)]]$paleoData_notes <-
+          paste(lipdTS[[as.numeric(i)]]$paleoData_notes,
+                valsChanged,
+                "have been standardized",
+                sep = ", ")
+      }
+
+    message("Updated metadata for ", nrow(metadataChangesDF), " TS objects,
+            Standardized values for ", nrow(standardizeSynonymDF), " TS Objects")
+
+  }else{
+
+    for (i in 1:nrow(standardizeSynonymDF)){
+      lipdTS[[as.numeric(standardizeSynonymDF$rowNum[i])]]$notes <-
+        paste(lipdTS[[as.numeric(standardizeSynonymDF$rowNum[i])]]$notes,
+              sub("\\Orig.*", "", names(standardizeSynonymDF)[4]),
+              "updated",
+              sep = " ")
+    }
+    #note metadata updated
+    for (i in 1:nrow(metadataChangesDF)){
+
+      valsChanged <- metadataChangesDF[i,is.na(metadataChangesDF[i,]) | !metadataChangesDF[i,]]
+      valsChanged <- names(valsChanged)
+      valsChanged <- paste(valsChanged, collapse=" ")
+      lipdTS[[as.numeric(i)]]$notes <-
+        paste(lipdTS[[as.numeric(i)]]$notes,
+              valsChanged,
+              "have been standardized",
+              sep = ", ")
+
+    }
+
+    message("Updated metadata for ", nrow(metadataChangesDF), " TS objects,
+          Standardized values for ", nrow(standardizeSynonymDF), " TS Objects")
+  }
+
+
+
   return(lipdTS)
 }
+
 
 
 

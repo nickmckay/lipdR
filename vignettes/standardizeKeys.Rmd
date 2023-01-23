@@ -37,7 +37,7 @@ Now we can standardize the invalid terms by looking for synonyms
 `standardizeValue()` looks for matches from previous lipd entries and PaST terms which are know to be synonyms of valid lipd terms
 
 ```{r, warning=FALSE}
-TSnew <- standardizeValue(TS, "archiveType")
+TSnew <- standardizeValue(TS, "paleoData_variableName")
 ```
 
 the function was able to find matches for some, but not all invalid terms
@@ -53,7 +53,9 @@ Same process with a different key
 
 ```{r}
 # print(TS)
-isValidValue(TS, "paleoData_variableName")
+invalidDF <- isValidValue(TS, "paleoData_variableName")
+
+invalidDF
 ```
 
 Wow, there a lot of invalid terms here
@@ -64,6 +66,35 @@ TSnew <- standardizeValue(TS, "paleoData_variableName")
 
 And this time we do have synonyms allowing for automated corrections to all invalid terms
 
+Now, let's update the metadata based on our standard tables
 
+```{r}
+newMetadata <- updateMetaDataFromStandardTables(TSnew$TS, "paleoData_variableName")
+```
 
+This function returns the TS object with updated metadata as well as a data frame detailing the changes
 
+```{r}
+head(newMetadata$ChangesDF)
+```
+
+We see `TRUE` where the values remain the same and `NA` where the metadata keys were added or the values were updated
+
+Now we can add notes to the TS object to track what has been updated
+
+```{r}
+metadataChangesDF <- newMetadata$ChangesDF
+standardizeSynonymDF <- TSnew$synonymDF
+
+TSfinal <- updateNotes(TSnew$TS, metadataChangesDF, standardizeSynonymDF)
+```
+
+We can grab a couple of examples to have a look
+
+```{r}
+TSfinal[[1]]$paleoData_notes
+```
+
+```{r}
+TSfinal[[251]]$paleoData_notes
+```
