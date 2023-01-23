@@ -1,13 +1,21 @@
 
+#load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
+load("C:/Users/dce72/Downloads/iso2k1_0_1.RData")
+key="paleoData_variableName"
+lipdTS <- TS
+
 #grab metaData for key
 getValueMetaData <- function(lipdTS, key){
 
+
+  #Check for appropriate key
   if (!key %in% names(standardTables)){
     stop("key must be one of: ", paste(names(standardTables)[1], names(standardTables)[2],
                                        names(standardTables)[3], names(standardTables)[4],
                                        names(standardTables)[5],  sep = " "))
   }
 
+  #Which metadata needs updated for the given key?
   if (key == "paleoData_variableName"){
     meta_keys <- c("paleoData_isAssemblage", "paleoData_datum", "paleoData_summaryStatistic", "paleoData_measurementMaterial",
                    "paleoData_inferrredMaterial", "paleoData_method", "paleoData_isPrimary")
@@ -19,10 +27,18 @@ getValueMetaData <- function(lipdTS, key){
     return(NULL)
   )
 
+  #Check that the metadata keys exist
+  if(!sum(unlist(lapply(lipdTS, function(x) all(meta_keys %in% names(x))))) == length(lipdTS)){
+    #add keys where necessary
+    for (i in 1:length(lipdTS)){
+      needAdded <- meta_keys[!meta_keys %in% names(lipdTS[[i]])]
+      for (j in length(needAdded)){
+        lipdTS[[i]][eval(needAdded[j])] <- NA
+      }
+    }
+  }
 
-
-  standardTables
-
+  #update metadata
 
 
 
