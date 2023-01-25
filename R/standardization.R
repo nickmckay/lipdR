@@ -99,21 +99,59 @@ isValidValue <- function(lipdTS, key = NA){
     stop(paste("key must be one of: ", paste(names(standardTables),collapse = ", ")))
   }
 
-  #something that might be helpful here or elsewhere is the pullTsVariable() function. Alternatively you could use ts-tibble and then just dplyr to filter, etc.
+  #Checking function
+  #check the validity in the appropriate spreadsheet
+  ckeckKey <- function(lipdTS, key){
+    TSvals <- pullTsVariable(lipdTS, key)
 
-  validCheck <- lapply(lipdTS, function(x) tolower(unname(unlist(x[eval(key)]))) %in%
-                         tolower(unname(unlist(standardTables[[eval(key)]]["lipdName"]))))
 
-  message("Found ", sum(!unlist(validCheck)), " invalid keys from ", length(unlist(validCheck)), " total entries for ", key)
+    validCheck <- unlist(lapply(tolower(TSvals), function(x) x %in%
+                           tolower(unname(unlist(standardTables[[eval(key)]]["lipdName"]))))) |
+      unlist(lapply(tolower(TSvals), function(x) is.na(x))) |
+      unlist(lapply(tolower(TSvals), function(x) is.null(x)))
 
-  invalidDF <- as.data.frame(matrix(nrow = sum(!unlist(validCheck)), ncol = 4))
-  countA <- 0
-  names(invalidDF) <- c("rowNum", "dataSetName", "dataSetId", eval(key))
-  for (i in which(!unlist(validCheck))){
-    countA <- countA + 1
-    invalidDF[countA,] <- c(i, lipdTS[[i]]$dataSetName, lipdTS[[i]]$datasetId, unlist(unname(lipdTS[[i]][eval(key)])))
+    message("Found ", sum(!unlist(validCheck)), " invalid keys from ", length(unlist(validCheck)), " total entries for ", key)
+
+    invalidDF <- as.data.frame(matrix(nrow = sum(!unlist(validCheck)), ncol = 5))
+    countA <- 0
+    names(invalidDF) <- c("rowNum", "TSid", "dataSetName", "dataSetId", eval(key))
+    for (i in which(!unlist(validCheck))){
+      countA <- countA + 1
+      dataFill <- list(i, lipdTS[[i]]$paleoData_TSid, lipdTS[[i]]$dataSetName, lipdTS[[i]]$datasetId, TSvals[i])
+      dataFill <- lapply(dataFill, function(x) if(is.null(x)){x=NA}else{x=x})
+      for (j in 1:5) {
+        invalidDF[countA,j] <- dataFill[[j]]
+      }
+    }
+    return(invalidDF)
   }
-  return(invalidDF)
+
+
+  #interpretation keys (seasonality and variable)
+  interpretation <- FALSE
+  if (grepl("interpretation", key)){
+    interpretation <- TRUE
+  }
+
+  #look for all keys that include "interpretation" and c("seasonaility" or "variable")
+  if (interpretation){
+
+    keyID <- sub(".*_", "", key)
+    possibleKeys <- lapply(1:100, function(x) paste0("interpretation", x, "_", keyID))
+    keysAll <- lapply(lipdTS, function(x) names(x)[names(x) %in% possibleKeys])
+
+    #how many of these keys exist for each record, save the max number
+    #numKeysMax <- max(unlist(lapply(keysAll, function(x) length(x))))
+
+    uniqueKeys <- unique(unlist(keysAll))
+
+    #run check for each unique, eg. interpretation1_seasonality
+    returns <- lapply(uniqueKeys, function(x) ckeckKey(lipdTS, x))
+  }else{
+    returns <- ckeckKey(lipdTS, key)
+  }
+
+  return(returns)
 }
 
 

@@ -51,7 +51,7 @@ interpretation <- googlesheets4::read_sheet("https://docs.google.com/spreadsheet
 proxy <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1-SonhUl_yhZRnmBDDACY9sByl7jt-Ov5b6n21PXPzXQ/edit#gid=279748030")
 units <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1a_QLvT-im7RZmW-vpJg-RnE4Ecu500pc9fua5u1R1zc/edit#gid=1220915696")
 standardTables <- list("paleoData_variableName" = variableName, "paleoData_proxy" = proxy, "paleoData_units" = units,
-"seasonality" = seasonality, "archiveType" = archiveType, "interpretation1_variable" = interpretation)
+"interpretation_seasonality" = seasonality, "archiveType" = archiveType, "interpretation_variable" = interpretation)
 usethis::use_data(standardTables, overwrite = TRUE)
 
 #Get past thesaurus

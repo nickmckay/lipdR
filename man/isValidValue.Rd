@@ -2,7 +2,7 @@
 % Please edit documentation in R/standardization.R
 \name{isValidValue}
 \alias{isValidValue}
-\title{make sure all terms under a controlled key are valied}
+\title{make sure all terms under a controlled key are valid}
 \usage{
 isValidValue(lipdTS, key)
 }
@@ -13,5 +13,5 @@ isValidValue(lipdTS, key)
 invalid keys df
 }
 \description{
-make sure all terms under a controlled key are valied
+make sure all terms under a controlled key are valid
 }
