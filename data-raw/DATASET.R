@@ -40,6 +40,10 @@ usethis::use_data(ZIPmd5Local, overwrite = TRUE)
 
 #Get standardization tables for lipd keys
 
+#consider using this directory to get all the standardization tables:
+allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
+
+
 variableName <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/18KBNY_x6lZ90k_NF_Cw-6RZ6VhMRR97bzXy49qtq6IU/edit#gid=1697518669")
 archiveType <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/16OxSagfVVp7KO3jrbjh5npWDNVOMCIZr4ToVgHvZgJE/edit#gid=253751289")
 seasonality <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1se8aXqKjlgh6HSGCVnG-nRQuPH3Jts8eNj439FrvvE4/edit#gid=874608133")

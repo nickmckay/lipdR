@@ -19,9 +19,7 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
 
   #Check for appropriate key
   if (!key %in% names(standardTables)){
-    stop("key must be one of: ", paste(names(standardTables)[1], names(standardTables)[2],
-                                       names(standardTables)[3], names(standardTables)[4],
-                                       names(standardTables)[5],  sep = " "))
+    stop(paste("key must be one of: ", paste(names(standardTables),collapse = ", ")))
   }
 
   #Which metadata needs updated for the given key?
@@ -96,12 +94,12 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
 #' @return invalid keys df
 #' @export
 
-isValidValue <- function(lipdTS, key){
+isValidValue <- function(lipdTS, key = NA){
   if (!key %in% names(standardTables)){
-    stop("key must be one of: ", paste(names(standardTables)[1], names(standardTables)[2],
-                 names(standardTables)[3], names(standardTables)[4],
-                 names(standardTables)[5],  sep = " "))
+    stop(paste("key must be one of: ", paste(names(standardTables),collapse = ", ")))
   }
+
+  #something that might be helpful here or elsewhere is the pullTsVariable() function. Alternatively you could use ts-tibble and then just dplyr to filter, etc.
 
   validCheck <- lapply(lipdTS, function(x) tolower(unname(unlist(x[eval(key)]))) %in%
                          tolower(unname(unlist(standardTables[[eval(key)]]["lipdName"]))))
@@ -129,7 +127,8 @@ isValidValue <- function(lipdTS, key){
 #' @return updated TS
 #' @export
 
-standardizeValue <- function(lipdTS, key){
+standardizeValue <- function(lipdTS, key = NA){
+  lipdTs <- as.lipdTs(lipdTs)
 
   invalidDF <- isValidValue(lipdTS, key)
 
