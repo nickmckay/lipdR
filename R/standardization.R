@@ -85,6 +85,41 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
 
 
 
+#Checking function
+#check the validity in the appropriate spreadsheet
+#' Check all values of a given key for validity in appropriate spreadsheet
+#'
+#' @param lipdTS
+#' @param key
+#'
+#' @return invalidDF
+#'
+ckeckKey <- function(lipdTS, key){
+  TSvals <- pullTsVariable(lipdTS, key)
+
+
+  validCheck <- unlist(lapply(tolower(TSvals), function(x) x %in%
+                                tolower(unname(unlist(standardTables[[eval(key)]]["lipdName"]))))) |
+    unlist(lapply(tolower(TSvals), function(x) is.na(x))) |
+    unlist(lapply(tolower(TSvals), function(x) is.null(x)))
+
+  message("Found ", sum(!unlist(validCheck)), " invalid keys from ", length(unlist(validCheck)), " total entries for ", key)
+
+  invalidDF <- as.data.frame(matrix(nrow = sum(!unlist(validCheck)), ncol = 5))
+  countA <- 0
+  names(invalidDF) <- c("rowNum", "TSid", "dataSetName", "dataSetId", eval(key))
+  for (i in which(!unlist(validCheck))){
+    countA <- countA + 1
+    dataFill <- list(i, lipdTS[[i]]$paleoData_TSid, lipdTS[[i]]$dataSetName, lipdTS[[i]]$datasetId, TSvals[i])
+    dataFill <- lapply(dataFill, function(x) if(is.null(x)){x=NA}else{x=x})
+    for (j in 1:5) {
+      invalidDF[countA,j] <- dataFill[[j]]
+    }
+  }
+  return(invalidDF)
+}
+
+
 
 #' make sure all terms under a controlled key are valid
 #'
@@ -95,35 +130,13 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
 #' @export
 
 isValidValue <- function(lipdTS, key = NA){
-  if (!key %in% names(standardTables)){
-    stop(paste("key must be one of: ", paste(names(standardTables),collapse = ", ")))
+  if (!methods::is(lipdTS, "lipd-ts")){
+    lipdTs <- as.lipdTs(lipdTS)
   }
 
-  #Checking function
-  #check the validity in the appropriate spreadsheet
-  ckeckKey <- function(lipdTS, key){
-    TSvals <- pullTsVariable(lipdTS, key)
 
-
-    validCheck <- unlist(lapply(tolower(TSvals), function(x) x %in%
-                           tolower(unname(unlist(standardTables[[eval(key)]]["lipdName"]))))) |
-      unlist(lapply(tolower(TSvals), function(x) is.na(x))) |
-      unlist(lapply(tolower(TSvals), function(x) is.null(x)))
-
-    message("Found ", sum(!unlist(validCheck)), " invalid keys from ", length(unlist(validCheck)), " total entries for ", key)
-
-    invalidDF <- as.data.frame(matrix(nrow = sum(!unlist(validCheck)), ncol = 5))
-    countA <- 0
-    names(invalidDF) <- c("rowNum", "TSid", "dataSetName", "dataSetId", eval(key))
-    for (i in which(!unlist(validCheck))){
-      countA <- countA + 1
-      dataFill <- list(i, lipdTS[[i]]$paleoData_TSid, lipdTS[[i]]$dataSetName, lipdTS[[i]]$datasetId, TSvals[i])
-      dataFill <- lapply(dataFill, function(x) if(is.null(x)){x=NA}else{x=x})
-      for (j in 1:5) {
-        invalidDF[countA,j] <- dataFill[[j]]
-      }
-    }
-    return(invalidDF)
+  if (!key %in% names(standardTables)){
+    stop(paste("key must be one of: ", paste(names(standardTables),collapse = ", ")))
   }
 
 
@@ -151,7 +164,11 @@ isValidValue <- function(lipdTS, key = NA){
     returns <- ckeckKey(lipdTS, key)
   }
 
-  return(returns)
+  # if (!verbose){
+  #   returns <- NULL
+  # }
+
+  invisible(returns)
 }
 
 
@@ -166,61 +183,117 @@ isValidValue <- function(lipdTS, key = NA){
 #' @export
 
 standardizeValue <- function(lipdTS, key = NA){
-  lipdTs <- as.lipdTs(lipdTs)
+  if (!methods::is(lipdTS, "lipd-ts")){
+    lipdTs <- as.lipdTs(lipdTS)
+  }
 
   invalidDF <- isValidValue(lipdTS, key)
 
-  possibleSynonyms <- unique(c(tolower(unname(unlist(standardTables[[eval(key)]]["synonym"]))),
-                        tolower(unname(unlist(standardTables[[eval(key)]]["paleoData_pastName"])))))
-  possibleSynonyms <- possibleSynonyms[!is.na(possibleSynonyms)]
 
-  validCheck <- lapply(lipdTS, function(x) tolower(unname(unlist(x[eval(key)]))) %in%
-                         tolower(unname(unlist(standardTables[[eval(key)]]["lipdName"]))))
+  #interpretation keys (seasonality and variable)
+  interpretation <- FALSE
+  if (grepl("interpretation", key)){
+    interpretation <- TRUE
+    uniqueKeys <- lapply(invalidDF, function(x) names(x)[5])
+    message("Standardizing ", length(invalidDF), " unique keys:\n", paste(uniqueKeys, collapse = "\n"))
+  }
 
-  synonymDF <- as.data.frame(matrix(nrow = sum(!unlist(validCheck)), ncol = 5))
-  names(synonymDF) <- c("rowNum", "dataSetName", "dataSetId", paste0(eval(key), "Orig"), paste0(eval(key), "New"))
-  for (i in 1:nrow(invalidDF)){
-    TSrowNum <- invalidDF$rowNum[[i]]
+  #Find and replace synonyms
+  replaceSynonyms <- function(TS=lipdTS, key=NA, invalidDF=NA, interpretation = interpretation){
+    if (nrow(invalidDF) > 0){
+      #add a "keyGeneral" variable for interps
+      if(interpretation){
+        keyGeneral <- gsub('[0-9]+', '', key)
+      }else{
+        keyGeneral <- key
+      }
 
-    currentTS <- lipdTS[[TSrowNum]]
+      #find synonyms based on "synonym" and "pastName"
+      possibleSynonyms <- unique(c(tolower(unname(unlist(standardTables[[eval(keyGeneral)]]["synonym"]))),
+                                   tolower(unname(unlist(standardTables[[eval(keyGeneral)]]["paleoData_pastName"])))))
+      possibleSynonyms <- possibleSynonyms[!is.na(possibleSynonyms)]
 
-    synonymLoc <- which(tolower(invalidDF[i,4]) == possibleSynonyms)
+      #Are the current values in the TS for this key valid (are they known lipdNames)
+      validCheck <- lapply(lipdTS, function(x) tolower(unname(unlist(x[eval(key)]))) %in%
+                             tolower(unname(unlist(standardTables[[eval(keyGeneral)]]["lipdName"]))))
 
-    if(length(synonymLoc) == 0){
-      lipdName <- NA
+      #Build a data frame to show replacement on known synonyms with valid lipdNames
+      synonymDF <- as.data.frame(matrix(nrow = sum(!unlist(validCheck)), ncol = 5))
+      names(synonymDF) <- c("rowNum", "dataSetName", "dataSetId", paste0(eval(key), "Orig"), paste0(eval(key), "New"))
+      for (i in 1:nrow(invalidDF)){
+        TSrowNum <- invalidDF$rowNum[[i]]
+
+        currentTS <- lipdTS[[TSrowNum]]
+
+        synonymLoc <- which(tolower(invalidDF[i,5]) == possibleSynonyms)
+
+        if(length(synonymLoc) == 0){
+          lipdName <- NA
+        }else{
+          #find the known synonym
+          synonym <- possibleSynonyms[synonymLoc]
+
+          #locate the corresponding lipdName
+          synonymTableLoc <- which(synonym == tolower(unname(unlist(standardTables[[eval(keyGeneral)]]["synonym"]))))
+          lipdName <- unname(unlist(standardTables[[eval(keyGeneral)]]["lipdName"]))[synonymTableLoc[1]]
+
+        }
+
+        #print(invalidDF[i,5])
+        #newRow <- c(TSrowNum, lipdTS[[as.numeric(TSrowNum)]]$dataSetName, lipdTS[[as.numeric(TSrowNum)]]$datasetId, invalidDF[i,5], lipdName)
+
+        # if (length(newRow) != 5){
+        #   stop("Problem with TS ", newRow, " for ", key)
+        # }
+
+        synonymDF[i,1] <- TSrowNum
+        synonymDF[i,2] <- lipdTS[[as.numeric(TSrowNum)]]$dataSetName
+        synonymDF[i,3] <- lipdTS[[as.numeric(TSrowNum)]]$datasetId
+        synonymDF[i,4] <- invalidDF[i,5]
+        synonymDF[i,5] <- lipdName
+
+      }
+
+      synonymDForig <- synonymDF
+      print(tibble::tibble(synonymDF))
+
+      # userResp <- askYesNo(msg = "Replace all?" , default = TRUE)
+      #
+      # if(userResp){
+      for (i in 1:nrow(synonymDF)){
+        lipdTS[[as.numeric(synonymDF$rowNum[i])]][eval(key)] <<- synonymDF$archiveTypeNew[i]
+      }
+      # }
+
+      if(interpretation){
+        keyGeneral <- gsub('[0-9]+', '', key)
+      }else{
+        keyGeneral <- key
+      }
+
+
+      message("Rerunning check for invalid keys in: ", key)
+      if (key %in% lapply(isValidValue(lipdTS, keyGeneral), function(x) names(x)[5])){
+        invalidDFnew <- ckeckKey(lipdTS, key)
+        print(tibble::tibble(invalidDFnew))
+      }
+
+      returns <- list("TS" = lipdTS, "synonymDF" = synonymDForig)
     }else{
-      #find the known synonym
-      synonym <- possibleSynonyms[synonymLoc]
-
-      #locate the corresponding lipdName
-      synonymTableLoc <- which(synonym == tolower(unname(unlist(standardTables[[eval(key)]]["synonym"]))))
-      lipdName <- unname(unlist(standardTables[[eval(key)]]["lipdName"]))[synonymTableLoc]
-
-
-
+      returns <- NULL
     }
 
 
-    synonymDF[i,] <- c(TSrowNum, lipdTS[[as.numeric(TSrowNum)]]$dataSetName, lipdTS[[as.numeric(TSrowNum)]]$datasetId, invalidDF[i,4], lipdName)
+    return(returns)
   }
 
-  synonymDForig <- synonymDF
-  print(synonymDF)
-
-  userResp <- askYesNo(msg = "Replace all?" , default = TRUE)
-
-  if(userResp){
-    for (i in 1:nrow(synonymDF)){
-      lipdTS[[as.numeric(synonymDF$rowNum[i])]][eval(key)] <- synonymDF$archiveTypeNew[i]
-    }
+  if (interpretation){
+    returns <- lapply(invalidDF, function(x) replaceSynonyms(lipdTS, key=names(x)[5], x, interpretation))
+  }else{
+    returns <- replaceSynonyms(lipdTS, key, invalidDF, interpretation)
   }
 
-
-  message("Rerunning check for invalid keys in: ", key)
-  invalidDFnew <- isValidValue(lipdTS, key)
-  print(invalidDFnew)
-
-  returns <- list("TS" = lipdTS, "synonymDF" = synonymDForig)
+  returns <- list("TSnew" = lipdTS, "replacements" = returns)
 
   return(returns)
 }

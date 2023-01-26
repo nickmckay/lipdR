@@ -46,7 +46,7 @@ allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-Cemwy
 
 variableName <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/18KBNY_x6lZ90k_NF_Cw-6RZ6VhMRR97bzXy49qtq6IU/edit#gid=1697518669")
 archiveType <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/16OxSagfVVp7KO3jrbjh5npWDNVOMCIZr4ToVgHvZgJE/edit#gid=253751289")
-seasonality <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1se8aXqKjlgh6HSGCVnG-nRQuPH3Jts8eNj439FrvvE4/edit#gid=874608133")
+seasonality <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1UPJoHh9cSKEIrTXAGonGgNcCzGRGWo4FYalfEtgiXDw/edit#gid=2132918474")
 interpretation <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1qwewgHin2YLVkZS9E66i6E8A7EBrm9VKj3y-vyBYgCs/edit#gid=400551674")
 proxy <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1-SonhUl_yhZRnmBDDACY9sByl7jt-Ov5b6n21PXPzXQ/edit#gid=279748030")
 units <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1a_QLvT-im7RZmW-vpJg-RnE4Ecu500pc9fua5u1R1zc/edit#gid=1220915696")
