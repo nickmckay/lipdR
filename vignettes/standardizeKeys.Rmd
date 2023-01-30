@@ -16,85 +16,124 @@ First we grab the ISO2k data and the standardization tables
 
 ```{r}
 load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
-#standardTables <- readRDS("C:/Users/dce25/Downloads/standardTables.RDS")
-#standardTables now included in package data
 ```
 
-###Check for valid `archiveType`
-
-`isValidValue()` checks to see if all terms for a given key are valid lipd terms
+First, update the metadata
 
 ```{r}
-# print(TS)
-isValidValue(TS, "archiveType")
+TS1 <- updateMetaDataFromStandardTables(TS, "paleoData_units")
 ```
 
-the function returns a data frame showing invalid terms
+This function produces an updated TS object as well as a data frame showing the changes
 
-
-Now we can standardize the invalid terms by looking for synonyms
-
-`standardizeValue()` looks for matches from previous lipd entries and PaST terms which are know to be synonyms of valid lipd terms
-
-```{r, warning=FALSE}
-TSnew <- standardizeValue(TS, "paleoData_variableName")
-```
-
-the function was able to find matches for some, but not all invalid terms
-
-The function returns the TS object (now `TSnew`) with corrections where possible
-
-The user is given the option to make the suggested corrections or abort
-
-
-###Check for valid `variableName`
-
-Same process with a different key
+`standardizeValue()` looks for synonyms and replaces them with valid lipd names
 
 ```{r}
-# print(TS)
-invalidDF <- isValidValue(TS, "paleoData_variableName")
-
-invalidDF
+TS2 <- standardizeValue(lipdTS=TS1$TS, key="paleoData_units")
 ```
 
-Wow, there a lot of invalid terms here
+#This function also produces a data frame showing any changes
+
+A quick sanity check
 
 ```{r}
-TSnew <- standardizeValue(TS, "paleoData_variableName")
+isValidValue(TS2$TS, "paleoData_units")
+TS[[2]]$paleoData_units
+TS2$TS[[2]]$paleoData_units
 ```
 
-And this time we do have synonyms allowing for automated corrections to all invalid terms
+#Looks good
 
-Now, let's update the metadata based on our standard tables
+Finally we can update either `paleoData_notes` or `notes` with the changes made
 
 ```{r}
-newMetadata <- updateMetaDataFromStandardTables(TSnew$TS, "paleoData_variableName")
+TS1 <- lipdR:::updateNotes(lipdTS=TS2$TS,
+                           key = "paleoData_units",
+                           metadataChangesDF=TS1$ChangesDF,
+                           standardizeSynonymDF=TS2$synonymDF$synonymDF)
 ```
 
-This function returns the TS object with updated metadata as well as a data frame detailing the changes
+Let's have a look at some examples
 
+unchanged
 ```{r}
-head(newMetadata$ChangesDF)
+TS[[1]]$paleoData_notes
+TS1[[1]]$paleoData_notes
 ```
 
-We see `TRUE` where the values remain the same and `NA` where the metadata keys were added or the values were updated
-
-Now we can add notes to the TS object to track what has been updated
+#Changed a peice of metadata
 
 ```{r}
-metadataChangesDF <- newMetadata$ChangesDF
-standardizeSynonymDF <- TSnew$synonymDF
-
-TSfinal <- updateNotes(TSnew$TS, metadataChangesDF, standardizeSynonymDF)
+TS[[2]]$paleoData_notes
+TS1[[2]]$paleoData_notes
 ```
 
-We can grab a couple of examples to have a look
+
+#Changed metadata and standardized value
 
 ```{r}
-TSfinal[[1]]$paleoData_notes
+TS[[240]]$paleoData_notes
+TS1[[240]]$paleoData_notes
 ```
 
+Now let's try this for a more complicated key
+
+
 ```{r}
-TSfinal[[251]]$paleoData_notes
+TS1 <- updateMetaDataFromStandardTables(TS, "interpretation_seasonality")
+TS1
+```
+
+There is no metadata to update this time
+
+Let's try standardizing
+
+```{r}
+TS2 <- standardizeValue(TS, "interpretation_seasonality")
+```
+
+We see a long string of output here, reflecting the 7 unique interpretation_seasonality keys
+
+Let's have a look now
+
+```{r}
+a2 <- isValidValue(lipdTS=TS2$TS, key="interpretation_seasonality")
+```
+
+Cool, that took care of all of them
+
+An example of values changed
+
+```{r}
+TS[[1851]]$interpretation5_seasonality
+TS2$TS[[1851]]$interpretation5_seasonality
+```
+
+
+#Finally, the notes
+#This is set up to be run once per interpretation, although the automation could be added
+```{r}
+TS1 <- lipdR:::updateNotes(lipdTS=TS2$TS,
+                           standardizeSynonymDF=TS2$synonymDF[[1]]$synonymDF)
+```
+
+#before and after
+
+```{r}
+TS[[328]]$notes
+TS1[[328]]$notes
+```
+
+#for interp 5
+
+```{r}
+TS1 <- lipdR:::updateNotes(lipdTS=TS2$TS,
+                           standardizeSynonymDF=TS2$synonymDF[[5]]$synonymDF)
+```
+
+#before and after
+
+```{r}
+TS[[1851]]$notes
+TS1[[1851]]$notes
 ```
