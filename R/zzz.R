@@ -2,6 +2,7 @@
 #This function should be called each time the package is loaded
 
 .onLoad <- function(libname, pkgname){
+  print(".onload is running")
   .lipdRquery <<- new.env()
   .lipdRquery$queryUpdated <- 0
   .standardTables <<- new.env()

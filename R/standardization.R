@@ -355,6 +355,7 @@ standardizeValue <- function(lipdTS, key = NA){
     returns <- replaceSynonyms(lipdTS, key, invalidDF, interpretation)
   }
 
+  deleteTheseTS <- c()
 
   if (length(returns)> 1){
     for (i in 1:length(returns)){
@@ -367,7 +368,7 @@ standardizeValue <- function(lipdTS, key = NA){
             if(!is.na(rowNum) & length(rowNum) > 0){
               if (grepl("delete", newVal)){
                 if(grepl("variableName", key)){
-                  lipdTS[[as.numeric(rowNum)]] <- NULL
+                  deleteTheseTS <- c(deleteTheseTS, lipdTS[[as.numeric(rowNum)]]$paleoData_TSid)
                 }else{
                   lipdTS[[as.numeric(rowNum)]][eval(names(df1)[4])] <- NULL
                 }
@@ -386,7 +387,7 @@ standardizeValue <- function(lipdTS, key = NA){
       if(!is.na(rowNum) & length(rowNum) > 0){
         if (grepl("delete", newVal)){
           if(grepl("variableName", key)){
-            lipdTS[[as.numeric(rowNum)]] <- NULL
+            deleteTheseTS <- c(deleteTheseTS, lipdTS[[as.numeric(rowNum)]]$paleoData_TSid)
           }else{
             lipdTS[[as.numeric(rowNum)]][eval(names(returns[[1]])[4])] <- NULL
           }
@@ -396,12 +397,30 @@ standardizeValue <- function(lipdTS, key = NA){
       }
     }
   }
+#
+#   allTerms <- pullTsVariable(lipdTS, eval(names(df1)[4]))
+#
+#     for (i in 1:length(allTerms)){
+#     if(grepl("delete", allTerms[i])){
+#       TS2$TS[[i]] <- NULL
+#     }
+#   }
 
+
+  for (i in 1:length(lipdTS)){
+    if (lipdTS[[i]]$paleoData_TSid %in% deleteTheseTS){
+      cat("deleting: ", lipdTS[[i]]$paleoData_TSid, "\n")
+      lipdTS[[i]] <- NULL
+    }
+  }
 
   returns <- list("TS"=lipdTS, "synonymDF" = returns)
 
   return(returns)
 }
+
+
+#Delete misnamed terms and TS with bad variableName
 
 
 
