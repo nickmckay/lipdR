@@ -1,21 +1,23 @@
-# 
+#
 #This function should be called each time the package is loaded
 
 .onLoad <- function(libname, pkgname){
   .lipdRquery <<- new.env()
   .lipdRquery$queryUpdated <- 0
+  .standardTables <<- new.env()
+  .standardTables$tablesUpdated <- 0
 }
-#   
+#
 # #Update the query table
-# 
+#
 # update_queryTable <- function(){
-#   
+#
 #   #download queryTable
 #   queryTable <- newQueryTable()
 #   #Replace local copy
 #   usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
 # }
-# 
+#
 # newQueryTable <- function(){
 #   query_url <- "https://github.com/DaveEdge1/lipdverseQuery/raw/main/queryZip.zip"
 #   temp <- tempdir()

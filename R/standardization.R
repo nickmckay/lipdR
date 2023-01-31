@@ -1,8 +1,17 @@
-#
-# load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
-# #load("C:/Users/dce72/Downloads/iso2k1_0_1.RData")
-# key="paleoData_variableName"
-# lipdTS <- TS
+#' Auto-update Standard tables
+#'
+checkStandardTables <- function(){
+  if(.standardTables$tablesUpdated == 0){
+    ans1 <- askYesNo("Would you like to update the standard tables (recommended)?")
+    if(ans1){
+      updateStandardTables()
+    }
+
+    .standardTables$tablesUpdated <- 1
+  }
+}
+
+
 
 
 #' grab metaData for given key from standard tables
@@ -13,6 +22,9 @@
 #' @return list
 #' @export
 updateMetaDataFromStandardTables <- function(lipdTS, key){
+
+  checkStandardTables()
+
 
   TSorig <- lipdTS
 
@@ -163,6 +175,9 @@ ckeckKey <- function(lipdTS, key, keyGeneral){
 #' @export
 
 isValidValue <- function(lipdTS, key = NA){
+
+  checkStandardTables()
+
   if (!methods::is(lipdTS, "lipd-ts")){
     lipdTs <- as.lipdTs(lipdTS)
   }
@@ -221,6 +236,9 @@ isValidValue <- function(lipdTS, key = NA){
 #' @export
 
 standardizeValue <- function(lipdTS, key = NA){
+
+  checkStandardTables()
+
   if (!methods::is(lipdTS, "lipd-ts")){
     lipdTs <- as.lipdTs(lipdTS)
   }
@@ -347,6 +365,13 @@ standardizeValue <- function(lipdTS, key = NA){
             rowNum <- df1$rowNum[j]
             newVal <- df1$New[j]
             if(!is.na(rowNum) & length(rowNum) > 0){
+              if (grepl("delete", newVal)){
+                if(grepl("variableName", key)){
+                  lipdTS[[as.numeric(rowNum)]] <- NULL
+                }else{
+                  lipdTS[[as.numeric(rowNum)]][eval(names(df1)[4])] <- NULL
+                }
+              }
               lipdTS[[as.numeric(rowNum)]][eval(names(df1)[4])] <- newVal
             }
           }
@@ -358,6 +383,13 @@ standardizeValue <- function(lipdTS, key = NA){
       rowNum <- returns[[1]]$rowNum[j]
       newVal <- returns[[1]]$New[j]
       if(!is.na(rowNum) & length(rowNum) > 0){
+        if (grepl("delete", newVal)){
+          if(grepl("variableName", key)){
+            lipdTS[[as.numeric(rowNum)]] <- NULL
+          }else{
+            lipdTS[[as.numeric(rowNum)]][eval(names(returns[[1]])[4])] <- NULL
+          }
+        }
         lipdTS[[as.numeric(rowNum)]][eval(names(returns[[1]])[4])] <- newVal
       }
     }
@@ -389,6 +421,9 @@ standardizeValue <- function(lipdTS, key = NA){
 
 
 updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonymDF=NA){
+
+  checkStandardTables()
+
   #choose the appropriate notes
   #for each invalid value from metadataChangesDF, update notes
   if(is.na(key)){
