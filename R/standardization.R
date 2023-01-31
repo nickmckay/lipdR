@@ -371,8 +371,9 @@ standardizeValue <- function(lipdTS, key = NA){
                 }else{
                   lipdTS[[as.numeric(rowNum)]][eval(names(df1)[4])] <- NULL
                 }
+              }else{
+                lipdTS[[as.numeric(rowNum)]][eval(names(df1)[4])] <- newVal
               }
-              lipdTS[[as.numeric(rowNum)]][eval(names(df1)[4])] <- newVal
             }
           }
         }
@@ -389,8 +390,9 @@ standardizeValue <- function(lipdTS, key = NA){
           }else{
             lipdTS[[as.numeric(rowNum)]][eval(names(returns[[1]])[4])] <- NULL
           }
+        }else{
+          lipdTS[[as.numeric(rowNum)]][eval(names(returns[[1]])[4])] <- newVal
         }
-        lipdTS[[as.numeric(rowNum)]][eval(names(returns[[1]])[4])] <- newVal
       }
     }
   }
