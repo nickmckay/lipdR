@@ -537,10 +537,12 @@ updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonym
 
   }
 
+  numDelete <- 0
   for (i in 1:length(lipdTS)){
     if(i > length(lipdTS)){
     }else{
       if (lipdTS[[i]]$paleoData_TSid %in% deleteTheseTS){
+        numDelete <- numDelete+1
         #cat("deleting: ", lipdTS[[i]]$paleoData_TSid, "\n")
         lipdTS[[i]] <- NULL
       }
@@ -549,7 +551,7 @@ updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonym
 
   message("Updated metadata for ", nrow(metadataChangesDF), " TS objects,\n",
           "Standardized values for ", nrow(standardizeSynonymDF), " TS Objects,\n",
-          "Deleted ", length(deleteTheseTS), " objects\n")
+          "Deleted ", numDelete, " objects\n")
 
 
   return(lipdTS)
