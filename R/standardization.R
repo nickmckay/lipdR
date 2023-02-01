@@ -42,9 +42,11 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
     meta_keys <- c("paleoData_proxyGeneral", "paleoData_measurementMaterial")
   }else if (key == "paleoData_units"){
     meta_keys <- c("paleoData_datum")
-  }else(
-    return(NULL)
-  )
+  }else{
+    returns <- list("TS" = lipdTS, "ChangesDF" = NULL)
+
+    return(returns)
+  }
 
   #Check that the metadata keys and primary key exist, if not, add them
   if(!sum(unlist(lapply(lipdTS, function(x) all(meta_keys %in% names(x))))) == length(lipdTS)){
@@ -553,10 +555,41 @@ updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonym
   return(lipdTS)
 }
 
+getAllTsNames <- function(TS){
+  return(sort(unique(unlist(purrr::map(TS,names)))))
+}
+
+standardizeAll <- function(TS){
+
+  an <- getAllTsNames(TS)
 
 
 
+  allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
 
+  for(tc in allKeys$name){
+
+    TS1 <- updateMetaDataFromStandardTables(TS, tc)
+    TS2 <- standardizeValue(lipdTS=TS1$TS, key=tc)
+    TS <- TS2$TS
+    isValidValue(TS, tc)
+
+    if(tc == "interpretation_seasonality"){
+      tci <- an[stringr::str_detect(an,"interpretation\\d{1,}_seasonality$")]
+    }else if(tc == "interpretation_variable"){
+      tci <- an[stringr::str_detect(an,"interpretation\\d{1,}_variable$")]
+    }else{
+      tci <- tc
+    }
+
+    for(tcii in tci){
+      TS <- updateNotes(key = tci,
+                        lipdTS = TS,
+                        standardizeSynonymDF=TS2$synonymDF[[1]]$synonymDF)
+    }
+  }
+  return(TS)
+}
 
 
 
