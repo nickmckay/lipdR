@@ -142,18 +142,22 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
 ckeckKey <- function(lipdTS, key, keyGeneral){
   TSvals <- pullTsVariable(lipdTS, key)
 
+  numVals <- length(TSvals)
 
   validCheck <- unlist(lapply(tolower(TSvals), function(x) x %in%
                                 tolower(unname(unlist(standardTables[[eval(keyGeneral)]]["lipdName"]))))) |
     unlist(lapply(tolower(TSvals), function(x) is.na(x))) |
     unlist(lapply(tolower(TSvals), function(x) is.null(x)))
 
-  message("Found ", sum(!unlist(validCheck)), " invalid keys from ", length(unlist(validCheck)), " total entries for ", key)
 
-  invalidDF <- as.data.frame(matrix(nrow = sum(!unlist(validCheck)), ncol = 5))
+  numInvalid <- sum(!unlist(validCheck))
+  message("Found ", numInvalid, " invalid keys from ", length(unlist(validCheck)), " total entries for ", key, "\n")
+
+  invalidDF <- as.data.frame(matrix(nrow = , ncol = 5))
   countA <- 0
   names(invalidDF) <- c("rowNum", "TSid", "dataSetName", "dataSetId", eval(key))
   for (i in which(!unlist(validCheck))){
+    numVals
     countA <- countA + 1
     dataFill <- list(i, lipdTS[[i]]$paleoData_TSid, lipdTS[[i]]$dataSetName, lipdTS[[i]]$datasetId, TSvals[i])
     dataFill <- lapply(dataFill, function(x) if(is.null(x)){x=NA}else{x=x})
@@ -237,6 +241,7 @@ isValidValue <- function(lipdTS, key = NA){
 
 standardizeValue <- function(lipdTS, key = NA){
 
+
   checkStandardTables()
 
   if (!methods::is(lipdTS, "lipd-ts")){
@@ -277,6 +282,7 @@ standardizeValue <- function(lipdTS, key = NA){
       synonymDF <- as.data.frame(matrix(nrow = sum(!unlist(validCheck2)), ncol = 5))
       names(synonymDF) <- c("rowNum", "dataSetName", "dataSetId", as.character(key), "New")
       for (i in 1:nrow(invalidDF)){
+
         TSrowNum <- invalidDF$rowNum[[i]]
 
         currentTS <- lipdTS[[TSrowNum]]
@@ -407,14 +413,10 @@ standardizeValue <- function(lipdTS, key = NA){
 #   }
 
 
-  for (i in 1:length(lipdTS)){
-    if (lipdTS[[i]]$paleoData_TSid %in% deleteTheseTS){
-      cat("deleting: ", lipdTS[[i]]$paleoData_TSid, "\n")
-      lipdTS[[i]] <- NULL
-    }
-  }
 
-  returns <- list("TS"=lipdTS, "synonymDF" = returns)
+
+
+  returns <- list("TS"=lipdTS, "synonymDF" = returns, "deleteTheseTS" = deleteTheseTS)
 
   return(returns)
 }
@@ -441,7 +443,7 @@ standardizeValue <- function(lipdTS, key = NA){
 #' @return lipdTS
 
 
-updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonymDF=NA){
+updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonymDF=NA, deleteTheseTS=NA){
 
   checkStandardTables()
 
@@ -530,10 +532,22 @@ updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonym
     }
 
 
-    message("Updated metadata for ", nrow(metadataChangesDF), " TS objects,
-          Standardized values for ", nrow(standardizeSynonymDF), " TS Objects")
+
   }
 
+  for (i in 1:length(lipdTS)){
+    if(i > length(lipdTS)){
+    }else{
+      if (lipdTS[[i]]$paleoData_TSid %in% deleteTheseTS){
+        #cat("deleting: ", lipdTS[[i]]$paleoData_TSid, "\n")
+        lipdTS[[i]] <- NULL
+      }
+    }
+  }
+
+  message("Updated metadata for ", nrow(metadataChangesDF), " TS objects,\n",
+          "Standardized values for ", nrow(standardizeSynonymDF), " TS Objects,\n",
+          "Deleted ", length(deleteTheseTS), " objects\n")
 
 
   return(lipdTS)
