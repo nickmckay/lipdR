@@ -583,8 +583,9 @@ standardizeAll <- function(TS){
     }
 
     for(tcii in tci){
-      TS <- updateNotes(key = tci,
+      TS <- updateNotes(key = tcii,
                         lipdTS = TS,
+                        metadataChangesDF = metadataChangesDF=TS1$ChangesDF,
                         standardizeSynonymDF=TS2$synonymDF[[1]]$synonymDF)
     }
   }
