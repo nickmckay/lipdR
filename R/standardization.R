@@ -585,10 +585,20 @@ standardizeAll <- function(TS){
     }
 
     for(tcii in tci){
+
+      if(length(tci) > 1){
+      an <- map_chr(TS2$synonymDF,\(x) names(x$synonymDF)[[4]])
+      ws <- which(an == tcii)
+
+      ssDF <- TS2$synonymDF[[ws]]$synonymDF
+      }else{
+        ssDF <- TS2$synonymDF
+      }
+
       TS <- updateNotes(key = tcii,
                         lipdTS = TS,
-                        metadataChangesDF = metadataChangesDF=TS1$ChangesDF,
-                        standardizeSynonymDF=TS2$synonymDF[[1]]$synonymDF)
+                        metadataChangesDF = TS1$ChangesDF,
+                        standardizeSynonymDF=ssDF)
     }
   }
   return(TS)
