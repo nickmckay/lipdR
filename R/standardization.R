@@ -142,31 +142,44 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
 #' @return invalidDF
 #'
 ckeckKey <- function(lipdTS, key, keyGeneral){
-  TSvals <- pullTsVariable(lipdTS, key)
-
+  TSvalsO <- pullTsVariable(lipdTS, key,strict.search = TRUE)
+  TSvals <- tolower(TSvalsO)
   numVals <- length(TSvals)
 
-  validCheck <- unlist(lapply(tolower(TSvals), function(x) x %in%
-                                tolower(unname(unlist(standardTables[[eval(keyGeneral)]]["lipdName"]))))) |
-    unlist(lapply(tolower(TSvals), function(x) is.na(x))) |
-    unlist(lapply(tolower(TSvals), function(x) is.null(x)))
+standardVals <- unique(tolower(standardTables[[eval(keyGeneral)]][["lipdName"]]))
+
+validCheck <- TSvals %in% standardVals |
+              is.na(TSvals) |
+              is.null(TSvals)
+
+#
+#   validCheck <- unlist(lapply(tolower(TSvals), function(x) x %in%
+#                                 tolower(unname(unlist(standardTables[[eval(keyGeneral)]]["lipdName"]))))) |
+#     unlist(lapply(tolower(TSvals), function(x) is.na(x))) |
+#     unlist(lapply(tolower(TSvals), function(x) is.null(x)))
 
 
-  numInvalid <- sum(!unlist(validCheck))
+  numInvalid <- sum(!validCheck)
+  invalidI <- which(!validCheck)
   message("Found ", numInvalid, " invalid keys from ", length(unlist(validCheck)), " total entries for ", key, "\n")
 
-  invalidDF <- as.data.frame(matrix(nrow = , ncol = 5))
+  invalidDF <- as.data.frame(matrix(nrow = numInvalid, ncol = 5))
   countA <- 0
-  names(invalidDF) <- c("rowNum", "TSid", "dataSetName", "dataSetId", eval(key))
-  for (i in which(!unlist(validCheck))){
-    numVals
-    countA <- countA + 1
-    dataFill <- list(i, lipdTS[[i]]$paleoData_TSid, lipdTS[[i]]$dataSetName, lipdTS[[i]]$datasetId, TSvals[i])
-    dataFill <- lapply(dataFill, function(x) if(is.null(x)){x=NA}else{x=x})
-    for (j in 1:5) {
-      invalidDF[countA,j] <- dataFill[[j]]
-    }
-  }
+
+  TSid <- pullTsVariable(TS,"paleoData_TSid",strict.search = TRUE)
+  datasetId <- pullTsVariable(TS,"datasetId",strict.search = TRUE)
+  dataSetName <- pullTsVariable(TS,"dataSetName",strict.search = TRUE)
+
+
+  invalidDF <- data.frame(rowNum = invalidI,
+                          TSid = TSid[invalidI],
+                          dataSetName = dataSetName[invalidI],
+                          datasetId = datasetId[invalidI],
+                          keyTBD = TSvalsO[invalidI])
+
+
+  names(invalidDF)[5] <- eval(key)
+
   return(invalidDF)
 }
 
@@ -562,7 +575,7 @@ getAllTsNames <- function(TS){
 }
 
 standardizeAll <- function(TS){
-
+notesOut <- list()
   an <- getAllTsNames(TS)
 
 
@@ -599,12 +612,37 @@ standardizeAll <- function(TS){
       TS <- updateNotes(key = tcii,
                         lipdTS = TS,
                         metadataChangesDF = TS1$ChangesDF,
+                        deleteTheseTS = TS2$deleteTheseTS,
                         standardizeSynonymDF=ssDF)
+
+      notesOut[[tcii]] <- list(metadata.changes = TS1$ChangesDF, deleted.ts = TS2$deleteTheseTS, standardized.synonym = ssDF)
+
     }
     isValidValue(TS, tc)
 
   }
   return(TS)
+}
+
+isValidAll <- function(TS){
+  vo <- list()
+  an <- getAllTsNames(TS)
+  allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
+
+  toStandardize <- setdiff(allKeys$name,"paleoData_proxyGeneral")
+
+  for(tc in toStandardize){
+    print(tc)
+    if(tc == "interpretation_seasonality"){
+      tci <- an[stringr::str_detect(an,"interpretation\\d{1,}_seasonality$")]
+    }else if(tc == "interpretation_variable"){
+      tci <- an[stringr::str_detect(an,"interpretation\\d{1,}_variable$")]
+    }else{
+      tci <- tc
+    }
+      vo[[tc]] <- isValidValue(TS, tc)
+  }
+  return(vo)
 }
 
 
