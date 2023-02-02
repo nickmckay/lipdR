@@ -4,7 +4,7 @@
 \alias{isValidValue}
 \title{make sure all terms under a controlled key are valid}
 \usage{
-isValidValue(lipdTS, key)
+isValidValue(lipdTS, key = NA)
 }
 \arguments{
 \item{key}{}
