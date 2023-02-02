@@ -587,12 +587,12 @@ standardizeAll <- function(TS){
     for(tcii in tci){
 
       if(length(tci) > 1){
-      an <- map_chr(TS2$synonymDF,\(x) names(x$synonymDF)[[4]])
-      ws <- which(an == tcii)
+        an <- map_chr(TS2$synonymDF,\(x) names(x$synonymDF)[[4]])
+        ws <- which(an == tcii)
 
-      ssDF <- TS2$synonymDF[[ws]]$synonymDF
+        ssDF <- TS2$synonymDF[[ws]]$synonymDF
       }else{
-        ssDF <- TS2$synonymDF
+        ssDF <- TS2$synonymDF[[1]]
       }
 
       TS <- updateNotes(key = tcii,
