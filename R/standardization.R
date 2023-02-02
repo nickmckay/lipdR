@@ -5,9 +5,10 @@ checkStandardTables <- function(){
     ans1 <- askYesNo("Would you like to update the standard tables (recommended)?")
     if(ans1){
       updateStandardTables()
+      .standardTables$tablesUpdated <- 1
+    }else{
+      assign("standardTables", standardTables, envir = .GlobalEnv)
     }
-
-    .standardTables$tablesUpdated <- 1
   }
 }
 
@@ -166,9 +167,9 @@ validCheck <- TSvals %in% standardVals |
   invalidDF <- as.data.frame(matrix(nrow = numInvalid, ncol = 5))
   countA <- 0
 
-  TSid <- pullTsVariable(TS,"paleoData_TSid",strict.search = TRUE)
-  datasetId <- pullTsVariable(TS,"datasetId",strict.search = TRUE)
-  dataSetName <- pullTsVariable(TS,"dataSetName",strict.search = TRUE)
+  TSid <- pullTsVariable(lipdTS,"paleoData_TSid",strict.search = TRUE)
+  datasetId <- pullTsVariable(lipdTS,"datasetId",strict.search = TRUE)
+  dataSetName <- pullTsVariable(lipdTS,"dataSetName",strict.search = TRUE)
 
 
   invalidDF <- data.frame(rowNum = invalidI,
