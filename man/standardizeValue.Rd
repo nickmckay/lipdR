@@ -4,7 +4,7 @@
 \alias{standardizeValue}
 \title{standardize terms automatically based on known synonyms}
 \usage{
-standardizeValue(lipdTS, key)
+standardizeValue(lipdTS, key = NA)
 }
 \arguments{
 \item{key}{}
