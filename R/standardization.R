@@ -569,7 +569,9 @@ standardizeAll <- function(TS){
 
   allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
 
-  for(tc in allKeys$name){
+  toStandardize <- setdiff(allKeys$name,"paleoData_proxyGeneral")
+
+  for(tc in toStandardize){
 
     TS1 <- updateMetaDataFromStandardTables(TS, tc)
     TS2 <- standardizeValue(lipdTS=TS1$TS, key=tc)
@@ -585,9 +587,20 @@ standardizeAll <- function(TS){
     }
 
     for(tcii in tci){
-      TS <- updateNotes(key = tci,
+
+      if(length(tci) > 1){
+        an <- map_chr(TS2$synonymDF,\(x) names(x$synonymDF)[[4]])
+        ws <- which(an == tcii)
+
+        ssDF <- TS2$synonymDF[[ws]]$synonymDF
+      }else{
+        ssDF <- TS2$synonymDF[[1]]
+      }
+
+      TS <- updateNotes(key = tcii,
                         lipdTS = TS,
-                        standardizeSynonymDF=TS2$synonymDF[[1]]$synonymDF)
+                        metadataChangesDF = TS1$ChangesDF,
+                        standardizeSynonymDF=ssDF)
     }
   }
   return(TS)
