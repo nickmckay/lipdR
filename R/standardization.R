@@ -576,7 +576,6 @@ standardizeAll <- function(TS){
     TS1 <- updateMetaDataFromStandardTables(TS, tc)
     TS2 <- standardizeValue(lipdTS=TS1$TS, key=tc)
     TS <- TS2$TS
-    isValidValue(TS, tc)
 
     if(tc == "interpretation_seasonality"){
       tci <- an[stringr::str_detect(an,"interpretation\\d{1,}_seasonality$")]
@@ -602,6 +601,8 @@ standardizeAll <- function(TS){
                         metadataChangesDF = TS1$ChangesDF,
                         standardizeSynonymDF=ssDF)
     }
+    isValidValue(TS, tc)
+
   }
   return(TS)
 }
