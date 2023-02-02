@@ -569,7 +569,9 @@ standardizeAll <- function(TS){
 
   allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
 
-  for(tc in allKeys$name){
+  toStandardize <- setdiff(allKeys$name,"paleoData_proxyGeneral")
+
+  for(tc in toStandardize){
 
     TS1 <- updateMetaDataFromStandardTables(TS, tc)
     TS2 <- standardizeValue(lipdTS=TS1$TS, key=tc)
