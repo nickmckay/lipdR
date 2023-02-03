@@ -93,6 +93,10 @@ is_include_key <- function(key, pc){
     return(FALSE)
   }
 
+  if(all(is.na(key))){
+    stop("this shouldn't be")
+  }
+
   # Split any keys that have underscores. (i.e. "interpretation1_scope").
   # Is the prefix (interpretation) in exclude?
   if(!isNullOb(match_idx[[1]])){
@@ -122,6 +126,9 @@ is_include_key <- function(key, pc){
 collapse_root <- function(d, entry, pc){
 
   ts_keys <- names(entry)
+  if(any(is.na(ts_keys))){
+    stop("can't have NAs here")
+  }
   pub <- list()
   funding <- list()
   # geo <- list(geometry=list(coordinates=list(NA, NA, NA), type="Point"), properties=list())
@@ -699,7 +706,7 @@ get_ts_lipd <- function(){
   if(exists("TMP_ts_storage", envir = lipdEnv)){
     tmp_storage <- get("TMP_ts_storage", envir=lipdEnv)
   } else {
-    stop("Error: Cannot collapse time series. 'TMP_ts_storage' not found in the lipd Environment. This data is created during 'extractTs' and is required for 'collapseTs'")
+    stop("Error: 'TMP_ts_storage' not found in the lipd Environment. This data is created during 'extractTs' and is required for 'collapseTs'. You can attempt to collapseTs anyway by setting force = TRUE, but you're more likely to lose information.")
   }
   return(tmp_storage)
 }
