@@ -55,9 +55,8 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
     allKeys <- c(meta_keys, key)
     for (i in 1:length(lipdTS)){
       needAdded <- allKeys[!allKeys %in% names(lipdTS[[i]])]
-      for (j in 1:length(needAdded)){
-        addNow <- needAdded[j]
-        lipdTS[[i]][eval(addNow)] <- NA
+      for (j in needAdded){
+        lipdTS[[i]][eval(j)] <- NA
       }
     }
   }
@@ -588,7 +587,13 @@ notesOut <- list()
   for(tc in toStandardize){
 
     TS1 <- updateMetaDataFromStandardTables(TS, tc)
+    if(sum(unlist(lapply(TS1$TS, function(x) sum(is.na(names(x))))))>0){
+      stop("NA is a TS key")
+    }
     TS2 <- standardizeValue(lipdTS=TS1$TS, key=tc)
+    if(sum(unlist(lapply(TS2, function(x) sum(is.na(names(x))))))>0){
+      stop("NA is a TS key")
+    }
     TS <- TS2$TS
 
     if(tc == "interpretation_seasonality"){
@@ -615,6 +620,9 @@ notesOut <- list()
                         metadataChangesDF = TS1$ChangesDF,
                         deleteTheseTS = TS2$deleteTheseTS,
                         standardizeSynonymDF=ssDF)
+      if(sum(unlist(lapply(TS, function(x) sum(is.na(names(x))))))>0){
+        stop("NA is a TS key")
+      }
 
       notesOut[[tcii]] <- list(metadata.changes = TS1$ChangesDF, deleted.ts = TS2$deleteTheseTS, standardized.synonym = ssDF)
 
@@ -622,7 +630,8 @@ notesOut <- list()
     isValidValue(TS, tc)
 
   }
-  return(TS)
+  returns <- list(TS, notesOut, D1)
+  return(returns)
 }
 
 isValidAll <- function(TS){
