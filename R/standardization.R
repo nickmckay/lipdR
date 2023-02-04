@@ -38,7 +38,7 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
   #Which metadata needs updated for the given key?
   if (key == "paleoData_variableName"){
     meta_keys <- c("paleoData_isAssemblage", "paleoData_datum", "paleoData_summaryStatistic", "paleoData_measurementMaterial",
-                   "paleoData_inferrredMaterial", "paleoData_method", "paleoData_isPrimary")
+                   "paleoData_inferredMaterial", "paleoData_method", "paleoData_isPrimary")
   }else if (key == "paleoData_proxy"){
     meta_keys <- c("paleoData_proxyGeneral", "paleoData_measurementMaterial")
   }else if (key == "paleoData_units"){
@@ -630,7 +630,7 @@ notesOut <- list()
     isValidValue(TS, tc)
 
   }
-  returns <- list(TS, notesOut, D1)
+  returns <- list(TS, notesOut)
   return(returns)
 }
 
