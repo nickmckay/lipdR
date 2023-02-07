@@ -649,7 +649,7 @@ notesOut <- list()
     isValidValue(TS, tc)
 
   }
-  returns <- list(TS, notesOut, D1)
+  returns <- list(TS, notesOut)
   return(returns)
 }
 
