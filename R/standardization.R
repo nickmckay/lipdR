@@ -38,7 +38,7 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
   #Which metadata needs updated for the given key?
   if (key == "paleoData_variableName"){
     meta_keys <- c("paleoData_isAssemblage", "paleoData_datum", "paleoData_summaryStatistic", "paleoData_measurementMaterial",
-                   "paleoData_inferrredMaterial", "paleoData_method", "paleoData_isPrimary")
+                   "paleoData_inferredMaterial", "paleoData_method", "paleoData_isPrimary")
   }else if (key == "paleoData_proxy"){
     meta_keys <- c("paleoData_proxyGeneral", "paleoData_measurementMaterial")
   }else if (key == "paleoData_units"){
@@ -143,14 +143,23 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
 #'
 ckeckKey <- function(lipdTS, key, keyGeneral){
   TSvalsO <- pullTsVariable(lipdTS, key,strict.search = TRUE)
-  TSvals <- tolower(TSvalsO)
-  numVals <- length(TSvals)
+  #TSvals <- tolower(TSvalsO)
+  numVals <- length(TSvalsO)
 
+#standardVals0 <- unique(standardTables[[eval(keyGeneral)]][["lipdName"]])
 standardVals <- unique(tolower(standardTables[[eval(keyGeneral)]][["lipdName"]]))
 
-validCheck <- TSvals %in% standardVals |
-              is.na(TSvals) |
-              is.null(TSvals)
+# validCheck0 <- TSvalsO %in% standardVals0 |
+#   is.na(TSvals) |
+#   is.null(TSvals)
+
+validCheck <- TSvalsO %in% standardVals |
+              is.na(TSvalsO) |
+              is.null(TSvalsO)
+
+#capDiff <- which(validCheck != validCheck0)
+
+
 
 #
 #   validCheck <- unlist(lapply(tolower(TSvals), function(x) x %in%
@@ -276,6 +285,8 @@ standardizeValue <- function(lipdTS, key = NA){
 
   #Find and replace synonyms
   replaceSynonyms <- function(TS=lipdTS, key=NA, invalidDF=NA, interpretation = interpretation){
+    noSynonym <- data.frame("TSid" = NA, "key" = NA)
+
     if (nrow(invalidDF) > 0){
       #add a "keyGeneral" variable for interps
       if(interpretation){
@@ -296,17 +307,19 @@ standardizeValue <- function(lipdTS, key = NA){
       #Build a data frame to show replacement on known synonyms with valid lipdNames
       synonymDF <- as.data.frame(matrix(nrow = sum(!unlist(validCheck2)), ncol = 5))
       names(synonymDF) <- c("rowNum", "dataSetName", "dataSetId", as.character(key), "New")
+      countEm <- 0
       for (i in 1:nrow(invalidDF)){
 
         TSrowNum <- invalidDF$rowNum[[i]]
 
-        currentTS <- lipdTS[[TSrowNum]]
-
         synonymLoc <- which(tolower(invalidDF[i,5]) == possibleSynonyms)
 
         if(length(synonymLoc) == 0){
-          lipdName <- NA
+          nosynonym1 <- data.frame("TSid" = lipdTS[[TSrowNum]]$paleoData_TSid,
+                                   "key" = key)
+          noSynonym <- rbind.data.frame(noSynonym, nosynonym1)
         }else{
+          countEm <- countEm + 1
           #find the known synonym
           synonym <- possibleSynonyms[synonymLoc]
 
@@ -314,6 +327,11 @@ standardizeValue <- function(lipdTS, key = NA){
           synonymTableLoc <- which(synonym == tolower(unname(unlist(standardTables[[eval(keyGeneral)]]["synonym"]))))
           lipdName <- unname(unlist(standardTables[[eval(keyGeneral)]]["lipdName"]))[synonymTableLoc[1]]
 
+          synonymDF[countEm,1] <- TSrowNum
+          synonymDF[countEm,2] <- lipdTS[[as.numeric(TSrowNum)]]$dataSetName
+          synonymDF[countEm,3] <- lipdTS[[as.numeric(TSrowNum)]]$datasetId
+          synonymDF[countEm,4] <- invalidDF[i,5]
+          synonymDF[countEm,5] <- lipdName
         }
 
         #print(invalidDF[i,5])
@@ -323,11 +341,7 @@ standardizeValue <- function(lipdTS, key = NA){
         #   stop("Problem with TS ", newRow, " for ", key)
         # }
 
-        synonymDF[i,1] <- TSrowNum
-        synonymDF[i,2] <- lipdTS[[as.numeric(TSrowNum)]]$dataSetName
-        synonymDF[i,3] <- lipdTS[[as.numeric(TSrowNum)]]$datasetId
-        synonymDF[i,4] <- invalidDF[i,5]
-        synonymDF[i,5] <- lipdName
+
 
         #lipdTS[[as.numeric(TSrowNum)]][eval(key)] <<- lipdName
 
@@ -357,7 +371,12 @@ standardizeValue <- function(lipdTS, key = NA){
       #   print(tibble::tibble(invalidDFnew))
       # }
 
-      returns <- list("synonymDF" = synonymDForig)
+      if (nrow(noSynonym) > 1){
+        noSynonym <- noSynonym[-1,]
+      }
+
+      returns <- list("synonymDF" = synonymDForig,
+                      "noSynonym" = noSynonym)
     }else{
       returns <- NULL
     }
@@ -431,7 +450,7 @@ standardizeValue <- function(lipdTS, key = NA){
 
 
 
-  returns <- list("TS"=lipdTS, "synonymDF" = returns, "deleteTheseTS" = deleteTheseTS)
+  returns <- list("TS"=lipdTS, "synonymDF" = returns$synonymDF, "deleteTheseTS" = deleteTheseTS, "noSynonym" = returns$noSynonym)
 
   return(returns)
 }
@@ -624,7 +643,7 @@ notesOut <- list()
         stop("NA is a TS key")
       }
 
-      notesOut[[tcii]] <- list(metadata.changes = TS1$ChangesDF, deleted.ts = TS2$deleteTheseTS, standardized.synonym = ssDF)
+      notesOut[[tcii]] <- list(metadata.changes = TS1$ChangesDF, deleted.ts = TS2$deleteTheseTS, standardized.synonym = ssDF, noSynonym = TS2$noSynonym)
 
     }
     isValidValue(TS, tc)
