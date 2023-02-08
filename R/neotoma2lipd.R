@@ -273,85 +273,94 @@ getPaleoDataNeotoma2 <- function(site){
 
   #collection units map to paleoData objects
   uCol <- unique(sampData$collunitid)
+
+
+
   npaleoData <- length(uCol)
 
   paleoData <- vector(mode = "list",npaleoData)
+  colMeta2get <- c("units","ecologicalgroup","taxongroup","taxonid")
+
   for(cc in seq_len(npaleoData)){
     #filter to just this cc
-    tsd <- dplyr::filter(sampData,collunitid == uCol[cc])
+    tsda <- dplyr::filter(sampData,collunitid == uCol[cc])
 
     #get units and other column metadata
 
-    colMeta2get <- c("units","ecologicalgroup","taxongroup","taxonid")
+    #datasetIds  map to measurement tables
+    uDS <- unique(tsda$datasetid)
+    mt <- vector(mode = "list",length = length(uDS))
+    for(ds in seq_len(length(uDS))){
+      tsd <- dplyr::filter(tsda,datasetid == uDS[ds])
 
-    allMeta <- list()
-    for(i in colMeta2get){
-
-      attemp <- tidyr::pivot_wider(tsd,
-                                   id_cols = c("depth","age","agetype"),
-                                   names_from = c("variablename","elementtype","context"),
-                                   values_from = i)
-
-
-      dataOut <- purrr::map_chr(purrr::array_tree(attemp,2),uget)
-
-      #remove agetype
-      dataOut <- dataOut[-3]
-
-      allMeta[[i]] <- dataOut
-    }
-
-    #deal with ageUnits
-    ageUnits <- unique(attemp$agetype)
-
-    wd <- which(names(allMeta$units) == "depth")
-    if(length(wd) == 1){
-      allMeta$units[wd] <- "cm"
-    }
-    wd <- which(names(allMeta$units) == "age")
-    if(length(wd) == 1 & length(ageUnits) == 1){
-      allMeta$units[wd] <- ageUnits
-    }
-    #find columns
-    rs <- tidyr::pivot_wider(tsd,
-                             id_cols = c("depth","age"),
-                             names_from = c("variablename","elementtype","context"),
-                             values_from = c("value"))
-
-    if(any(purrr::map(rs,class) == "list")){
-      stop("Failed to uniquely pivot the neotoma download")
-    }
-
-    rs[is.null(rs)] <- NA
-
-    #create measurement table
-    #prep the names
-    acn <- names(rs) %>%
-      stringr::str_remove("_NA") %>%
-      stringr::str_remove_all("[^A-Za-z0-9_]")
-
-    names(rs) <- acn
-
-
-    mt <- vector(mode = "list",length = npaleoData)
-
-    # mt[[cc]] <- list()
-    mt[[cc]]$tableMetadata <- SeuratObject::S4ToList(site@collunits[[cc]]@datasets@datasets[[cc]])
-    mt[[cc]]$tableMetadata$chroncontrols <- NULL
-
-    for(cn in seq_along(acn)){#iterate through columns
-      mt[[1]][[acn[cn]]] <- list()
-      mt[[1]][[acn[cn]]]$number <- cn
-      mt[[1]][[acn[cn]]]$variableName <- acn[cn]
-      mt[[1]][[acn[cn]]]$values <- as.matrix(rs[,cn])
-      mt[[1]][[acn[cn]]]$TSid <- createTSid()
-      #add additional column metadata
+      allMeta <- list()
       for(i in colMeta2get){
-        mt[[1]][[acn[cn]]][[i]] <- allMeta[[i]][cn]
-        #check names
-        checkName <- names(allMeta[[i]][cn]) %>%
-          stringr::str_remove("_NA") %>%
-          stringr::str_remove_all("[^A-Za-z0-9_]")
+
+        attemp <- tidyr::pivot_wider(tsd,
+                                     id_cols = c("depth","age","agetype"),
+                                     names_from = c("variablename","elementtype","context"),
+                                     values_from = i)
+
+
+        dataOut <- purrr::map_chr(purrr::array_tree(attemp,2),uget)
+
+        #remove agetype
+        dataOut <- dataOut[-3]
+
+        allMeta[[i]] <- dataOut
+      }
+
+      #deal with ageUnits
+      ageUnits <- unique(attemp$agetype)
+
+      wd <- which(names(allMeta$units) == "depth")
+      if(length(wd) == 1){
+        allMeta$units[wd] <- "cm"
+      }
+      wd <- which(names(allMeta$units) == "age")
+      if(length(wd) == 1 & length(ageUnits) == 1){
+        allMeta$units[wd] <- ageUnits
+      }
+      #find columns
+      rs <- tidyr::pivot_wider(tsd,
+                               id_cols = c("depth","age"),
+                               names_from = c("variablename","elementtype","context"),
+                               values_from = c("value"))
+
+      if(any(purrr::map(rs,class) == "list")){
+        stop("Failed to uniquely pivot the neotoma download")
+      }
+
+      rs[is.null(rs)] <- NA
+
+      #create measurement table
+      #prep the names
+      acn <- names(rs) %>%
+        stringr::str_remove("_NA") %>%
+        stringr::str_remove_all("[^A-Za-z0-9_]")
+
+      names(rs) <- acn
+
+
+
+
+      mt[[ds]] <- list()
+      mt[[ds]]$tableMetadata <- SeuratObject::S4ToList(site@collunits[[cc]]@datasets@datasets[[ds]])
+      mt[[ds]]$tableMetadata$chroncontrols <- NULL
+
+      for(cn in seq_along(acn)){#iterate through columns
+        mt[[ds]][[acn[cn]]] <- list()
+        mt[[ds]][[acn[cn]]]$number <- cn
+        mt[[ds]][[acn[cn]]]$variableName <- acn[cn]
+        mt[[ds]][[acn[cn]]]$values <- as.matrix(rs[,cn])
+        mt[[ds]][[acn[cn]]]$TSid <- createTSid()
+        #add additional column metadata
+        for(i in colMeta2get){
+          mt[[ds]][[acn[cn]]][[i]] <- allMeta[[i]][cn]
+          #check names
+          checkName <- names(allMeta[[i]][cn]) %>%
+            stringr::str_remove("_NA") %>%
+            stringr::str_remove_all("[^A-Za-z0-9_]")
 
           if(length(checkName) > 0){
             if(checkName != acn[cn]){
@@ -360,11 +369,12 @@ getPaleoDataNeotoma2 <- function(site){
           }
 
 
-        #print(allMeta[[i]][cn])
+          #print(allMeta[[i]][cn])
+        }
+
       }
-
     }
-
+    paleoData[[cc]] <- mt
   }
 
   return(paleoData)
