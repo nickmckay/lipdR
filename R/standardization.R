@@ -655,7 +655,7 @@ notesOut <- list()
       cat("length(TS2$synonymDF): ", length(TS2$synonymDF), "\n")
 
       if(length(tci) > 1){
-        an <- purrr::map_chr(TS2$synonymDF,\(x) names(x$synonymDF)[[4]])
+        an <- purrr::map_chr(TS2$synonymDF,\(x) names(x)[[4]])
         ws <- which(an == tcii)
 
         ssDF <- TS2$returns1[[ws]]$synonymDF
