@@ -399,11 +399,9 @@ standardizeValue <- function(lipdTS, key = NA){
 
   deleteTheseTS <- c()
 
-  cat("length of returns:", length(returns), "\n")
-
   if (length(returns)> 1){
     for (i in 1:length(returns)){
-      df1 <- returns[[i]]$synonymDF
+      df1 <- returns[[i]]$returns1$synonymDF
       if (length(df1) > 0){
         if(!is.null(nrow(df1))){
           for (j in 1:nrow(df1)){
