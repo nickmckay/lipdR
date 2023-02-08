@@ -376,6 +376,9 @@ standardizeValue <- function(lipdTS, key = NA){
         noSynonym <- noSynonym[-1,]
       }
 
+      cat("synonymDForig:", dim(synonymDForig), "\n")
+      cat("noSynonym:", dim(noSynonym), "\n")
+
       returns1 <- list("synonymDF" = synonymDForig)
       returns2 <- list("noSynonym" = noSynonym)
       returns <- list(returns1=returns1, returns2=returns2)
@@ -389,8 +392,14 @@ standardizeValue <- function(lipdTS, key = NA){
 
   returns <- list()
   if (interpretation){
+    cat("length invalidDF: ", length(invalidDF), "\n")
     for (i in 1:length(invalidDF)){
-      returns[[i]] <- replaceSynonyms(lipdTS, key=names(invalidDF[[i]])[5], invalidDF[[i]], interpretation)
+      cat("invalidDF:", dim(invalidDF[[i]]), "\n")
+      if (nrow(invalidDF[[i]]>0)){
+        returns[[i]] <- replaceSynonyms(lipdTS, key=names(invalidDF[[i]])[5], invalidDF[[i]], interpretation)
+        cat("synonymDForig:", dim(returns[[i]]$returns1$synonymDF), "\n")
+      }
+
     }
     #returns <- lapply(invalidDF, function(x) replaceSynonyms(lipdTS, key=names(x)[5], x, interpretation))
   }else{
@@ -399,9 +408,16 @@ standardizeValue <- function(lipdTS, key = NA){
 
   deleteTheseTS <- c()
 
-  if (length(returns)> 1){
+
+  if (!sum(grepl("returns1", names(returns)))>0){
+    df0 <- list()
+    df10 <- list()
     for (i in 1:length(returns)){
+      cat("i:", i, "\n")
       df1 <- returns[[i]]$returns1$synonymDF
+      df0[[i]] <- df1
+      df2 <- returns[[i]]$returns2$noSynonym
+      df10[[i]] <- df2
       if (length(df1) > 0){
         if(!is.null(nrow(df1))){
           for (j in 1:nrow(df1)){
@@ -423,18 +439,20 @@ standardizeValue <- function(lipdTS, key = NA){
       }
     }
   }else{
-    for (j in 1:nrow(returns[[1]])){
-      rowNum <- returns[[1]]$rowNum[j]
-      newVal <- returns[[1]]$New[j]
+    df0 <- returns$returns1$synonymDF
+    df10 <- returns$returns2$noSynonym
+    for (j in 1:nrow(df0)){
+      rowNum <- df0$rowNum[j]
+      newVal <- df0$New[j]
       if(!is.na(rowNum) & length(rowNum) > 0){
         if (grepl("delete", newVal)){
           if(grepl("variableName", key)){
             deleteTheseTS <- c(deleteTheseTS, lipdTS[[as.numeric(rowNum)]]$paleoData_TSid)
           }else{
-            lipdTS[[as.numeric(rowNum)]][eval(names(returns[[1]])[4])] <- NULL
+            lipdTS[[as.numeric(rowNum)]][eval(names(df0)[4])] <- NULL
           }
         }else{
-          lipdTS[[as.numeric(rowNum)]][eval(names(returns[[1]])[4])] <- newVal
+          lipdTS[[as.numeric(rowNum)]][eval(names(df0)[4])] <- newVal
         }
       }
     }
@@ -452,7 +470,7 @@ standardizeValue <- function(lipdTS, key = NA){
 
 
 
-  returns <- list("TS"=lipdTS, "synonymDF" = returns$returns1, "deleteTheseTS" = deleteTheseTS, "noSynonym" = returns$returns2)
+  returns <- list("TS"=lipdTS, "synonymDF" = df0, "deleteTheseTS" = deleteTheseTS, "noSynonym" = df10)
 
   return(returns)
 }
@@ -632,13 +650,19 @@ notesOut <- list()
 
     for(tcii in tci){
 
+      cat("working on ", tcii, "...\n")
+      cat("class(TS2$synonymDF): ", class(TS2$synonymDF), "\n")
+      cat("length(TS2$synonymDF): ", length(TS2$synonymDF), "\n")
+
       if(length(tci) > 1){
-        an <- map_chr(TS2$synonymDF,\(x) names(x$synonymDF)[[4]])
+        an <- purrr::map_chr(TS2$synonymDF,\(x) names(x$synonymDF)[[4]])
         ws <- which(an == tcii)
 
-        ssDF <- TS2$synonymDF[[ws]]$synonymDF
+        ssDF <- TS2$returns1[[ws]]$synonymDF
+        nsDF <- TS2$returns2[[ws]]$noSynonym
       }else{
-        ssDF <- TS2$synonymDF[[1]]
+        ssDF <- TS2$synonymDF$synonymDF
+        nsDF <- TS2$noSynonym$noSynonym
       }
 
       #cat("standardizeSynonym: ", TS2$synonymDF, "\n", class(TS2$synonymDF), "\n")
@@ -652,10 +676,37 @@ notesOut <- list()
         stop("NA is a TS key")
       }
 
-      notesOut[[tcii]] <- list(metadata.changes = TS1$ChangesDF, deleted.ts = TS2$deleteTheseTS, standardized.synonym = ssDF, noSynonym = TS2$noSynonym)
+      notesOut[[tcii]] <- list(metadata.changes = TS1$ChangesDF, deleted.ts = TS2$deleteTheseTS, standardized.synonym = ssDF, noSynonym = nsDF)
+
+      message("Could not find valid names for ", nrow(nsDF), " values in ", tcii)
 
     }
-    isValidValue(TS, tc)
+    validNew <- isValidValue(TS, tc)
+
+    # unrec <- sum(unlist(lapply(notesOut, function(x) nrow(x$noSynonym))))
+    #
+    #
+    # if (unrec > 0){
+    #   message(unrec, " values not recognized for: ", tc)
+    # }
+    #
+    # if (methods::is(validNew, "list")){
+    #   invalid1 <- sum(unlist(lapply(validNew, function(x) nrow(x))))
+    # }else{
+    #   invalid1 <- nrow(validNew)
+    # }
+    #
+    #
+    # if (invalid1 != unrec){
+    #   warning(paste0("Some invalid values not accounted for:\n",
+    #                  "noSynonym = ", unrec, "\n",
+    #                  "invalid = ", invalid1, "\n",
+    #                  "for key: ", tc))
+    # }
+
+
+
+
 
   }
   returns <- list(TS, notesOut)
