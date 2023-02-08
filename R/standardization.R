@@ -143,11 +143,12 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
 #'
 ckeckKey <- function(lipdTS, key, keyGeneral){
   TSvalsO <- pullTsVariable(lipdTS, key,strict.search = TRUE)
+
   #TSvals <- tolower(TSvalsO)
   numVals <- length(TSvalsO)
 
 #standardVals0 <- unique(standardTables[[eval(keyGeneral)]][["lipdName"]])
-standardVals <- unique(tolower(standardTables[[eval(keyGeneral)]][["lipdName"]]))
+standardVals <- unique(standardTables[[eval(keyGeneral)]][["lipdName"]])
 
 # validCheck0 <- TSvalsO %in% standardVals0 |
 #   is.na(TSvals) |
@@ -375,8 +376,9 @@ standardizeValue <- function(lipdTS, key = NA){
         noSynonym <- noSynonym[-1,]
       }
 
-      returns <- list("synonymDF" = synonymDForig,
-                      "noSynonym" = noSynonym)
+      returns1 <- list("synonymDF" = synonymDForig)
+      returns2 <- list("noSynonym" = noSynonym)
+      returns <- list(returns1=returns1, returns2=returns2)
     }else{
       returns <- NULL
     }
@@ -396,6 +398,8 @@ standardizeValue <- function(lipdTS, key = NA){
   }
 
   deleteTheseTS <- c()
+
+  cat("length of returns:", length(returns), "\n")
 
   if (length(returns)> 1){
     for (i in 1:length(returns)){
@@ -450,7 +454,7 @@ standardizeValue <- function(lipdTS, key = NA){
 
 
 
-  returns <- list("TS"=lipdTS, "synonymDF" = returns$synonymDF, "deleteTheseTS" = deleteTheseTS, "noSynonym" = returns$noSynonym)
+  returns <- list("TS"=lipdTS, "synonymDF" = returns$returns1, "deleteTheseTS" = deleteTheseTS, "noSynonym" = returns$returns2)
 
   return(returns)
 }
@@ -479,6 +483,8 @@ standardizeValue <- function(lipdTS, key = NA){
 
 updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonymDF=NA, deleteTheseTS=NA){
 
+  #cat("standardizeSynonym: ", standardizeSynonymDF, "\n", class(standardizeSynonymDF), "\n")
+
   checkStandardTables()
 
   #choose the appropriate notes
@@ -489,11 +495,14 @@ updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonym
     }
     key=names(standardizeSynonymDF)[4]
   }
-  if(!all(is.na(standardizeSynonymDF))){
+  if(!all(is.na(standardizeSynonymDF)) & length(standardizeSynonymDF)>0 & !is.null(standardizeSynonymDF)){
+    if(nrow(standardizeSynonymDF)>0){
+
     standardizeSynonymDF <-
       standardizeSynonymDF[apply(standardizeSynonymDF,
                                  1,
                                  function(x) sum(is.na(x)))!=ncol(standardizeSynonymDF),]
+    }
   }
 
   if (sub("\\_.*", "", key) == "paleoData") {
@@ -633,6 +642,8 @@ notesOut <- list()
       }else{
         ssDF <- TS2$synonymDF[[1]]
       }
+
+      #cat("standardizeSynonym: ", TS2$synonymDF, "\n", class(TS2$synonymDF), "\n")
 
       TS <- updateNotes(key = tcii,
                         lipdTS = TS,
