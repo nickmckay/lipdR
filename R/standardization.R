@@ -376,8 +376,7 @@ standardizeValue <- function(lipdTS, key = NA){
         noSynonym <- noSynonym[-1,]
       }
 
-      cat("synonymDForig:", dim(synonymDForig), "\n")
-      cat("noSynonym:", dim(noSynonym), "\n")
+
 
       returns1 <- list("synonymDF" = synonymDForig)
       returns2 <- list("noSynonym" = noSynonym)
@@ -392,12 +391,9 @@ standardizeValue <- function(lipdTS, key = NA){
 
   returns <- list()
   if (interpretation){
-    cat("length invalidDF: ", length(invalidDF), "\n")
     for (i in 1:length(invalidDF)){
-      cat("invalidDF:", dim(invalidDF[[i]]), "\n")
       if (nrow(invalidDF[[i]]>0)){
         returns[[i]] <- replaceSynonyms(lipdTS, key=names(invalidDF[[i]])[5], invalidDF[[i]], interpretation)
-        cat("synonymDForig:", dim(returns[[i]]$returns1$synonymDF), "\n")
       }
 
     }
@@ -413,7 +409,6 @@ standardizeValue <- function(lipdTS, key = NA){
     df0 <- list()
     df10 <- list()
     for (i in 1:length(returns)){
-      cat("i:", i, "\n")
       df1 <- returns[[i]]$returns1$synonymDF
       df0[[i]] <- df1
       df2 <- returns[[i]]$returns2$noSynonym
@@ -499,7 +494,6 @@ standardizeValue <- function(lipdTS, key = NA){
 
 updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonymDF=NA, deleteTheseTS=NA){
 
-  #cat("standardizeSynonym: ", standardizeSynonymDF, "\n", class(standardizeSynonymDF), "\n")
 
   checkStandardTables()
 
@@ -600,7 +594,6 @@ updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonym
     }else{
       if (lipdTS[[i]]$paleoData_TSid %in% deleteTheseTS){
         numDelete <- numDelete+1
-        #cat("deleting: ", lipdTS[[i]]$paleoData_TSid, "\n")
         lipdTS[[i]] <- NULL
       }
     }
@@ -648,15 +641,13 @@ notesOut <- list()
       tci <- tc
     }
 
+
     for(tcii in tci){
 
-      cat("working on ", tcii, "...\n")
-      cat("class(TS2$synonymDF): ", class(TS2$synonymDF), "\n")
-      cat("length(TS2$synonymDF): ", length(TS2$synonymDF), "\n")
 
       if(length(tci) > 1){
-        an <- purrr::map_chr(TS2$synonymDF,\(x) names(x)[[4]])
-        ws <- which(an == tcii)
+        an1 <- purrr::map_chr(TS2$synonymDF,\(x) names(x)[[4]])
+        ws <- which(an1 == tcii)
 
         ssDF <- TS2$returns1[[ws]]$synonymDF
         nsDF <- TS2$returns2[[ws]]$noSynonym
@@ -665,7 +656,6 @@ notesOut <- list()
         nsDF <- TS2$noSynonym$noSynonym
       }
 
-      #cat("standardizeSynonym: ", TS2$synonymDF, "\n", class(TS2$synonymDF), "\n")
 
       TS <- updateNotes(key = tcii,
                         lipdTS = TS,
@@ -678,7 +668,10 @@ notesOut <- list()
 
       notesOut[[tcii]] <- list(metadata.changes = TS1$ChangesDF, deleted.ts = TS2$deleteTheseTS, standardized.synonym = ssDF, noSynonym = nsDF)
 
-      message("Could not find valid names for ", nrow(nsDF), " values in ", tcii)
+      if (length(nsDF)>0){
+        message("Could not find valid names for ", nrow(nsDF), " values in ", tcii)
+      }
+
 
     }
     validNew <- isValidValue(TS, tc)
@@ -733,6 +726,7 @@ isValidAll <- function(TS){
   }
   return(vo)
 }
+
 
 
 
