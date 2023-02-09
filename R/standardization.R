@@ -599,6 +599,13 @@ updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonym
     }
   }
 
+  for (i in 1:length(lipdTS)){
+    lipdTS[[i]]$paleoData_notes <- sub("^; ", "", lipdTS[[i]]$paleoData_notes)
+    lipdTS[[i]]$paleoData_notes <- sub("^NA; ", "", lipdTS[[i]]$paleoData_notes)
+    lipdTS[[i]]$Notes <- sub("^; ", "", lipdTS[[i]]$Notes)
+    lipdTS[[i]]$Notes <- sub("^NA; ", "", lipdTS[[i]]$Notes)
+  }
+
   message("Updated metadata for ", nrow(metadataChangesDF), " TS objects,\n",
           "Standardized values for ", nrow(standardizeSynonymDF), " TS Objects,\n",
           "Deleted ", numDelete, " objects\n")
