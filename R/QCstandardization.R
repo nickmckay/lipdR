@@ -92,6 +92,7 @@ standardizeQCsheetValues <- function(qcID){
   for (jj in keyConDF$qcSheetName){
     newSheet[eval(jj)] <- standardizedTerms[jj]
   }
+  newSheet$standardizationNotes <- notes
 
 
   returns <- list("standardizedTerms" = standardizedTerms,
@@ -104,6 +105,8 @@ standardizeQCsheetValues <- function(qcID){
   for (i in 1:length(returns$notes)){
     returns$notes[[i]] <- sub("^NA, ", "", returns$notes[[i]])
   }
+
+  newSheet$standardizationNotes <- notes
 
   return(returns)
 }
