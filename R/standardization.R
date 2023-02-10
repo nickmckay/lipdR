@@ -713,7 +713,13 @@ notesOut <- list()
   return(returns)
 }
 
-isValidAll <- function(TS){
+#' Are all the parameters valid?
+#'
+#' @param TS
+#'
+#' @return
+#' @export
+isValidAll <- function(TS,report = TRUE){
   vo <- list()
   an <- getAllTsNames(TS)
   allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
@@ -722,19 +728,24 @@ isValidAll <- function(TS){
 
   for(tc in toStandardize){
     print(tc)
-    if(tc == "interpretation_seasonality"){
-      tci <- an[stringr::str_detect(an,"interpretation\\d{1,}_seasonality$")]
-    }else if(tc == "interpretation_variable"){
-      tci <- an[stringr::str_detect(an,"interpretation\\d{1,}_variable$")]
-    }else{
-      tci <- tc
-    }
-      vo[[tc]] <- isValidValue(TS, tc)
+    vo[[tc]] <- isValidValue(TS, tc)
   }
-  return(vo)
+
+  if(report){
+    return(vo)
+  }else{
+    return(purrr::map_dbl(vo,numInvalid))
+  }
 }
 
 
+numInvalid <- function(x){
+  if(is(x,"data.frame")){
+    return(nrow(x))
+  }else{
+    return(sum(map_dbl(x,nrow)))
+  }
+}
 
 
 
