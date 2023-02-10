@@ -1,5 +1,8 @@
 # example:
-# qcStand <- standardizeQCsheetValues(qcID <- "1k3PZTGZ1n1eljVbXx9qR-PtQ-7LIdj-mi7wtEmzu2iM")
+# qcStand <- standardizeQCsheetValues(qcID = "1k3PZTGZ1n1eljVbXx9qR-PtQ-7LIdj-mi7wtEmzu2iM")
+# writeNewQCsheet <- function(qcID = "1k3PZTGZ1n1eljVbXx9qR-PtQ-7LIdj-mi7wtEmzu2iM",
+# qcStand = qcStand,
+# newSheetName = "standardizedValues")
 
 standardizeQCsheetValues <- function(qcID){
 
@@ -105,7 +108,9 @@ standardizeQCsheetValues <- function(qcID){
   return(returns)
 }
 
-
-
+writeNewQCsheet <- function(qcID, qcStand, newSheetName = "standardizedValues"){
+  googlesheets4::sheet_add(ss=qcID, sheet = newSheetName)
+  googlesheets4::write_sheet(qcStand$newSheet, ss=qcID, sheet = newSheetName)
+}
 
 
