@@ -1,5 +1,5 @@
 # example:
-# qcStand <- standardizeQCsheetValues(qcID = "1k3PZTGZ1n1eljVbXx9qR-PtQ-7LIdj-mi7wtEmzu2iM")
+# qcStand <- standardizeQCsheetValues(googlesheets4::read_sheet("1k3PZTGZ1n1eljVbXx9qR-PtQ-7LIdj-mi7wtEmzu2iM"))
 # writeNewQCsheet <- function(qcID = "1k3PZTGZ1n1eljVbXx9qR-PtQ-7LIdj-mi7wtEmzu2iM",
 # qcStand = qcStand,
 # newSheetName = "standardizedValues")
@@ -74,11 +74,20 @@ standardizeQCsheetValues <- function(qcSheet){
         warning("For ", nm," ", numInvalid, " invalid terms remain\n")
 
 
-        remainingInvalid[[eval(nm)]] <- data.frame(rowNum = which(!isValid),
-                                TSid = qcSheet$TSid[!isValid],
-                                dataSetName = qcSheet$dataSetName[!isValid],
-                                #dataSetID = qcSheet$dataSetID[!isValid],
-                                keyTBD = rep(nm, sum(!isValid)))
+        if("dataSetID" %in% names(qcSheet)){
+          remainingInvalid[[eval(nm)]] <- data.frame(rowNum = which(!isValid),
+                                                     TSid = qcSheet$TSid[!isValid],
+                                                     dataSetName = qcSheet$dataSetName[!isValid],
+                                                     dataSetID = qcSheet$dataSetID[!isValid],
+                                                     keyTBD = rep(nm, sum(!isValid)))
+        }else{
+          remainingInvalid[[eval(nm)]] <- data.frame(rowNum = which(!isValid),
+                                                     TSid = qcSheet$TSid[!isValid],
+                                                     dataSetName = qcSheet$dataSetName[!isValid],
+                                                     dataSetID = rep(NA, sum(!isValid)),
+                                                     keyTBD = rep(nm, sum(!isValid)))
+        }
+
 
 
 
