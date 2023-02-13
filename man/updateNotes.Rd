@@ -8,7 +8,8 @@ updateNotes(
   lipdTS,
   key = NA,
   metadataChangesDF = NA,
-  standardizeSynonymDF = NA
+  standardizeSynonymDF = NA,
+  deleteTheseTS = NA
 )
 }
 \arguments{

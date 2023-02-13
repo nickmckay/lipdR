@@ -4,10 +4,13 @@
 # qcStand = qcStand,
 # newSheetName = "standardizedValues")
 
-standardizeQCsheetValues <- function(qcID){
-
-
-  qcSheet <- googlesheets4::read_sheet(qcID)
+#' standardizeQCsheetValues
+#'
+#' @param qcID
+#'
+#' @return
+#' @export
+standardizeQCsheetValues <- function(qcSheet){
 
   allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
 
