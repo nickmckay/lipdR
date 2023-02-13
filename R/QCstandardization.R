@@ -45,7 +45,7 @@ standardizeQCsheetValues <- function(qcSheet){
       isValid <- unlist(lapply(QCTermsNow, function(x) is.na(x) | x %in% tableNow$lipdName))
     }
     numInvalid <- sum(!isValid)
-    message("Found ", numInvalid, " invalid terms of ", numTerms, " total for ", nm)
+    message("\n\nFound ", numInvalid, " invalid terms of ", numTerms, " total for ", nm)
     #Checking for known synonym
     if (numInvalid > 0){
         hasSynonym <- unlist(lapply(QCTermsNow[!isValid], function(x) x %in% tableNow$synonym))
@@ -77,12 +77,13 @@ standardizeQCsheetValues <- function(qcSheet){
         remainingInvalid[[eval(nm)]] <- data.frame(rowNum = which(!isValid),
                                 TSid = qcSheet$TSid[!isValid],
                                 dataSetName = qcSheet$dataSetName[!isValid],
-                                keyTBD = QCTermsNow[!isValid])
+                                #dataSetID = qcSheet$dataSetID[!isValid],
+                                keyTBD = rep(nm, sum(!isValid)))
 
 
 
       }else{
-        message("No remaining invalid terms for ", nm, "\n\n")
+        message("No remaining invalid terms for ", nm)
       }
     }
 
