@@ -74,17 +74,17 @@ standardizeQCsheetValues <- function(qcSheet){
         warning("For ", nm," ", numInvalid, " invalid terms remain\n")
 
 
-        if("dataSetID" %in% names(qcSheet)){
+        if("datasetId" %in% names(qcSheet)){
           remainingInvalid[[eval(nm)]] <- data.frame(rowNum = which(!isValid),
                                                      TSid = qcSheet$TSid[!isValid],
                                                      dataSetName = qcSheet$dataSetName[!isValid],
-                                                     dataSetID = qcSheet$dataSetID[!isValid],
+                                                     datasetId = qcSheet$datasetId[!isValid],
                                                      keyTBD = rep(nm, sum(!isValid)))
         }else{
           remainingInvalid[[eval(nm)]] <- data.frame(rowNum = which(!isValid),
                                                      TSid = qcSheet$TSid[!isValid],
                                                      dataSetName = qcSheet$dataSetName[!isValid],
-                                                     dataSetID = rep(NA, sum(!isValid)),
+                                                     datasetId = rep(NA, sum(!isValid)),
                                                      keyTBD = rep(nm, sum(!isValid)))
         }
 
