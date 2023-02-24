@@ -6,7 +6,6 @@
 #'
 #' @return neotoma site
 #'
-L=L1
 
 
 lipd2neotoma <- function(L){
