@@ -2,17 +2,21 @@
 #'
 #' @param L lipd object
 #' @importFrom methods new
-#' @importFrom sf st_as_sf st_sfc st_point
 #'
 #' @return neotoma site
 #'
-
-
 lipd2neotoma <- function(L){
 
   if (!requireNamespace("neotoma2", quietly = TRUE)) {
     stop(
       "Package 'neotoma2' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
+      call. = FALSE
+    )
+  }
+
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    stop(
+      "Package 'sf' must be installed to use this function. Install it from github using `install.packages('sf')`",
       call. = FALSE
     )
   }
@@ -263,7 +267,7 @@ lipd2neotoma <- function(L){
   # site1$long <- lipdR:::getGeoNeotoma2(D@sites[[1]])$longitude
   site1$altitude <- L$geo$elevation
 
-  site1@geography = st_as_sf(st_sfc(st_point(c(L$geo$longitude,L$geo$latitude))))
+  site1@geography = sf::st_as_sf(sf::st_sfc(sf::st_point(c(L$geo$longitude,L$geo$latitude))))
 
   site1@description <- L$geo$description
 
