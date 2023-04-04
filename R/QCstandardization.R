@@ -79,13 +79,13 @@ standardizeQCsheetValues <- function(qcSheet){
                                                      TSid = qcSheet$TSid[!isValid],
                                                      dataSetName = qcSheet$dataSetName[!isValid],
                                                      datasetId = qcSheet$datasetId[!isValid],
-                                                     keyTBD = rep(nm, sum(!isValid)))
+                                                     keyTBD = QCTermsNow[!isValid])
         }else{
           remainingInvalid[[eval(nm)]] <- data.frame(rowNum = which(!isValid),
                                                      TSid = qcSheet$TSid[!isValid],
                                                      dataSetName = qcSheet$dataSetName[!isValid],
                                                      datasetId = rep(NA, sum(!isValid)),
-                                                     keyTBD = rep(nm, sum(!isValid)))
+                                                     keyTBD = QCTermsNow[!isValid])
         }
 
 
@@ -93,6 +93,9 @@ standardizeQCsheetValues <- function(qcSheet){
 
       }else{
         message("No remaining invalid terms for ", nm)
+      }
+      if(!is.null(names(remainingInvalid[[nm]])[5])){
+        names(remainingInvalid[[nm]])[5] <- nm
       }
     }
 
