@@ -39,7 +39,8 @@ queryLipdverse <- function(variable.name = NULL,
                      interp.details = NULL,
                      compilation = NULL,
                      verbose = FALSE,
-                     skip.update = FALSE
+                     skip.update = FALSE,
+                     queryTable1 =NULL,
                      ){
 
   if (skip.update == TRUE){
