@@ -56,7 +56,10 @@ queryLipdverse <- function(variable.name = NULL,
   }
 
 
-  queryTable1 <- queryTable
+  if (is.null(queryTable1)){
+    queryTable1 <- queryTable
+  }
+
   #
   if(verbose){cat("Series available before filtering: ", nrow(queryTable1), "\n\n")}
 
