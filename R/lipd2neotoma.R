@@ -17,11 +17,13 @@ lipd2neotoma <- function(L){
       call. = FALSE
     )
   }
-  if (L$createdBy == "neotoma2lipd"){
-    site1 <- fromOrigNeotoma(L)
-  }else{
-    site1 <- fromOrigLipd(L)
-  }
+  #don't use fromOrigNeotoma() yet, not finished
+  # if (L$createdBy == "neotoma2lipd"){
+  #   site1 <- fromOrigNeotoma(L)
+  # }else{
+  #   site1 <- fromOrigLipd(L)
+  # }
+  site1 <- fromOrigLipd(L)
   return(site1)
 }
 
@@ -58,9 +60,12 @@ fromOrigLipd <- function(L){
     whichChronMetaNotPlaced <- whichChronMetaNotPlaced[!whichChronMetaNotPlaced %in% "geo"]
   }
 
+  if(length(whichChronMetaNotPlaced)>0){
+    message(paste0("The following site (lipd dataset) metadata could not be placed: ", paste(whichChronMetaNotPlaced, collapse = " "), "\n",
+                   "Consider renaming to one of the controlled neotoma terms: ", paste(siteSlots, collapse = " "),"\n"))
+  }
 
-  warning(paste0("The following site (lipd dataset) metadata could not be placed: ", paste(whichChronMetaNotPlaced, collapse = " "), "\n",
-                 "Consider renaming to one of the controlled neotoma terms: ", paste(siteSlots, collapse = " "),"\n"))
+
 
   #######################################################################
   #paleoData
@@ -150,8 +155,10 @@ fromOrigLipd <- function(L){
           whichMetadata <- !names(PD1) %in% names(sampleTab)
           sampleMetaNames <- names(PD1[whichMetadata])
           datasetMetaNotPlaced <- sampleMetaNames[!sampleMetaNames %in% datasetSlots]
-          warning(paste0("The following dataset (paleoData measurement table) metadata could not be placed: ", paste(datasetMetaNotPlaced, collapse = " "), "\n",
-                         "Consider renaming to one of the controlled neotoma terms: ", paste(siteSlots, collapse = " "),"\n"))
+          if(length(datasetMetaNotPlaced)>0){
+            message(paste0("The following dataset (paleoData measurement table) metadata could not be placed: ", paste(datasetMetaNotPlaced, collapse = " "), "\n",
+                           "Consider renaming to one of the controlled neotoma terms: ", paste(siteSlots, collapse = " "),"\n"))
+          }
 
           sampleMetaNames <- sampleMetaNames[sampleMetaNames %in% datasetSlots]
 
@@ -202,8 +209,9 @@ fromOrigLipd <- function(L){
 
           #which metadata could not be placed?
           whichChronMetaNotPlaced <- names(L$chronData[[jj]]$measurementTable[[j]]) %in% c(names(getSlots("chronology")), names(chron1[eval(paste0("chron",jj,"meas",j))][[1]]))
-          if(any(whichChronMetaNotPlaced)){
-            warning(paste0("The following chronology (chronData measurement table) metadata could not be placed: ", names(L$chronData[[jj]]$measurementTable[[j]])[!whichChronMetaNotPlaced], "\n",
+          whichChronMetaNotPlacedNames <- names(L$chronData[[jj]]$measurementTable[[j]])[!whichChronMetaNotPlaced]
+          if(length(whichChronMetaNotPlacedNames)>0){
+            message(paste0("The following chronology (chronData measurement table) metadata could not be placed: ", whichChronMetaNotPlacedNames, "\n",
                            "Consider renaming to one of the controlled neotoma terms: ", paste(chrnSlots, collapse = " "),"\n"))
           }
         }
