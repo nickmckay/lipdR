@@ -4,7 +4,7 @@
 \alias{summary.lipd}
 \title{Full summary detail of single lipd}
 \usage{
-\method{summary}{lipd}(object, ...)
+summary.lipd(object, ...)
 }
 \arguments{
 \item{object}{a lipd object}

@@ -18,7 +18,7 @@ Maintainer: Nicholas McKay <nick@nau.edu>
 Description: Functions to open, modify, analyze, and save LiPD data. 
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 URL: www.lipd.net
 Encoding: UTF-8
 Imports: 

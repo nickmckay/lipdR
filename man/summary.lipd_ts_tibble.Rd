@@ -4,7 +4,7 @@
 \alias{summary.lipd_ts_tibble}
 \title{full summary of lipd ts tibble}
 \usage{
-\method{summary}{lipd_ts_tibble}(object, ...)
+summary.lipd_ts_tibble(object, ...)
 }
 \arguments{
 \item{object}{a lipd_ts_tibble object}

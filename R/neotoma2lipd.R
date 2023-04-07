@@ -7,7 +7,7 @@
 #'
 #' @return neotoma site
 #' @import neotoma2
-#' @export
+#' @export lipd2neotoma
 #'
 lipd2neotoma <- function(L){
   #ensure neotoma2 is loaded

@@ -4,7 +4,7 @@
 \alias{summary.multi_lipd}
 \title{full summary of multi lipd}
 \usage{
-\method{summary}{multi_lipd}(object, ...)
+summary.multi_lipd(object, ...)
 }
 \arguments{
 \item{object}{a multi_lipd object}
