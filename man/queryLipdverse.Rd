@@ -62,6 +62,8 @@ queryLipdverse(
 \item{verbose}{offer details of filters and get feedback from user}
 
 \item{skip.update}{remove update prompt}
+
+\item{queryTable1}{use a local query table}
 }
 \value{
 filtered query table

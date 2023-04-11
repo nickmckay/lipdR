@@ -164,13 +164,13 @@ fromOrigLipd <- function(L){
             sample1 <- new("sample")
             sample1@datum <- neoSamples
             if (length(pullAge)>0){
-              sample1@ages <- as.numeric(PD1[sampleTabNames[pullAge]][[1]]$age[[1]][k])
+              sample1@ages <- as.numeric(PD1[sampleTabNames[pullAge]][[1]]$age[k])
             }
             if (length(pullYear)>0){
-              sample1@ages <- as.numeric(PD1[sampleTabNames[pullAge]][[1]]$year[[1]][k])
+              sample1@ages <- as.numeric(PD1[sampleTabNames[pullAge]][[1]]$year[k])
             }
             if (length(pullDepth)>0){
-              sample1@depth <- as.numeric(PD1[sampleTabNames[pullDepth]][[1]]$value[[1]][k])
+              sample1@depth <- as.numeric(PD1[sampleTabNames[pullDepth]][[1]]$value[k])
             }
             allSamps[[k]] <- sample1
           }

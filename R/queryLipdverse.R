@@ -18,6 +18,7 @@
 #' @param compilation #compilation name as character vector from unique(queryTable$paleoData_mostRecentCompilations), eg. c("temp12k", "wnam")
 #' @param verbose offer details of filters and get feedback from user
 #' @param skip.update remove update prompt
+#' @param queryTable1 use a local query table
 #'
 #' @return filtered query table
 #' @export
