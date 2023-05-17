@@ -35,6 +35,19 @@ lipd2neotoma <- function(L){
 #' @return neotoma site
 #'
 fromOrigLipd <- function(L){
+
+  #define the lithology class if it does not exist
+  if(!isClass("lithology")){
+    setClass("lithology",representation(lithologyid="integer",
+                                        depthtop="numeric",
+                                        depthbottom="numeric",
+                                        lowerboundary="character",
+                                        description="character",
+                                        recdatecreated="Date",
+                                        recdatemodified="Date"))
+  }
+
+
   #initiate site and set site-level metadata
   site1 <- neotoma2::set_site()
 
@@ -60,6 +73,9 @@ fromOrigLipd <- function(L){
     whichChronMetaNotPlaced <- whichChronMetaNotPlaced[!whichChronMetaNotPlaced %in% "geo"]
   }
 
+  #ignore these lipd-specific metadata
+  whichChronMetaNotPlaced <- whichChronMetaNotPlaced[!whichChronMetaNotPlaced %in% c("@context", "createdBy", "archiveType", "lipdVersion" )]
+
   if(length(whichChronMetaNotPlaced)>0){
     message(paste0("The following site (lipd dataset) metadata could not be placed: ", paste(whichChronMetaNotPlaced, collapse = " "), "\n",
                    "Consider renaming to one of the controlled neotoma terms: ", paste(siteSlots, collapse = " "),"\n"))
@@ -81,180 +97,435 @@ fromOrigLipd <- function(L){
     for (jj in 1:length(L$paleoData)){
       datasetAll <- new("datasets")
       site1@collunits@collunits[[jj]] <- neotoma2::set_collunit(datasets = datasetAll, chronologies = new("chronologies"), colldate = as.Date(character(1)))
+
+
+      #set collunit metadata
+
+      possibleLipdCollunitKeys <- c("collectionunitid",
+                            "notes",
+                            "handle",
+                            "colldate",
+                            "location",
+                            "waterdepth",
+                            "gpslocation",
+                            "collunittype",
+                            "collectiondevice",
+                            "paleoDataName",
+                            "depositionalenvironment",
+                            "linkedChronData"
+      )
+      lipdCollunitKeys <- names(L$paleoData[[jj]])[names(L$paleoData[[jj]]) %in% possibleLipdCollunitKeys]
+
+      for (rr in lipdCollunitKeys){
+        if (rr == "paleoDataName"){
+          aa = "collectionunitname"
+        }else if (rr == "linkedChronData"){
+          aa = "defaultchronology"
+        }else{
+          aa=rr
+        }
+        slot(site1@collunits@collunits[[jj]], eval(aa)) <- unname(L$paleoData[[jj]][eval(rr)])[[1]]
+      }
+
+      ###############################################################################################
+      #link any associated chron data
+
+      #if there is a default chronology (linked chron data), go find it
+      if (!is.na(slot(site1@collunits@collunits[[jj]], "defaultchronology"))){
+        chronNow <- slot(site1@collunits@collunits[[jj]], "defaultchronology")
+
+        chronNum <- which(chronNow == unlist(lapply(L2$paleoData, function(x) x$linkedChronData)))
+
+        if (length(chronNum) < 1){
+          message("No chronology found, please make explicit link to chronData.")
+          message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
+        }
+      }#otherwise, report lack of chron data
+      else{
+        message("No chronology found, please make explicit link to chronData.")
+        message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
+      }
+
+
+
+      ###############################################################################################
+
       #loop over measurement tables
-      if (length(L$paleoData[[jj]]) > 0){
-        #space for measurementTable-object-level metadata
+      if (length(L$paleoData[[jj]]$measurementTable) > 0){
 
-        #iterate over paleoData measurement tables - equivalent to dataset in Neotoma
-        for (j in 1:length(L$paleoData[[jj]])){
 
-          PD1 <- L$paleoData[[jj]]$measurementTable[[j]]
-          sampleTab <- paleo1[[eval(paste0("paleo", jj, "meas", j))]]
 
-          sampleTabNames <- names(sampleTab)
+        #iterate over paleoData measurement tables - equivalent to dataset or lithology in Neotoma
+        for (j in 1:length(L$paleoData[[jj]]$measurementTable)){
 
-          #Get all the sample datum column headers
-          allSampleKeys <- list()
-          for (i in 1:length(sampleTabNames)){
-            #Handling of controlled synonyms for sample datum keys (paleoData measurement table keys in lipd)
-            allColHeaders <- names(PD1[sampleTabNames[i]][[1]])
-            for (dd in allColHeaders){
-              if (dd == "values"){
-                names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "values")] = "value"
-              }else if (dd == "measurementMaterial"){
-                names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "measurementMaterial")] = "element"
-              }else if (dd == "neotomaTaxonID"){
-                names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaTaxonID")] = "taxonid"
-              }else if (dd == "neotomaTaxongroup"){
-                names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaTaxonGroup")] = "Taxongroup"
-              }else if (dd == "variableName"){
-                names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "variableName")] = "variablename"
-              }else if (dd == "neotomaEcologicalGroup"){
-                names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaEcologicalGroup")] = "ecologicalgroup"
-              }else if (dd == "paleoData_proxy"){
-                names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "paleoData_proxy")] = "datasettype"
-              }else if (dd == "variableType"){
-                names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "variableType")] = "variabletype"
+          if (length(L$paleoData[[jj]]$measurementTable[[j]]$tableName) < 1){
+            stop(paste0("at paeloData ", jj, " measurementTable ", j, " 'tableName' must be defined"))
+          }
+
+
+          if(L$paleoData[[jj]]$measurementTable[[j]]$tableName == "dataset"){
+            ###########################################################################
+            #Add new dataset
+            ###########################################################################
+
+            if (!is.null(L$paleoData[[jj]]$paleoDataId)){
+              paleoNow <- L$paleoData[[jj]]$paleoDataId
+            }
+
+            ###########################################################################
+            #Link any chron data
+            if (!is.null(L$paleoData[[jj]]$measurementTable[[j]]$measurementTableId) & !is.null(chronNum)& !is.null(paleoNow)){
+              #use the known paleo-chron linkage to find measurement table
+              chronTabNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedMeasurementTable
+              chronTabNum <- which(chronTabNow == unlist(lapply(L2$chronData[[chronNum]]$measurementTable, function(x) x$measurementTableId)))
+              #and model
+              modelNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedModel
+              modelNum <- which(modelNow == unlist(lapply(L2$chronData[[chronNum]]$model, function(x) x$modelId)))
+              #and summary table
+              if (is.numeric(modelNum)){
+                summaryTabNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedSummaryTable
+                summaryTabNum <- which(summaryTabNow == unlist(lapply(L2$chronData[[chronNum]]$model[[modelNum]]$summaryTable, function(x) x$summaryTableId)))
+              }
+
+
+              if (length(chronTabNum) < 0){
+                message(paste0("The paleodata (", paleoNow, ") and chronData (", chronNow, ") link was established, but the measurement table linkage was not found."))
               }
             }
 
-            allSampleKeys[[i]] <- names(PD1[sampleTabNames[i]][[1]])
-          }
-          sampleCols <- unique(unlist(allSampleKeys))
+            ###########################################################################
+            #Build new chronology
+            chronos1 <- new("chronologies")
+            #copy lipd "chron data measurement table" as neotoma "chron controls" table
+            chronos1@chronologies[[j]] <- new("chronology")
+            chron1 <- getMeasurementTables(L, "chron")
+            chronos1@chronologies[[j]]@chroncontrols <- chron1[eval(paste0("chron",chronNum,"meas",chronTabNum))]
+            #fill other matching neotoma "chronology" slots with chron data measurement-table-level metadata
+            chrnSlots <- unlist(names(getSlots("chronology")))[!unlist(names(getSlots("chronology"))) %in% c("agemodel", "modelagetype")]
+            for (zz in chrnSlots){
+              if (zz == "chronologyid"){
+                aa = "measurementTableId"
+              }else if (zz == "dateprepared"){
+                aa = "neotomaDatePrepared"
+              }else if (zz == "chronologyname"){
+                aa = "neotomaChronologyname"
+              }else {
+                aa = zz
+              }
+              if (!is.null(L$chronData[[chronNum]]$measurementTable[[chronTabNum]][eval(aa)][[1]][[1]])){
+                slot(chronos1@chronologies[[j]], zz) <- L$chronData[[chronNum]]$measurementTable[[chronTabNum]][eval(aa)][[1]][[1]]
+              }
+            }
+            if (!is.null(chronNum) & !is.null(modelNum)){
+              slot(chronos1@chronologies[[j]], "agemodel") <- L$chronData[[chronNum]]$model[[modelNum]]$methods$method
+              slot(chronos1@chronologies[[j]], "modelagetype") <- L$chronData[[chronNum]]$model[[modelNum]]$methods$units
+            }else{
+              message("Could not find model methods. Chronology metadata fields 'agemodel' and 'modelagetype' not filled.")
+            }
+            if (slot(chronos1@chronologies[[j]], "chronologyid") == L$chronData[[chronNum]]$measurementTable[[chronTabNum]]$measurementTableId){
+              slot(chronos1@chronologies[[j]], "isdefault") <- 1
+            }else{
+              slot(chronos1@chronologies[[j]], "isdefault") <- 0
+            }
+
+            #which metadata could not be placed?
+            whichChronMetaNotPlaced <- names(L$chronData[[chronNum]]$measurementTable[[chronTabNum]]) %in% c(names(getSlots("chronology")), names(chron1[eval(paste0("chron",chronNum,"meas",chronTabNum))][[1]]), "measurementTableId", "linkedMeasurementTable")
+            whichChronMetaNotPlacedNames <- names(L$chronData[[chronNum]]$measurementTable[[chronTabNum]])[!whichChronMetaNotPlaced]
+            if(length(whichChronMetaNotPlacedNames)>0){
+              message(paste0("The following chronology (chronData measurement table) metadata could not be placed: ", whichChronMetaNotPlacedNames, "\n",
+                             "Consider renaming to one of the controlled neotoma terms: ", paste(chrnSlots, collapse = " "),"\n"))
+            }
+            slot(site1@collunits@collunits[[jj]], "chronologies") <- chronos1
+
+
+            ###########################################################################
+            #dataset metadata
+            dataset1 <- neotoma2::set_dataset()
+
+            possibleLipdDatasetKeys <-
+              c(
+                "measurementTableId",
+                "database",
+                "datasettype",
+                "measurementTableName",
+                "age_range_young",
+                "notes",
+                "measurementTableDOI",
+                "age_range_old",
+                "specimens",
+                "measurementTablePIList"
+              )
+
+            lipdDatasetKeys <- names(L$paleoData[[jj]]$measurementTable[[j]])[names(L$paleoData[[jj]]$measurementTable[[j]]) %in% possibleLipdDatasetKeys]
+
+            for (rr in lipdDatasetKeys){
+              if (rr == "measurementTableId"){
+                aa = "datasetid"
+              }else if (rr == "measurementTableName"){
+                aa = "datasetname"
+              }else if (rr == "measurementTableDOI"){
+                aa = "doi"
+              }else if (rr == "measurementTablePIList"){
+                aa = "pi_list"
+              }else{
+                aa=rr
+              }
+              slot(dataset1, eval(aa)) <- unname(L$paleoData[[jj]]$measurementTable[[j]][eval(rr)])[[1]]
+            }
+
+            #note unplaced dataset metadata
+            areTheseDatasetMetadata <- names(L$paleoData[[jj]]$measurementTable[[j]])[unlist(lapply(L$paleoData[[jj]]$measurementTable[[j]], function(x) class(x) != "list"))]
+
+            datasetMetadataNotPlaced <- areTheseDatasetMetadata[!areTheseDatasetMetadata %in% c(possibleLipdDatasetKeys,"tableName", "linkedMeasurementTable", "linkedModel", "linkedSummaryTable")]
+
+            if (length(datasetMetadataNotPlaced)>0){
+              message(paste0("The following dataset (paleoData measurement table) metadata could not be placed: ", paste(datasetMetadataNotPlaced, collapse = " "), "\n",
+                             "Consider renaming to one of the controlled lipd standard for neotoma terms: ", paste(possibleLipdDatasetKeys, collapse = " "),"\n"))
+            }
 
 
 
+            #Gather dataset data
+            PD1 <- L$paleoData[[jj]]$measurementTable[[j]]
+            sampleTab <- paleo1[[eval(paste0("paleo", jj, "meas", j))]]
+            sampleTabNames <- names(sampleTab)
 
-          #initiate list for neotoma "samples"
-          allSamps <- list()
+            ###########################################################################
+            #build a sample
 
-          pullAge <- which(tolower(sampleTabNames) == "age")
-          pullDepth <- which(tolower(sampleTabNames) == "depth")
-          pullYear <- which(tolower(sampleTabNames) == "year")
+            #extract sample metadata
+            possibleLipdSampleKeys <-
+              c(
+                "age",
+                "igsn",
+                "sampleid",
+                "thickness",
+                "samplename",
+                "sampleanalyst",
+                "analysisunitid",
+                "analysisunitname",
+                "depth"
+              )
 
-          #iterate over all ages (sample layers) to build a data frame at each layer
-          for (k in 1:nrow(sampleTab)){
+            lipdSampleKeys <- names(L$paleoData[[jj]]$measurementTable[[j]])[names(L$paleoData[[jj]]$measurementTable[[j]]) %in% possibleLipdSampleKeys]
 
-            pullAgeDepthYear <- c(sampleTabNames[pullAge], sampleTabNames[pullDepth], sampleTabNames[pullYear])
-            notAgeDepthYear <- which(!sampleTabNames %in% pullAgeDepthYear)
+            #Note unplaced sample metadata
+            doTheyHaveMetadata <- names(L$paleoData[[jj]]$measurementTable[[j]])[unlist(lapply(L$paleoData[[jj]]$measurementTable[[j]], function(x) length(names(x))==2))]
+            areTheyKnownKeys <- doTheyHaveMetadata[!doTheyHaveMetadata %in% possibleLipdSampleKeys]
+            if (length(areTheyKnownKeys)>0){
+              message(paste0("The following sample (paleoData measurement table columns) metadata could not be placed: ", paste(areTheyKnownKeys, collapse = " "), "\n",
+                             "Consider renaming to one of the controlled lipd standard for neotoma terms: ", paste(possibleLipdSampleKeys, collapse = " "),"\n"))
+            }
 
-            neoSamples <- data.frame(matrix(ncol = length(sampleCols), nrow = length(notAgeDepthYear), data=NA))
-            colnames(neoSamples) <- sampleCols
+            #Get all the sample datum column headers
+            allSampleKeys <- list()
+            for (i in 1:length(sampleTabNames)){
+              #Handling of controlled synonyms for sample datum keys (paleoData measurement table keys in lipd)
+              allColHeaders <- names(PD1[sampleTabNames[i]][[1]])
+              for (dd in allColHeaders){
+                if (dd == "values"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "values")] = "value"
+                }else if (dd == "neotomaElement"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaElement")] = "element"
+                }else if (dd == "neotomaTaxonid"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaTaxonid")] = "taxonid"
+                }else if (dd == "neotomaTaxongroup"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaTaxongroup")] = "taxongroup"
+                }else if (dd == "variableName"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "variableName")] = "variablename"
+                }else if (dd == "neotomaEcologicalgroup"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaEcologicalgroup")] = "ecologicalgroup"
+                }else if (dd == "neotomaSymmetry"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaSymmetry")] = "symmetry"
+                }else if (dd == "neotomaContext"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaContext")] = "context"
+                }else if (dd == "units"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "units")] = "units"
+                }else {
+                  message(paste0("This sample datum key is not valid for Neotoma: ", dd, "\nplease refer to lipd2neotoma standardization documentation for help"))
+                }
+              }
 
-            #iterate over each variable (i) of the sample df (k)
-            for (i in notAgeDepthYear){
-              #iterate over each property (ii) for a given variable (i)
-              for (ii in 1:length(sampleCols)){
-                #check that the given property exists for this variable
-                if (is.null(PD1[sampleTabNames[i]][[1]][eval(sampleCols[ii])][[1]])){
-                  neoSamples[i,ii] <- NA
-                }else{
-                  if (grepl("value", sampleCols[ii])){
-                    neoSamples[i,ii] <- PD1[sampleTabNames[i]][[1]][eval(sampleCols[ii])][[1]][k]
+              allSampleKeys[[i]] <- names(PD1[sampleTabNames[i]][[1]])
+            }
+            sampleCols <- unique(unlist(allSampleKeys))
+
+            #initiate list for neotoma "samples"
+            allSamps <- list()
+
+            pullAge <- which(tolower(sampleTabNames) == "age")
+            pullDepth <- which(tolower(sampleTabNames) == "depth")
+            pullYear <- which(tolower(sampleTabNames) == "year")
+
+            #iterate over all ages (sample layers) to build a data frame (datum) at each layer
+            for (k in 1:nrow(sampleTab)){
+
+              pullAgeDepthYear <- c(sampleTabNames[pullAge], sampleTabNames[pullDepth], sampleTabNames[pullYear], lipdSampleKeys)
+              notAgeDepthYear <- which(!sampleTabNames %in% pullAgeDepthYear)
+
+              neoSamples <- data.frame(matrix(ncol = length(sampleCols), nrow = length(notAgeDepthYear), data=NA))
+              colnames(neoSamples) <- sampleCols
+
+              #iterate over each variable (i) of the sample df (k)
+              for (i in notAgeDepthYear){
+                #iterate over each property (ii) for a given variable (i)
+                for (ii in 1:length(sampleCols)){
+                  #check that the given property exists for this variable
+                  if (is.null(PD1[sampleTabNames[i]][[1]][eval(sampleCols[ii])][[1]])){
+                    neoSamples[i,ii] <- NA
                   }else{
-                    neoSamples[i,ii] <- PD1[sampleTabNames[i]][[1]][eval(sampleCols[ii])][[1]][1]
+                    if (grepl("value", sampleCols[ii])){
+                      neoSamples[i,ii] <- PD1[sampleTabNames[i]][[1]][eval(sampleCols[ii])][[1]][k]
+                    }else{
+                      neoSamples[i,ii] <- PD1[sampleTabNames[i]][[1]][eval(sampleCols[ii])][[1]][1]
+                    }
                   }
                 }
               }
+
+              neoSamples$value[as.numeric(neoSamples$value) == 0] <- NA
+              neoSamples <- neoSamples[!is.na(neoSamples$value),]
+
+
+              #assign sample slots
+              sample1 <- new("sample")
+
+              #add sample metadata
+              for (rr in lipdSampleKeys){
+                if (rr == "age"){
+                  aa = "ages"
+                }else{
+                  aa=rr
+                }
+                slot(sample1, eval(aa)) <- as.numeric(unname(L$paleoData[[jj]]$measurementTable[[j]][eval(rr)])[[1]]$values[k])
+              }
+
+              if (length(slot(sample1, eval("ages")))<1 | is.na(slot(sample1, eval("depth")))){
+                summaryTab <- L2$chronData[[chronNum]]$model[[modelNum]]$summaryTable[[summaryTabNum]]
+                #toss out any metadata fields
+                summaryTab <- summaryTab[unlist(lapply(summaryTab, function(x) class(x)=="list"))]
+                #add additonal sample metadata
+                for (rr in names(summaryTab)){
+                  if (rr == "age"){
+                    aa = "ages"
+                  }else{
+                    aa=rr
+                  }
+                  slot(sample1, eval(aa)) <- as.numeric(summaryTab[eval(rr)][[1]]$values[k])
+                }
+              }
+
+
+
+              #add datum to appropriate sample slot
+              sample1@datum <- neoSamples
+
+              #add current sample to list of all samples
+              allSamps[[k]] <- sample1
             }
 
-            neoSamples$value[as.numeric(neoSamples$value) == 0] <- NA
-            neoSamples <- neoSamples[complete.cases(neoSamples),]
-
-            #build sample and assign sample slots
-            #note - there is not currently a place to store sample-level metadata in lipd!
-            sample1 <- new("sample")
-            sample1@datum <- neoSamples
-            if (length(pullAge)>0){
-              sample1@ages <- as.numeric(PD1[sampleTabNames[pullAge]][[1]]$age[k])
+            #Place samples and dataset
+            for (i in 1:length(allSamps)){
+              dataset1@samples@samples[[i]] <- allSamps[[i]]
             }
-            if (length(pullYear)>0){
-              sample1@ages <- as.numeric(PD1[sampleTabNames[pullAge]][[1]]$year[k])
+
+            #place dataset in list of datasets
+            datasetAll@datasets[[j]] <- dataset1
+
+          } else if (L$paleoData[[jj]]$measurementTable[[j]]$tableName == "lithology"){
+
+            ###########################################################################
+            #Add new lithology
+            ###########################################################################
+
+            lith1 <- new("lithology")
+
+
+            possibleLipdLithologyKeys <-
+              c(
+                "neotomaLithologyid",
+                "neotomaLowerboundary",
+                "neotomaRecdatecreated",
+                "neotomaRecdatemodified"
+              )
+
+            lipdLithologKeys <- names(L$paleoData[[jj]]$measurementTable[[j]])[names(L$paleoData[[jj]]$measurementTable[[j]]) %in% possibleLipdLithologyKeys]
+
+            for (rr in lipdLithologKeys){
+              if (rr == "neotomaLithologyid"){
+                aa = "lithologyid"
+              }else if (rr == "neotomaLowerboundary"){
+                aa = "lowerboundary"
+              }else if (rr == "neotomaRecdatecreated"){
+                aa = "recdatecreated"
+              }else if (rr == "neotomaRecdatemodified"){
+                aa = "recdatemodified"
+              }else{
+                aa=rr
+              }
+              slot(lith1, eval(aa)) <- unname(L$paleoData[[jj]]$measurementTable[[j]][eval(rr)])[[1]]
             }
-            if (length(pullDepth)>0){
-              sample1@depth <- as.numeric(PD1[sampleTabNames[pullDepth]][[1]]$value[k])
+
+            #note unplaced dataset metadata
+            areTheseLithologyMetadata <- names(L$paleoData[[jj]]$measurementTable[[j]])[unlist(lapply(L$paleoData[[jj]]$measurementTable[[j]], function(x) class(x) != "list"))]
+
+            lithologyMetadataNotPlaced <- areTheseLithologyMetadata[!areTheseLithologyMetadata %in% c(possibleLipdLithologyKeys,"tableName")]
+
+            if (length(datasetMetadataNotPlaced)>0){
+              message(paste0("The following lithology (paleoData measurement table) metadata could not be placed: ", paste(datasetMetadataNotPlaced, collapse = " "), "\n",
+                             "Consider renaming to one of the controlled lipd standard for neotoma terms: ", paste(possibleLipdLithologyKeys, collapse = " "),"\n"))
             }
-            allSamps[[k]] <- sample1
-          }
 
-          #Organize samples and datasets
-          dataset1 <- neotoma2::set_dataset()
-          for (i in 1:length(allSamps)){
-            dataset1@samples@samples[[i]] <- allSamps[[i]]
-          }
-          #Find and store metadata for  dataset slots
-          datasetSlots <- names(getSlots("dataset"))
-          whichMetadata <- !names(PD1) %in% names(sampleTab)
-          sampleMetaNames <- names(PD1[whichMetadata])
-          datasetMetaNotPlaced <- sampleMetaNames[!sampleMetaNames %in% datasetSlots]
-          if(length(datasetMetaNotPlaced)>0){
-            message(paste0("The following dataset (paleoData measurement table) metadata could not be placed: ", paste(datasetMetaNotPlaced, collapse = " "), "\n",
-                           "Consider renaming to one of the controlled neotoma terms: ", paste(datasetSlots, collapse = " "),"\n"))
-          }
 
-          sampleMetaNames <- sampleMetaNames[sampleMetaNames %in% datasetSlots]
+            lithologyColNames <- names(L$paleoData[[jj]]$measurementTable[[j]])[unlist(lapply(L$paleoData[[jj]]$measurementTable[[j]], function(x) class(x) == "list"))]
 
-          datasetMetaNotPlaced <- sampleMetaNames[sampleMetaNames %in% datasetSlots]
+            lithologies <- list()
 
-          if (length(sampleMetaNames)>0){
-            for (kk in sampleMetaNames){
-              if(.hasSlot(dataset1, kk)){
-                slot(dataset1, kk) <- PD1[eval(kk)][[1]]
+            if (length(lithologyColNames) > 0) {
+              for (yy in 1:length(L$paleoData[[jj]]$measurementTable[[j]][lithologyColNames[1]][[1]]$values)){
+                lithNew <- lith1
+                for (tt in lithologyColNames){
+                  if (tt == "neotomaLithologyid"){
+                    aa = "lithologyid"
+                    slot(lithNew, eval(aa)) <- as.numeric(L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy])
+                  }else if (tt == "neotomaLowerboundary"){
+                    aa = "lowerboundary"
+                    slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
+                  }else if (tt == "neotomaRecdatecreated"){
+                    aa = "recdatecreated"
+                    slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
+                  }else if (tt == "neotomaRecdatemodified"){
+                    aa = "recdatemodified"
+                    slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
+                  }else if (tt == "depthTop"){
+                    aa = "depthtop"
+                    slot(lithNew, eval(aa)) <- as.numeric(L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy])
+                  }else if (tt == "depthBottom"){
+                    aa = "depthbottom"
+                    slot(lithNew, eval(aa)) <- as.numeric(L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy])
+                  }else if (tt == "facies"){
+                    aa = "description"
+                    slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
+                  }else{
+                    aa=tt
+                  }
+                }
+                lithologies[[yy]] <- lithNew
               }
             }
+          } else {
+            stop(paste0("at paeloData ", jj, " measurementTable ", j, " 'tableName' must be one of: 'dataset', 'lithology'"))
           }
-          datasetAll@datasets[[j]] <- dataset1
         }
       }
+      #place datasets in collunit
       slot(site1@collunits@collunits[[jj]], "datasets") <- datasetAll
     }
   }
 
-  #######################################################################
-  #chronData
-  #######################################################################
+  neotomaStuff <- list(site1, lithologies)
 
-  if (length(grep("chron", attributes(L)$names)) > 0){
-    #grab measurement tables
-    chron1 <- getMeasurementTables(L, "chron")
-    #space for chronData-object-level metadata
-
-    #iterate over chronData objects - equivalent to collunit in Neotoma (parts of the collunit are also in paleoData)
-    for (jj in 1:length(L$chronData)){
-      chronos1 <- new("chronologies")
-
-      #loop over measurement tables
-      if (length(L$chronData[[jj]]) > 0){
-        #space for measurementTable-object-level metadata
-
-        #iterate over chronData measurement tables - equivalent to dataset in Neotoma
-        for (j in 1:length(L$chronData[[jj]])){
-          #copy lipd "chron data measurement table" as neotoma "chron controls" table
-          chronos1@chronologies[[j]] <- new("chronology")
-          chronos1@chronologies[[j]]@chroncontrols <- chron1[eval(paste0("chron",jj,"meas",j))]
-          #fill other matching neotoma "chronology" slots with chron data measurement-table-level metadata
-          chrnSlots <- unlist(names(getSlots("chronology")))
-          haveChronoSlots <- names(getSlots("chronology"))[names(getSlots("chronology")) %in% names(L$chronData[[jj]]$measurementTable[[j]])]
-          for (zz in haveChronoSlots){
-            slot(chronos1@chronologies[[j]], zz) <- L$chronData[[jj]]$measurementTable[[j]][eval(zz)][[1]]
-          }
-
-          #which metadata could not be placed?
-          whichChronMetaNotPlaced <- names(L$chronData[[jj]]$measurementTable[[j]]) %in% c(names(getSlots("chronology")), names(chron1[eval(paste0("chron",jj,"meas",j))][[1]]))
-          whichChronMetaNotPlacedNames <- names(L$chronData[[jj]]$measurementTable[[j]])[!whichChronMetaNotPlaced]
-          if(length(whichChronMetaNotPlacedNames)>0){
-            message(paste0("The following chronology (chronData measurement table) metadata could not be placed: ", whichChronMetaNotPlacedNames, "\n",
-                           "Consider renaming to one of the controlled neotoma terms: ", paste(chrnSlots, collapse = " "),"\n"))
-          }
-        }
-      }
-      slot(site1@collunits@collunits[[jj]], "chronologies") <- chronos1
-    }
-  }
-
-
-
-  return(site1)
+  return(neotomaStuff)
 }
 
 
