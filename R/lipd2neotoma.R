@@ -113,6 +113,8 @@ fromOrigLipd <- function(L){
                 names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaEcologicalGroup")] = "ecologicalgroup"
               }else if (dd == "paleoData_proxy"){
                 names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "paleoData_proxy")] = "datasettype"
+              }else if (dd == "variableType"){
+                names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "variableType")] = "variabletype"
               }
             }
 
