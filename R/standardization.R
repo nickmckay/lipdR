@@ -618,13 +618,10 @@ getAllTsNames <- function(TS){
   return(sort(unique(unlist(purrr::map(TS,names)))))
 }
 
-standardizeAll <- function(TS){
+standardizeAll <- function(TS,allKeys = googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")){
 notesOut <- list()
   an <- getAllTsNames(TS)
 
-
-
-  allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
 
   toStandardize <- setdiff(allKeys$name,"paleoData_proxyGeneral")
 
@@ -719,10 +716,9 @@ notesOut <- list()
 #'
 #' @return
 #' @export
-isValidAll <- function(TS,report = TRUE){
+isValidAll <- function(TS,report = TRUE,allKeys = googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")){
   vo <- list()
   an <- getAllTsNames(TS)
-  allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
 
   toStandardize <- setdiff(allKeys$name,"paleoData_proxyGeneral")
 
