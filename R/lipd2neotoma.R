@@ -215,7 +215,7 @@ fromOrigLipd <- function(L){
             #copy lipd "chron data measurement table" as neotoma "chron controls" table
             chronos1@chronologies[[j]] <- new("chronology")
             chron1 <- getMeasurementTables(L, "chron")
-            chronos1@chronologies[[j]]@chroncontrols <- chron1[eval(paste0("chron",chronNum,"meas",chronTabNum))]
+            chronos1@chronologies[[j]]@chroncontrols <- chron1[eval(paste0("chron",chronNum,"meas",chronTabNum))][[1]]
             #fill other matching neotoma "chronology" slots with chron data measurement-table-level metadata
             chrnSlots <- unlist(names(getSlots("chronology")))[!unlist(names(getSlots("chronology"))) %in% c("agemodel", "modelagetype")]
             for (zz in chrnSlots){
