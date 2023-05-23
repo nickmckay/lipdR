@@ -57,7 +57,7 @@ fromOrigLipd <- function(L){
   whichChronMetaNotPlaced <- whichChronMetaNotPlaced[!whichChronMetaNotPlaced %in% c("paleoData", "chronData")]
 
   if (!is.null(L$dataSetName)){
-    slot(site1, "sitename") <- L$dataSetName
+    slot(site1, "sitename") <- L$geo$siteName
     whichChronMetaNotPlaced <- whichChronMetaNotPlaced[!whichChronMetaNotPlaced %in% "dataSetName"]
   }
   if (!is.null(L$geo$elevation)){
@@ -103,8 +103,8 @@ fromOrigLipd <- function(L){
 
       possibleLipdCollunitKeys <- c("collectionunitid",
                             "notes",
-                            "handle",
-                            "colldate",
+                            "neotomaHandle",
+                            "collectionDate",
                             "location",
                             "waterdepth",
                             "gpslocation",
@@ -117,7 +117,11 @@ fromOrigLipd <- function(L){
       lipdCollunitKeys <- names(L$paleoData[[jj]])[names(L$paleoData[[jj]]) %in% possibleLipdCollunitKeys]
 
       for (rr in lipdCollunitKeys){
-        if (rr == "paleoDataName"){
+        if (rr == "neotomaHandle"){
+          aa = "handle"
+        }else if (rr == "collectionDate"){
+          aa = "colldate"
+        }else if (rr == "paleoDataName"){
           aa = "collectionunitname"
         }else if (rr == "linkedChronData"){
           aa = "defaultchronology"
@@ -245,13 +249,13 @@ fromOrigLipd <- function(L){
             possibleLipdDatasetKeys <-
               c(
                 "measurementTableId",
-                "database",
-                "datasettype",
+                "neotomaDatabase",
+                "neotomaDatasetType",
                 "measurementTableName",
-                "age_range_young",
+                "ageRangeYoung",
                 "notes",
                 "measurementTableDOI",
-                "age_range_old",
+                "ageRangeOld",
                 "specimens",
                 "measurementTablePIList"
               )
@@ -267,6 +271,14 @@ fromOrigLipd <- function(L){
                 aa = "doi"
               }else if (rr == "measurementTablePIList"){
                 aa = "pi_list"
+              }else if (rr == "neotomaDatabase"){
+                aa = "database"
+              }else if (rr == "neotomaDatasetType"){
+                aa = "datasettype"
+              }else if (rr == "ageRangeYoung"){
+                aa = "age_range_young"
+              }else if (rr == "ageRangeOld"){
+                aa = "age_range_old"
               }else{
                 aa=rr
               }
@@ -327,14 +339,14 @@ fromOrigLipd <- function(L){
                   names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "values")] = "value"
                 }else if (dd == "neotomaElement"){
                   names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaElement")] = "element"
-                }else if (dd == "neotomaTaxonid"){
-                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaTaxonid")] = "taxonid"
-                }else if (dd == "neotomaTaxongroup"){
-                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaTaxongroup")] = "taxongroup"
+                }else if (dd == "neotomaTaxonId"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaTaxonId")] = "taxonid"
+                }else if (dd == "neotomaTaxonGroup"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaTaxonGroup")] = "taxongroup"
                 }else if (dd == "variableName"){
                   names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "variableName")] = "variablename"
-                }else if (dd == "neotomaEcologicalgroup"){
-                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaEcologicalgroup")] = "ecologicalgroup"
+                }else if (dd == "neotomaEcologicalGroup"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaEcologicalGroup")] = "ecologicalgroup"
                 }else if (dd == "neotomaSymmetry"){
                   names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaSymmetry")] = "symmetry"
                 }else if (dd == "neotomaContext"){
