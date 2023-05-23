@@ -101,17 +101,17 @@ fromOrigLipd <- function(L){
 
       #set collunit metadata
 
-      possibleLipdCollunitKeys <- c("collectionunitid",
+      possibleLipdCollunitKeys <- c("neotomaCollectionUnitId",
                             "notes",
                             "neotomaHandle",
                             "collectionDate",
                             "location",
-                            "waterdepth",
-                            "gpslocation",
-                            "collunittype",
-                            "collectiondevice",
+                            "waterDepth",
+                            "gpsLocation",
+                            "neotomaCollectionUnitType",
+                            "collectionDevice",
                             "paleoDataName",
-                            "depositionalenvironment",
+                            "depositionalEnvironment",
                             "linkedChronData"
       )
       lipdCollunitKeys <- names(L$paleoData[[jj]])[names(L$paleoData[[jj]]) %in% possibleLipdCollunitKeys]
@@ -123,6 +123,18 @@ fromOrigLipd <- function(L){
           aa = "colldate"
         }else if (rr == "paleoDataName"){
           aa = "collectionunitname"
+        }else if (rr == "depositionalEnvironment"){
+          aa = "depositionalenvironment"
+        }else if (rr == "collectionDevice"){
+          aa = "collectiondevice"
+        }else if (rr == "neotomaCollectionUnitType"){
+          aa = "collunittype"
+        }else if (rr == "gpsLocation"){
+          aa = "gpslocation"
+        }else if (rr == "waterDepth"){
+          aa = "waterdepth"
+        }else if (rr == "neotomaCollectionUnitId"){
+          aa = "collectionunitid"
         }else if (rr == "linkedChronData"){
           aa = "defaultchronology"
         }else{
@@ -310,12 +322,12 @@ fromOrigLipd <- function(L){
               c(
                 "age",
                 "igsn",
-                "sampleid",
+                "neotomaSampleId",
                 "thickness",
-                "samplename",
-                "sampleanalyst",
-                "analysisunitid",
-                "analysisunitname",
+                "neotomaSampleName",
+                "neotomaSampleAnalyst",
+                "neotomaAnalysisUnitId",
+                "neotomaAnalysisUnitName",
                 "depth"
               )
 
@@ -406,6 +418,16 @@ fromOrigLipd <- function(L){
               for (rr in lipdSampleKeys){
                 if (rr == "age"){
                   aa = "ages"
+                }else if (rr == "neotomaSampleId"){
+                  aa = "sampleid"
+                }else if (rr == "neotomaSampleName"){
+                  aa = "samplename"
+                }else if (rr == "neotomaSampleAnalyst"){
+                  aa = "sampleanalyst"
+                }else if (rr == "neotomaAnalysisUnitId"){
+                  aa = "analysisunitid"
+                }else if (rr == "neotomaAnalysisUnitName"){
+                  aa = "analysisunitname"
                 }else{
                   aa=rr
                 }
