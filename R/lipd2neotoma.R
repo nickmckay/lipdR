@@ -354,7 +354,7 @@ fromOrigLipd <- function(L){
                 }else if (dd == "units"){
                   names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "units")] = "units"
                 }else {
-                  message(paste0("This sample datum key is not valid for Neotoma: ", dd, "\nplease refer to lipd2neotoma standardization documentation for help"))
+                  message(paste0("For ", sampleTabNames[i], " This sample datum key is not valid for Neotoma: ", dd, "\nplease refer to lipd2neotoma standardization documentation for help"))
                 }
               }
 
