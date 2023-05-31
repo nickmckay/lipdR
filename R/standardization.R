@@ -1,31 +1,19 @@
 #' Auto-update Standard tables
 #'
 checkStandardTables <- function(){
-  if(.standardTables$tablesUpdated == 0){
-    ans1 <- askYesNo("Would you like to update the standard tables (recommended)?")
-    if(ans1){
       updateStandardTables()
-      .standardTables$tablesUpdated <- 1
-    }else{
-      assign("standardTables", standardTables, envir = .GlobalEnv)
-    }
-  }
 }
-
-
-
 
 #' grab metaData for given key from standard tables
 #'
-#' @param lipdTS
-#' @param key
+#' @param lipdTS a lipd TS object
+#' @param key the key to check
 #'
 #' @return list
 #' @export
 updateMetaDataFromStandardTables <- function(lipdTS, key){
 
   checkStandardTables()
-
 
   TSorig <- lipdTS
 
@@ -197,8 +185,8 @@ validCheck <- TSvalsO %in% standardVals |
 
 #' make sure all terms under a controlled key are valid
 #'
-#' @param lipdTS
-#' @param key
+#' @param lipdTS a lipd-ts object
+#' @param key the key that you want to check
 #'
 #' @return invalid keys df
 #' @export
@@ -258,8 +246,8 @@ isValidValue <- function(lipdTS, key = NA){
 
 #' standardize terms automatically based on known synonyms
 #'
-#' @param lipdTS
-#' @param key
+#' @param lipdTS a lipd TS object
+#' @param key the key to check
 #'
 #' @return updated TS
 #' @export
@@ -485,13 +473,11 @@ standardizeValue <- function(lipdTS, key = NA){
 
 #' Update notes and paleoData_notes
 #'
-#' @param lipdTS
-#' @param metadataChangesDF
-#' @param standardizeSynonymDF
+#' @param lipdTS a LiPD TS object
+#' @param metadataChangesDF a data frame listing the changes to the metadata
+#' @param standardizeSynonymDF standardizing synonyms dataframe
 #'
 #' @return lipdTS
-
-
 updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonymDF=NA, deleteTheseTS=NA){
 
 
@@ -618,12 +604,12 @@ getAllTsNames <- function(TS){
   return(sort(unique(unlist(purrr::map(TS,names)))))
 }
 
-standardizeAll <- function(TS,allKeys = googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")){
+standardizeAll <- function(TS,allKeys = names(standardTables)){
 notesOut <- list()
   an <- getAllTsNames(TS)
 
 
-  toStandardize <- setdiff(allKeys$name,"paleoData_proxyGeneral")
+  toStandardize <- setdiff(allKeys,"paleoData_proxyGeneral")
 
   for(tc in toStandardize){
 
@@ -714,13 +700,13 @@ notesOut <- list()
 #'
 #' @param TS
 #'
-#' @return
+#' @return boolean
 #' @export
-isValidAll <- function(TS,report = TRUE,allKeys = googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")){
+isValidAll <- function(TS,report = TRUE,allKeys = names(standardTables)){
   vo <- list()
   an <- getAllTsNames(TS)
 
-  toStandardize <- setdiff(allKeys$name,"paleoData_proxyGeneral")
+  toStandardize <- setdiff(allKeys,"paleoData_proxyGeneral")
 
   for(tc in toStandardize){
     print(tc)

@@ -4,8 +4,7 @@
 .onLoad <- function(libname, pkgname){
   .lipdRquery <<- new.env()
   .lipdRquery$queryUpdated <- 0
-  .standardTables <<- new.env()
-  .standardTables$tablesUpdated <- 0
+  updateStandardTables()
 }
 #
 # #Update the query table

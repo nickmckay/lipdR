@@ -8,13 +8,13 @@
 #'
 #' @param qcID
 #'
-#' @return
+#' @return stnadardized qc sheet
 #' @export
 standardizeQCsheetValues <- function(qcSheet){
 
-  allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
+  allKeys <- names(standardTables)
 
-  standardKeyNames <- allKeys$name[!"paleoData_proxyGeneral" == allKeys$name]
+  standardKeyNames <- setdiff(allKeys,"paleoData_proxyGeneral")
 
   tsNames <- sub("interpretation", "climateInterpretation1", standardKeyNames)
 

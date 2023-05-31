@@ -9,6 +9,9 @@ standardizeQCsheetValues(qcSheet)
 \arguments{
 \item{qcID}{}
 }
+\value{
+stnadardized qc sheet
+}
 \description{
 standardizeQCsheetValues
 }

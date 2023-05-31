@@ -4,7 +4,7 @@
 \alias{isValidAll}
 \title{Are all the parameters valid?}
 \usage{
-isValidAll(TS, report = TRUE)
+isValidAll(TS, report = TRUE, allKeys = names(standardTables))
 }
 \arguments{
 \item{TS}{}
