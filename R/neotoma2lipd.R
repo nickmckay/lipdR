@@ -279,8 +279,7 @@ getPaleoDataNeotoma2 <- function(site){
       attemp <- tidyr::pivot_wider(tsd,
                                    id_cols = c("depth","age","agetype"),
                                    names_from = c("variablename","elementtype","context"),
-                                   values_from = i,
-                                   values_fn=sum)
+                                   values_from = i)
 
 
       dataOut <- purrr::map_chr(purrr::array_tree(attemp,2),uget)
@@ -309,7 +308,14 @@ getPaleoDataNeotoma2 <- function(site){
                              values_from = c("value"))
 
     if(any(purrr::map(rs,class) == "list")){
-      stop("Failed to uniquely pivot the neotoma download")
+      rs <- tidyr::pivot_wider(tsd,
+                               id_cols = c("depth","age"),
+                               names_from = c("variablename","elementtype","context"),
+                               values_from = c("value"),
+                               values_fn = sum)
+      if(any(purrr::map(rs,class) == "list")){
+        stop("Failed to uniquely pivot the neotoma download")
+      }
     }
 
     rs[is.null(rs)] <- NA
