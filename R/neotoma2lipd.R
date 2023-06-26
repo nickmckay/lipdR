@@ -279,7 +279,8 @@ getPaleoDataNeotoma2 <- function(site){
       attemp <- tidyr::pivot_wider(tsd,
                                    id_cols = c("depth","age","agetype"),
                                    names_from = c("variablename","elementtype","context"),
-                                   values_from = i)
+                                   values_from = i,
+                                   values_fn=sum)
 
 
       dataOut <- purrr::map_chr(purrr::array_tree(attemp,2),uget)
