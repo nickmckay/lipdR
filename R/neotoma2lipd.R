@@ -312,7 +312,7 @@ getPaleoDataNeotoma2 <- function(site){
                                id_cols = c("depth","age"),
                                names_from = c("variablename","elementtype","context"),
                                values_from = c("value"),
-                               values_fn = sum)
+                               values_fn = values_fn)
       if(any(purrr::map(rs,class) == "list")){
         stop("Failed to uniquely pivot the neotoma download")
       }
@@ -386,7 +386,7 @@ getPaleoDataNeotoma2 <- function(site){
 #' D <- neotoma2::get_downloads(B)
 #' L <- neotoma2lipd(D)
 #'
-neotoma2lipd <- function(site){
+neotoma2lipd <- function(site, values_fn=NULL){
 
   if (!requireNamespace("neotoma2", quietly = TRUE)) {
     stop(
