@@ -308,11 +308,11 @@ getPaleoDataNeotoma2 <- function(site){
                              values_from = c("value"))
 
     if(any(purrr::map(rs,class) == "list")){
-      rs <- tidyr::pivot_wider(tsd,
+      rs <- suppressWarnings(tidyr::pivot_wider(tsd,
                                id_cols = c("depth","age"),
                                names_from = c("variablename","elementtype","context"),
                                values_from = c("value"),
-                               values_fn = values_fn)
+                               values_fn = sum))
       if(any(purrr::map(rs,class) == "list")){
         stop("Failed to uniquely pivot the neotoma download")
       }
@@ -386,7 +386,7 @@ getPaleoDataNeotoma2 <- function(site){
 #' D <- neotoma2::get_downloads(B)
 #' L <- neotoma2lipd(D)
 #'
-neotoma2lipd <- function(site, values_fn=NULL){
+neotoma2lipd <- function(site){
 
   if (!requireNamespace("neotoma2", quietly = TRUE)) {
     stop(
