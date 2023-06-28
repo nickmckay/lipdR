@@ -269,7 +269,7 @@ getPaleoDataNeotoma2 <- function(site){
         stop(paste0("Error at Collection Unit: ", collunit1, " while gathering metadata field: ", i, ". See Error message above."))
       }, warning=function(cond) {
         message("Warning message from pivot_wider in lipdR:::getPaleoDataNeotoma2():")
-        message("These samples appear to be duplicated: ")
+        message("These data appear to be duplicated (n gives the number of dulicates): ")
         duplicates <- data1 %>%
           dplyr::group_by(depth, age, agetype, variablename, elementtype, context) %>%
           dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
