@@ -465,7 +465,9 @@ neotoma2lipd <- function(site){
           summarise(value = sum(value))
 
         site@collunits[[cc]]@datasets[[1]]@samples@samples[sampleIndexDups[1]][[1]]@datum <- data.frame(weldedSampsDF)
-        site@collunits[[cc]]@datasets[[1]]@samples@samples <- site@collunits[[cc]]@datasets[[1]]@samples@samples[-sampleIndexDups[2]]
+        for (iii in 2:length(sampleIndexDups)){
+          site@collunits[[cc]]@datasets[[1]]@samples@samples <- site@collunits[[cc]]@datasets[[1]]@samples@samples[-sampleIndexDups[iii]]
+        }
       }
     }
   }
