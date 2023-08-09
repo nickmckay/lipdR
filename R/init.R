@@ -200,6 +200,8 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
         yes = dsn,
         no = NA)
 
+      # assign most recent version to datasetVersion
+      j$datasetVersion <- getVersion(j)
 
       # Set the data in D using the datasetname
       D[[dsn]] <- j
