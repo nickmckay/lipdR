@@ -23,7 +23,7 @@ standardizeQCsheetValues <- function(qcSheet){
   #QCkeys and corresponding TSName and corresponding standardKey in DF
   keyConDF <- keyConversion[keyConversion$tsName %in% tsNames,c(1,2)]
   keyConDF$standKey <- standardKeyNames[unlist(lapply(keyConDF$tsName, function(x) which(x == sub("interpretation", "climateInterpretation1", standardKeyNames))))]
-  notes <- rep(NA, nrow(qcSheet))
+  notes <- rep(NA, times = nrow(qcSheet))
   remainingInvalid <- list()
 
   standardizedTerms <- data.frame(matrix(nrow = nrow(qcSheet), ncol = length(standardKeyNames)))
