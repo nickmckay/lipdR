@@ -27,7 +27,7 @@ initializeChangelog <- function(L,
 
   thisChange <- list(version = as.character(version),
                      curator = curator,
-                     timestamp = paste(timestamp,tz(timestamp)),
+                     timestamp = paste(timestamp,lubridate::tz(timestamp)),
                      notes  =  notes)
 
   L$changelog <- list(thisChange)
@@ -866,7 +866,7 @@ updateChangelog <- function(L,
     thisChange <- list(version = as.character(vers),
                        lastVersion = as.character(lastVers),
                        curator = curator,
-                       timestamp = paste(timestamp,tz(timestamp)),
+                       timestamp = paste(timestamp,lubridate::tz(timestamp)),
                        notes = notes,
                        changes =  changelist)
   }else{
@@ -874,7 +874,7 @@ updateChangelog <- function(L,
     thisChange <- list(version = as.character(vers),
                        lastVersion = as.character(lastVers),
                        curator = curator,
-                       timestamp = paste(timestamp,tz(timestamp)),
+                       timestamp = paste(timestamp,lubridate::tz(timestamp)),
                        changes =  changelist)
   }
 
@@ -919,7 +919,7 @@ createNewChangelog <- function(L,
     thisChange <- list(version = as.character(vers),
                        lastVersion = as.character(lastVers),
                        curator = curator,
-                       timestamp = paste(timestamp,tz(timestamp)),
+                       timestamp = paste(timestamp,lubridate::tz(timestamp)),
                        notes = notes,
                        changes =  changelist)
   }else{
@@ -927,7 +927,7 @@ createNewChangelog <- function(L,
     thisChange <- list(version = as.character(vers),
                        lastVersion = as.character(lastVers),
                        curator = curator,
-                       timestamp = paste(timestamp,tz(timestamp)),
+                       timestamp = paste(timestamp,lubridate::tz(timestamp)),
                        changes =  changelist)
   }
 

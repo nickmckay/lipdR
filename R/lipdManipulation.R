@@ -66,51 +66,67 @@ createColumn <- function(L,
                          values = NA,
                          additional.metadata = NA){
 
-  #get the relevant table
-  toi <- L[[paste0(paleo.or.chron,"Data")]][[paleo.or.chron.number]][[paste0(table.type,"Table")]][[table.number]]
 
-  #get existing variablenames
-  vn <- purrr::map(toi,purrr::pluck,"variableName")
+  #see if the relevant table exists
+  ex <- try(L[[paste0(paleo.or.chron,"Data")]][[paleo.or.chron.number]][[paste0(table.type,"Table")]][[table.number]],silent = TRUE)
 
-  #which are columns?
-  isCol <- which(!purrr::map_lgl(vn,is.null))
-
-  if(length(isCol) == 0){
-    stop("No valid columns")
+  if(is(ex,"try-error")){
+    newTable <- TRUE
+  }else{
+    newTable <- FALSE
   }
 
+  if(!newTable){
+    #get the relevant table
+    toi <- L[[paste0(paleo.or.chron,"Data")]][[paleo.or.chron.number]][[paste0(table.type,"Table")]][[table.number]]
 
-  #check variableNames
-  vn <- purrr::map_chr(toi[isCol],purrr::pluck,"variableName")
-  if(is.na(variableName)){
-    stop("You must enter a variableName for this column")
-  }
+    #get existing variablenames
+    vn <- purrr::map(toi,purrr::pluck,"variableName")
 
-  if(variableName %in% vn){
-    stop(glue::glue("The variableName {variableName} is already present in the table. Please enter a new one."))
-  }
+    #which are columns?
+    isCol <- which(!purrr::map_lgl(vn,is.null))
 
-  #check units
-  if(is.na(units)){
-    stop("You must enter units for this column. 'unitless' is an acceptable entry.")
-  }
-
-  #check column length
-  colLength <- unique(purrr::map_dbl(toi[isCol],~length(.x$values)))
+    if(length(isCol) == 0){
+      stop("No valid columns")
+    }
 
 
-  if(length(colLength) != 1){
-    stop("The columns aren't all the same length!")
-  }
+    #check variableNames
+    vn <- purrr::map_chr(toi[isCol],purrr::pluck,"variableName")
+    if(is.na(variableName)){
+      stop("You must enter a variableName for this column")
+    }
 
-  if(length(values) == 1 & colLength > 1){
-    print(glue::glue("Replicating the input value ({values}) {colLength} times to match table length"))
-    values = rep(values, colLength)
-  }
+    if(variableName %in% vn){
+      stop(glue::glue("The variableName {variableName} is already present in the table. Please enter a new one."))
+    }
+
+    #check units
+    if(is.na(units)){
+      stop("You must enter units for this column. 'unitless' is an acceptable entry.")
+    }
+
+    #check column length
+    colLength <- unique(purrr::map_dbl(toi[isCol],~length(.x$values)))
 
 
-  if(length(values) != colLength){
-    stop(glue::glue("The new values vector has {length(values)} entries, but the rest of table has {colLength} observations. These must be the same."))
+    if(length(colLength) != 1){
+      stop("The columns aren't all the same length!")
+    }
+
+    if(length(values) == 1 & colLength > 1){
+      print(glue::glue("Replicating the input value ({values}) {colLength} times to match table length"))
+      values = rep(values, colLength)
+    }
+
+
+    if(length(values) != colLength){
+      stop(glue::glue("The new values vector has {length(values)} entries, but the rest of table has {colLength} observations. These must be the same."))
+    }
+
+  }else{#it's a new table
+    print(glue::glue("Created new table {paleo.or.chron}-{paleo.or.chron.number} {table.type}-{table.number}"))
+    toi <- list()
   }
 
   #put everything together
@@ -142,6 +158,9 @@ createColumn <- function(L,
   }
 
   #add back in
+  if(length(L[[paste0(paleo.or.chron,"Data")]]) < paleo.or.chron.number){
+    L[[paste0(paleo.or.chron,"Data")]][[paleo.or.chron.number]] <- list()
+  }
 
   L[[paste0(paleo.or.chron,"Data")]][[paleo.or.chron.number]][[paste0(table.type,"Table")]][[table.number]] <- toi
 
