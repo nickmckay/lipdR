@@ -124,12 +124,12 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
 #check the validity in the appropriate spreadsheet
 #' Check all values of a given key for validity in appropriate spreadsheet
 #'
-#' @param lipdTS
+#' @param lipdTS a lipdTS object
 #' @param key
 #'
 #' @return invalidDF
 #'
-ckeckKey <- function(lipdTS, key, keyGeneral){
+checkKey <- function(lipdTS, key, keyGeneral){
   TSvalsO <- pullTsVariable(lipdTS, key,strict.search = TRUE)
 
   #TSvals <- tolower(TSvalsO)
@@ -228,10 +228,10 @@ isValidValue <- function(lipdTS, key = NA){
     uniqueKeys <- unique(unlist(keysAll))
 
     #run check for each unique, eg. interpretation1_seasonality
-    returns <- lapply(uniqueKeys, function(x) ckeckKey(lipdTS, x, keyGeneral))
+    returns <- lapply(uniqueKeys, function(x) checkKey(lipdTS, x, keyGeneral))
   }else{
 
-    returns <- ckeckKey(lipdTS, key, key)
+    returns <- checkKey(lipdTS, key, key)
   }
 
   # if (!verbose){
@@ -356,7 +356,7 @@ standardizeValue <- function(lipdTS, key = NA){
 
       # message("Rerunning check for invalid keys in: ", key)
       # if (key %in% lapply(isValidValue(lipdTS, keyGeneral), function(x) names(x)[5])){
-      #   invalidDFnew <- ckeckKey(lipdTS, key)
+      #   invalidDFnew <- checkKey(lipdTS, key)
       #   print(tibble::tibble(invalidDFnew))
       # }
 

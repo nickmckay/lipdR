@@ -7,7 +7,9 @@
 standardizeValue(lipdTS, key = NA)
 }
 \arguments{
-\item{key}{}
+\item{lipdTS}{a lipd TS object}
+
+\item{key}{the key to check}
 }
 \value{
 updated TS

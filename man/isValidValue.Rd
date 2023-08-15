@@ -7,7 +7,9 @@
 isValidValue(lipdTS, key = NA)
 }
 \arguments{
-\item{key}{}
+\item{lipdTS}{a lipd-ts object}
+
+\item{key}{the key that you want to check}
 }
 \value{
 invalid keys df

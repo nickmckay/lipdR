@@ -7,7 +7,9 @@
 updateMetaDataFromStandardTables(lipdTS, key)
 }
 \arguments{
-\item{key}{}
+\item{lipdTS}{a lipd TS object}
+
+\item{key}{the key to check}
 }
 \value{
 list

@@ -9,6 +9,9 @@ isValidAll(TS, report = TRUE, allKeys = names(standardTables))
 \arguments{
 \item{TS}{}
 }
+\value{
+boolean
+}
 \description{
 Are all the parameters valid?
 }

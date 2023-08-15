@@ -13,7 +13,11 @@ updateNotes(
 )
 }
 \arguments{
-\item{standardizeSynonymDF}{}
+\item{lipdTS}{a LiPD TS object}
+
+\item{metadataChangesDF}{a data frame listing the changes to the metadata}
+
+\item{standardizeSynonymDF}{standardizing synonyms dataframe}
 }
 \value{
 lipdTS
