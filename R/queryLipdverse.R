@@ -39,7 +39,8 @@ queryLipdverse <- function(variable.name = NULL,
                      interp.details = NULL,
                      compilation = NULL,
                      verbose = FALSE,
-                     skip.update = FALSE
+                     skip.update = FALSE,
+                     queryTable1 =NULL
                      ){
 
   if (skip.update == TRUE){
@@ -55,7 +56,10 @@ queryLipdverse <- function(variable.name = NULL,
   }
 
 
-  queryTable1 <- queryTable
+  if (is.null(queryTable1)){
+    queryTable1 <- queryTable
+  }
+
   #
   if(verbose){cat("Series available before filtering: ", nrow(queryTable1), "\n\n")}
 

@@ -41,8 +41,8 @@ get_csv_from_section <- function(dat, pc_1, dsn){
             d[[pc]][[i]][["measurementTable"]] <- tmp[["meta"]]
             csvs <- tmp[["csvs"]]
           } # end measurement
-          
-          
+
+
           if ("model" %in% names(d[[pc]][[i]])){
             crumbs_2 <- paste0(crumbs_1, i, "model")
             tmp <- get_csv_from_model(d[[pc]][[i]][["model"]], crumbs_2, csvs)
@@ -51,7 +51,7 @@ get_csv_from_section <- function(dat, pc_1, dsn){
           }
         }
       }
-    } 
+    }
   }, error=function(cond){
     print(paste0("Error: get_csv_from_section: ", cond))
     stop()
@@ -60,7 +60,7 @@ get_csv_from_section <- function(dat, pc_1, dsn){
   new[["csvs"]] <- csvs
   return(new)
 }
-  
+
 #' Parse metadata and csv from models
 #' @export
 #' @keywords internal
@@ -70,11 +70,11 @@ get_csv_from_section <- function(dat, pc_1, dsn){
 #' @return list new: Metadata / CSV
 get_csv_from_model <- function(models, crumbs, csvs){
   new <- list()
-  
+
   tryCatch({
     # Loop for each model
     for (i in 1:length(models)){
-      
+
       # Summary
       if ("summaryTable" %in% names(models[[i]])){
         crumbs_2 <- paste0(crumbs, i, "summary")
@@ -82,7 +82,7 @@ get_csv_from_model <- function(models, crumbs, csvs){
         models[[i]][["summaryTable"]] <- tmp[["meta"]]
         csvs <- tmp[["csvs"]]
       }
-      
+
       # Ensemble
       if ("ensembleTable" %in% names(models[[i]])){
         crumbs_2 <- paste0(crumbs, i, "ensemble")
@@ -90,7 +90,7 @@ get_csv_from_model <- function(models, crumbs, csvs){
         models[[i]][["ensembleTable"]] <- tmp[["meta"]]
         csvs <- tmp[["csvs"]]
       }
-      
+
       # Distribution
       if ("distributionTable" %in% names(models[[i]])){
         crumbs_2 <- paste0(crumbs, i, "distribution")
@@ -136,7 +136,7 @@ get_csv_from_table <- function(tables, crumbs, csvs){
   new[["csvs"]] <- csvs
   return(new)
 }
-  
+
 #' Parse metadata and csv from columns
 #' @export
 #' @keywords internal
@@ -147,7 +147,7 @@ get_csv_from_columns <- function(table){
     # list to hold each column for this table
     vals <- list()
     new <- list()
-    
+
     # if table and columns exist
     if (!is.null(table)){
       if (!is.null(table[["columns"]])){
@@ -156,12 +156,12 @@ get_csv_from_columns <- function(table){
         for (k in 1:length(table[["columns"]])){
           # add values for this column to the main list, then remove values
           if (!is.null(table[["columns"]][[k]][["values"]])){
-            
+
             # Assume the table is an ensemble first, and get the 2nd dimension (cols) of the matrix
             len <- dim(table[["columns"]][[k]][["values"]])[[2]]
             if(is.null(len)){
-              # Ah, it's NOT an ensemble table. Get the length of the values, which should always = 1. 
-              len <- length(table[["columns"]][[k]][["values"]][[1]])
+              # Ah, it's NOT an ensemble table. Get the length of the values, which should always = 1.
+              len <- NCOL(table[["columns"]][[k]][["values"]])
             }
             # remove the "number" entry for the column, then replace it with the index of this loop
             # however, if it's an ensemble table with many "numbers"/columns, then we'll keep it.
@@ -178,10 +178,12 @@ get_csv_from_columns <- function(table){
               # the beginning point for the next loop is right after the finish of this loop.
               curr.num <- curr.num + len
             }
-            else if (len <= 1){
+            else if (len == 1){
               vals[[curr.num]] <- table[["columns"]][[k]][["values"]]
               table[["columns"]][[k]][["number"]] <- curr.num
               curr.num <- curr.num + 1
+            }else{
+              stop("this column doesn't seem to have any values - this is not allowed")
             }
             # remove values from the column
             table[["columns"]][[k]][["values"]] <- NULL

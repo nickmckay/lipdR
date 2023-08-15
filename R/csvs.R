@@ -8,30 +8,46 @@
 getMeasurementTables <- function(L,pc = "all"){
   if(pc == "all"){
     pc <- c("paleo","chron")
-  }  
-  
+  }
+
   at <- list()#initialize alltables
   for(tpc in pc){
     PC <- L[[paste0(tpc,"Data")]]
-    
+
     for(ni in 1:length(PC)){
       for(mi in 1:length(PC[[ni]]$measurementTable)){
         TT <- PC[[ni]]$measurementTable[[mi]]
         loTT <- TT[purrr::map_lgl(TT,is.list)]
         tt <- loTT[[1]]$values
-        tnames <- loTT[[1]]$variableName
+        if(!is.null(loTT[[1]]$units)){
+          units <- loTT[[1]]$units
+        }else{
+          units <- "missing"
+        }
+        tnames <- paste0(loTT[[1]]$variableName," (",units,")")
+
         if(length(loTT) > 1){
           for(c in 2:length(loTT)){
             tt <- cbind(tt,loTT[[c]]$values)
-            tnames <- c(tnames,loTT[[c]]$variableName)
+            if(!is.null(loTT[[c]]$units)){
+              units <- loTT[[c]]$units
+            }else{
+              units <- "missing"
+            }
+            tnames <- c(tnames,paste0(loTT[[c]]$variableName," (",units,")"))
           }
         }
         tt <- as.data.frame(tt)
         names(tt) <- tnames
-        
+
         #add into a list
-        at[[paste0(tpc,ni,"meas",mi)]] <- tt
-        
+        #add into a list
+        if(!is.null(TT$tableId)){
+          at[[TT$tableId]] <- tt
+        }else{
+          at[[paste0(tpc,ni,"meas",mi)]] <- tt
+        }
+
       }
     }
   }
@@ -74,44 +90,44 @@ read_csv_from_file <- function(path){
   c.data <- vector(mode="list",length=length(c))
   # import each csv file
   for (ci in seq_along(c)){
-    # Robust column type guessing with minimal overhead. Use all rows to guess 
+    # Robust column type guessing with minimal overhead. Use all rows to guess
     # but no more.
     # Get n.rows before reading in file
-    
+
     n.rows <- length(count.fields(c[ci], blank.lines.skip = FALSE))
-    
+
     if(packageVersion("readr") > 2){
       #warning("version 2.0.0 and higher of readr have made this much slower. If you're loadning lots of files consider downgrading to version 1.4.0 until we figure out how to fix this. ")
-    readr::local_edition(1)
+      readr::local_edition(1)
     }
-    
+
     # This is code for version >2.0.0, not necessary if using local_edition
-    # df <- readr::read_csv(c[ci], 
+    # df <- readr::read_csv(c[ci],
     #                       col_names = FALSE,
     #                       na = c("nan", "NaN", "NAN", "NA", ""),
-    #                       col_types = readr::cols(), 
+    #                       col_types = readr::cols(),
     #                       guess_max = n.rows,
     #                       lazy = FALSE)
     # }else{
 
-      df <- readr::read_csv(c[ci], 
-                            col_names = FALSE,
-                            na = c("nan", "NaN", "NAN", "NA", ""),
-                            col_types = readr::cols(), 
-                            guess_max = n.rows,
-                            progress = FALSE)
+    df <- readr::read_csv(c[ci],
+                          col_names = FALSE,
+                          na = c("nan", "NaN", "NAN", "NA", ""),
+                          col_types = readr::cols(),
+                          guess_max = n.rows,
+                          progress = FALSE)
 
-    
-    
+
+
     #check column types #nope, not now.
-    
-    
+
+
     # #deal with missing characters
     # blanks <- c(""," ", "NA", "NaN", "NAN", "nan","")
     # blanks <- "\\s"
     # censor <- function(x){stringr::str_replace(x,  c("", " ", "NaN", "NAN", "nan"), "NA")}
     # dplyr::mutate_all(df, dplyr::funs(censor))
-    # 
+    #
     #remove rows that are all NAs
     goodRows = which(rowSums(!is.na(df))>0)
     # If there are 0 good rows, then we need to make 8 rows of NA's
@@ -120,7 +136,7 @@ read_csv_from_file <- function(path){
       col <- ncol(df)
       tmp <- list()
       for(j in seq_along(df)){
-        tmp[[j]] <- as.double(rep(NA,8)) 
+        tmp[[j]] <- as.double(rep(NA,8))
       }
       c.data[[ci]]=tmp
     } else {
@@ -128,11 +144,11 @@ read_csv_from_file <- function(path){
       c.data[[ci]]=df[goodRows,]
     }
     #pause here
-    
+
   }
-  
+
   names(c.data) <- basename(c)
-  
+
   return(c.data)
 }
 
@@ -149,11 +165,11 @@ write_csv_to_file <- function(csvs,path){
     success <- TRUE
     # csvs <- clean_csv(csvs)
     entries <- names(csvs)
-    
+
     # loop for csv file
     for (f in 1:length(entries)){
       tmp <- matrix()
-      
+
       # one csv file: list of lists. [V1: [column values], V2: [columns values], etc.]
       entry <- entries[[f]]
       if(!isNullOb(csvs[[entry]])){
@@ -165,14 +181,14 @@ write_csv_to_file <- function(csvs,path){
           if (is.data.frame(col)){
             col <- as.matrix(col)
           }
-          
+
           # convert to numeric if needed
           if (is.list(col)){
             col <- as.numeric(col)
           }
           # replace all NA values with "NaN" before writing to file
           col <- replace(col, is.na(col), "NaN")
-          
+
           # check if tmp matrix has data or is fresh.
           if(all(is.na(tmp))){
             # fresh, so just bind the col itself
@@ -203,7 +219,7 @@ write_csv_to_file <- function(csvs,path){
             # cbind didn't work here, it's possible the matrix is transposed wrong.
             # give it another try after transposing it.
             # if (is.null(tmp) & is.matrix(col)){
-            #   
+            #
             # }
           }
         }

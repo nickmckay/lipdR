@@ -2,17 +2,21 @@
 #'
 #' @param L lipd object
 #' @importFrom methods new
-#' @importFrom sf st_as_sf st_sfc st_point
 #'
 #' @return neotoma site
 #'
-
-
 lipd2neotoma <- function(L){
 
   if (!requireNamespace("neotoma2", quietly = TRUE)) {
     stop(
       "Package 'neotoma2' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
+      call. = FALSE
+    )
+  }
+
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    stop(
+      "Package 'sf' must be installed to use this function. Install it from github using `install.packages('sf')`",
       call. = FALSE
     )
   }
@@ -26,7 +30,8 @@ lipd2neotoma <- function(L){
   #######################################################################
 
   #grab paleoData names and dataframe
-  for (j in 1:sum(grepl("paleo", attributes(mtabs1)$names))){
+  for (j in 1:sum(grep("paleo", attributes(mtabs1)$names))){
+    paleoTabName <- attributes(mtabs1)$names[paleoTabIndex]
     paleoTabIndex <- grep("paleo", attributes(mtabs1)$names)[j]
     PD1 <- mtabs1[[paleoTabIndex]]
 
@@ -34,15 +39,93 @@ lipd2neotoma <- function(L){
     allSamps <- list()
 
     #iterate over all ages (sample layers)
-    for (k in 1:sum(!is.na(PD1$age))){
+    for (k in 1:nrow(PD1)){
       #cat(k, "\n")
 
       sampleTab <- PD1[k,!is.na(PD1[k,])]
 
       sampleTabNames <- names(sampleTab)
 
-      pullAgeDepth <- which(sampleTabNames %in% c("age", "depth"))
-      notAgeDepth <- which(!sampleTabNames %in% c("age", "depth"))
+      pullAge <- which(tolower(sampleTabNames) %in% "age")
+      if(length(pullAge)<1){
+        message("No clear age column")
+        pullAge <- grepl("age",tolower(sampleTabNames))
+        for(h in which(pullAge)){
+          ans1 <- 0
+          while (!ans1 %in% c("y","n")){
+            ans1 <- readline(prompt = paste0("Is this your 'age' column header? ", sampleTabNames[h], " (y/n): "))
+            if (ans1 == "y"){
+              var1 <- h
+              message(paste0("Okay, setting 'age' column to ", sampleTabNames[var1]))
+              break
+            }
+          }
+        }
+        if (ans1 != "y"){
+          var1Check <- FALSE
+          while (!var1Check){
+            message("column headers: ")
+            lapply(1:length(sampleTabNames), function(x) cat(paste0(x, " ", sampleTabNames[x], "\n")))
+
+            var1 <- readline(prompt = paste0("Enter the index corresponding to your 'age' column from 1 to ", length(pullAge),
+                                            ". Enter 0 if no 'age' column: "))
+            var1 <- as.numeric(var1)
+            if (!is.na(var1)){
+              if (var1 >= 0 & var1 <= length(pullAge)){
+                var1Check <- TRUE
+                if (var1==0){
+                  message("Okay, no 'age' column")
+                }else{
+                  message(paste0("Okay, setting 'age' column to ", sampleTabNames[var1]))
+                }
+              }
+            }
+          }
+        }
+        pullAge <- var1
+      }
+
+      pullDepth <- which(tolower(sampleTabNames) %in% "depth")
+      if(length(pullDepth)<1){
+        message("No clear depth column")
+        pullDepth <- grepl("depth",tolower(sampleTabNames))
+        for(h in which(pullDepth)){
+          ans1 <- 0
+          while (!ans1 %in% c("y","n")){
+            ans1 <- readline(prompt = paste0("Is this your 'depth' column header? ", sampleTabNames[h], " (y/n): "))
+            if (ans1 == "y"){
+              var2 <- h
+              message(paste0("Okay, setting 'depth' column to ", sampleTabNames[var2]))
+              break
+            }
+          }
+        }
+        if (ans1 != "y"){
+          var1Check <- FALSE
+          while (!var1Check){
+            message("column headers: ")
+            lapply(1:length(sampleTabNames), function(x) cat(paste0(x, " ", sampleTabNames[x], "\n")))
+
+            var2 <- readline(prompt = paste0("Enter the index corresponding to your 'depth' column from 1 to ", length(pullAge),
+                                             ". Enter 0 if no 'depth' column: "))
+            var2 <- as.numeric(var2)
+            if (!is.na(var2)){
+              if (var1 >= 0 & var2 <= length(pullAge)){
+                var1Check <- TRUE
+                if (var2==0){
+                  message("Okay, no 'depth' column")
+                }else{
+                  message(paste0("Okay, setting 'depth' column to ", sampleTabNames[var2]))
+                }
+              }
+            }
+          }
+        }
+        pullDepth <- var2
+      }
+
+      pullAgeDepth <- c(sampleTabNames[var1], sampleTabNames[var2])
+      notAgeDepth <- which(!sampleTabNames %in% pullAgeDepth)
 
       neoSamples <- data.frame(matrix(ncol = 10, nrow = length(notAgeDepth), data=NA))
       colnames(neoSamples) <- c("units", "value", "context", "element", "taxonid", "symmetry", "taxongroup", "elementtype", "variablename", "ecologicalgroup")
@@ -95,23 +178,41 @@ lipd2neotoma <- function(L){
       neoSamples$element <- neoSamples$elementtype
       neoSamples <- neoSamples[order(neoSamples$units, neoSamples$value, neoSamples$context, neoSamples$element, as.numeric(neoSamples$taxonid)),]
 
-      ageType <- L$paleoData[[1]]$measurementTable[[1]]$age$units
-      split1 <- strsplit(L$chronData[[1]]$measurementTable[[1]]$ageYoung$TSid, "_")
-      ChronID <- strsplit(split1[[1]][2], "ageYoung")
+      if (length(L$paleoData[[1]]$measurementTable[[1]]$age$units)>0){
+        ageType <- L$paleoData[[1]]$measurementTable[[1]]$age$units
+      }else{
+        ageType <- NA
+      }
 
-      ages1 <- data.frame("age" = sampleTab$age,
+      if (pullAge==0){
+        age1 <- NA
+      }else{
+        age1 <- sampleTab[pullAge]
+      }
+
+
+      if (length(L$chronData[[1]]$measurementTable[[1]]$ageYoung$TSid)>0){
+        split1 <- strsplit(L$chronData[[1]]$measurementTable[[1]]$ageYoung$TSid, "_")
+        ChronID <- strsplit(split1[[1]][2], "ageYoung")
+        ChronID <- as.integer(ChronID[[1]][1])
+      }else{
+        ChronID <- NA
+      }
+
+
+      ages1 <- data.frame("age" = age1,
                           "agetype" = ageType,
                           "ageolder" = NA,
                           "ageyounger" = NA,
-                          "chronologyid" = as.integer(ChronID[[1]][1]),
+                          "chronologyid" = ChronID,
                           "chronologyname" = NA,
-                          row.names = 1)
+                          "row.names" = 1)
 
 
       sample1 <- new("sample")
 
       sample1@datum <- neoSamples
-      sample1@depth <- sampleTab$depth
+      sample1@depth <- sampleTab[pullDepth]
       sample1@ages <- ages1
 
       allSamps[[k]] <- sample1
@@ -144,10 +245,6 @@ lipd2neotoma <- function(L){
     chronTabIndex <- grep("chron", attributes(mtabs1)$names)[j]
     CD1 <- mtabs1[[chronTabIndex]]
 
-    CD1 <- CD1[,c(1,3,6,10,7,5,8)]
-
-    names(CD1) <- c("depth", "thickness", "agelimitolder", "chroncontrolid", "agelimityounger", "chroncontrolage", "chroncontroltype")
-
     chronos1@chronologies[[j]] <- new("chronology")
 
     chronos1@chronologies[[j]]@chroncontrols <- CD1
@@ -170,7 +267,7 @@ lipd2neotoma <- function(L){
   # site1$long <- lipdR:::getGeoNeotoma2(D@sites[[1]])$longitude
   site1$altitude <- L$geo$elevation
 
-  site1@geography = st_as_sf(st_sfc(st_point(c(L$geo$longitude,L$geo$latitude))))
+  site1@geography = sf::st_as_sf(sf::st_sfc(sf::st_point(c(L$geo$longitude,L$geo$latitude))))
 
   site1@description <- L$geo$description
 

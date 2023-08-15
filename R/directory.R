@@ -75,6 +75,13 @@ get_src_or_dst<- function(path){
           }
         }
       }else{
+        #try expanding directory to a relative path
+        if(!dir.exists(path)){
+          if(dir.exists(file.path(getwd(),path)) |
+             file.exists(file.path(getwd(),path))){
+            path <- file.path(getwd(),path)
+          }
+        }
 
         if (!isDirectory(path) &&
             tools::file_ext(path) != "lpd" &&
