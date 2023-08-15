@@ -97,7 +97,25 @@
     <loc>/reference/convert_dsid_to_path.html</loc>
   </url>
   <url>
+    <loc>/reference/createChangelog.html</loc>
+  </url>
+  <url>
     <loc>/reference/createColumn.html</loc>
+  </url>
+  <url>
+    <loc>/reference/createDatasetId.html</loc>
+  </url>
+  <url>
+    <loc>/reference/createMarkdownChangelog.html</loc>
+  </url>
+  <url>
+    <loc>/reference/createNewChangelog.html</loc>
+  </url>
+  <url>
+    <loc>/reference/createProjectChangelog.html</loc>
+  </url>
+  <url>
+    <loc>/reference/createSingleMarkdownChangelog.html</loc>
   </url>
   <url>
     <loc>/reference/createTSid.html</loc>
@@ -136,6 +154,9 @@
     <loc>/reference/formatCitation.html</loc>
   </url>
   <url>
+    <loc>/reference/getChangelog.html</loc>
+  </url>
+  <url>
     <loc>/reference/getChronDataNeotoma2.html</loc>
   </url>
   <url>
@@ -149,6 +170,12 @@
   </url>
   <url>
     <loc>/reference/getPubNeotoma2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getTimestamp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getVersion.html</loc>
   </url>
   <url>
     <loc>/reference/get_csv_from_columns.html</loc>
@@ -227,6 +254,9 @@
   </url>
   <url>
     <loc>/reference/index_geo.html</loc>
+  </url>
+  <url>
+    <loc>/reference/initializeChangelog.html</loc>
   </url>
   <url>
     <loc>/reference/is.lipd.html</loc>
@@ -421,6 +451,9 @@
     <loc>/reference/unzipper.html</loc>
   </url>
   <url>
+    <loc>/reference/updateChangelog.html</loc>
+  </url>
+  <url>
     <loc>/reference/update_lipd_v1_1.html</loc>
   </url>
   <url>
@@ -452,6 +485,9 @@
   </url>
   <url>
     <loc>/reference/writeLipd.html</loc>
+  </url>
+  <url>
+    <loc>/reference/writeVersionToRoot.html</loc>
   </url>
   <url>
     <loc>/reference/write_csv_to_file.html</loc>
