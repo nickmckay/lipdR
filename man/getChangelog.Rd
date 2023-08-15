@@ -9,6 +9,9 @@ getChangelog(L, version = "newest")
 \arguments{
 \item{version}{}
 }
+\value{
+
+}
 \description{
 Get one instance from a LiPD changelog
 }

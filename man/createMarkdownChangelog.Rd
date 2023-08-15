@@ -9,6 +9,9 @@ createMarkdownChangelog(L)
 \arguments{
 \item{L}{}
 }
+\value{
+
+}
 \description{
 Create a Markdown representation of a LiPD changelog
 }

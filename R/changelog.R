@@ -1111,6 +1111,9 @@ createSingleMarkdownChangelog<- function(scl){
     }
   }
 
+  clmd <- str_replace_all(clmd,"\\\\","\\") %>%
+    str_remove_all("textemdash")
+
   return(clmd)
 
 }
@@ -1266,10 +1269,19 @@ createProjectChangelog <- function(Dold,
     for(d in 1:length(Dchanged)){
       tcl <- getChangelog(Dchanged[[d]],version = "newest")
       mdcl <- mdcl %>%
-        glue::glue("## {Dchanged[[d]]$dataSetName}") %>%
+        str_c(glue::glue("## {Dchanged[[d]]$dataSetName}")) %>%
         str_c("\n\n") %>%
         str_c(createSingleMarkdownChangelog(tcl)) %>%
         str_c("\n\n")
+
+      # if(is(tmdcl,"try-error")){
+      #   mdcl <- mdcl %>%
+      #                 glue::glue("## {Dchanged[[d]]$dataSetName}") %>%
+      #                 str_c("\n\n") %>%
+      #                 str_c("changelog includes special characters that are breaking createProjectChangelog. Skipping.")
+      # }else{
+      #   mdcl <- tmdcl
+      #}
     }
 
     mdcl <- stringr::str_replace_all(mdcl,pattern = "''",replacement = "NULL")

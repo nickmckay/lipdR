@@ -16,6 +16,9 @@ updateChangelog(
 \arguments{
 \item{timestamp}{}
 }
+\value{
+
+}
 \description{
 Update the changelog entry in a LiPD file with new changes
 }

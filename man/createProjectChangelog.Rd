@@ -17,6 +17,9 @@ createProjectChangelog(
 \arguments{
 \item{webDirectory}{}
 }
+\value{
+
+}
 \description{
 Create html changelog details and summaries for the differences between two projects
 }

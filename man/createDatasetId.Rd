@@ -6,6 +6,9 @@
 \usage{
 createDatasetId()
 }
+\value{
+
+}
 \description{
 Create a random Dataset ID for a LiPD dataset
 }

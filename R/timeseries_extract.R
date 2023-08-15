@@ -54,14 +54,14 @@ extractTs= function(D, whichtables = "all", mode = "paleo"){
       step1 <- try(new_entries[[add]])
 
       if(methods::is(step1, "try-error")){
-        print("uhoh") 
+        print("uhoh")
       }else{
         TS[[length(TS)+1]] <- new_entries[[add]]
       }
     }
   }
 
-  structure(TS,class = c("lipd_ts",class(list()))) %>% 
+  structure(TS,class = c("lipd_ts",class(list()))) %>%
   return()
 }
 
@@ -115,7 +115,7 @@ extract_pc=function(L, root, whichtables, mode){
         # Make a copy of root
         current = root
         # Get the method data, to pair with the ens and summ tables.
-        current = extract_method(MODEL$method, current)
+        current = extract_method(MODEL, current)
         # Process summaryTables as needed
         if(whichtables %in% c("all", "summ")){
           # loop for each summaryTable entry
@@ -247,11 +247,13 @@ extract_column=function(column, current_fork, pc){
 
 # Extract the method data from a model, and flatten it for the TS
 extract_method=function(model, root){
-  method <- model$method
-  excludeMethod = c()
-  metGrab = which(!(names(method) %in% excludeMethod) & !sapply(method,is.list))
-  for(m in metGrab){#assign in needed paleo stuff
-    root[[paste0("method_",names(method)[m])]] = method[[m]]
+  if("method" %in% model){
+    method <- model$method
+    excludeMethod = c()
+    metGrab = which(!(names(method) %in% excludeMethod) & !sapply(method,is.list))
+    for(m in metGrab){#assign in needed paleo stuff
+      root[[paste0("method_",names(method)[m])]] = method[[m]]
+    }
   }
   return(root)
 }
