@@ -44,6 +44,11 @@ newQueryTable <- function(){
   return(queryTable)
 }
 
+updateStandardTables <- function(){
+  standardTables <- readRDS(url("https://lipdverse.org/lipdverse/standardTables.RDS"),"rb")
+  assign("standardTables", standardTables, envir = .GlobalEnv)
+}
+
 #' Compare the MD5 sums for the queryTable zip between locally stored and current remote
 #'
 #' @return out

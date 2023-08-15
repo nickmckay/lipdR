@@ -1,0 +1,33 @@
+---
+title: "LiPD to Neotoma"
+author: "Dave Edge"
+date: "2023-01-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+This vignette demonstrates a function to translate LiPD to Neotoma
+
+The example file (site) used is Bambili 2. Bambili 2 is loaded using Neotoma and 
+first translated to LiPD. This makes for a simple use case
+
+```{r}
+B <- neotoma2::get_sites(sitename = "Bambili 2")
+D <- neotoma2::get_downloads(B)
+L <- lipdR:::neotoma2lipd(D)
+
+summary(L)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

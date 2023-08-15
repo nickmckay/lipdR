@@ -1,0 +1,139 @@
+---
+title: "lipd Values standardization with ISO2k"
+author: "Dave Edge"
+date: "2023-01-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+devtools::load_all()
+```
+
+###Load Data
+
+First we grab the ISO2k data and the standardization tables
+
+```{r}
+load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
+```
+
+First, update the metadata
+
+```{r}
+TS1 <- updateMetaDataFromStandardTables(TS, "paleoData_units")
+```
+
+This function produces an updated TS object as well as a data frame showing the changes
+
+`standardizeValue()` looks for synonyms and replaces them with valid lipd names
+
+```{r}
+TS2 <- standardizeValue(lipdTS=TS1$TS, key="paleoData_units")
+```
+
+#This function also produces a data frame showing any changes
+
+A quick sanity check
+
+```{r}
+isValidValue(TS2$TS, "paleoData_units")
+TS[[2]]$paleoData_units
+TS2$TS[[2]]$paleoData_units
+```
+
+#Looks good
+
+Finally we can update either `paleoData_notes` or `notes` with the changes made
+
+```{r}
+TS1 <- lipdR:::updateNotes(lipdTS=TS2$TS,
+                           key = "paleoData_units",
+                           metadataChangesDF=TS1$ChangesDF,
+                           standardizeSynonymDF=TS2$synonymDF$synonymDF)
+```
+
+Let's have a look at some examples
+
+unchanged
+```{r}
+TS[[1]]$paleoData_notes
+TS1[[1]]$paleoData_notes
+```
+
+#Changed a peice of metadata
+
+```{r}
+TS[[2]]$paleoData_notes
+TS1[[2]]$paleoData_notes
+```
+
+
+#Changed metadata and standardized value
+
+```{r}
+TS[[240]]$paleoData_notes
+TS1[[240]]$paleoData_notes
+```
+
+Now let's try this for a more complicated key
+
+
+```{r}
+TS1 <- updateMetaDataFromStandardTables(TS, "interpretation_seasonality")
+TS1
+```
+
+There is no metadata to update this time
+
+Let's try standardizing
+
+```{r}
+TS2 <- standardizeValue(TS, "interpretation_seasonality")
+```
+
+We see a long string of output here, reflecting the 7 unique interpretation_seasonality keys
+
+Let's have a look now
+
+```{r}
+a2 <- isValidValue(lipdTS=TS2$TS, key="interpretation_seasonality")
+```
+
+Cool, that took care of all of them
+
+An example of values changed
+
+```{r}
+TS[[1851]]$interpretation5_seasonality
+TS2$TS[[1851]]$interpretation5_seasonality
+```
+
+
+#Finally, the notes
+#This is set up to be run once per interpretation, although the automation could be added
+```{r}
+TS1 <- lipdR:::updateNotes(lipdTS=TS2$TS,
+                           standardizeSynonymDF=TS2$synonymDF[[1]]$synonymDF)
+```
+
+#before and after
+
+```{r}
+TS[[328]]$notes
+TS1[[328]]$notes
+```
+
+#for interp 5
+
+```{r}
+TS1 <- lipdR:::updateNotes(lipdTS=TS2$TS,
+                           standardizeSynonymDF=TS2$synonymDF[[5]]$synonymDF)
+```
+
+#before and after
+
+```{r}
+TS[[1851]]$notes
+TS1[[1851]]$notes
+```
