@@ -9,9 +9,6 @@ getVersion(L)
 \arguments{
 \item{L}{}
 }
-\value{
-
-}
 \description{
 Get the current version of a LiPD file from it's changelog
 }

@@ -8,23 +8,51 @@ lipdEnv <- new.env()
 #'
 #' @export
 #'
-update_queryTable <- function(){
-
-  if(checkZIPmd5() == FALSE){
+updateQueryTable <- function(){
+  if(checkZipMd5() == FALSE){
     message("Updating Query Table\n")
     #download queryTable
     queryTable <- newQueryTable()
     #Replace local copy
-    usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
     replaceLocalZipMD5()
-    #devtools::reload()
-    #load("data/queryTable.rda", .GlobalEnv)
-    #replace local MD5
-    assign("queryTable", newQueryTable(), envir = .GlobalEnv)
 
   }else{
     message("Query Table up to date")
   }
+}
+
+
+#' Download the remote query table
+#'
+#' @return queryTable
+#'
+getQueryTable <- function(){
+  temp <- tempdir()
+  zip_path <- file.path(temp, "/queryTable.zip")
+  getRemote <- FALSE
+
+  if(exists("queryTable", envir = lipdEnv)){
+    queryTable <- get("queryTable",lipdEnv)
+  }else{
+
+    if(file.exists(zip_path)){
+      fileMd5 <- tools::md5sum(zip_path)
+      if(fileMd5 == readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5", warn=FALSE)){
+        queryTable <- read.csv(fPth)
+      }else{
+        getRemote <- TRUE
+      }
+    }else{
+      getRemote <- TRUE
+    }
+  }
+
+  if(getRemote){
+    queryTable <- newQueryTable()
+  }
+
+  assign("queryTable", queryTable, envir = lipdEnv)
+  return(queryTable)
 }
 
 #' Download the remote query table
@@ -32,15 +60,16 @@ update_queryTable <- function(){
 #' @return queryTable
 #'
 newQueryTable <- function(){
-  query_url <- "http://lipdverse.org/lipdverse/lipdverseQuery.zip"
+  query_url <- "https://lipdverse.org/lipdverse/lipdverseQuery.zip"
   temp <- tempdir()
   zip_dir <- paste0(temp, "/queryTable.zip")
   download.file(query_url, zip_dir)
   unzip(zipfile = zip_dir, files = "lipdverseQuery.csv", exdir = temp)
   fPth <- paste0(temp, "/lipdverseQuery.csv")
   queryTable <- read.csv(fPth)
-  unlink(temp)
-  #assign("queryTable", queryTable, envir = lipdEnv)
+
+  replaceLocalZipMD5()
+  assign("queryTable", queryTable, envir = lipdEnv)
   return(queryTable)
 }
 
@@ -53,12 +82,16 @@ updateStandardTables <- function(){
 #'
 #' @return out
 #'
-checkZIPmd5 <- function(){
+checkZipMd5 <- function(){
   out <- tryCatch(
     {
       ZIPmd5Remote <- readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5", warn=FALSE)
-
-      ZIPmd5Local == ZIPmd5Remote
+      if(exists("ZIPmd5Local",envir = lipdEnv)){
+        ZIPmd5Local <- get("ZIPmd5Local",envir = lipdEnv)
+      }else{
+        ZIPmd5Local <- readLines(file.path(tempdir(),"lipdverseQuery.md5"), warn = FALSE)
+      }
+      out <- ZIPmd5Local == ZIPmd5Remote
     },
     error=function(cond){
       return(FALSE)
@@ -79,10 +112,8 @@ checkZIPmd5 <- function(){
 replaceLocalZipMD5 <- function(){
   ZIPmd5Remote <- readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5", warn = FALSE)
   ZIPmd5Local <- ZIPmd5Remote
-  message("New MD5: ", ZIPmd5Local)
-  usethis::use_data(ZIPmd5Local, overwrite = TRUE)
-  assign("ZIPmd5Local", ZIPmd5Remote, envir = .GlobalEnv)
-  #load("data/ZIPmd5Local.rda", .GlobalEnv)
+  write(ZIPmd5Local,file = file.path(tempdir(),"lipdverseQuery.md5"))
+  assign("ZIPmd5Local", ZIPmd5Remote, envir = lipdEnv)
 }
 
 

@@ -9,9 +9,6 @@ getTimestamp(L)
 \arguments{
 \item{L}{}
 }
-\value{
-
-}
 \description{
 Get the timestamp frmo current version of a LiPD file from it's changelog
 }

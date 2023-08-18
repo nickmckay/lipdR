@@ -17,9 +17,6 @@ createChangelog(
 \arguments{
 \item{exclude.chron}{}
 }
-\value{
-
-}
 \description{
 Create a changelog by comparing two LiPD files
 }

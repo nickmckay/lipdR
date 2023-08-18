@@ -43,23 +43,12 @@ queryLipdverse <- function(variable.name = NULL,
                      queryTable1 =NULL
                      ){
 
-  if (skip.update == TRUE){
-    .lipdRquery$queryUpdated <- 1
+  #check query table MD5
+  if(checkZipMd5()){#looks like we have the current version
+    queryTable1 <- getQueryTable()
+  }else{
+    queryTable1 <- newQueryTable()
   }
-  if(.lipdRquery$queryUpdated == 0){
-    ans1 <- askYesNo("Would you like to update the query table (recommended)?")
-    if(ans1){
-      update_queryTable()
-    }
-
-    .lipdRquery$queryUpdated <- 1
-  }
-
-
-  if (is.null(queryTable1)){
-    queryTable1 <- queryTable
-  }
-
   #
   if(verbose){cat("Series available before filtering: ", nrow(queryTable1), "\n\n")}
 

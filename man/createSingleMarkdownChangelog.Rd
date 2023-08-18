@@ -9,9 +9,6 @@ createSingleMarkdownChangelog(scl)
 \arguments{
 \item{scl}{}
 }
-\value{
-
-}
 \description{
 Create markdown for a single entry
 }
