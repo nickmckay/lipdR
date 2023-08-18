@@ -1,7 +1,12 @@
-#' Auto-update Standard tables
+#' Get Standard tables
 #'
-checkStandardTables <- function(){
-      updateStandardTables()
+getStandardTables <- function(){
+  if(exists("standardTables",envir = lipdEnv)){
+    standardTables <- get("standardTables",envir = lipdEnv)
+  }else{
+    standardTables <- updateStandardTables()
+  }
+  return(standardTables)
 }
 
 #' grab metaData for given key from standard tables
@@ -13,7 +18,7 @@ checkStandardTables <- function(){
 #' @export
 updateMetaDataFromStandardTables <- function(lipdTS, key){
 
-  checkStandardTables()
+  standardTables <- getStandardTables()
 
   TSorig <- lipdTS
 
@@ -193,7 +198,7 @@ validCheck <- TSvalsO %in% standardVals |
 
 isValidValue <- function(lipdTS, key = NA){
 
-  checkStandardTables()
+  standardTables <- getStandardTables()
 
   if (!methods::is(lipdTS, "lipd-ts")){
     lipdTs <- as.lipdTs(lipdTS)
@@ -255,7 +260,7 @@ isValidValue <- function(lipdTS, key = NA){
 standardizeValue <- function(lipdTS, key = NA){
 
 
-  checkStandardTables()
+  standardTables <- getStandardTables()
 
   if (!methods::is(lipdTS, "lipd-ts")){
     lipdTs <- as.lipdTs(lipdTS)
@@ -481,7 +486,7 @@ standardizeValue <- function(lipdTS, key = NA){
 updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonymDF=NA, deleteTheseTS=NA){
 
 
-  checkStandardTables()
+  standardTables <- getStandardTables()
 
   #choose the appropriate notes
   #for each invalid value from metadataChangesDF, update notes
