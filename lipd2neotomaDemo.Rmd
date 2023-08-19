@@ -36,7 +36,7 @@ summary(L)
 Now we will convert back to neotoma and observe the changes
 
 ```{r}
-N <- lipdR:::lipd2neotoma(L)
+N <- lipd2neotoma(L)
 
 D@sites[[1]]
 N

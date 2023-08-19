@@ -15,9 +15,13 @@ updateNotes(
 \arguments{
 \item{lipdTS}{a LiPD TS object}
 
+\item{key}{which key}
+
 \item{metadataChangesDF}{a data frame listing the changes to the metadata}
 
 \item{standardizeSynonymDF}{standardizing synonyms dataframe}
+
+\item{deleteTheseTS}{what to delete}
 }
 \value{
 lipdTS

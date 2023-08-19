@@ -1,5 +1,7 @@
 # lipdR 0.5.0
 
+* Brought `queryLipdverse()`, neotoma conversion and changelogging files into the main branch.
+
 # lipdR 0.4.3
 
 * Fixed bug to load a vector of local files

@@ -1,33 +1,30 @@
 #' Query Table for LiPDverse datasets
 #'
-#' A table of metadata describing the time series available in LiPDverse
+#' A table of metadata for the PaST Thesaurus
 #'
-#' @format ## `queryTable`
-#' A data frame with 98,054 rows and 16 columns:
+#' @format ## `past`
+#' A data frame with 2401 rows and 5 columns:
 #' \describe{
-#'   \item{archiveType}{Country name}
-#'   \item{datasetId}{Lipdverse dataset Id}
-#'   \item{dataSetName}{dataset name}
-#'   \item{earliestYear}{first year of record}
-#'   \item{geo_latitude}{latitude}
-#'   \item{geo_longitude}{longitude}
-#'   \item{interpretation1_seasonality}{Interpreted seasonality of proxy}
-#'   \item{mostRecentYear}{Last year of record}
-#'   \item{paleoData_mostRecentCompilations}{Most recent compilations}
-#'   \item{paleoData_variableName}{paleo-data variable name}
-#'   \item{country2}{Country name}
-#'   \item{continent}{Continent name}
-#'   \item{auth}{Publication info}
-#'   \item{interp_Vars}{Paleodata interpretation variable}
-#'   \item{interp_Details}{Paleodata interpretation detail}
+#'   \item{id}{PaST ID}
+#'   \item{url}{URL To past locator}
+#'   \item{name}{Long name}
+#'   \item{definition}{Definition of term}
+#'   \item{related}{URI to related concepts}
 #' }
 #' @source <https://github.com/DaveEdge1/lipdverseQuery/raw/main/queryZip.zip>
-"queryTable"
+"past"
 
 
-#' MD5 sums for Query Table Zip File
+#' Neotoma conversion metadata
 #'
-#' @format ## `ZIPmd5Local`
-#' A set of 32-character hexadecimal letters and numbers:
-#' @source <https://raw.githubusercontent.com/DaveEdge1/lipdverseQuery/main/ZIPmd5.txt>
-"ZIPmd5Local"
+#' @format ## `nc`
+#' Neotoma conversion metadata
+#' @source <"1Z44xjSxEDlWnThvYLsHFS9aFAN0FnYh2EdroMs9qe_Q">
+"nc"
+
+#' Neotoma chron conversion metadata
+#'
+#' @format ## `cconv`
+#' Neotoma conversion metadata for chron
+#' @source <"1Z44xjSxEDlWnThvYLsHFS9aFAN0FnYh2EdroMs9qe_Q">
+"cconv"

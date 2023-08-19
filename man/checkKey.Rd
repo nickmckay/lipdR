@@ -9,7 +9,9 @@ checkKey(lipdTS, key, keyGeneral)
 \arguments{
 \item{lipdTS}{a lipdTS object}
 
-\item{key}{}
+\item{key}{key name}
+
+\item{keyGeneral}{generalized key name}
 }
 \value{
 invalidDF

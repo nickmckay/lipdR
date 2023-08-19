@@ -7,7 +7,10 @@
 getVersion(L)
 }
 \arguments{
-\item{L}{}
+\item{L}{a Lipd object}
+}
+\value{
+the version as a string
 }
 \description{
 Get the current version of a LiPD file from it's changelog

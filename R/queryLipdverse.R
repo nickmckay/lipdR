@@ -39,9 +39,7 @@ queryLipdverse <- function(variable.name = NULL,
                      interp.details = NULL,
                      compilation = NULL,
                      verbose = FALSE,
-                     skip.update = FALSE,
-                     queryTable1 =NULL
-                     ){
+                     skip.update = FALSE){
 
   #check query table MD5
   if(checkZipMd5()){#looks like we have the current version
@@ -274,7 +272,7 @@ queryLipdverse <- function(variable.name = NULL,
   #     D[[i]] <- readLipd(URLs[i])
   #   }
   #
-  #   D <- lipdR:::new_multiLipd(D)
+  #   D <- new_multiLipd(D)
   #
   #   print("\n")
   #

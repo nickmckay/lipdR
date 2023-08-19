@@ -7,7 +7,11 @@
 isValidAll(TS, report = TRUE, allKeys = names(standardTables))
 }
 \arguments{
-\item{TS}{}
+\item{TS}{lipd-ts object}
+
+\item{report}{report out? T/F}
+
+\item{allKeys}{what keys to check}
 }
 \value{
 boolean

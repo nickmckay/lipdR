@@ -7,7 +7,10 @@
 createMarkdownChangelog(L)
 }
 \arguments{
-\item{L}{}
+\item{L}{a Lipd Object}
+}
+\value{
+markdown version of changelog
 }
 \description{
 Create a Markdown representation of a LiPD changelog

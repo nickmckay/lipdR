@@ -263,8 +263,8 @@ lipd2neotoma <- function(L){
 
   site1$siteid <- L$geo$neotomaSiteId
   site1$sitename <- L$geo$siteName
-  # site1$lat <- lipdR:::getGeoNeotoma2(D@sites[[1]])$latitude
-  # site1$long <- lipdR:::getGeoNeotoma2(D@sites[[1]])$longitude
+  # site1$lat <- getGeoNeotoma2(D@sites[[1]])$latitude
+  # site1$long <- getGeoNeotoma2(D@sites[[1]])$longitude
   site1$altitude <- L$geo$elevation
 
   site1@geography = sf::st_as_sf(sf::st_sfc(sf::st_point(c(L$geo$longitude,L$geo$latitude))))

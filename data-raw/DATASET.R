@@ -14,50 +14,19 @@ if (!requireNamespace("usethis", quietly = TRUE)) {
   )
 }
 
-
+#neotoma conversions
 nc <- googlesheets4::read_sheet("1Z44xjSxEDlWnThvYLsHFS9aFAN0FnYh2EdroMs9qe_Q")
-
 cconv <- googlesheets4::read_sheet(ss = "1Z44xjSxEDlWnThvYLsHFS9aFAN0FnYh2EdroMs9qe_Q",sheet = "chronColumns")
-usethis::use_data(nc,cconv,queryTable, overwrite = TRUE,internal = TRUE)
 
 
-
-#Download and use the queryTable
-
-query_url <- "https://github.com/DaveEdge1/lipdverseQuery/raw/main/queryZip.zip"
-temp <- tempdir()
-zip_dir <- paste0(temp, "/queryTable.zip")
-download.file(query_url, zip_dir)
-unzip(zip_dir, exdir = temp)
-fPth <- paste0(temp, "/queryTable.csv")
-queryTable <- read.csv(fPth)
-usethis::use_data(queryTable, overwrite = TRUE, compress = "xz")
-
-#Get the query zip file MD5 sums
-ZIPmd5Remote <- readLines("https://raw.githubusercontent.com/DaveEdge1/lipdverseQuery/main/ZIPmd5.txt")
-ZIPmd5Local <- ZIPmd5Remote
-usethis::use_data(ZIPmd5Local, overwrite = TRUE)
-
-#Get standardization tables for lipd keys
-
-#consider using this directory to get all the standardization tables:
-allKeys <- googlesheets4::read_sheet("16edAnvTQiWSQm49BLYn_TaqzHtKO9awzv5C-CemwyTY")
-
-
-variableName <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/18KBNY_x6lZ90k_NF_Cw-6RZ6VhMRR97bzXy49qtq6IU/edit#gid=1697518669")
-archiveType <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/16OxSagfVVp7KO3jrbjh5npWDNVOMCIZr4ToVgHvZgJE/edit#gid=253751289")
-seasonality <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1UPJoHh9cSKEIrTXAGonGgNcCzGRGWo4FYalfEtgiXDw/edit#gid=2132918474")
-interpretation <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1qwewgHin2YLVkZS9E66i6E8A7EBrm9VKj3y-vyBYgCs/edit#gid=400551674")
-proxy <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1-SonhUl_yhZRnmBDDACY9sByl7jt-Ov5b6n21PXPzXQ/edit#gid=279748030")
-units <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1a_QLvT-im7RZmW-vpJg-RnE4Ecu500pc9fua5u1R1zc/edit#gid=1220915696")
-standardTables <- list("paleoData_variableName" = variableName, "paleoData_proxy" = proxy, "paleoData_units" = units,
-"interpretation_seasonality" = seasonality, "archiveType" = archiveType, "interpretation_variable" = interpretation)
-usethis::use_data(standardTables, overwrite = TRUE)
 
 #Get past thesaurus
 
-getPastDataframe <- function(filename = "past.json"){
-  PaST <- jsonlite::read_json(filename)
+getPastDataframe <- function(){
+  past_rdf <- rdflib::rdf_parse("https://www.ncei.noaa.gov/access/paleo-search/skos/past-thesaurus.rdf")
+  out <- tempfile("file", fileext = ".json")
+  jweb <- rdflib::rdf_serialize(rdf = past_rdf, doc = out, format = "jsonld")
+  PaST <- jsonlite::read_json(out)
   PaST <- PaST$`@graph`
 
   allIdUrls <- purrr::map_chr(PaST,"@id")
@@ -78,8 +47,6 @@ getPastDataframe <- function(filename = "past.json"){
   return(past)
 }
 
-past_rdf <- rdflib::rdf_parse("https://www.ncei.noaa.gov/access/paleo-search/skos/past-thesaurus.rdf")
-out <- tempfile("file", fileext = ".json")
-rdflib::rdf_serialize(rdf = past_rdf, doc = out, format = "jsonld")
-past <- getPastDataframe(out)
-usethis::use_data(past)
+
+past <- getPastDataframe()
+usethis::use_data(past,nc,cconv,overwrite = FALSE)

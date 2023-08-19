@@ -15,7 +15,18 @@ createChangelog(
 )
 }
 \arguments{
-\item{exclude.chron}{}
+\item{Lold}{Old lipd object}
+
+\item{Lnew}{New lipd object}
+
+\item{good.base}{A vector of base level metadata to check}
+
+\item{exclude.paleo}{A vector of paleo metadata to exclude}
+
+\item{exclude.chron}{A vector of chron metadata to exclude}
+}
+\value{
+a changelog data frame
 }
 \description{
 Create a changelog by comparing two LiPD files

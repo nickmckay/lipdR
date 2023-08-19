@@ -13,7 +13,15 @@ initializeChangelog(
 )
 }
 \arguments{
-\item{timestamp}{}
+\item{L}{a LiPD object}
+
+\item{notes}{notes}
+
+\item{curator}{who made these changes}
+
+\item{timestamp}{when was this made}
+
+\item{version}{version of the dataset}
 }
 \value{
 A LiPD object with a changelog

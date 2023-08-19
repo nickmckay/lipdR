@@ -7,10 +7,10 @@
 writeVersionToRoot(L)
 }
 \arguments{
-\item{L}{A LiPD file}
+\item{L}{A LiPD object}
 }
 \value{
-A LiPD file
+A LiPD object
 }
 \description{
 write dataset version to a variable in the LiPD file

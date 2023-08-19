@@ -64,7 +64,7 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
     newValues[i,1] <- i
     for (j in 1:length(meta_keys)){
       #If the field is blank, check the spreadsheet for metadata based on the synonym in the TS
-      if (lipdR:::is_blank(lipdTS[[i]][eval(meta_keys[j])])){
+      if (is_blank(lipdTS[[i]][eval(meta_keys[j])])){
         newVal <- unlist(standardTables[[eval(key)]][synonymLoc,eval(meta_keys[j])])
         if (length(newVal)==0){
           newVal <- NA
@@ -130,7 +130,8 @@ updateMetaDataFromStandardTables <- function(lipdTS, key){
 #' Check all values of a given key for validity in appropriate spreadsheet
 #'
 #' @param lipdTS a lipdTS object
-#' @param key
+#' @param key key name
+#' @param keyGeneral generalized key name
 #'
 #' @return invalidDF
 #'
@@ -481,6 +482,8 @@ standardizeValue <- function(lipdTS, key = NA){
 #' @param lipdTS a LiPD TS object
 #' @param metadataChangesDF a data frame listing the changes to the metadata
 #' @param standardizeSynonymDF standardizing synonyms dataframe
+#' @param key which key
+#' @param deleteTheseTS what to delete
 #'
 #' @return lipdTS
 updateNotes <- function(lipdTS, key=NA, metadataChangesDF=NA, standardizeSynonymDF=NA, deleteTheseTS=NA){
@@ -703,7 +706,9 @@ notesOut <- list()
 
 #' Are all the parameters valid?
 #'
-#' @param TS
+#' @param TS lipd-ts object
+#' @param report report out? T/F
+#' @param allKeys what keys to check
 #'
 #' @return boolean
 #' @export

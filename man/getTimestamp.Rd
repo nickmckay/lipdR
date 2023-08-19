@@ -7,7 +7,10 @@
 getTimestamp(L)
 }
 \arguments{
-\item{L}{}
+\item{L}{LiPD object}
+}
+\value{
+the timestamp as a string
 }
 \description{
 Get the timestamp frmo current version of a LiPD file from it's changelog
