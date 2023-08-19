@@ -1,3 +1,5 @@
+# lipdR 0.5.0
+
 # lipdR 0.4.3
 
 * Fixed bug to load a vector of local files
