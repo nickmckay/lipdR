@@ -15,8 +15,16 @@ devtools::load_all()
 First we grab the ISO2k data and the standardization tables
 
 ```{r}
-load("C:/Users/dce25/Downloads/iso2k1_0_1.RData")
+library(lipdR)
+iso2k <- readLipd("https://lipdverse.org/iso2k/current_version/iso2k1_0_1.zip")
 ```
+
+
+And now we'll convert that to a LiPD TS object
+```{r}
+TS <- as.lipdTs(D)
+```
+
 
 First, update the metadata
 
