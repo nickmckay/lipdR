@@ -22,7 +22,7 @@ iso2k <- readLipd("https://lipdverse.org/iso2k/current_version/iso2k1_0_1.zip")
 
 And now we'll convert that to a LiPD TS object
 ```{r}
-TS <- as.lipdTs(D)
+TS <- as.lipdTs(iso2k)
 ```
 
 
