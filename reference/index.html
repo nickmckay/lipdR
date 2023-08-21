@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
     </li>
     <li>
       <a href="../articles/Summary.html">LiPD Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/lipd2neotoma.html">LiPD to Neotoma</a>
     </li>
   </ul></li>
 <li>
@@ -58,10 +61,6 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="ZIPmd5Local.html">ZIPmd5Local</a></code> </p>
-        </td>
-        <td><p>MD5 sums for Query Table Zip File</p></td>
-      </tr><tr><td>
           <p><code><a href="abc123.html">abc123()</a></code> </p>
         </td>
         <td><p>random imports</p></td>
@@ -94,7 +93,15 @@
         </td>
         <td><p>Before you place a table, you must have the structure leading up to the location or you'll get errors. Build the structure</p></td>
       </tr><tr><td>
-          <p><code><a href="checkZIPmd5.html">checkZIPmd5()</a></code> </p>
+          <p><code><a href="cconv.html">cconv</a></code> </p>
+        </td>
+        <td><p>Neotoma chron conversion metadata</p></td>
+      </tr><tr><td>
+          <p><code><a href="checkKey.html">checkKey()</a></code> </p>
+        </td>
+        <td><p>Check all values of a given key for validity in appropriate spreadsheet</p></td>
+      </tr><tr><td>
+          <p><code><a href="checkZipMd5.html">checkZipMd5()</a></code> </p>
         </td>
         <td><p>Compare the MD5 sums for the queryTable zip between locally stored and current remote</p></td>
       </tr><tr><td>
@@ -150,18 +157,6 @@ match[[1]][[3]] = second key (ex. "tableName")</p></td>
         </td>
         <td><p>Create a Markdown representation of a LiPD changelog</p></td>
       </tr><tr><td>
-          <p><code><a href="createNewChangelog.html">createNewChangelog()</a></code> </p>
-        </td>
-        <td><p>Update the changelog entry in a LiPD file with new changes</p></td>
-      </tr><tr><td>
-          <p><code><a href="createProjectChangelog.html">createProjectChangelog()</a></code> </p>
-        </td>
-        <td><p>Create html changelog details and summaries for the differences between two projects</p></td>
-      </tr><tr><td>
-          <p><code><a href="createSingleMarkdownChangelog.html">createSingleMarkdownChangelog()</a></code> </p>
-        </td>
-        <td><p>Create markdown for a single entry</p></td>
-      </tr><tr><td>
           <p><code><a href="createTSid.html">createTSid()</a></code> </p>
         </td>
         <td><p>Create a random TSid</p></td>
@@ -208,6 +203,14 @@ Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
         </td>
         <td><p>get pub info from neotoma</p></td>
       </tr><tr><td>
+          <p><code><a href="getQueryTable.html">getQueryTable()</a></code> </p>
+        </td>
+        <td><p>Download the remote query table</p></td>
+      </tr><tr><td>
+          <p><code><a href="getStandardTables.html">getStandardTables()</a></code> </p>
+        </td>
+        <td><p>Get Standard tables</p></td>
+      </tr><tr><td>
           <p><code><a href="getTimestamp.html">getTimestamp()</a></code> </p>
         </td>
         <td><p>Get the timestamp frmo current version of a LiPD file from it's changelog</p></td>
@@ -248,6 +251,14 @@ Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
         </td>
         <td><p>Is this a multiLiPD object?</p></td>
       </tr><tr><td>
+          <p><code><a href="isValidAll.html">isValidAll()</a></code> </p>
+        </td>
+        <td><p>Are all the parameters valid?</p></td>
+      </tr><tr><td>
+          <p><code><a href="isValidValue.html">isValidValue()</a></code> </p>
+        </td>
+        <td><p>make sure all terms under a controlled key are valid</p></td>
+      </tr><tr><td>
           <p><code><a href="lipd2neotoma.html">lipd2neotoma()</a></code> </p>
         </td>
         <td><p>Convert lipd to neotoma</p></td>
@@ -272,6 +283,10 @@ Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
         </td>
         <td><p>Print a summary of the contents of a Multi-LiPD</p></td>
       </tr><tr><td>
+          <p><code><a href="nc.html">nc</a></code> </p>
+        </td>
+        <td><p>Neotoma conversion metadata</p></td>
+      </tr><tr><td>
           <p><code><a href="neotoma2lipd.html">neotoma2lipd()</a></code> </p>
         </td>
         <td><p>Convert a neotoma dataset into a LiPD object</p></td>
@@ -279,6 +294,10 @@ Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
           <p><code><a href="newQueryTable.html">newQueryTable()</a></code> </p>
         </td>
         <td><p>Download the remote query table</p></td>
+      </tr><tr><td>
+          <p><code><a href="past.html">past</a></code> </p>
+        </td>
+        <td><p>Query Table for LiPDverse datasets</p></td>
       </tr><tr><td>
           <p><code><a href="print.lipd.html">print(<i>&lt;lipd&gt;</i>)</a></code> </p>
         </td>
@@ -332,10 +351,6 @@ Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
         </td>
         <td><p>Query the LiPDverse</p></td>
       </tr><tr><td>
-          <p><code><a href="queryTable.html">queryTable</a></code> </p>
-        </td>
-        <td><p>Query Table for LiPDverse datasets</p></td>
-      </tr><tr><td>
           <p><code><a href="queryTs.html">queryTs()</a></code> </p>
         </td>
         <td><p>Find all the time series entries that match a given search expression, 
@@ -366,6 +381,10 @@ Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
           <p><code><a href="splitInterpretationByScope.html">splitInterpretationByScope()</a></code> </p>
         </td>
         <td><p>Split interpretation by scope</p></td>
+      </tr><tr><td>
+          <p><code><a href="standardizeValue.html">standardizeValue()</a></code> </p>
+        </td>
+        <td><p>standardize terms automatically based on known synonyms</p></td>
       </tr><tr><td>
           <p><code><a href="stripExtension.html">stripExtension()</a></code> </p>
         </td>
@@ -415,7 +434,15 @@ Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
         </td>
         <td><p>Update the changelog entry in a LiPD file with new changes</p></td>
       </tr><tr><td>
-          <p><code><a href="update_queryTable.html">update_queryTable()</a></code> </p>
+          <p><code><a href="updateMetaDataFromStandardTables.html">updateMetaDataFromStandardTables()</a></code> </p>
+        </td>
+        <td><p>grab metaData for given key from standard tables</p></td>
+      </tr><tr><td>
+          <p><code><a href="updateNotes.html">updateNotes()</a></code> </p>
+        </td>
+        <td><p>Update notes and paleoData_notes</p></td>
+      </tr><tr><td>
+          <p><code><a href="updateQueryTable.html">updateQueryTable()</a></code> </p>
         </td>
         <td><p>update the query table with most recent lipdverse version</p></td>
       </tr><tr><td>

@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
       </span>
     </div>
 
@@ -54,6 +54,9 @@
     </li>
     <li>
       <a href="../articles/Summary.html">LiPD Summaries</a>
+    </li>
+    <li>
+      <a href="../articles/lipd2neotoma.html">LiPD to Neotoma</a>
     </li>
   </ul>
 </li>
@@ -95,10 +98,9 @@ time series available on LiPDverse</p>
 <p>Let’s get a sense for what the table holds</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1000   19</span></span>
+<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "archiveType"                      "paleoData_variableName"           "paleoData_units"                  "paleoData_proxy"                  "geo_latitude"                     "geo_longitude"                    "geo_elevation"                    "minAge"                           "maxAge"                           "medianResolution"                 "auth"                             "datasetId"                        "dataSetName"                      "country"                         </span></span>
-<span><span class="co">#&gt; [15] "continent"                        "varTags"                          "interp_Vars"                      "interp_Details"                   "paleoData_mostRecentCompilations"</span></span></code></pre></div>
+<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>That’s a lot of rows! There’s a row for every time series in the
 LiPDverse database</p>
 <p>If you have used the LiPD format, you will recognize some of these
@@ -119,32 +121,12 @@ once, it will not prompt you again in a given R session</p>
 <p>We’ll just look at the first 250, there are quite a few</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">paleoData_variableName</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">250</span><span class="op">]</span></span>
-<span><span class="co">#&gt;   [1] "depth"                                 "age"                                   "planktic.d18O"                         "temperature"                           "C37.concentration"                     "label"                                 "planktic.MgCa"                         "Uk37"                                  "ageOriginal"                           "d18o_pachyderma"                       "d13c_pachyderma"                       "ageMedianBacon"                       </span></span>
-<span><span class="co">#&gt;  [13] "year"                                  "ageUncertainty"                        "ageDuplicate"                          "ageMin"                                "ageMax"                                "ageMedian"                             "temperatureUncertainty"                "precipitation"                         "precipitationUncertainty"              "depth_merged"                          "salinity"                              "Sea_Ice_months"                       </span></span>
-<span><span class="co">#&gt;  [25] "Sea_Ice_conc"                          "productivity"                          "A"                                     "ReliabIeYN1"                           "Commentregardingreliability1"          "d18O"                                  "hole"                                  "section"                               "interval"                              "varveCountedAgeKa"                     "varveCountedAgeAD0x2FBC"               "radiocarbonDatesAD0x2FBC"             </span></span>
-<span><span class="co">#&gt;  [37] "d18o_ruber"                            "mgca_ruber"                            "ageOld"                                "lakeStatus"                            "lakeTrend"                             "age14C"                                "error"                                 "elevation a.s.l."                      "ID"                                    "Lab ID"                                "Material"                              "d2H"                                  </span></span>
-<span><span class="co">#&gt;  [49] "ageYoung"                              "lakeLevelMax"                          "lakeLevelMin"                          "lakeLevel"                             "lakeLevelRelative"                     "GDD5"                                  "temperatureComposite"                  "uncertaintyHigh"                       "uncertaintyLow"                        "melt"                                  "meltUncertaintyHigh"                   "meltUncertaintyLow"                   </span></span>
-<span><span class="co">#&gt;  [61] "ice_melt_fraction"                     "Composite depth"                       "% Carbonate"                           "% Organic carbon"                      "d13C carbonate"                        "d18O carbonate"                        "d18O carbonate corrected for dolomite" "d18O  encrustation"                    "% Dolomite"                            "C/N organic"                           "d13C organic"                          "PC1"                                  </span></span>
-<span><span class="co">#&gt;  [73] "PC2"                                   "PC3"                                   "OriginalSampleID"                      "C28 d2H"                               "C30 d2H"                               "C26 d2H"                               "hobdob"                                "uncertainty.temperature"               "SunFracMin"                            "SunFracMax"                            "uncertainty"                           "reliable"                             </span></span>
-<span><span class="co">#&gt;  [85] "nonReliabletemperature"                NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt;  [97] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [109] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [121] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [133] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [145] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [157] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [169] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [181] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [193] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [205] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [217] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [229] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                     </span></span>
-<span><span class="co">#&gt; [241] NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA                                      NA</span></span></code></pre></div>
+<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>There’s quite a few notation styles, but they all have “18o” in
 common, so let’s try that</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>variable.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"18o"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 17 available time series in 11 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 1688 available time series in 1069 datasets</span></span></code></pre></div>
 <p>Now that is a lot more data</p>
 <p>Some query parameters will require considering what all the possible
 results have in common</p>
@@ -155,7 +137,7 @@ combined with “OR” logic, so more entries will generally pull more
 datasets</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>variable.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"δ18O"</span>, <span class="st">"d18O"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 17 available time series in 11 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 1688 available time series in 1069 datasets</span></span></code></pre></div>
 <p>This gets us almost the same result, but we see the simplified filter
 is still pulling one more dataset</p>
 <p>Also note that capitalization makes no difference here</p>
@@ -163,24 +145,24 @@ is still pulling one more dataset</p>
 our options</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">archiveType</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "MarineSediment"      "Lake"                "LakeSediment"        "Peat"                "LakeDeposits"        "LakeDeposit"         "Fluvial"             "Ocean"               "GlacierIce"          "Mire"                "TerrestrialSediment" "River"</span></span></code></pre></div>
+<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>Note that we have distinct options: “Lake”, “LakeSediment”,
 “LakeDeposits”, “LakeDeposit”, and “Lake Sediment”</p>
 <p>We can grab the <code>archive.type</code> names and search for all of
 them like this</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>archive.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">archiveType</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">39</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 667 available time series in 33 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>Or we can use the simplification strategy again</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>archive.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lake"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 497 available time series in 33 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 46308 available time series in 2309 datasets</span></span></code></pre></div>
 <p>As we saw last time, the results are similar</p>
 <p>We can also filter based on publications: Author, DOI, Title, etc.
 using <code>pub.info</code></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>pub.info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"10.1016/j.quascirev.2008.09.005"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 0 available time series in 0 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 20 available time series in 7 datasets</span></span></code></pre></div>
 <p>This query can be a little slow if you don’t narrow the results with
 another parameter first</p>
 <p>Let’s narrow our region of interest</p>
@@ -190,11 +172,11 @@ another parameter first</p>
 <p>Let’s grab all the North American datasets</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 320 available time series in 11 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 46652 available time series in 1817 datasets</span></span></code></pre></div>
 <p>Let’s grab just those from Mexico</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>country <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Mexico"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 0 available time series in 0 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 512 available time series in 36 datasets</span></span></code></pre></div>
 <p>Note that the country and contient filters are not filtered based on
 LiPD content. A function in R uses the coordinates associated with the
 datasets to associate them with countries and the results can be
@@ -205,13 +187,13 @@ unreliable near country borders</p>
 box</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 93 available time series in 6 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 14062 available time series in 772 datasets</span></span></code></pre></div>
 <p>We can limit this to only marine data by setting <code>ocean</code>
 to <code>TRUE</code></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>         ocean <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 54 available time series in 3 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 1485 available time series in 85 datasets</span></span></code></pre></div>
 <p>The <code>ocean</code> parameter works on the same basis as the
 <code>country</code> and <code>continent</code> parameters and can be
 unreliable in coastal areas</p>
@@ -219,11 +201,11 @@ unreliable in coastal areas</p>
 as the Western North America (WNAm)</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>compilation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wNAm"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 7 available time series in 3 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 392 available time series in 184 datasets</span></span></code></pre></div>
 <p>or multiple compilations</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>compilation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wnam"</span>, <span class="st">"temp12k"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 34 available time series in 15 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 1717 available time series in 799 datasets</span></span></code></pre></div>
 <p>the <code>compilation</code> filter uses “OR” logic</p>
 <p>Let’s try pulling datasets based on their
 <code>seasonality</code></p>
@@ -233,12 +215,12 @@ the Northern Hemisphere</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"June"</span>, <span class="st">"July"</span>, <span class="st">"August"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 0 available time series in 0 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 1 available time series in 1 datasets</span></span></code></pre></div>
 <p>Okay, so this must not be a good choice of format, let’s see how LiPD
 authors define their seasons</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">interpretation1_seasonality</span><span class="op">)</span></span>
-<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>It looks like numeric months are most common. Season names,
 “warm”/“cold”, and series of first-letter abbreviations (ie. JJA) are
 all common.</p>
@@ -254,7 +236,7 @@ different notations</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"8"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"summer"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"JJA"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 0 available time series in 0 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 219 available time series in 165 datasets</span></span></code></pre></div>
 <p>This returns quite a few datasets</p>
 <p>From our look at all the unique <code>seasonality</code> entries, we
 can see that this probably includes a lot of annual data too</p>
@@ -266,7 +248,7 @@ can see that this probably includes a lot of annual data too</p>
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"8"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"summer"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"JJA"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>               season.not <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"annual"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"December"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"12"</span>,<span class="st">"1"</span>,<span class="st">"2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"winter"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"cold"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 0 available time series in 0 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 193 available time series in 139 datasets</span></span></code></pre></div>
 <p>Now we’ve narrowed it down to summer-specific datasets</p>
 <p>Let’s look at interpretation variables now. These are the climate
 variables that may serve as a target for the proxy time series
@@ -276,17 +258,17 @@ interpretation variable and interpretation detail</p>
 <p>Each of these variables has four possible interpretation slots</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">interp_Vars</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] ""                                        "T"                                       "P"                                       "S"                                       "ICE"                                     "Piso"                                    "P-E"                                     "GDD"                                     "M"                                       "P|P_isotope|plant community composition" "SUN"</span></span>
+<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">interp_Details</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] ""                      "sea@surface"           "air@surface"           "precipitation@surface" "d18OPachySLCorr"       "d18O0x28pachy0x29"     "d18OBullSLCorr"        "d18O0x28bull0x29"      "LakeLevel@surface"     "@surface"              "lakebalance@surface"   "lakelevel@surface"     "lake@surface"          "amount@surface"        "surface"</span></span></code></pre></div>
+<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>Let’s look at some marine <code>interp.vars</code> in the northeast
 Pacific</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>               ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>               interp.vars <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SST"</span>, <span class="st">"upwelling"</span>, <span class="st">"SSS"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 0 available time series in 0 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 22 available time series in 7 datasets</span></span></code></pre></div>
 <p>That gives us just a few datasets</p>
 <p>Perhaps we’ll have more luck with <code>interp.details</code>, which
 is more standardized</p>
@@ -294,7 +276,7 @@ is more standardized</p>
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>               ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>               interp.details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sea@surface"</span>, <span class="st">"elNino"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 3 available time series in 1 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 59 available time series in 38 datasets</span></span></code></pre></div>
 <p>let’s see if we grab more using both</p>
 <p>These inputs combine with “OR” logic, so we may gather more datasets
 by using both parameters</p>
@@ -303,7 +285,7 @@ by using both parameters</p>
 <span>               ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>               interp.details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sea@surface"</span>, <span class="st">"elNino"</span><span class="op">)</span>,</span>
 <span>               interp.vars <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SST"</span>, <span class="st">"upwelling"</span>, <span class="st">"SSS"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 3 available time series in 1 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 81 available time series in 42 datasets</span></span></code></pre></div>
 <p>looks like we get a few extra datasets with this approach</p>
 <p>Now that we know how to use our filters, let’s go for a strict
 filter</p>
@@ -318,7 +300,7 @@ only</p>
 <span>               interp.vars <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SST"</span>, <span class="st">"upwelling"</span>, <span class="st">"SSS"</span><span class="op">)</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"8"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"summer"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"JJA"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>               season.not <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"annual"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"December"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"12"</span>,<span class="st">"1"</span>,<span class="st">"2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"winter"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"cold"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 0 available time series in 0 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 7 available time series in 1 datasets</span></span></code></pre></div>
 <p>To fine-tune your query, set verbose to TRUE to see which parameters
 have what effect on filtering</p>
 <p>We’ll narrow the results further by adding author names to find
@@ -333,33 +315,33 @@ within the publication info</p>
 <span>               season.not <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"annual"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"December"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"12"</span>,<span class="st">"1"</span>,<span class="st">"2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"winter"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"cold"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>               pub.info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mix"</span>, <span class="st">"caissie"</span><span class="op">)</span>,</span>
 <span>               verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Series available before filtering:  1000 </span></span>
+<span><span class="co">#&gt; Series available before filtering:  103920 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after coord filter:  93 </span></span>
+<span><span class="co">#&gt; Series remaining after coord filter:  14062 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after marine filter:  54 </span></span>
+<span><span class="co">#&gt; Series remaining after marine filter:  1485 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after continent filter:  54 </span></span>
+<span><span class="co">#&gt; Series remaining after continent filter:  1485 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after country filter:  54 </span></span>
+<span><span class="co">#&gt; Series remaining after country filter:  1485 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after time filter:  54 </span></span>
+<span><span class="co">#&gt; Series remaining after time filter:  1485 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after paleo.proxy filter:  54 </span></span>
+<span><span class="co">#&gt; Series remaining after paleo.proxy filter:  1485 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after paleo.units filter:  54 </span></span>
+<span><span class="co">#&gt; Series remaining after paleo.units filter:  1485 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after archive.type filter:  17 </span></span>
+<span><span class="co">#&gt; Series remaining after archive.type filter:  893 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after variable.name filter:  17 </span></span>
+<span><span class="co">#&gt; Series remaining after variable.name filter:  893 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after interp.vars filter:  17 </span></span>
+<span><span class="co">#&gt; Series remaining after interp.vars filter:  893 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after interp.details filter:  3 </span></span>
+<span><span class="co">#&gt; Series remaining after interp.details filter:  76 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after compilation filter:  3 </span></span>
+<span><span class="co">#&gt; Series remaining after compilation filter:  76 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after seasonality filter(s):  0 </span></span>
+<span><span class="co">#&gt; Series remaining after seasonality filter(s):  7 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Series remaining after pub.info filter:  0 </span></span>
 <span><span class="co">#&gt; </span></span>

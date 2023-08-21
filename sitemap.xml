@@ -19,6 +19,9 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
+    <loc>/articles/lipd2neotoma.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -26,9 +29,6 @@
   </url>
   <url>
     <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ZIPmd5Local.html</loc>
   </url>
   <url>
     <loc>/reference/abc123.html</loc>
@@ -64,7 +64,13 @@
     <loc>/reference/build_structure.html</loc>
   </url>
   <url>
-    <loc>/reference/checkZIPmd5.html</loc>
+    <loc>/reference/cconv.html</loc>
+  </url>
+  <url>
+    <loc>/reference/checkKey.html</loc>
+  </url>
+  <url>
+    <loc>/reference/checkZipMd5.html</loc>
   </url>
   <url>
     <loc>/reference/check_match.html</loc>
@@ -107,15 +113,6 @@
   </url>
   <url>
     <loc>/reference/createMarkdownChangelog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/createNewChangelog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/createProjectChangelog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/createSingleMarkdownChangelog.html</loc>
   </url>
   <url>
     <loc>/reference/createTSid.html</loc>
@@ -170,6 +167,12 @@
   </url>
   <url>
     <loc>/reference/getPubNeotoma2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getQueryTable.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getStandardTables.html</loc>
   </url>
   <url>
     <loc>/reference/getTimestamp.html</loc>
@@ -283,6 +286,12 @@
     <loc>/reference/isNullOb.html</loc>
   </url>
   <url>
+    <loc>/reference/isValidAll.html</loc>
+  </url>
+  <url>
+    <loc>/reference/isValidValue.html</loc>
+  </url>
+  <url>
     <loc>/reference/lipd2neotoma.html</loc>
   </url>
   <url>
@@ -328,10 +337,16 @@
     <loc>/reference/multiLipdSummary.html</loc>
   </url>
   <url>
+    <loc>/reference/nc.html</loc>
+  </url>
+  <url>
     <loc>/reference/neotoma2lipd.html</loc>
   </url>
   <url>
     <loc>/reference/newQueryTable.html</loc>
+  </url>
+  <url>
+    <loc>/reference/past.html</loc>
   </url>
   <url>
     <loc>/reference/print.lipd.html</loc>
@@ -373,9 +388,6 @@
     <loc>/reference/queryLipdverse.html</loc>
   </url>
   <url>
-    <loc>/reference/queryTable.html</loc>
-  </url>
-  <url>
     <loc>/reference/queryTs.html</loc>
   </url>
   <url>
@@ -407,6 +419,9 @@
   </url>
   <url>
     <loc>/reference/splitInterpretationByScope.html</loc>
+  </url>
+  <url>
+    <loc>/reference/standardizeValue.html</loc>
   </url>
   <url>
     <loc>/reference/stripExtension.html</loc>
@@ -454,6 +469,15 @@
     <loc>/reference/updateChangelog.html</loc>
   </url>
   <url>
+    <loc>/reference/updateMetaDataFromStandardTables.html</loc>
+  </url>
+  <url>
+    <loc>/reference/updateNotes.html</loc>
+  </url>
+  <url>
+    <loc>/reference/updateQueryTable.html</loc>
+  </url>
+  <url>
     <loc>/reference/update_lipd_v1_1.html</loc>
   </url>
   <url>
@@ -473,9 +497,6 @@
   </url>
   <url>
     <loc>/reference/update_lipd_version.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_queryTable.html</loc>
   </url>
   <url>
     <loc>/reference/validLipd.html</loc>
