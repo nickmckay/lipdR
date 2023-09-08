@@ -1,3 +1,5 @@
+# lipdR 0.5.1
+
 # lipdR 0.5.0
 
 * Brought `queryLipdverse()`, neotoma conversion and changelogging files into the main branch.
