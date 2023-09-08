@@ -164,10 +164,15 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
   # Silence warnings
   options(warn = -1)
   # Ask user where files are stored, or sort the given path parameter
+  orig.path <- path
   path <- get_src_or_dst(path)
 
   # If this is a URL, download the file and return the local path where the file is saved.
   path <- download_from_url(path)
+  if(path == "download-error"){
+    warning(glue::glue("Failed to download {orig.path}, returning a null object"))
+    return(NULL)
+  }
 
   if(all(startsWith(tolower(tools::file_ext(path)),"json"))){
     jsonOnly <- TRUE

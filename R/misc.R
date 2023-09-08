@@ -73,7 +73,11 @@ download_from_url <- function(path){
       # Initiate download
         dir <- get_download_path()
         local_path <- file.path(dir, paste0(dsn, ".lpd"))
-        download.file(path, local_path, method = dmeth)
+        succ <- try(download.file(path, local_path, method = dmeth),silent = TRUE)
+        if(is(succ,"try-error")){
+          return("download-error")
+        }
+
         path <- local_path
 
       # Set the local path as our output path
