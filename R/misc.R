@@ -21,6 +21,7 @@ create_range <- function(start, len){
 #' @return path Local path to downloaded file
 download_from_url <- function(path){
 
+  path <- unique(path)
   #check for libcurl
   if(get_os() == "win"){
     dmeth <- "curl"
@@ -94,7 +95,7 @@ download_from_url <- function(path){
     dir.create(dir)
     local_path <- file.path(dir, paste0(basename(dirname(dirname(path))), ".lpd"))
     print(glue::glue("Downloading {length(path)} datasets from lipdverse.org..."))
-    purrr::walk2(path,local_path,download.file,method = dmeth,quiet = TRUE)
+    purrr::walk2(path,local_path,purrr::possibly(download.file),method = dmeth,quiet = TRUE,otherwise = NULL)
     path <- dir
     }else if(all(!isUrl)){
       path <- path

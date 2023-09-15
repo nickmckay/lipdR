@@ -14,9 +14,9 @@ vignette: >
       call. = FALSE
     )
   }
-  if (!requireNamespace("gt", quietly = TRUE)) {
+  if (!requireNamespace("neotoma2", quietly = TRUE)) {
     stop(
-      "Package 'gt' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
+      "Package 'neotoma2' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
       call. = FALSE
     )
   }

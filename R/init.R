@@ -174,6 +174,10 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
     return(NULL)
   }
 
+  if(!all(file.exists(path))){
+    stop(glue::glue("{path} does not exist - are you pointing to the right file(s)"))
+  }
+
   if(all(startsWith(tolower(tools::file_ext(path)),"json"))){
     jsonOnly <- TRUE
   }else if(all(startsWith(tolower(tools::file_ext(path)),"lpd")) | all(isDirectory(path))){

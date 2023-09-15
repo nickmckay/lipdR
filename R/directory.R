@@ -69,7 +69,10 @@ get_src_or_dst<- function(path){
       if(length(path) > 1){
         if(!all(purrr::map_lgl(path,~ tools::file_ext(.x) == "lpd"))){
           if(all(purrr::map_lgl(path,is.character))){#all dsids
-            path <- purrr::map2_chr(path,vers,convert_dsid_to_path)
+            if(any(is.na(vers))){
+            message("Getting version information from lipdverse")
+            }
+            path <- purrr::map2_chr(path,vers,purrr::insistently(convert_dsid_to_path,rate = purrr::rate_delay(pause = 1,max_times = 10)),.progress = TRUE)
           }else{
             stop("Error: The provided vector of paths must all point to lipd files (.lpd extensions) that exist (check for full paths), or dsids on lipdverse")
           }
@@ -116,7 +119,11 @@ get_src_or_dst<- function(path){
 convert_dsid_to_path <- function(dsid,vers = NA){
   webpath <- paste0("https://lipdverse.org/data/",dsid)
   if(is.na(vers)){#get most recent
-    vers <- stringr::str_extract(string = readr::read_file(webpath) , pattern = "\\d{1,}_\\d{1,}_\\d{1,}")
+    vers <- try(stringr::str_extract(string = readr::read_file(webpath) , pattern = "\\d{1,}_\\d{1,}_\\d{1,}"),silent = TRUE)
+
+    if(is(vers,"try-error")){
+      stop("Cant get dataset version from path.")
+    }
   }
   path <- file.path(webpath,vers,"lipd.lpd")
   return(path)
@@ -131,8 +138,8 @@ get_lipd_paths <- function(path,jsonOnly = FALSE){
   if(length(path) > 1){
     if(length(tools::file_ext(path[1])) > 0){
       files <- path
-    # }else{#it's a dsid
-    #   files <- purrr::map_chr(path,convert_dsid_to_path)
+      # }else{#it's a dsid
+      #   files <- purrr::map_chr(path,convert_dsid_to_path)
     }
   }else{
 
@@ -152,8 +159,8 @@ get_lipd_paths <- function(path,jsonOnly = FALSE){
         files <- list.files(path=path, pattern='\\.lpd$', full.names = TRUE)
       } else if(tools::file_ext(path) == "lpd"){
         files[[1]] <- path
-      # }else if(tools::file_ext(path) == ""){
-      #   files[[1]] <- convert_dsid_to_path(path)
+        # }else if(tools::file_ext(path) == ""){
+        #   files[[1]] <- convert_dsid_to_path(path)
       }else{
         stop("don't recognize input")
       }
