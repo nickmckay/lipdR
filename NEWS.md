@@ -1,3 +1,5 @@
+# lipdR 0.5.2
+
 # lipdR 0.5.1
 
 * Make `readLipd()` fail better when downloading from lipdverse or other urls
