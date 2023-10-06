@@ -150,7 +150,7 @@ fromOrigLipd <- function(L){
       if (!is.na(slot(site1@collunits@collunits[[jj]], "defaultchronology"))){
         chronNow <- slot(site1@collunits@collunits[[jj]], "defaultchronology")
 
-        chronNum <- which(chronNow == unlist(lapply(L2$paleoData, function(x) x$linkedChronData)))
+        chronNum <- which(chronNow == unlist(lapply(L$paleoData, function(x) x$linkedChronData)))
 
         if (length(chronNum) < 1){
           message("No chronology found, please make explicit link to chronData.")
@@ -193,14 +193,14 @@ fromOrigLipd <- function(L){
             if (!is.null(L$paleoData[[jj]]$measurementTable[[j]]$measurementTableId) & !is.null(chronNum)& !is.null(paleoNow)){
               #use the known paleo-chron linkage to find measurement table
               chronTabNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedMeasurementTable
-              chronTabNum <- which(chronTabNow == unlist(lapply(L2$chronData[[chronNum]]$measurementTable, function(x) x$measurementTableId)))
+              chronTabNum <- which(chronTabNow == unlist(lapply(L$chronData[[chronNum]]$measurementTable, function(x) x$measurementTableId)))
               #and model
               modelNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedModel
-              modelNum <- which(modelNow == unlist(lapply(L2$chronData[[chronNum]]$model, function(x) x$modelId)))
+              modelNum <- which(modelNow == unlist(lapply(L$chronData[[chronNum]]$model, function(x) x$modelId)))
               #and summary table
               if (is.numeric(modelNum)){
                 summaryTabNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedSummaryTable
-                summaryTabNum <- which(summaryTabNow == unlist(lapply(L2$chronData[[chronNum]]$model[[modelNum]]$summaryTable, function(x) x$summaryTableId)))
+                summaryTabNum <- which(summaryTabNow == unlist(lapply(L$chronData[[chronNum]]$model[[modelNum]]$summaryTable, function(x) x$summaryTableId)))
               }
 
 
@@ -435,7 +435,7 @@ fromOrigLipd <- function(L){
               }
 
               if (length(slot(sample1, eval("ages")))<1 | is.na(slot(sample1, eval("depth")))){
-                summaryTab <- L2$chronData[[chronNum]]$model[[modelNum]]$summaryTable[[summaryTabNum]]
+                summaryTab <- L$chronData[[chronNum]]$model[[modelNum]]$summaryTable[[summaryTabNum]]
                 #toss out any metadata fields
                 summaryTab <- summaryTab[unlist(lapply(summaryTab, function(x) class(x)=="list"))]
                 #add additonal sample metadata

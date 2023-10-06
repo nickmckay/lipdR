@@ -5,10 +5,13 @@ date: "10-6-2023"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 #this vignette uses the lipdR branch "neotomaNew" (https://github.com/nickmckay/lipdR/tree/neotmaNew)
 knitr::opts_chunk$set(echo = TRUE)
-library(lipdR)
+```
+
+```{r setup}
+devtools::load_all()
 ```
 
 ### APD LiPD file
