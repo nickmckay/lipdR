@@ -37,15 +37,15 @@ lipd2neotoma <- function(L){
 fromOrigLipd <- function(L){
 
   #define the lithology class if it does not exist
-  if(!isClass("lithology")){
-    setClass("lithology",representation(lithologyid="integer",
-                                        depthtop="numeric",
-                                        depthbottom="numeric",
-                                        lowerboundary="character",
-                                        description="character",
-                                        recdatecreated="Date",
-                                        recdatemodified="Date"))
-  }
+  # if(!isClass("lithology")){
+  #   setClass("lithology",representation(lithologyid="integer",
+  #                                       depthtop="numeric",
+  #                                       depthbottom="numeric",
+  #                                       lowerboundary="character",
+  #                                       description="character",
+  #                                       recdatecreated="Date",
+  #                                       recdatemodified="Date"))
+  # }
 
 
   #initiate site and set site-level metadata
@@ -464,7 +464,8 @@ fromOrigLipd <- function(L){
             }
 
             #place dataset in list of datasets
-            datasetAll@datasets[[j]] <- dataset1
+            site1@collunits@collunits[[jj]]@datasets@datasets[[j]] <- dataset1
+            #datasetAll@datasets[[j]] <- dataset1
 
           } else if (L$paleoData[[jj]]$measurementTable[[j]]$tableName == "lithology"){
 
@@ -553,7 +554,7 @@ fromOrigLipd <- function(L){
         }
       }
       #place datasets in collunit
-      slot(site1@collunits@collunits[[jj]], "datasets") <- datasetAll
+      #slot(site1@collunits@collunits[[jj]], "datasets") <- datasetAll
     }
   }
 
@@ -577,7 +578,8 @@ fromOrigNeotoma <- function(L){
   mtabs1 <- getMeasurementTables(L)
 
 
-  datasetAll <- new("datasets")
+  #datasetAll <- new("datasets")
+  datasetAll <- list()
   #######################################################################
   #paleoData
   #######################################################################
@@ -789,6 +791,7 @@ fromOrigNeotoma <- function(L){
     }else{
       message("Setting dataset ID as 9999")
       dataset1 <- neotoma2::set_dataset(datasetid = 9999)
+      dataset1@specimens <- new("specimens")
     }
 
 
