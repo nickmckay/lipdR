@@ -467,90 +467,91 @@ fromOrigLipd <- function(L){
             site1@collunits@collunits[[jj]]@datasets@datasets[[j]] <- dataset1
             #datasetAll@datasets[[j]] <- dataset1
 
-          } else if (L$paleoData[[jj]]$measurementTable[[j]]$tableName == "lithology"){
-
-            ###########################################################################
-            #Add new lithology
-            ###########################################################################
-
-            lith1 <- new("lithology")
-
-
-            possibleLipdLithologyKeys <-
-              c(
-                "neotomaLithologyid",
-                "neotomaLowerboundary",
-                "neotomaRecdatecreated",
-                "neotomaRecdatemodified"
-              )
-
-            lipdLithologKeys <- names(L$paleoData[[jj]]$measurementTable[[j]])[names(L$paleoData[[jj]]$measurementTable[[j]]) %in% possibleLipdLithologyKeys]
-
-            for (rr in lipdLithologKeys){
-              if (rr == "neotomaLithologyid"){
-                aa = "lithologyid"
-              }else if (rr == "neotomaLowerboundary"){
-                aa = "lowerboundary"
-              }else if (rr == "neotomaRecdatecreated"){
-                aa = "recdatecreated"
-              }else if (rr == "neotomaRecdatemodified"){
-                aa = "recdatemodified"
-              }else{
-                aa=rr
-              }
-              slot(lith1, eval(aa)) <- unname(L$paleoData[[jj]]$measurementTable[[j]][eval(rr)])[[1]]
-            }
-
-            #note unplaced dataset metadata
-            areTheseLithologyMetadata <- names(L$paleoData[[jj]]$measurementTable[[j]])[unlist(lapply(L$paleoData[[jj]]$measurementTable[[j]], function(x) class(x) != "list"))]
-
-            lithologyMetadataNotPlaced <- areTheseLithologyMetadata[!areTheseLithologyMetadata %in% c(possibleLipdLithologyKeys,"tableName")]
-
-            if (length(datasetMetadataNotPlaced)>0){
-              message(paste0("The following lithology (paleoData measurement table) metadata could not be placed: ", paste(datasetMetadataNotPlaced, collapse = " "), "\n",
-                             "Consider renaming to one of the controlled lipd standard for neotoma terms: ", paste(possibleLipdLithologyKeys, collapse = " "),"\n"))
-            }
-
-
-            lithologyColNames <- names(L$paleoData[[jj]]$measurementTable[[j]])[unlist(lapply(L$paleoData[[jj]]$measurementTable[[j]], function(x) class(x) == "list"))]
-
-            lithologies <- list()
-
-            if (length(lithologyColNames) > 0) {
-              for (yy in 1:length(L$paleoData[[jj]]$measurementTable[[j]][lithologyColNames[1]][[1]]$values)){
-                lithNew <- lith1
-                for (tt in lithologyColNames){
-                  if (tt == "neotomaLithologyid"){
-                    aa = "lithologyid"
-                    slot(lithNew, eval(aa)) <- as.numeric(L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy])
-                  }else if (tt == "neotomaLowerboundary"){
-                    aa = "lowerboundary"
-                    slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
-                  }else if (tt == "neotomaRecdatecreated"){
-                    aa = "recdatecreated"
-                    slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
-                  }else if (tt == "neotomaRecdatemodified"){
-                    aa = "recdatemodified"
-                    slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
-                  }else if (tt == "depthTop"){
-                    aa = "depthtop"
-                    slot(lithNew, eval(aa)) <- as.numeric(L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy])
-                  }else if (tt == "depthBottom"){
-                    aa = "depthbottom"
-                    slot(lithNew, eval(aa)) <- as.numeric(L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy])
-                  }else if (tt == "facies"){
-                    aa = "description"
-                    slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
-                  }else{
-                    aa=tt
-                  }
-                }
-                lithologies[[yy]] <- lithNew
-              }
-            }
-          } else {
-            stop(paste0("at paeloData ", jj, " measurementTable ", j, " 'tableName' must be one of: 'dataset', 'lithology'"))
           }
+          # else if (L$paleoData[[jj]]$measurementTable[[j]]$tableName == "lithology"){
+          #
+          #   ###########################################################################
+          #   #Add new lithology
+          #   ###########################################################################
+          #
+          #   lith1 <- new("lithology")
+          #
+          #
+          #   possibleLipdLithologyKeys <-
+          #     c(
+          #       "neotomaLithologyid",
+          #       "neotomaLowerboundary",
+          #       "neotomaRecdatecreated",
+          #       "neotomaRecdatemodified"
+          #     )
+          #
+          #   lipdLithologKeys <- names(L$paleoData[[jj]]$measurementTable[[j]])[names(L$paleoData[[jj]]$measurementTable[[j]]) %in% possibleLipdLithologyKeys]
+          #
+          #   for (rr in lipdLithologKeys){
+          #     if (rr == "neotomaLithologyid"){
+          #       aa = "lithologyid"
+          #     }else if (rr == "neotomaLowerboundary"){
+          #       aa = "lowerboundary"
+          #     }else if (rr == "neotomaRecdatecreated"){
+          #       aa = "recdatecreated"
+          #     }else if (rr == "neotomaRecdatemodified"){
+          #       aa = "recdatemodified"
+          #     }else{
+          #       aa=rr
+          #     }
+          #     slot(lith1, eval(aa)) <- unname(L$paleoData[[jj]]$measurementTable[[j]][eval(rr)])[[1]]
+          #   }
+          #
+          #   #note unplaced dataset metadata
+          #   areTheseLithologyMetadata <- names(L$paleoData[[jj]]$measurementTable[[j]])[unlist(lapply(L$paleoData[[jj]]$measurementTable[[j]], function(x) class(x) != "list"))]
+          #
+          #   lithologyMetadataNotPlaced <- areTheseLithologyMetadata[!areTheseLithologyMetadata %in% c(possibleLipdLithologyKeys,"tableName")]
+          #
+          #   if (length(datasetMetadataNotPlaced)>0){
+          #     message(paste0("The following lithology (paleoData measurement table) metadata could not be placed: ", paste(datasetMetadataNotPlaced, collapse = " "), "\n",
+          #                    "Consider renaming to one of the controlled lipd standard for neotoma terms: ", paste(possibleLipdLithologyKeys, collapse = " "),"\n"))
+          #   }
+          #
+          #
+          #   lithologyColNames <- names(L$paleoData[[jj]]$measurementTable[[j]])[unlist(lapply(L$paleoData[[jj]]$measurementTable[[j]], function(x) class(x) == "list"))]
+          #
+          #   lithologies <- list()
+          #
+          #   if (length(lithologyColNames) > 0) {
+          #     for (yy in 1:length(L$paleoData[[jj]]$measurementTable[[j]][lithologyColNames[1]][[1]]$values)){
+          #       lithNew <- lith1
+          #       for (tt in lithologyColNames){
+          #         if (tt == "neotomaLithologyid"){
+          #           aa = "lithologyid"
+          #           slot(lithNew, eval(aa)) <- as.numeric(L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy])
+          #         }else if (tt == "neotomaLowerboundary"){
+          #           aa = "lowerboundary"
+          #           slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
+          #         }else if (tt == "neotomaRecdatecreated"){
+          #           aa = "recdatecreated"
+          #           slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
+          #         }else if (tt == "neotomaRecdatemodified"){
+          #           aa = "recdatemodified"
+          #           slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
+          #         }else if (tt == "depthTop"){
+          #           aa = "depthtop"
+          #           slot(lithNew, eval(aa)) <- as.numeric(L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy])
+          #         }else if (tt == "depthBottom"){
+          #           aa = "depthbottom"
+          #           slot(lithNew, eval(aa)) <- as.numeric(L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy])
+          #         }else if (tt == "facies"){
+          #           aa = "description"
+          #           slot(lithNew, eval(aa)) <- L$paleoData[[jj]]$measurementTable[[j]][eval(tt)][[1]]$values[yy]
+          #         }else{
+          #           aa=tt
+          #         }
+          #       }
+          #       lithologies[[yy]] <- lithNew
+          #     }
+          #   }
+          # } else {
+          #   stop(paste0("at paeloData ", jj, " measurementTable ", j, " 'tableName' must be one of: 'dataset', 'lithology'"))
+          # }
         }
       }
       #place datasets in collunit
@@ -558,9 +559,10 @@ fromOrigLipd <- function(L){
     }
   }
 
-  neotomaStuff <- list(site1, lithologies)
+  #neotomaStuff <- list(site1, lithologies)
 
-  return(neotomaStuff)
+  #return(neotomaStuff)
+  return(site1)
 }
 
 
