@@ -1,0 +1,124 @@
+---
+title: "APD translation by lipd2neotoma()"
+author: "Dave Edge"
+date: "10-6-2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#this vignette uses the lipdR branch "neotomaNew" (https://github.com/nickmckay/lipdR/tree/neotmaNew)
+knitr::opts_chunk$set(echo = TRUE)
+library(lipdR)
+```
+
+### APD LiPD file
+
+lipdR includes a lipd-formatted dataset from the African Pollen Database
+This dataset conforms to the lipd standard for conversion to a neotoma2 R object
+
+The standard is defined here: https://github.com/nickmckay/lipdR/blob/neotmaNew/LiPD%20standard%20for%20neotoma%20conversion.md
+
+Let's take a first look at the KISIMA lipd object
+
+```{r}
+KISIMA
+```
+
+So we have one paleo data object with two measurement tables
+one chron data object with a single measurement tables
+and one model with a summary table
+
+### Convert to a neotoma object
+
+```{r}
+D1 <- lipdR:::lipd2neotoma(KISIMA)
+```
+
+Okay, looks like we have a successful conversion
+
+Let's see a top-level summary of the neotoma2 object
+
+```{r}
+D1
+```
+
+Great, the overview data has been translated
+
+Let's investigate the deeper structures
+
+```{r}
+D1$collunits[[1]]
+```
+
+Okay, the collection unit metadata is intact
+
+
+### dataset
+
+```{r}
+D1$collunits[[1]]@datasets@datasets[[1]]
+```
+
+
+### sample
+
+```{r}
+D1$collunits[[1]]@datasets@datasets[[1]]@samples[[1]]
+```
+
+At the sample level, we see that units, variable name, value, element, and taxon group have come through
+
+The taxon ID is a Neotoma concept which can be added at a later stage if upload to the Neotoma database is desired
+
+The ecological group information, related to the APD concept of "Pollen Habit" is not currently exported for APD lipd files
+
+### chronology
+
+```{r}
+D1$collunits[[1]]@chronologies
+```
+
+The chronology data looks good
+
+That wraps up our look at a lipd to neotoma translation
+
+Now let's go the other direction, starting from the neotoma2 site "Bambili 2"
+
+```{r}
+B <- neotoma2::get_sites(sitename = "Bambili 2")
+D <- neotoma2::get_downloads(B)
+D
+```
+
+Now we'll translate to a lipd object
+
+```{r}
+L <- neotoma2lipd(D)
+L
+```
+
+Great, the summary shows a paleodata measurement table
+and a chron data measurement table
+
+Let's look inside
+
+```{r}
+head(summary(L$paleoData[[1]]$measurementTable[[1]]))
+length(summary(L$paleoData[[1]]$measurementTable[[1]]))
+```
+
+Okay, so we have data for depth, age and 616 additional variables
+
+```{r}
+names(L$chronData[[1]]$measurementTable[[1]])
+```
+
+We have 10 fields here, let's just look at depth
+
+```{r}
+L$chronData[[1]]$measurementTable[[1]]$depth
+```
+
+Great, we see our depth values as well as the key metadata
+
+All looks to be in order for running analysis with this lipd dataset
