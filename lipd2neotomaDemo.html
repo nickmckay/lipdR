@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0073)file:///C:/Users/dce25/Documents/R%20Projects/lipdR/lipd2neotomaDemo.html -->
+<!-- saved from url=(0108)file:///C:/Users/dce25/AppData/Local/Temp/RtmpQrh6E8/preview-116b47e6739e8.dir/lipd-neotoma_translation.html -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 
@@ -9,9 +9,8 @@
 
 <meta name="author" content="Dave Edge">
 
-<meta name="date" content="2022-12-05">
 
-<title>lipd2neotoma Demo</title>
+<title>APD translation by lipd2neotoma()</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -443,29 +442,224 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">lipd2neotoma Demo</h1>
+<h1 class="title toc-ignore">APD translation by lipd2neotoma()</h1>
 <h4 class="author">Dave Edge</h4>
-<h4 class="date">2022-12-05</h4>
+<h4 class="date">10-6-2023</h4>
 
 </div>
 
 
-<div id="this-is-a-demonstration-of-the-new-lipd2neotoma-function" class="section level2">
-<h2>This is a demonstration of the new <code>lipd2neotoma()</code>
-function</h2>
-<div id="i-will-use-a-neotoma-dataset-called-bambili-2-for-this-demonstration" class="section level3">
-<h3>I will use a neotoma dataset, called Bambili 2, for this
-demonstration</h3>
-<p>First, we will load this record and convert into lipd format</p>
+<pre class="r"><code class="hljs">devtools::load_all()</code></pre>
+<pre><code class="hljs">## ℹ Loading lipdR</code></pre>
+<pre><code class="hljs">## Warning: package 'testthat' was built under R version 4.2.2</code></pre>
+<div id="apd-lipd-file" class="section level3">
+<h3>APD LiPD file</h3>
+<p>lipdR includes a lipd-formatted dataset from the African Pollen
+Database This dataset conforms to the lipd standard for conversion to a
+neotoma2 R object</p>
+<p>The standard is defined here: <a href="https://github.com/nickmckay/lipdR/blob/neotmaNew/LiPD%20standard%20for%20neotoma%20conversion.md" class="uri">https://github.com/nickmckay/lipdR/blob/neotmaNew/LiPD%20standard%20for%20neotoma%20conversion.md</a></p>
+<p>Let’s take a first look at the KISIMA lipd object</p>
+<pre class="r"><code class="hljs">KISIMA</code></pre>
+<pre><code class="hljs">## ################################################################################################
+## KISIMA [KN1A]
+## ################################################################################################
+## 
+## ### Archive Type ###
+## Peat
+## 
+## ### Geographic Metadata ###
+## Kisima Ngeda (Tanzania, United Republic of)(-3.4856944N, 35.3481944E), 1030 masl### Paleo Data ###
+## 
+## Summary data for object 1, Measurement Table 1 of 2:
+## Measurement table contains 22 observations of 54 variables
+## 
+## 
+## Summary data for object 1, Measurement Table 2 of 2:
+## Measurement table contains 2 observations of 3 variables
+## 
+## 
+## ### Chron Data ###
+## 
+## Summary data for object 1, Measurement Table 1 of 1:
+## Measurement table contains 4 observations of 5 variables
+## 
+## 1 model(s) found 
+## 
+## Model 1 contains: methods summaryTable modelId</code></pre>
+<p>So we have one paleo data object with two measurement tables one
+chron data object with a single measurement tables and one model with a
+summary table</p>
+</div>
+<div id="convert-to-a-neotoma-object" class="section level3">
+<h3>Convert to a neotoma object</h3>
+<pre class="r"><code class="hljs">D1 &lt;- lipdR:::lipd2neotoma(KISIMA)</code></pre>
+<p>Okay, looks like we have a successful conversion</p>
+<p>Let’s see a top-level summary of the neotoma2 object</p>
+<pre class="r"><code class="hljs">D1</code></pre>
+<pre><code class="hljs">##                                siteid     sitename       lat     long altitude
+##  445ec9c8-204d-4baa-9626-7531725dc7cb Kisima Ngeda -3.485694 35.34819     1030</code></pre>
+<p>Great, the overview data has been translated</p>
+<p>Let’s investigate the deeper structures</p>
+<pre class="r"><code class="hljs">D1$collunits[[<span class="hljs-number">1</span>]]</code></pre>
+<pre><code class="hljs">##   collectionunitid handle   colldate location waterdepth collunittype
+## 1            39474   KN1A 2011-07-07     &lt;NA&gt;         NA         &lt;NA&gt;
+##                            collectiondevice defaultchronology
+## 1 Livingston-Bolivia drive rod piston corer             38642
+##   collectionunitname depositionalenvironment
+## 1      KISIMA [KN1A]                    Peat</code></pre>
+<p>Okay, the collection unit metadata is intact</p>
+</div>
+<div id="dataset" class="section level3">
+<h3>dataset</h3>
+<pre class="r"><code class="hljs">D1$collunits[[<span class="hljs-number">1</span>]]@datasets@datasets[[<span class="hljs-number">1</span>]]</code></pre>
+<pre><code class="hljs">##                         datasetid                database datasettype
+##  45d424a149fe6a85c63628cd18736c05 African Pollen Database      pollen
+##  age_range_old age_range_young notes
+##           1106             -61  &lt;NA&gt;</code></pre>
+</div>
+<div id="sample" class="section level3">
+<h3>sample</h3>
+<pre class="r"><code class="hljs">D1$collunits[[<span class="hljs-number">1</span>]]@datasets@datasets[[<span class="hljs-number">1</span>]]@samples[[<span class="hljs-number">1</span>]]</code></pre>
+<pre><code class="hljs">## An object of class "sample"
+## Slot "ages":
+## [1] 2011
+## 
+## Slot "igsn":
+## [1] NA
+## 
+## Slot "datum":
+##    units               variablename value taxonid           element context
+## 2   NISP    Hypoestes-type aristata     1      NA Pollen and spores      NA
+## 5   NISP    Achyranthes-type aspera     3      NA Pollen and spores      NA
+## 6   NISP       Celosia-type trigyna     1      NA Pollen and spores      NA
+## 15  NISP               Tubuliflorae     1      NA Pollen and spores      NA
+## 17  NISP    Maerua-type crassifolia     1      NA Pollen and spores      NA
+## 18  NISP        Suaeda monoica-type     9      NA Pollen and spores      NA
+## 19  NISP       Combretum-type molle     1      NA Pollen and spores      NA
+## 21  NISP         Cyperaceae undiff.   463      NA Pollen and spores      NA
+## 22  NISP                     Euclea     1      NA Pollen and spores      NA
+## 29  NISP            Sesbania sesban     1      NA Pollen and spores      NA
+## 30  NISP Vatovaea-type pseudolablab     1      NA Pollen and spores      NA
+## 32  NISP           Sansevieria-type     3      NA Pollen and spores      NA
+## 33  NISP               Nuxia/Dobera     2      NA Pollen and spores      NA
+## 34  NISP                     Rotala     2      NA Pollen and spores      NA
+## 36  NISP              Cocculus-type     1      NA Pollen and spores      NA
+## 37  NISP                     Acacia    23      NA Pollen and spores      NA
+## 40  NISP                    Ximenia     1      NA Pollen and spores      NA
+## 41  NISP         Olea europaea-type     3      NA Pollen and spores      NA
+## 42  NISP              Hyphaene-type     2      NA Pollen and spores      NA
+## 43  NISP            Poaceae undiff.   111      NA Pollen and spores      NA
+## 47  NISP                      Typha   742      NA Pollen and spores      NA
+## 49  NISP      Trema-type orientalis     1      NA Pollen and spores      NA
+## 51  NISP                   Tribulus     1      NA Pollen and spores      NA
+##    symmetry      taxongroup ecologicalgroup
+## 2        NA Vascular plants              NA
+## 5        NA Vascular plants              NA
+## 6        NA Vascular plants              NA
+## 15       NA Vascular plants              NA
+## 17       NA Vascular plants              NA
+## 18       NA Vascular plants              NA
+## 19       NA Vascular plants              NA
+## 21       NA Vascular plants              NA
+## 22       NA Vascular plants              NA
+## 29       NA Vascular plants              NA
+## 30       NA Vascular plants              NA
+## 32       NA Vascular plants              NA
+## 33       NA Vascular plants              NA
+## 34       NA Vascular plants              NA
+## 36       NA Vascular plants              NA
+## 37       NA Vascular plants              NA
+## 40       NA Vascular plants              NA
+## 41       NA Vascular plants              NA
+## 42       NA Vascular plants              NA
+## 43       NA Vascular plants              NA
+## 47       NA Vascular plants              NA
+## 49       NA Vascular plants              NA
+## 51       NA Vascular plants              NA
+## 
+## Slot "depth":
+## [1] 0.5
+## 
+## Slot "sampleid":
+## [1] 556598
+## 
+## Slot "thickness":
+## [1] NA
+## 
+## Slot "samplename":
+## [1] NA
+## 
+## Slot "sampleanalyst":
+## list()
+## 
+## Slot "analysisunitid":
+## [1] 433490
+## 
+## Slot "analysisunitname":
+## [1] NA</code></pre>
+<p>At the sample level, we see that units, variable name, value,
+element, and taxon group have come through</p>
+<p>The taxon ID is a Neotoma concept which can be added at a later stage
+if upload to the Neotoma database is desired</p>
+<p>The ecological group information, related to the APD concept of
+“Pollen Habit” is not currently exported for APD lipd files</p>
+</div>
+<div id="chronology" class="section level3">
+<h3>chronology</h3>
+<pre class="r"><code class="hljs">D1$collunits[[<span class="hljs-number">1</span>]]@chronologies</code></pre>
+<pre><code class="hljs">## An object of class "chronologies"
+## Slot "chronologies":
+## [[1]]
+## An object of class "chronology"
+## Slot "chronologyid":
+## [1] "fef47c67b42e8259f668c111622e700e"
+## 
+## Slot "notes":
+## [1] "all dates available for the site, not necessarily all used in the reference chronology"
+## 
+## Slot "contact":
+## list()
+## 
+## Slot "agemodel":
+## [1] "CLAM"
+## 
+## Slot "ageboundolder":
+## [1] NA
+## 
+## Slot "ageboundyounger":
+## [1] NA
+## 
+## Slot "isdefault":
+## [1] 1
+## 
+## Slot "dateprepared":
+## [1] NA
+## 
+## Slot "modelagetype":
+## [1] "yrs BP"
+## 
+## Slot "chronologyname":
+## [1] NA
+## 
+## Slot "chroncontrols":
+##   depth  age error thickness       labId
+## 1  22.5  540    30         1 Beta 463027
+## 2  30.5  730    30         1 Beta 463028
+## 3 37.75 1055    30       0.5  SacA 33589
+## 4  42.5 1190    80         1  SacA 33590</code></pre>
+<p>The chronology data looks good</p>
+<p>That wraps up our look at a lipd to neotoma translation</p>
+<p>Now let’s go the other direction, starting from the neotoma2 site
+“Bambili 2”</p>
 <pre class="r"><code class="hljs">B &lt;- neotoma2::get_sites(sitename = <span class="hljs-string">"Bambili 2"</span>)
 D &lt;- neotoma2::get_downloads(B)</code></pre>
 <pre><code class="hljs">## ..</code></pre>
-<pre class="r"><code class="hljs">L &lt;- neotoma2lipd(D)</code></pre>
-</div>
-<div id="lipd" class="section level3">
-<h3>LiPD</h3>
-<p>Let’s see a summary of the record in LiPD</p>
-<pre class="r"><code class="hljs">summary(L)</code></pre>
+<pre class="r"><code class="hljs">D</code></pre>
+<pre><code class="hljs">##  siteid  sitename      lat     long altitude
+##   23664 Bambili 2 5.925018 10.24278     2323</code></pre>
+<p>Now we’ll translate to a lipd object</p>
+<pre class="r"><code class="hljs">L &lt;- neotoma2lipd(D)
+L</code></pre>
 <pre><code class="hljs">## ################################################################################################
 ## Bambili2.Lzine.2019
 ## neotomaSiteId_23664
@@ -487,647 +681,53 @@ D &lt;- neotoma2::get_downloads(B)</code></pre>
 ## Summary data for object 1, Measurement Table 1 of 1:
 ## Measurement table contains 141 observations of 206 variables
 ## 
-## # A tibble: 4 × 207
-##   ` `    depth  age   Celtis_p…¹ Hyper…² Fabac…³ Myric…⁴ Combr…⁵ Dysch…⁶ Vitel…⁷
-##   &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
-## 1 units  cm     &lt;NA&gt;  NISP       NISP    NISP    NISP    NISP    NISP    NISP   
-## 2 min    154.5  20312 1          1       1       1       1       1       1      
-## 3 median 607    53111 4          5       3       2       3       1       1      
-## 4 max    1259.5 88932 15         22      12      12      12      6       3      
-## # … with 197 more variables: Polypodiumtype_spore &lt;chr&gt;,
-## #   Cyatheatype_spore &lt;chr&gt;, Ilexmitis_pollen &lt;chr&gt;,
-## #   EmbeliatypeEschimperi_pollen &lt;chr&gt;, Vernonieaeundiff_pollen &lt;chr&gt;,
-## #   Oleacapensistype_pollen &lt;chr&gt;, Ascolepis_pollen &lt;chr&gt;,
-## #   NuxiatypeNcongesta_pollen &lt;chr&gt;, Polypodiophytamonoleteundiff_spore &lt;chr&gt;,
-## #   Scabiosatype_pollen &lt;chr&gt;, Podocarpus_pollen &lt;chr&gt;,
-## #   Asteraceaeundiff_pollen &lt;chr&gt;, Ericaceaeundiff_pollen &lt;chr&gt;, …
 ## 
 ## ### Chron Data ###
 ## 
 ## Summary data for object 1, Measurement Table 1 of 1:
-## Measurement table contains 16 observations of 10 variables
-## 
-## # A tibble: 5 × 11
-##   ` `         depth  depth…¹ depth…² thick…³ age   ageOld ageYo…⁴ age_t…⁵ ageUnc
-##   &lt;chr&gt;       &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; 
-## 1 units       cm     cm      cm      cm      yr BP yr BP  yr BP   unitle… yr BP 
-## 2 description midpo… top de… bottom… sample… cale… older… younge… type o… two s…
-## 3 min         199.5  Inf     Inf     &lt;NA&gt;    22225 22873  21577   Biostr… 590   
-## 4 median      402    &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;    40633 34584  33020   Radioc… 798   
-## 5 max         1239.5 -Inf    -Inf    &lt;NA&gt;    88350 51467  42882   Radioc… 4464  
-## # … with 1 more variable: neotomaChronConrolId &lt;chr&gt;, and abbreviated variable
-## #   names ¹​depth_top, ²​depth_bottom, ³​thickness, ⁴​ageYoung, ⁵​age_type</code></pre>
-</div>
-<div id="neotoma" class="section level3">
-<h3>Neotoma</h3>
-<p>Now we will convert back to neotoma and observe the changes</p>
-<pre class="r"><code class="hljs">N &lt;- lipdR:::lipd2neotoma(L)
-
-D@sites[[<span class="hljs-number">1</span>]]</code></pre>
-<pre><code class="hljs">##  siteid  sitename      lat     long altitude
-##   23664 Bambili 2 5.925018 10.24278     2323</code></pre>
-<pre class="r"><code class="hljs">N</code></pre>
-<pre><code class="hljs">##  siteid  sitename      lat     long altitude
-##   23664 Bambili 2 5.925018 10.24278     2323</code></pre>
-<p>The site printout looks good</p>
-<p>Site level metadata</p>
-<pre class="r"><code class="hljs">D</code></pre>
-<pre><code class="hljs">##  siteid  sitename      lat     long altitude
-##   23664 Bambili 2 5.925018 10.24278     2323</code></pre>
-<pre class="r"><code class="hljs">D@sites</code></pre>
-<pre><code class="hljs">## $site
-##  siteid  sitename      lat     long altitude
-##   23664 Bambili 2 5.925018 10.24278     2323</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]</code></pre>
-<pre><code class="hljs">##  siteid  sitename      lat     long altitude
-##   23664 Bambili 2 5.925018 10.24278     2323</code></pre>
-<pre class="r"><code class="hljs">N</code></pre>
-<pre><code class="hljs">##  siteid  sitename      lat     long altitude
-##   23664 Bambili 2 5.925018 10.24278     2323</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]@siteid</code></pre>
-<pre><code class="hljs">## [1] 23664</code></pre>
-<pre class="r"><code class="hljs">N@siteid</code></pre>
-<pre><code class="hljs">## [1] "23664"</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]@sitename</code></pre>
-<pre><code class="hljs">## [1] "Bambili 2"</code></pre>
-<pre class="r"><code class="hljs">N@sitename</code></pre>
-<pre><code class="hljs">## [1] "Bambili 2"</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]$geography</code></pre>
-<pre><code class="hljs">## Simple feature collection with 1 feature and 0 fields
-## Geometry type: POLYGON
-## Dimension:     XY
-## Bounding box:  xmin: 10.24036 ymin: 5.92223 xmax: 10.24642 ymax: 5.9292
-## Geodetic CRS:  WGS 84
-##                         geometry
-## 1 POLYGON ((10.24036 5.92223,...</code></pre>
-<pre class="r"><code class="hljs">N@geography</code></pre>
-<pre><code class="hljs">## Simple feature collection with 1 feature and 0 fields
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: 10.24278 ymin: 5.925018 xmax: 10.24278 ymax: 5.925018
-## CRS:           NA
-##                           x
-## 1 POINT (10.24278 5.925018)</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]$altitude</code></pre>
-<pre><code class="hljs">## [1] 2323</code></pre>
-<pre class="r"><code class="hljs">N@altitude</code></pre>
-<pre><code class="hljs">## [1] 2323</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]$geopolitical</code></pre>
-<pre><code class="hljs">## [[1]]
-## [[1]][[1]]
-## [1] "Cameroon"
-## 
-## [[1]][[2]]
-## [1] "North-West"</code></pre>
-<pre class="r"><code class="hljs">N@geopolitical</code></pre>
-<pre><code class="hljs">## list()</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]$area</code></pre>
-<pre><code class="hljs">## [1] NA</code></pre>
-<pre class="r"><code class="hljs">N@area</code></pre>
-<pre><code class="hljs">## [1] NA</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]$notes</code></pre>
-<pre><code class="hljs">## [1] NA</code></pre>
-<pre class="r"><code class="hljs">N@notes</code></pre>
-<pre><code class="hljs">## [1] NA</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]$description</code></pre>
-<pre><code class="hljs">## [1] "Bambili upper crater (swamp)"</code></pre>
-<pre class="r"><code class="hljs">N@description</code></pre>
-<pre><code class="hljs">## [1] "Bambili upper crater (swamp)"</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]$collunits</code></pre>
-<pre><code class="hljs">##   collectionunitid   handle   colldate                  location waterdepth
-## 1            28383 BAMBILI2 2010-01-01 near north edge of crater         NA
-##   collunittype   collectiondevice defaultchronology collectionunitname
-## 1         &lt;NA&gt; Russian peat corer             24946               &lt;NA&gt;
-##   depositionalenvironment
-## 1                     Fen</code></pre>
-<pre class="r"><code class="hljs">N@collunits</code></pre>
-<pre><code class="hljs">## Error in data.frame(collectionunitid = x@collectionunitid, handle = x@handle, : arguments imply differing number of rows: 1, 0</code></pre>
-<p>We do pretty good here with the exception of “geopolitical”, which
-could be added to the lipd under “geo”</p>
-<p>We also see an error in trying to print the “collunit”, which is
-detailed later</p>
-</div>
-<div id="sample-datum" class="section level3">
-<h3>Sample datum</h3>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]@collunits@collunits[[<span class="hljs-number">1</span>]]@datasets@datasets[[<span class="hljs-number">1</span>]]@samples@samples[[<span class="hljs-number">1</span>]]@datum</code></pre>
-<pre><code class="hljs">##    units value context element taxonid symmetry      taxongroup elementtype
-## 1   NISP     1      NA  pollen      49       NA Vascular plants      pollen
-## 2   NISP     1      NA  pollen     132       NA Vascular plants      pollen
-## 3   NISP     1      NA  pollen     157       NA Vascular plants      pollen
-## 4   NISP     1      NA  pollen     383       NA Vascular plants      pollen
-## 5   NISP     1      NA  pollen    1215       NA Vascular plants      pollen
-## 6   NISP     1      NA  pollen   36943       NA Vascular plants      pollen
-## 7   NISP     1      NA  pollen   37025       NA Vascular plants      pollen
-## 8   NISP     1      NA   spore     235       NA Vascular plants       spore
-## 9   NISP     1      NA   spore    3018       NA Vascular plants       spore
-## 10  NISP     2      NA  pollen    2372       NA Vascular plants      pollen
-## 11  NISP     2      NA  pollen   36945       NA Vascular plants      pollen
-## 12  NISP     2      NA  pollen   37022       NA Vascular plants      pollen
-## 13  NISP     3      NA  pollen    2401       NA Vascular plants      pollen
-## 14  NISP     3      NA  pollen    2465       NA Vascular plants      pollen
-## 15  NISP     3      NA  pollen   36985       NA Vascular plants      pollen
-## 16  NISP     3      NA   spore     957       NA Vascular plants       spore
-## 17  NISP     8      NA  pollen    4828       NA Vascular plants      pollen
-## 18  NISP    25      NA  pollen    1028       NA Vascular plants      pollen
-## 19  NISP    26      NA  pollen      61       NA Vascular plants      pollen
-## 20  NISP    26      NA  pollen     909       NA Vascular plants      pollen
-## 21  NISP   351      NA  pollen     430       NA Vascular plants      pollen
-## 22  NISP   953      NA  pollen     125       NA Vascular plants      pollen
-##                            variablename ecologicalgroup
-## 1                                Celtis            TRSH
-## 2                             Hypericum            UPHE
-## 3                      Fabaceae undiff.            UPHE
-## 4                                Myrica            TRSH
-## 5  Combretaceae/Melastomataceae undiff.            TRSH
-## 6                      Dyschoriste-type            UPHE
-## 7         Vitellaria-type (V. paradoxa)            TRSH
-## 8                       Polypodium-type            VACR
-## 9                          Cyathea-type            VACR
-## 10                           Ilex mitis            TRSH
-## 11          Embelia-type (E. schimperi)            TRSH
-## 12                   Vernonieae undiff.            UPHE
-## 13                   Olea capensis-type            TRSH
-## 14                            Ascolepis            UPHE
-## 15             Nuxia-type (N. congesta)            TRSH
-## 16    Polypodiophyta (monolete) undiff.            VACR
-## 17                        Scabiosa-type            UPHE
-## 18                           Podocarpus            TRSH
-## 19                   Asteraceae undiff.            UPHE
-## 20                    Ericaceae undiff.            TRSH
-## 21                   Cyperaceae undiff.            UPHE
-## 22                      Poaceae undiff.            UPHE</code></pre>
-<pre class="r"><code class="hljs">N@collunits@collunits[[<span class="hljs-number">1</span>]]@datasets@datasets[[<span class="hljs-number">1</span>]]@samples@samples[[<span class="hljs-number">1</span>]]@datum</code></pre>
-<pre><code class="hljs">##    units value context element taxonid symmetry      taxongroup elementtype
-## 1   NISP     1      NA  pollen      49       NA Vascular plants      pollen
-## 2   NISP     1      NA  pollen     132       NA Vascular plants      pollen
-## 3   NISP     1      NA  pollen     157       NA Vascular plants      pollen
-## 4   NISP     1      NA  pollen     383       NA Vascular plants      pollen
-## 5   NISP     1      NA  pollen    1215       NA Vascular plants      pollen
-## 6   NISP     1      NA  pollen   36943       NA Vascular plants      pollen
-## 7   NISP     1      NA  pollen   37025       NA Vascular plants      pollen
-## 8   NISP     1      NA   spore     235       NA Vascular plants       spore
-## 9   NISP     1      NA   spore    3018       NA Vascular plants       spore
-## 10  NISP     2      NA  pollen    2372       NA Vascular plants      pollen
-## 11  NISP     2      NA  pollen   36945       NA Vascular plants      pollen
-## 12  NISP     2      NA  pollen   37022       NA Vascular plants      pollen
-## 13  NISP     3      NA  pollen    2401       NA Vascular plants      pollen
-## 14  NISP     3      NA  pollen    2465       NA Vascular plants      pollen
-## 15  NISP     3      NA  pollen   36985       NA Vascular plants      pollen
-## 16  NISP     3      NA   spore     957       NA Vascular plants       spore
-## 17  NISP     8      NA  pollen    4828       NA Vascular plants      pollen
-## 18  NISP    25      NA  pollen    1028       NA Vascular plants      pollen
-## 19  NISP    26      NA  pollen      61       NA Vascular plants      pollen
-## 20  NISP    26      NA  pollen     909       NA Vascular plants      pollen
-## 21  NISP   351      NA  pollen     430       NA Vascular plants      pollen
-## 22  NISP   953      NA  pollen     125       NA Vascular plants      pollen
-##                           variablename ecologicalgroup
-## 1                               Celtis            TRSH
-## 2                            Hypericum            UPHE
-## 3                     Fabaceae undiff.            UPHE
-## 4                               Myrica            TRSH
-## 5  CombretaceaeMelastomataceae undiff.            TRSH
-## 6                     Dyschoriste-type            UPHE
-## 7                      Vitellaria-type            TRSH
-## 8                      Polypodium-type            VACR
-## 9                         Cyathea-type            VACR
-## 10                           Ilexmitis            TRSH
-## 11                        Embelia-type            TRSH
-## 12                  Vernonieae undiff.            UPHE
-## 13                   Oleacapensis-type            TRSH
-## 14                           Ascolepis            UPHE
-## 15                          Nuxia-type            TRSH
-## 16      Polypodiophytamonolete undiff.            VACR
-## 17                       Scabiosa-type            UPHE
-## 18                          Podocarpus            TRSH
-## 19                  Asteraceae undiff.            UPHE
-## 20                   Ericaceae undiff.            TRSH
-## 21                  Cyperaceae undiff.            UPHE
-## 22                     Poaceae undiff.            UPHE</code></pre>
-<p>note that <code>D</code> is the original neotoma dataset and
-<code>N</code> is the new one <code>N</code> is a <code>site</code>
-rather than a <code>sites</code></p>
-<p>Aside from some loss in the <code>variablename</code>, these data
-frames look identical. Improved <code>variablename</code> fidelity is
-possible with alteration to the <code>neotoma2lipd()</code> function</p>
-<p>What’s the difference between element and elementtype?</p>
-<p>Let’s jump to the last <code>datum</code> to see if this fidelity
-holds</p>
-<pre class="r"><code class="hljs">length(D@sites[[<span class="hljs-number">1</span>]]@collunits@collunits[[<span class="hljs-number">1</span>]]@datasets@datasets[[<span class="hljs-number">1</span>]]@samples@samples)</code></pre>
-<pre><code class="hljs">## [1] 140</code></pre>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]@collunits@collunits[[<span class="hljs-number">1</span>]]@datasets@datasets[[<span class="hljs-number">1</span>]]@samples@samples[[<span class="hljs-number">140</span>]]@datum</code></pre>
-<pre><code class="hljs">##    units value context element taxonid symmetry      taxongroup elementtype
-## 1   NISP     1      NA  pollen       2       NA Vascular plants      pollen
-## 2   NISP     1      NA  pollen     186       NA Vascular plants      pollen
-## 3   NISP     1      NA  pollen     268       NA Vascular plants      pollen
-## 4   NISP     1      NA  pollen   36804       NA Vascular plants      pollen
-## 5   NISP     1      NA  pollen   36945       NA Vascular plants      pollen
-## 6   NISP     1      NA   spore     235       NA Vascular plants       spore
-## 7   NISP     2      NA  pollen      61       NA Vascular plants      pollen
-## 8   NISP     2      NA  pollen     132       NA Vascular plants      pollen
-## 9   NISP     2      NA  pollen     383       NA Vascular plants      pollen
-## 10  NISP     2      NA  pollen    3500       NA Vascular plants      pollen
-## 11  NISP     2      NA  pollen    4828       NA Vascular plants      pollen
-## 12  NISP     2      NA  pollen   20730       NA Vascular plants      pollen
-## 13  NISP     2      NA  pollen   36913       NA Vascular plants      pollen
-## 14  NISP     2      NA  pollen   36917       NA Vascular plants      pollen
-## 15  NISP     2      NA  pollen   36943       NA Vascular plants      pollen
-## 16  NISP     2      NA  pollen   37025       NA Vascular plants      pollen
-## 17  NISP     2      NA   spore    3018       NA Vascular plants       spore
-## 18  NISP     3      NA  pollen    2413       NA Vascular plants      pollen
-## 19  NISP     3      NA  pollen   36919       NA Vascular plants      pollen
-## 20  NISP     3      NA  pollen   36953       NA Vascular plants      pollen
-## 21  NISP     4      NA  pollen      25       NA Vascular plants      pollen
-## 22  NISP     5      NA  pollen    1215       NA Vascular plants      pollen
-## 23  NISP     5      NA  pollen    2368       NA Vascular plants      pollen
-## 24  NISP     6      NA  pollen    2372       NA Vascular plants      pollen
-## 25  NISP     8      NA   spore     957       NA Vascular plants       spore
-## 26  NISP     9      NA  pollen     909       NA Vascular plants      pollen
-## 27  NISP    15      NA  pollen      49       NA Vascular plants      pollen
-## 28  NISP    16      NA  pollen    2401       NA Vascular plants      pollen
-## 29  NISP    21      NA  pollen    1708       NA Vascular plants      pollen
-## 30  NISP    39      NA  pollen     430       NA Vascular plants      pollen
-## 31  NISP   125      NA  pollen    1028       NA Vascular plants      pollen
-## 32  NISP   234      NA  pollen     125       NA Vascular plants      pollen
-##                            variablename ecologicalgroup
-## 1                              Acalypha            UPHE
-## 2                                 Morus            TRSH
-## 3                                 Rumex            UPHE
-## 4                     Erythrococca-type            TRSH
-## 5           Embelia-type (E. schimperi)            TRSH
-## 6                       Polypodium-type            VACR
-## 7                    Asteraceae undiff.            UPHE
-## 8                             Hypericum            UPHE
-## 9                                Myrica            TRSH
-## 10                        Clematis-type            UPHE
-## 11                        Scabiosa-type            UPHE
-## 12                Celosia argentea-type            UPHE
-## 13               Chenopodium/Amaranthus            UPHE
-## 14     Basilicum-type (B. polystachyon)            UPHE
-## 15                     Dyschoriste-type            UPHE
-## 16        Vitellaria-type (V. paradoxa)            TRSH
-## 17                         Cyathea-type            VACR
-## 18                 Prunus africana-type            TRSH
-## 19             Bridelia ferruginea-type            TRSH
-## 20              Gnidia-type (G. glauca)            TRSH
-## 21                            Artemisia            UPHE
-## 22 Combretaceae/Melastomataceae undiff.            TRSH
-## 23                        Syzygium-type            TRSH
-## 24                           Ilex mitis            TRSH
-## 25    Polypodiophyta (monolete) undiff.            VACR
-## 26                    Ericaceae undiff.            TRSH
-## 27                               Celtis            TRSH
-## 28                   Olea capensis-type            TRSH
-## 29                            Alchornea            TRSH
-## 30                   Cyperaceae undiff.            UPHE
-## 31                           Podocarpus            TRSH
-## 32                      Poaceae undiff.            UPHE</code></pre>
-<pre class="r"><code class="hljs">N$collunits@collunits[[<span class="hljs-number">1</span>]]@datasets@datasets[[<span class="hljs-number">1</span>]]@samples@samples[[<span class="hljs-number">140</span>]]@datum</code></pre>
-<pre><code class="hljs">##    units value context element taxonid symmetry      taxongroup elementtype
-## 28  NISP     1      NA  pollen       2       NA Vascular plants      pollen
-## 32  NISP     1      NA  pollen     186       NA Vascular plants      pollen
-## 29  NISP     1      NA  pollen     268       NA Vascular plants      pollen
-## 27  NISP     1      NA  pollen   36804       NA Vascular plants      pollen
-## 10  NISP     1      NA  pollen   36945       NA Vascular plants      pollen
-## 7   NISP     1      NA   spore     235       NA Vascular plants       spore
-## 15  NISP     2      NA  pollen      61       NA Vascular plants      pollen
-## 2   NISP     2      NA  pollen     132       NA Vascular plants      pollen
-## 3   NISP     2      NA  pollen     383       NA Vascular plants      pollen
-## 20  NISP     2      NA  pollen    3500       NA Vascular plants      pollen
-## 13  NISP     2      NA  pollen    4828       NA Vascular plants      pollen
-## 30  NISP     2      NA  pollen   20730       NA Vascular plants      pollen
-## 25  NISP     2      NA  pollen   36913       NA Vascular plants      pollen
-## 22  NISP     2      NA  pollen   36917       NA Vascular plants      pollen
-## 5   NISP     2      NA  pollen   36943       NA Vascular plants      pollen
-## 6   NISP     2      NA  pollen   37025       NA Vascular plants      pollen
-## 8   NISP     2      NA   spore    3018       NA Vascular plants       spore
-## 31  NISP     3      NA  pollen    2413       NA Vascular plants      pollen
-## 26  NISP     3      NA  pollen   36919       NA Vascular plants      pollen
-## 23  NISP     3      NA  pollen   36953       NA Vascular plants      pollen
-## 21  NISP     4      NA  pollen      25       NA Vascular plants      pollen
-## 4   NISP     5      NA  pollen    1215       NA Vascular plants      pollen
-## 24  NISP     5      NA  pollen    2368       NA Vascular plants      pollen
-## 9   NISP     6      NA  pollen    2372       NA Vascular plants      pollen
-## 12  NISP     8      NA   spore     957       NA Vascular plants       spore
-## 16  NISP     9      NA  pollen     909       NA Vascular plants      pollen
-## 1   NISP    15      NA  pollen      49       NA Vascular plants      pollen
-## 11  NISP    16      NA  pollen    2401       NA Vascular plants      pollen
-## 19  NISP    21      NA  pollen    1708       NA Vascular plants      pollen
-## 17  NISP    39      NA  pollen     430       NA Vascular plants      pollen
-## 14  NISP   125      NA  pollen    1028       NA Vascular plants      pollen
-## 18  NISP   234      NA  pollen     125       NA Vascular plants      pollen
-##                           variablename ecologicalgroup
-## 28                            Acalypha            UPHE
-## 32                               Morus            TRSH
-## 29                               Rumex            UPHE
-## 27                   Erythrococca-type            TRSH
-## 10                        Embelia-type            TRSH
-## 7                      Polypodium-type            VACR
-## 15                  Asteraceae undiff.            UPHE
-## 2                            Hypericum            UPHE
-## 3                               Myrica            TRSH
-## 20                       Clematis-type            UPHE
-## 13                       Scabiosa-type            UPHE
-## 30                Celosiaargentea-type            UPHE
-## 25               ChenopodiumAmaranthus            UPHE
-## 22                      Basilicum-type            UPHE
-## 5                     Dyschoriste-type            UPHE
-## 6                      Vitellaria-type            TRSH
-## 8                         Cyathea-type            VACR
-## 31                 Prunusafricana-type            TRSH
-## 26             Brideliaferruginea-type            TRSH
-## 23                         Gnidia-type            TRSH
-## 21                           Artemisia            UPHE
-## 4  CombretaceaeMelastomataceae undiff.            TRSH
-## 24                       Syzygium-type            TRSH
-## 9                            Ilexmitis            TRSH
-## 12      Polypodiophytamonolete undiff.            VACR
-## 16                   Ericaceae undiff.            TRSH
-## 1                               Celtis            TRSH
-## 11                   Oleacapensis-type            TRSH
-## 19                           Alchornea            TRSH
-## 17                  Cyperaceae undiff.            UPHE
-## 14                          Podocarpus            TRSH
-## 18                     Poaceae undiff.            UPHE</code></pre>
-<p>again, we see some minor changes to <code>variablename</code>, but
-otherwise the data frame is identical</p>
-</div>
-<div id="chronologies" class="section level3">
-<h3>Chronologies</h3>
-<p>Let’s have a look at the chronology data</p>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]@collunits@collunits[[<span class="hljs-number">1</span>]]@chronologies@chronologies[[<span class="hljs-number">1</span>]]@chroncontrols</code></pre>
-<pre><code class="hljs">##     depth thickness agelimitolder chroncontrolid agelimityounger
-## 1  1239.5        NA            NA          80058              NA
-## 2   199.5        NA         26000          80043           24448
-## 3   404.5        NA         41599          80051           38107
-## 4   204.5        NA         24745          80044           23565
-## 5   579.5        NA            NA          80055              NA
-## 6   209.5        NA         23085          80045           21713
-## 7   469.5        NA            NA          80052              NA
-## 8   254.5        NA         22873          80046           21577
-## 9  1099.5        NA            NA          80057              NA
-## 10  259.5        NA         34584          80047           33020
-## 11  504.5        NA         50638          80053           42882
-## 12  284.5        NA         31480          80048           29884
-## 13  989.5        NA            NA          80056              NA
-## 14  334.5        NA         38946          80049           35726
-## 15  549.5        NA         51467          80054           42539
-## 16  399.5        NA         42749          80050           40077
-##    chroncontrolage         chroncontroltype
-## 1            88350 Biostratigraphic, pollen
-## 2            25224  Radiocarbon, calibrated
-## 3            39853  Radiocarbon, calibrated
-## 4            24155  Radiocarbon, calibrated
-## 5            51166 Biostratigraphic, pollen
-## 6            22399  Radiocarbon, calibrated
-## 7            42500 Biostratigraphic, pollen
-## 8            22225  Radiocarbon, calibrated
-## 9            81550 Biostratigraphic, pollen
-## 10           33802  Radiocarbon, calibrated
-## 11           46760  Radiocarbon, calibrated
-## 12           30682  Radiocarbon, calibrated
-## 13           77090 Biostratigraphic, pollen
-## 14           37336  Radiocarbon, calibrated
-## 15           47003  Radiocarbon, calibrated
-## 16           41413  Radiocarbon, calibrated</code></pre>
-<pre class="r"><code class="hljs">N$collunits@collunits[[<span class="hljs-number">1</span>]]@chronologies@chronologies[[<span class="hljs-number">1</span>]]@chroncontrols</code></pre>
-<pre><code class="hljs">##     depth thickness agelimitolder chroncontrolid agelimityounger
-## 1   199.5      &lt;NA&gt;         26000          80043           24448
-## 2   204.5      &lt;NA&gt;         24745          80044           23565
-## 3   209.5      &lt;NA&gt;         23085          80045           21713
-## 4   254.5      &lt;NA&gt;         22873          80046           21577
-## 5   259.5      &lt;NA&gt;         34584          80047           33020
-## 6   284.5      &lt;NA&gt;         31480          80048           29884
-## 7   334.5      &lt;NA&gt;         38946          80049           35726
-## 8   399.5      &lt;NA&gt;         42749          80050           40077
-## 9   404.5      &lt;NA&gt;         41599          80051           38107
-## 10  469.5      &lt;NA&gt;          &lt;NA&gt;          80052            &lt;NA&gt;
-## 11  504.5      &lt;NA&gt;         50638          80053           42882
-## 12  549.5      &lt;NA&gt;         51467          80054           42539
-## 13  579.5      &lt;NA&gt;          &lt;NA&gt;          80055            &lt;NA&gt;
-## 14  989.5      &lt;NA&gt;          &lt;NA&gt;          80056            &lt;NA&gt;
-## 15 1099.5      &lt;NA&gt;          &lt;NA&gt;          80057            &lt;NA&gt;
-## 16 1239.5      &lt;NA&gt;          &lt;NA&gt;          80058            &lt;NA&gt;
-##    chroncontrolage         chroncontroltype
-## 1            25224  Radiocarbon, calibrated
-## 2            24155  Radiocarbon, calibrated
-## 3            22399  Radiocarbon, calibrated
-## 4            22225  Radiocarbon, calibrated
-## 5            33802  Radiocarbon, calibrated
-## 6            30682  Radiocarbon, calibrated
-## 7            37336  Radiocarbon, calibrated
-## 8            41413  Radiocarbon, calibrated
-## 9            39853  Radiocarbon, calibrated
-## 10           42500 Biostratigraphic, pollen
-## 11           46760  Radiocarbon, calibrated
-## 12           47003  Radiocarbon, calibrated
-## 13           51166 Biostratigraphic, pollen
-## 14           77090 Biostratigraphic, pollen
-## 15           81550 Biostratigraphic, pollen
-## 16           88350 Biostratigraphic, pollen</code></pre>
-<p>I could not identify the sorting of the original chronology table to
-follow</p>
-<p>The tables are otherwise identical</p>
-</div>
-<div id="outstanding-issues" class="section level3">
-<h3>Outstanding Issues</h3>
-<p>Collection unit print doesn’t work</p>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]@collunits@collunits[[<span class="hljs-number">1</span>]]</code></pre>
-<pre><code class="hljs">##   collectionunitid   handle   colldate                  location waterdepth
-## 1            28383 BAMBILI2 2010-01-01 near north edge of crater         NA
-##   collunittype   collectiondevice defaultchronology collectionunitname
-## 1         &lt;NA&gt; Russian peat corer             24946               &lt;NA&gt;
-##   depositionalenvironment
-## 1                     Fen</code></pre>
-<pre class="r"><code class="hljs">N$collunits@collunits[[<span class="hljs-number">1</span>]]</code></pre>
-<pre><code class="hljs">## Error in data.frame(collectionunitid = x@collectionunitid, handle = x@handle, : arguments imply differing number of rows: 1, 0</code></pre>
-<pre class="r"><code class="hljs">new(<span class="hljs-string">"site"</span>)</code></pre>
-<pre><code class="hljs">##  siteid sitename lat long altitude
-##      NA     &lt;NA&gt; NaN  NaN       NA</code></pre>
-<pre class="r"><code class="hljs">new(<span class="hljs-string">"collunits"</span>)</code></pre>
-<pre><code class="hljs">## # A tibble: 0 × 0</code></pre>
-<pre class="r"><code class="hljs">new(<span class="hljs-string">"collunit"</span>)</code></pre>
-<pre><code class="hljs">## Error in data.frame(collectionunitid = x@collectionunitid, handle = x@handle, : arguments imply differing number of rows: 1, 0</code></pre>
-<p>creating a new “collunit” is an issue?</p>
-<p>Some of the chronology metadata isn’t retained, lipd doesn’t store
-metadata at this level</p>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]@collunits@collunits[[<span class="hljs-number">1</span>]]@chronologies@chronologies[[<span class="hljs-number">1</span>]]</code></pre>
-<pre><code class="hljs">## An object of class "chronology"
-## Slot "chronologyid":
-## [1] 24946
-## 
-## Slot "notes":
-## [1] "Chronololgy is based on calibrated radiocarbon dates and on pollen stratigraphic correlation with core GIK16856-2 offshore Cameroon, which was dated by correclation with marine isotope stages (Dupont, L.M, S. Jahns, F. Marret, N. Shi. 2000. Vegetation change in equatorial West Africa: time-slices for the last 150 ka. Palaeogeogr., Palaeoclim., Palaeoecol. 155:95-122). Correlation with past phases of expanded tree cover registered in core GIK16856-2 was used to confirm the radiocarbon chronology of 10-BB-02, while giving additional control points for the base of the sequence. The Bambili chronology resulting from peak matching of total tree percentages (excluding mangrove) at both sites is coherent, and also fits with the 14C-dated portion of the Bambili sequence."
-## 
-## Slot "contact":
-## [[1]]
-## [[1]]$contactid
-## [1] 6414
-## 
-## [[1]]$givenname
-## [1] "Anne-Marie"
-## 
-## [[1]]$familyname
-## [1] "Lézine"
-## 
-## [[1]]$contactname
-## [1] "Lézine, Anne-Marie"
-## 
-## [[1]]$leadinginitial
-## [1] "A.-M."
-## 
-## 
-## [[2]]
-## [[2]]$contactid
-## [1] 6414
-## 
-## [[2]]$givenname
-## [1] "Anne-Marie"
-## 
-## [[2]]$familyname
-## [1] "Lézine"
-## 
-## [[2]]$contactname
-## [1] "Lézine, Anne-Marie"
-## 
-## [[2]]$leadinginitial
-## [1] "A.-M."
-## 
-## 
-## 
-## Slot "agemodel":
-## [1] "third-order polynomial"
-## 
-## Slot "ageboundolder":
-## [1] 88940
-## 
-## Slot "ageboundyounger":
-## [1] 20310
-## 
-## Slot "isdefault":
+## Measurement table contains 16 observations of 10 variables</code></pre>
+<p>Great, the summary shows a paleodata measurement table and a chron
+data measurement table</p>
+<p>Let’s look inside</p>
+<pre class="r"><code class="hljs">head(summary(L$paleoData[[<span class="hljs-number">1</span>]]$measurementTable[[<span class="hljs-number">1</span>]]))</code></pre>
+<pre><code class="hljs">##                       Length Class  Mode
+## depth                 8      -none- list
+## age                   8      -none- list
+## Celtis_pollen         8      -none- list
+## Hypericum_pollen      8      -none- list
+## Fabaceaeundiff_pollen 8      -none- list
+## Myrica_pollen         8      -none- list</code></pre>
+<pre class="r"><code class="hljs">length(summary(L$paleoData[[<span class="hljs-number">1</span>]]$measurementTable[[<span class="hljs-number">1</span>]]))</code></pre>
+<pre><code class="hljs">## [1] 618</code></pre>
+<p>Okay, so we have data for depth, age and 616 additional variables</p>
+<pre class="r"><code class="hljs">names(L$chronData[[<span class="hljs-number">1</span>]]$measurementTable[[<span class="hljs-number">1</span>]])</code></pre>
+<pre><code class="hljs">##  [1] "depth"                "depth_top"            "depth_bottom"        
+##  [4] "thickness"            "age"                  "ageOld"              
+##  [7] "ageYoung"             "age_type"             "ageUnc"              
+## [10] "neotomaChronConrolId"</code></pre>
+<p>We have 10 fields here, let’s just look at depth</p>
+<pre class="r"><code class="hljs">L$chronData[[<span class="hljs-number">1</span>]]$measurementTable[[<span class="hljs-number">1</span>]]$depth</code></pre>
+<pre><code class="hljs">## $number
 ## [1] 1
 ## 
-## Slot "dateprepared":
-## [1] NA
+## $variableName
+## [1] "depth"
 ## 
-## Slot "modelagetype":
-## [1] "Calibrated radiocarbon years BP"
+## $values
+##  [1]  199.5  204.5  209.5  254.5  259.5  284.5  334.5  399.5  404.5  469.5
+## [11]  504.5  549.5  579.5  989.5 1099.5 1239.5
 ## 
-## Slot "chronologyname":
-## [1] "Lézine et al. 2018"
+## $units
+## [1] "cm"
 ## 
-## Slot "chroncontrols":
-##     depth thickness agelimitolder chroncontrolid agelimityounger
-## 1  1239.5        NA            NA          80058              NA
-## 2   199.5        NA         26000          80043           24448
-## 3   404.5        NA         41599          80051           38107
-## 4   204.5        NA         24745          80044           23565
-## 5   579.5        NA            NA          80055              NA
-## 6   209.5        NA         23085          80045           21713
-## 7   469.5        NA            NA          80052              NA
-## 8   254.5        NA         22873          80046           21577
-## 9  1099.5        NA            NA          80057              NA
-## 10  259.5        NA         34584          80047           33020
-## 11  504.5        NA         50638          80053           42882
-## 12  284.5        NA         31480          80048           29884
-## 13  989.5        NA            NA          80056              NA
-## 14  334.5        NA         38946          80049           35726
-## 15  549.5        NA         51467          80054           42539
-## 16  399.5        NA         42749          80050           40077
-##    chroncontrolage         chroncontroltype
-## 1            88350 Biostratigraphic, pollen
-## 2            25224  Radiocarbon, calibrated
-## 3            39853  Radiocarbon, calibrated
-## 4            24155  Radiocarbon, calibrated
-## 5            51166 Biostratigraphic, pollen
-## 6            22399  Radiocarbon, calibrated
-## 7            42500 Biostratigraphic, pollen
-## 8            22225  Radiocarbon, calibrated
-## 9            81550 Biostratigraphic, pollen
-## 10           33802  Radiocarbon, calibrated
-## 11           46760  Radiocarbon, calibrated
-## 12           30682  Radiocarbon, calibrated
-## 13           77090 Biostratigraphic, pollen
-## 14           37336  Radiocarbon, calibrated
-## 15           47003  Radiocarbon, calibrated
-## 16           41413  Radiocarbon, calibrated</code></pre>
-<pre class="r"><code class="hljs">N$collunits@collunits[[<span class="hljs-number">1</span>]]@chronologies@chronologies[[<span class="hljs-number">1</span>]]</code></pre>
-<pre><code class="hljs">## An object of class "chronology"
-## Slot "chronologyid":
-## [1] 24946
+## $description
+## [1] "midpoint depth"
 ## 
-## Slot "notes":
-## [1] NA
-## 
-## Slot "contact":
-## list()
-## 
-## Slot "agemodel":
-## [1] NA
-## 
-## Slot "ageboundolder":
-## [1] NA
-## 
-## Slot "ageboundyounger":
-## [1] NA
-## 
-## Slot "isdefault":
-## [1] NA
-## 
-## Slot "dateprepared":
-## Date of length 0
-## 
-## Slot "modelagetype":
-## [1] NA
-## 
-## Slot "chronologyname":
-## [1] NA
-## 
-## Slot "chroncontrols":
-##     depth thickness agelimitolder chroncontrolid agelimityounger
-## 1   199.5      &lt;NA&gt;         26000          80043           24448
-## 2   204.5      &lt;NA&gt;         24745          80044           23565
-## 3   209.5      &lt;NA&gt;         23085          80045           21713
-## 4   254.5      &lt;NA&gt;         22873          80046           21577
-## 5   259.5      &lt;NA&gt;         34584          80047           33020
-## 6   284.5      &lt;NA&gt;         31480          80048           29884
-## 7   334.5      &lt;NA&gt;         38946          80049           35726
-## 8   399.5      &lt;NA&gt;         42749          80050           40077
-## 9   404.5      &lt;NA&gt;         41599          80051           38107
-## 10  469.5      &lt;NA&gt;          &lt;NA&gt;          80052            &lt;NA&gt;
-## 11  504.5      &lt;NA&gt;         50638          80053           42882
-## 12  549.5      &lt;NA&gt;         51467          80054           42539
-## 13  579.5      &lt;NA&gt;          &lt;NA&gt;          80055            &lt;NA&gt;
-## 14  989.5      &lt;NA&gt;          &lt;NA&gt;          80056            &lt;NA&gt;
-## 15 1099.5      &lt;NA&gt;          &lt;NA&gt;          80057            &lt;NA&gt;
-## 16 1239.5      &lt;NA&gt;          &lt;NA&gt;          80058            &lt;NA&gt;
-##    chroncontrolage         chroncontroltype
-## 1            25224  Radiocarbon, calibrated
-## 2            24155  Radiocarbon, calibrated
-## 3            22399  Radiocarbon, calibrated
-## 4            22225  Radiocarbon, calibrated
-## 5            33802  Radiocarbon, calibrated
-## 6            30682  Radiocarbon, calibrated
-## 7            37336  Radiocarbon, calibrated
-## 8            41413  Radiocarbon, calibrated
-## 9            39853  Radiocarbon, calibrated
-## 10           42500 Biostratigraphic, pollen
-## 11           46760  Radiocarbon, calibrated
-## 12           47003  Radiocarbon, calibrated
-## 13           51166 Biostratigraphic, pollen
-## 14           77090 Biostratigraphic, pollen
-## 15           81550 Biostratigraphic, pollen
-## 16           88350 Biostratigraphic, pollen</code></pre>
-<p>Same for “collunit” metadata</p>
-<pre class="r"><code class="hljs">D@sites[[<span class="hljs-number">1</span>]]@collunits@collunits[[<span class="hljs-number">1</span>]]</code></pre>
-<pre><code class="hljs">##   collectionunitid   handle   colldate                  location waterdepth
-## 1            28383 BAMBILI2 2010-01-01 near north edge of crater         NA
-##   collunittype   collectiondevice defaultchronology collectionunitname
-## 1         &lt;NA&gt; Russian peat corer             24946               &lt;NA&gt;
-##   depositionalenvironment
-## 1                     Fen</code></pre>
-<pre class="r"><code class="hljs">N$collunits@collunits[[<span class="hljs-number">1</span>]]</code></pre>
-<pre><code class="hljs">## Error in data.frame(collectionunitid = x@collectionunitid, handle = x@handle, : arguments imply differing number of rows: 1, 0</code></pre>
-</div>
+## $TSid
+## [1] "neotomaChronologyID_24946depth"</code></pre>
+<p>Great, we see our depth values as well as the key metadata</p>
+<p>All looks to be in order for running analysis with this lipd
+dataset</p>
 </div>
 
 
