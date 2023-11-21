@@ -1,5 +1,7 @@
 # lipdR 0.5.3
 
+* Fix the issue where `readLipd()` sometimes fails when getting version information from lipdverse
+
 # lipdR 0.5.2
 
 * make `readLipd()` give an error if a local file doesn't exist.

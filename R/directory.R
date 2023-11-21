@@ -70,9 +70,17 @@ get_src_or_dst<- function(path){
         if(!all(purrr::map_lgl(path,~ tools::file_ext(.x) == "lpd"))){
           if(all(purrr::map_lgl(path,is.character))){#all dsids
             if(any(is.na(vers))){
-            message("Getting version information from lipdverse")
+              message("Getting version information from lipdverse")
             }
-            path <- purrr::map2_chr(path,vers,purrr::insistently(convert_dsid_to_path,rate = purrr::rate_delay(pause = 1,max_times = 10)),.progress = TRUE)
+            path <- purrr::map2_chr(path,vers,
+                                    purrr::possibly(
+                                      purrr::insistently(convert_dsid_to_path,
+                                                         rate = purrr::rate_backoff(pause_base = 1,
+                                                                                    pause_cap = 60,
+                                                                                    pause_min = 1,
+                                                                                    max_times = 20)),
+                                      otherwise = NA),
+                                    .progress = TRUE)
           }else{
             stop("Error: The provided vector of paths must all point to lipd files (.lpd extensions) that exist (check for full paths), or dsids on lipdverse")
           }
