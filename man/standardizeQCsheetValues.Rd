@@ -7,7 +7,7 @@
 standardizeQCsheetValues(qcSheet)
 }
 \arguments{
-\item{qcID}{google qc sheet id}
+\item{qcSheet}{google qc sheet id}
 }
 \value{
 stnadardized qc sheet
