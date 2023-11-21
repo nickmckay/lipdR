@@ -1,3 +1,5 @@
+# lipdR 0.5.3
+
 # lipdR 0.5.2
 
 * make `readLipd()` give an error if a local file doesn't exist.
