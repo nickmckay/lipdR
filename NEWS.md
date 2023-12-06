@@ -1,5 +1,7 @@
 # lipdR 0.5.4
 
+* Fixed a bug with `readLipd()` with multiple file paths as inputs
+
 # lipdR 0.5.3
 
 * Fix the issue where `readLipd()` sometimes fails when getting version information from lipdverse

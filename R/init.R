@@ -169,7 +169,7 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
 
   # If this is a URL, download the file and return the local path where the file is saved.
   path <- download_from_url(path)
-  if(path == "download-error"){
+  if(any(path == "download-error")){
     warning(glue::glue("Failed to download {orig.path}, returning a null object"))
     return(NULL)
   }
