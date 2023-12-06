@@ -1,3 +1,5 @@
+# lipdR 0.5.4
+
 # lipdR 0.5.3
 
 * Fix the issue where `readLipd()` sometimes fails when getting version information from lipdverse
