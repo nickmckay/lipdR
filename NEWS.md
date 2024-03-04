@@ -1,3 +1,5 @@
+# lipdR 0.5.5
+
 # lipdR 0.5.4
 
 * Fixed a bug with `readLipd()` with multiple file paths as inputs
