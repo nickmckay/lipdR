@@ -521,13 +521,13 @@ lipdTSSummary <- function(ts.object, print.length=10, add.variable = NULL, skip.
   #look for "age" and "year" variables, do all TS have one or the other?
   hasYear <- rep(NA, numTS)
   hasAge <- rep(NA, numTS)
-    for (i in 1:length(ts.object$year)){
+    for (i in 1:nrow(ts.object)){
       hasYear[i] <- !is_blank(unlist(ts.object$year[i]))
       hasAge[i] <- !is_blank(unlist(ts.object$age[i]))
     }
 
-    totYear <- sum(hasYear)
-    totAge <- sum(hasAge)
+    totYear <- sum(hasYear,na.rm = TRUE)
+    totAge <- sum(hasAge,na.rm = TRUE)
 
   if (totYear < numTS & totAge < numTS){
     cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
