@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.5</span>
       </span>
     </div>
 
@@ -110,17 +110,17 @@
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Create a new project in R Studio and start with a fresh workspace:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/wg2w9ag7hwi7knd/1_fresh.png?raw=1" alt=""><p class="caption">Workspace</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/wg2w9ag7hwi7knd/1_fresh.png?raw=1" alt="Workspace"><div class="figcaption">Workspace</div>
 </div>
 <p>Install <em>remotes</em> in the console window:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"remotes"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"remotes"</span>)</span></code></pre></div>
 <p>Load the <em>remotes</em> package:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(remotes)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(remotes)</span></code></pre></div>
 <p>Use <em>remotes</em> to install the LiPD Utilities package from github:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"nickmckay/lipdR"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"nickmckay/lipdR"</span>)</span></code></pre></div>
 <p>Load the <em>lipdR</em> package:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span></code></pre></div>
 <p>And that’s it! You have successfully installed the LiPD utilities and are ready to start working. Your console should now look similar to this:</p>
 </div>
 <div class="section level2">
@@ -146,21 +146,21 @@
 <p><strong>Returns:</strong> &gt; &gt; <strong>D</strong> &gt; &gt; Multiple datasets <code>D</code> or one dataset <code>L</code> &gt;</p>
 <p><strong>Example 1: Browse for file</strong></p>
 <p>Call <code>readLipd</code> as shown below:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/suv2u7egvsh24hn/1_readlipd_prompt.png?raw=1" alt=""><p class="caption">readlipd_browse_file_prompt</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/suv2u7egvsh24hn/1_readlipd_prompt.png?raw=1" alt="readlipd_browse_file_prompt"><div class="figcaption">readlipd_browse_file_prompt</div>
 </div>
 <p>Leave the path empty in this example. A prompt will ask you to choose to read a <code>single file</code> or a <code>directory</code>. Choose <code>s</code> and read a single file:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/xcx36hjmjp3wot4/readlipd_1_browse_file.png?raw=1" alt=""><p class="caption">readlipd_browse_file_dialog</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/xcx36hjmjp3wot4/readlipd_1_browse_file.png?raw=1" alt="readlipd_browse_file_dialog"><div class="figcaption">readlipd_browse_file_dialog</div>
 </div>
 <p>A browse dialog opens and asks you to choose the LiPD file that you want. Here, I have selected the file and clicked “Open”:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/5kpj0iz8cwn9wql/readlipd_1_done.png?raw=1" alt=""><p class="caption">readlipd_browse_file_done</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/5kpj0iz8cwn9wql/readlipd_1_done.png?raw=1" alt="readlipd_browse_file_done"><div class="figcaption">readlipd_browse_file_done</div>
 </div>
 <p>The console shows the name of the current file being read. When the file is finished reading, the <code>&gt;</code> indicator appears again and the process is finished. (shown on the left)</p>
 <p>The LiPD file loads into the environment under variable <code>L</code> . The environment <code>L</code> variable allows you to preview some of the LiPD data with the dropdown arrow (shown on the right).</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/tvnodp9ewiiatze/readlipd_1_L.png?raw=1" alt=""><p class="caption">readlipd_browse_file_L</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/tvnodp9ewiiatze/readlipd_1_L.png?raw=1" alt="readlipd_browse_file_L"><div class="figcaption">readlipd_browse_file_L</div>
 </div>
 <p>A quick look at <code>L</code> shows that the data is at the root of the variable, as expected.</p>
 <hr>
@@ -170,29 +170,29 @@
 <p>Reading a directory is most commonly used for reading multiple files. I have added LiPD files to my source folder and will load them into variable <code>D</code>.</p>
 </blockquote>
 <p>Call <code>readLipd</code> as shown below:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/suv2u7egvsh24hn/1_readlipd_prompt.png?raw=1" alt=""><p class="caption">readlipd_browse_dir_prompt</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/suv2u7egvsh24hn/1_readlipd_prompt.png?raw=1" alt="readlipd_browse_dir_prompt"><div class="figcaption">readlipd_browse_dir_prompt</div>
 </div>
 <p>Leave the path empty in this example. A prompt will ask you to choose to read a <code>single file</code> or a <code>directory</code>. Choose <code>d</code> and read a directory:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/bxndk6abu7a70rh/readlipd_2_browse_dir.png?raw=1" alt=""><p class="caption">readlipd_browse_dir_dialog</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/bxndk6abu7a70rh/readlipd_2_browse_dir.png?raw=1" alt="readlipd_browse_dir_dialog"><div class="figcaption">readlipd_browse_dir_dialog</div>
 </div>
 <blockquote>
 <p><strong>NOTE:</strong></p>
 <p>Due to a bug in R, we are not able to use the module for choosing a directory with the GUI. It causes R Studio to crash and that’s not an experience we want to give you. The instructions below are a workaround that will provide the same result.</p>
 </blockquote>
 <p>A browse dialog opens. Please choose <strong>any</strong> LiPD file <strong>within</strong> the directory that you want. For example, I want to load all the LiPD files in the <code>quickstart</code> directory, so I will choose the <code>ODP1098B13.lpd</code>. Choosing either of the other two LiPD files has the same outcome.</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/pxnkwnjzn3d594t/readlipd_2_done.png?raw=1" alt=""><p class="caption">readlipd_browse_dir_done</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/pxnkwnjzn3d594t/readlipd_2_done.png?raw=1" alt="readlipd_browse_dir_done"><div class="figcaption">readlipd_browse_dir_done</div>
 </div>
 <p>The console shows that 3 files have been read, and processing is finished.</p>
 <p>The LiPD files load into the environment under variable <code>D</code>. The <code>D</code> variable shows that it is a <code>list of 3</code>, which matches the number of LiPD files in the source directory. Success!</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/clgcdza7k3mpnw8/readlipd_2_D.png?raw=1" alt=""><p class="caption">readlipd_browse_dir_D</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/clgcdza7k3mpnw8/readlipd_2_D.png?raw=1" alt="readlipd_browse_dir_D"><div class="figcaption">readlipd_browse_dir_D</div>
 </div>
 <p>A quick look at <code>D</code> shows that the datasets are sorted by dataset names, as expected. If you look one more level down, we can see the data.</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/gvoyijx44j6zisc/readlipd_2_D_2.png?raw=1" alt=""><p class="caption">readlipd_browse_dir_D2</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/gvoyijx44j6zisc/readlipd_2_D_2.png?raw=1" alt="readlipd_browse_dir_D2"><div class="figcaption">readlipd_browse_dir_D2</div>
 </div>
 <blockquote>
 <p><strong>REMEMBER</strong></p>
@@ -200,8 +200,8 @@
 </blockquote>
 <p><strong>Example 3: Provide a path</strong></p>
 <p>If you have the path to a specific file or directory that you would like to read, you can read in data in less steps. I’ll use a path to a file on my desktop.</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/tq20wfubnr4n3zy/readlipd_3_path_file.png?raw=1" alt=""><p class="caption">readlipd_path_file</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/tq20wfubnr4n3zy/readlipd_3_path_file.png?raw=1" alt="readlipd_path_file"><div class="figcaption">readlipd_path_file</div>
 </div>
 <blockquote>
 <p><strong>NOTE:</strong></p>
@@ -221,12 +221,12 @@
 &gt; <code>writeLipd(D, "/Users/bobsmith/Desktop")</code> &gt; &gt; Or, omit the path to browse for a destination: &gt; &gt; <code>writeLipd(D)</code></p>
 <p><strong>Returns:</strong> &gt; &gt; This function does not return data &gt;</p>
 <p>Call <code>writeLipd</code> as shown below. Pass your LiPD data. In this case, I pass <code>L</code> to the function, which represents one LiPD dataset. <img src="https://www.dropbox.com/s/8sr6dkwlx8swkdb/writelipd_1_call.png?raw=1" alt="writelipd_file_call"></p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/6z0j99px5l9r4ta/writelipd_1_choose.png?raw=1" alt=""><p class="caption">writelipd_file_choose</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/6z0j99px5l9r4ta/writelipd_1_choose.png?raw=1" alt="writelipd_file_choose"><div class="figcaption">writelipd_file_choose</div>
 </div>
 <p>A dialog opens and asks you to choose a directory. Choose a file <strong>within</strong> the directory that you to write to. (Reference Example 2 for <code>readLipd</code> for further explanation)</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/agh4cfnqcnmqmvh/writelipd_1_done.png?raw=1" alt=""><p class="caption">writelipd_file_done</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/agh4cfnqcnmqmvh/writelipd_1_done.png?raw=1" alt="writelipd_file_done"><div class="figcaption">writelipd_file_done</div>
 </div>
 <p>The console window will show each data file as it is compressed into the LiPD file being written. The list should contain four <code>.txt</code>, <em>at least</em> one <code>.csv</code> file, and one <code>.jsonld</code> file.</p>
 <hr>
@@ -239,12 +239,12 @@
 <p><strong>Parameters:</strong> &gt; &gt; <strong>D</strong> &gt; &gt; Multiple datasets <code>D</code> or one dataset <code>L</code> &gt;</p>
 <p><strong>Returns:</strong> &gt; &gt; <strong>ts</strong> &gt; &gt; A time series &gt;</p>
 <p>Call <code>extractTs</code> as shown below:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/e2aebrn33u2v570/extractTs_start.png?raw=1" alt=""><p class="caption">extractts_call</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/e2aebrn33u2v570/extractTs_start.png?raw=1" alt="extractts_call"><div class="figcaption">extractts_call</div>
 </div>
 <p>The time series is created and placed in the <code>ts</code> variable. Click the arrow next to the <code>ts</code> variable in the environment to see the what the contents look like.</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/27s93kgnnwnuj65/extractTs_finish.png?raw=1" alt=""><p class="caption">extractts_done</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/27s93kgnnwnuj65/extractTs_finish.png?raw=1" alt="extractts_done"><div class="figcaption">extractts_done</div>
 </div>
 <hr>
 </div>
@@ -256,16 +256,16 @@
 <p><strong>Parameters:</strong> &gt; <strong>ts</strong> &gt; &gt; A time series &gt;</p>
 <p><strong>Returns:</strong> &gt; &gt; <strong>D</strong> &gt; &gt; Multiple datasets <code>D</code> or one dataset <code>L</code> &gt;</p>
 <p>Call <code>collapseTs</code> as shown below:</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/jbxaoakv1bksblv/collapseTs_start.png?raw=1" alt=""><p class="caption">collapsets_start</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/jbxaoakv1bksblv/collapseTs_start.png?raw=1" alt="collapsets_start"><div class="figcaption">collapsets_start</div>
 </div>
 <p>The goal of <code>collapseTs</code> is to recreate the same data (without losing anything) that you had <em>before</em> calling <code>extractTs</code>. This is most useful if you have edited the time series in some way.</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/dj8ppdv8cbrcwt2/collapseTs_done.png?raw=1" alt=""><p class="caption">collapsets_done</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/dj8ppdv8cbrcwt2/collapseTs_done.png?raw=1" alt="collapsets_done"><div class="figcaption">collapsets_done</div>
 </div>
 <p>In this example, <code>L</code> represents your original dataset, <code>ts</code> represents the time series, and <code>L2</code> represents the new dataset. Note how the number of elements, and the size of <code>L</code> and <code>L2</code> are equal.</p>
-<div class="figure">
-<img src="https://www.dropbox.com/s/dlhjnre66vkan47/collapseTs_expand.png?raw=1" alt=""><p class="caption">collapsets_expand</p>
+<div class="float">
+<img src="https://www.dropbox.com/s/dlhjnre66vkan47/collapseTs_expand.png?raw=1" alt="collapsets_expand"><div class="figcaption">collapsets_expand</div>
 </div>
 <p>Expanding <code>L2</code> in the environment shows that the data has returned to the LiPD dataset hierarchy as before.</p>
 <hr>
@@ -365,8 +365,8 @@
 </h2>
 <p><a href="http://doi.org/10.5281/zenodo.60813" class="external-link"><img src="https://zenodo.org/badge/24036/nickmckay/LiPD-utilities.svg"></a></p>
 <p>Use this link to visit the Zenodo website. It provides citation information in many popular formats.</p>
-<div class="figure">
-<img src="../assets/logo_nsf.png" alt=""><p class="caption">footer NSF</p>
+<div class="float">
+<img src="../assets/logo_nsf.png" alt="footer NSF"><div class="figcaption">footer NSF</div>
 </div>
 </div>
 </div>
