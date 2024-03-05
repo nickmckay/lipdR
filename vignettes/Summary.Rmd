@@ -7,19 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE, width.out='100%'}
-  if (!requireNamespace("devtools", quietly = TRUE)) {
-    stop(
-      "Package 'devtools' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
-      call. = FALSE
-    )
-  }
-  if (!requireNamespace("neotoma2", quietly = TRUE)) {
-    stop(
-      "Package 'neotoma2' must be installed to use this function. Install it from github using `remotes::install_github('neotomadb/neotoma2')`",
-      call. = FALSE
-    )
-  }
+```{r setup, include = FALSE, width.out='100%', echo = FALSE}
 options(width = 500)
 knitr::opts_chunk$set(
   collapse = TRUE,

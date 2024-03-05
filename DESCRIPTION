@@ -38,7 +38,8 @@ Imports:
     data.table,
     methods,
     jsonlite,
-    sets
+    sets,
+    neotoma2
 Suggests: 
     tools,
     gt,
@@ -51,12 +52,10 @@ Suggests:
     knitr,
     devtools,
     lubridate,
-    neotoma2,
     covr,
     rmarkdown,
     testthat,
     googlesheets4
 Remotes: 
-    neotomadb/neotoma2
 VignetteBuilder: knitr
 LazyData: true
