@@ -24,8 +24,8 @@ pulls all instances of a single variable out of a TS
 \seealso{
 Other LiPD manipulation: 
 \code{\link{pullTsVariable}()},
-\code{\link{tidyTsOld}()},
 \code{\link{tidyTs}()},
+\code{\link{tidyTsOld}()},
 \code{\link{untidyTs}()}
 }
 \concept{LiPD manipulation}

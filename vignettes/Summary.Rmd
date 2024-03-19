@@ -25,9 +25,7 @@ LiPD datasets can contain a lot of data and metadata, and it's often useful to g
 Let's first grab at a single LiPD the Moose Lake dataset from Clegg et al. (2010) that's part of the PAGES2k Temperature compilation.
 
 ```{r echo=T, results='hide'}
-#library(lipdR)
-devtools::load_all()
-
+library(lipdR)
 L <- readLipd("https://lipdverse.org/data/MD6jkgwSxsq0oilgYUjM/1_0_0//Arc-MooseLake.Clegg.2010-ensemble.lpd")
 ```
 

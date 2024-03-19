@@ -1,8 +1,12 @@
 ---
-title: "LiPD to Neotoma"
+title: "Neotoma to LiPD"
 author: "Dave Edge"
 date: "2023-01-09"
-output: html_document
+vignette: >
+  %\VignetteIndexEntry{Neotoma To LiPD}
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteEncoding{UTF-8}
+output: rmarkdown::html_vignette
 ---
 
 ```{r setup, include=FALSE}

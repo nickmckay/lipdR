@@ -1,3 +1,10 @@
+#' handle NAs in cbind
+#'
+#' @param ... whatever you're binding
+#' @param fill unused parameter
+#'
+#' @return bound columns
+#' @export
 cbind.NA <- function (..., fill = NA)
 {
   DFx <- list(...)
@@ -10,7 +17,7 @@ cbind.NA <- function (..., fill = NA)
       DFx[[i]] <- data.frame(rep(NA, 1))
     }
   }
-  
+
   vertLen <-  function(dfIn){
     if(is.null(dim(dfIn))){
       vertical <- length(dfIn)
@@ -19,7 +26,7 @@ cbind.NA <- function (..., fill = NA)
     }
     return(vertical)
   }
-  
+
   lengthsDF <- as.numeric(lapply(DFx, vertLen))
   maxLen <- max(lengthsDF)
   newDF <- rep(NA, maxLen)
