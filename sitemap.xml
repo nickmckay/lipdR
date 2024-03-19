@@ -61,10 +61,10 @@
     <loc>/reference/build_structure.html</loc>
   </url>
   <url>
-    <loc>/reference/cconv.html</loc>
+    <loc>/reference/cbind.NA.html</loc>
   </url>
   <url>
-    <loc>/reference/checkKey.html</loc>
+    <loc>/reference/cconv.html</loc>
   </url>
   <url>
     <loc>/reference/checkZipMd5.html</loc>
@@ -167,9 +167,6 @@
   </url>
   <url>
     <loc>/reference/getQueryTable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getStandardTables.html</loc>
   </url>
   <url>
     <loc>/reference/getTimestamp.html</loc>
@@ -281,12 +278,6 @@
   </url>
   <url>
     <loc>/reference/isNullOb.html</loc>
-  </url>
-  <url>
-    <loc>/reference/isValidAll.html</loc>
-  </url>
-  <url>
-    <loc>/reference/isValidValue.html</loc>
   </url>
   <url>
     <loc>/reference/lipd2neotoma.html</loc>
@@ -421,9 +412,6 @@
     <loc>/reference/standardizeQCsheetValues.html</loc>
   </url>
   <url>
-    <loc>/reference/standardizeValue.html</loc>
-  </url>
-  <url>
     <loc>/reference/stripExtension.html</loc>
   </url>
   <url>
@@ -467,12 +455,6 @@
   </url>
   <url>
     <loc>/reference/updateChangelog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/updateMetaDataFromStandardTables.html</loc>
-  </url>
-  <url>
-    <loc>/reference/updateNotes.html</loc>
   </url>
   <url>
     <loc>/reference/updateQueryTable.html</loc>
