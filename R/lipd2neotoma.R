@@ -137,6 +137,9 @@ fromOrigLipd <- function(L){
           aa = "collectionunitid"
         }else if (rr == "linkedChronData"){
           aa = "defaultchronology"
+          if (!is.numeric(L$paleoData[[1]]$linkedChronData)){
+            stop("The 'linkedChronData' and associated 'chronDataId' must be of class integer")
+          }
         }else{
           aa=rr
         }
@@ -179,7 +182,7 @@ fromOrigLipd <- function(L){
           }
 
 
-          if(L$paleoData[[jj]]$measurementTable[[j]]$tableName == "dataset"){
+          #if(L$paleoData[[jj]]$measurementTable[[j]]$tableName == "dataset"){
             ###########################################################################
             #Add new dataset
             ###########################################################################
@@ -192,12 +195,25 @@ fromOrigLipd <- function(L){
             #Link any chron data
             if (!is.null(L$paleoData[[jj]]$measurementTable[[j]]$measurementTableId) & !is.null(chronNum)& !is.null(paleoNow)){
               #use the known paleo-chron linkage to find measurement table
+              if (is.null(L$paleoData[[jj]]$measurementTable[[j]]$linkedMeasurementTable)){
+                stop(paste0("Missing 'linkedMeasurementTable' at paleoData ", jj, " measurementTable ", j))
+              }
               chronTabNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedMeasurementTable
+              if (is.null(which(chronTabNow == unlist(lapply(L$chronData[[chronNum]]$measurementTable, function(x) x$measurementTableId))))){
+                stop(paste0("Unable to locate a chronData Measurement Table with measurementTableId: ", chronTabNow))
+              }
               chronTabNum <- which(chronTabNow == unlist(lapply(L$chronData[[chronNum]]$measurementTable, function(x) x$measurementTableId)))
               #and model
+              if (is.null(L$paleoData[[jj]]$measurementTable[[j]]$linkedModel)){
+                stop(paste0("Missing 'linkedModel' at paleoData ", jj, " measurementTable ", j))
+              }
               modelNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedModel
+              if (is.null(which(modelNow == unlist(lapply(L$chronData[[chronNum]]$model, function(x) x$modelId))))){
+                stop(paste0("Unable to locate a model Summary Table with modelId: ", modelNow))
+              }
               modelNum <- which(modelNow == unlist(lapply(L$chronData[[chronNum]]$model, function(x) x$modelId)))
               #and summary table
+
               if (is.numeric(modelNum)){
                 summaryTabNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedSummaryTable
                 summaryTabNum <- which(summaryTabNow == unlist(lapply(L$chronData[[chronNum]]$model[[modelNum]]$summaryTable, function(x) x$summaryTableId)))
@@ -232,7 +248,7 @@ fromOrigLipd <- function(L){
                 slot(chronos1@chronologies[[j]], zz) <- L$chronData[[chronNum]]$measurementTable[[chronTabNum]][eval(aa)][[1]][[1]]
               }
             }
-            if (!is.null(chronNum) & !is.null(modelNum)){
+            if (!is.null(L$chronData[[chronNum]]$model[[modelNum]]$methods$method) && !is.null(L$chronData[[chronNum]]$model[[modelNum]]$methods$units)){
               slot(chronos1@chronologies[[j]], "agemodel") <- L$chronData[[chronNum]]$model[[modelNum]]$methods$method
               slot(chronos1@chronologies[[j]], "modelagetype") <- L$chronData[[chronNum]]$model[[modelNum]]$methods$units
             }else{
@@ -333,6 +349,8 @@ fromOrigLipd <- function(L){
 
             lipdSampleKeys <- names(L$paleoData[[jj]]$measurementTable[[j]])[names(L$paleoData[[jj]]$measurementTable[[j]]) %in% possibleLipdSampleKeys]
 
+            message("sample keys: ")
+            print(lipdSampleKeys)
             #Note unplaced sample metadata
             doTheyHaveMetadata <- names(L$paleoData[[jj]]$measurementTable[[j]])[unlist(lapply(L$paleoData[[jj]]$measurementTable[[j]], function(x) length(names(x))==2))]
             areTheyKnownKeys <- doTheyHaveMetadata[!doTheyHaveMetadata %in% possibleLipdSampleKeys]
@@ -467,7 +485,7 @@ fromOrigLipd <- function(L){
             site1@collunits@collunits[[jj]]@datasets@datasets[[j]] <- dataset1
             #datasetAll@datasets[[j]] <- dataset1
 
-          }
+          #}
           # else if (L$paleoData[[jj]]$measurementTable[[j]]$tableName == "lithology"){
           #
           #   ###########################################################################
