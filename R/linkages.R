@@ -4,7 +4,7 @@
 #'
 #' @return lipd object
 #'
-lipdObjectLinkages <- function(L){
+lipdObjectLinkages <- function(L, ask=TRUE){
   #For each object requiring a linked object:
   ##check for ID, create one if needed
   ##find linked object
@@ -17,10 +17,12 @@ lipdObjectLinkages <- function(L){
       ##paleoDataId
       if (length(grep("paleoDataId", attributes(L$paleoData[[jj]])$names)) > 0){
         message("has paleoDataId")
+        checkLinks(L$paleoData[[jj]],"paleoDataId",L$chronData[[jj]],"linkedPaleoData",ask=ask)
       }
       ##linkedChronData
       if (length(grep("linkedChronData", attributes(L$paleoData[[jj]])$names)) > 0){
         message("has linkedChronData")
+        checkLinks(L$paleoData[[jj]],"linkedChronData",L$chronData[[jj]],"chronDataId",ask=ask)
       }
       if (length(grep("measurementTable", attributes(L$paleoData[[jj]])$names)) > 0){
         #iterate over measurement tables
@@ -37,9 +39,6 @@ lipdObjectLinkages <- function(L){
       }
     }
   }
-
-
-
 
 
   #Chron 1,2,3,etc.
@@ -69,6 +68,20 @@ lipdObjectLinkages <- function(L){
   ####distributionTableId
 }
 
+validNetotomaID <- function(ID){
+  if (is.null(ID)){
+    warning("ID is null")
+    return(0)
+  } else if (length(ID) == 0){
+    warning("ID is of length 0")
+    return(0)
+  } else if (!methods::is(ID, "integer")){
+    warning(paste0("class of ID is ", class(ID), " must be class integer"))
+    return(0)
+  }
+  return(1)
+}
+
 takeID <- function(name1){
   x <- readline(paste0("What is the value of ", name1, "?"))
   x <- as.integer(x)
@@ -78,26 +91,27 @@ takeID <- function(name1){
   }
 }
 
-checkLinks <- function(loc1, name1, loc2, name2,ask=TRUE){
+checkLinks <- function(pointer1, pointer2 ,auto=TRUE){
+  valid1 <- validNetotomaID(loc1[[name1]])
+  valid2 <- validNetotomaID(loc2[[name2]])
   #if name1 doesn't exist, create it
-  replace1 = TRUE
-  if (length(grep(name1, attributes(loc1)$names)) == 0 || !methods::is(loc1[[name1]], "integer")){
+  if(!auto){
+    auto = askYesNo(paste0(name1,": ", loc1[[name1]], " is missing or of wrong class. Should all unfit IDs be replaced automatically? (Answer 'No' to provide an ID)"))
+  }
+  ID1 <- round(runif(1,0,100000),0)
+  if (!valid1){
     if (ask){
-      replaceAll = askYesNo(paste0(name1,": ", loc1[[name1]], " is missing or of wrong class. Should all unfit IDs be replaced automatically? (Answer 'No' to provide an ID)"))
+      if (replaceAll){
+        loc1[[name1]] <- ID1
+      }
+    } else {
+      loc1[[name1]] <- takeID(name1)
     }
-    if (replaceAll){
-      ID1 <- round(runif(1,0,100000),0)
-      loc1[[name1]] <- ID1
-    }
-  } else {
-    x <- takeID(name1)
+
   }
   #if name2 doesn't exist, check elsewhere
   if (length(grep(name2, attributes(loc2)$names)) == 0 || !methods::is(loc2[[name2]], "integer")){
-
     loc2[[name2]] <- ID1
-
-
   }
 
   if (loc1[[name1]] == loc2[[name2]]){
@@ -118,6 +132,8 @@ L <- readLipd("C:\\Users\\dce25\\Downloads\\Arc-GRIP.Vinther.2010.lpd")
 
 rapply(L, function(x) grepl(x,"link"),how = "unlist")
 
+checkLinks(L$paleoData[[1]],"linkedChronData",L$chronData[[1]],"chronDataId")
+
 
 #link any associated chron data
 
@@ -131,8 +147,13 @@ if (!is.na(slot(site1@collunits@collunits[[jj]], "defaultchronology"))){
     message("No chronology found, please make explicit link to chronData.")
     message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
   }
-}#otherwise, report lack of chron data
-else{
+#otherwise, report lack of chron data
+} else{
   message("No chronology found, please make explicit link to chronData.")
   message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
 }
+
+pointer1 <- list("paleoData",1,"paleoDataId")
+
+eval(parse(text=paste0("L",paste('[[',pointer1,']]',collapse = "",sep="'"))))
+sapply(pointer1, function(x) is.numeric(x))
