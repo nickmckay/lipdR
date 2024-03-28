@@ -1,3 +1,135 @@
+#' Build the address to a lipd element from its constituent parts
+#'
+#' @param pointer list to build address
+#'
+#' @return full address as string
+#'
+addressFromList <- function(pointer){
+  listIt <- function(x,sep){paste('[[',x,']]',collapse = "",sep=sep)}
+  parts <- sapply(pointer, function(x) ifelse(is.numeric(x),listIt(x,""),listIt(x,"'")))
+  address <- paste0("L",paste(parts,collapse = "",sep="'"))
+  #eval(parse(text=address))
+}
+incrementPointer <- function(pointer,loc){
+    pointer[[loc]] <- pointer[[loc]] + 1
+    pointer
+}
+
+addressFromListM <- function(pointer,addAddresses = list(),counter=0,branchNow=NULL,success=TRUE){
+  zeros <- which(!is.na(unlist(lapply(pointer,function(x) as.numeric(x)))))
+  #First round only
+  if (counter==0){
+    #Find locations of zeros (branch points)
+    zeros <- which(unlist(pointer)==0)
+    if (is.null(branchNow)){
+      branchNow <- max(zeros)
+    }
+    #Increment all branch points until all are non zero
+    while (sum(zeros) > 0){
+      branchPoint <- min(zeros)
+      pointer <- incrementPointer(pointer,branchPoint)
+      zeros <- which(unlist(pointer)==0)
+    }
+  }
+  #print(paste0("zeros: ", zeros))
+
+  #if the last run failed, the branching location should be moved up and the previous branch tip should be restarted at 1
+  if(success==FALSE){
+    pointer[[branchNow]] <- 1
+    branchNow <- zeros[(which(branchNow == zeros)-1)]
+    if (length(branchNow)<1){
+      return(addAddresses)
+    }
+    #print(paste0("branchNow: ", branchNow))
+    pointer <- incrementPointer(pointer,branchNow)
+    #print(paste0("branch Change: ", branchNow))
+    addressFromListM(pointer,addAddresses = addAddresses,counter=counter,branchNow=branchNow,success=TRUE)
+  }
+
+  #convert the pointer to an address
+  address1 <- addressFromList(pointer)
+  #If the address points to a valid lipd element...
+  if (validAddress(address1)){
+    #count the valid address, add it to the list, and print to console
+    counter <- counter + 1
+    print(paste0("Count: ", counter))
+    print(address1)
+    addAddresses[[counter]] <- address1
+    #note the success to suggest incrementing the branchNow
+    pointer <- incrementPointer(pointer,branchNow)
+    addressFromListM(pointer,addAddresses=addAddresses,counter=counter,branchNow=branchNow,success=TRUE)
+  } else {
+    #print("failed, invalid pointer")
+    pointer <- incrementPointer(pointer,branchNow)
+    #note the failure to suggest decrementing the branchNow value and adjusting a new branch
+    addressFromListM(pointer,addAddresses=addAddresses,counter=counter,branchNow=branchNow,success=FALSE)
+  }
+  return(addAddresses)
+}
+
+#' Extract the ID of an element based on its address
+#'
+#' @param pointer the address of the ID as a list
+#'
+#' @return the ID
+#'
+parseID <- function(pointer){
+  expr1 <- addressFromList(pointer)
+  tryCatch(
+    {
+      eval(parse(text=expr1))
+    },
+    error=function(cond) {
+      message(conditionMessage(cond))
+      NULL
+    },
+    warning = function(cond) {
+      message(conditionMessage(cond))
+      NULL
+    }
+  )
+}
+
+#' test a lipd element address for validity
+#'
+#' @param address1 the address of a lipd element
+#'
+#' @return the TRUE if valid, else return FALSE
+#'
+validAddress <- function(address1){
+  tryCatch(
+    {
+      eval(parse(text=address1))
+      TRUE
+    },
+    error=function(cond) {
+      message(conditionMessage(cond))
+      FALSE
+    },
+    warning = function(cond) {
+      message(conditionMessage(cond))
+      FALSE
+    }
+  )
+}
+
+getIdAddress <- function(ID, addressTop){
+  address1 <- addressFromList(addressTop)
+  IDexists <- sum(unlist(L$paleoData[[1]]$measurementTable[[1]])==ID,na.rm=TRUE)>0
+  if (!IDexists){
+    message("No such ID in this location")
+    NULL
+  } else {
+    message(paste0("ID: ", ID, " exists"))
+  }
+}
+getIdAddress(ID="093klsimpl-d-f7777d32",addressTop=list("chronData",0,"measurementTable",0,"measurementTableId"))
+
+addressFromList(list("chronData",1,"measurementTable",1,"measurementTableId"))
+
+
+
+
 #' Format/create explicit linkages for various chron/paleoData and measurement tables
 #'
 #' @param L lipd object
@@ -15,9 +147,11 @@ lipdObjectLinkages <- function(L, ask=TRUE){
     #iterate over paleoData objects
     for (jj in 1:length(L$paleoData)){
       ##paleoDataId
-      if (length(grep("paleoDataId", attributes(L$paleoData[[jj]])$names)) > 0){
+      paleoDataIdAddress <- list("paleoData",jj,"paleoDataId")
+      paleoDataId <- parseID(paleoDataIdAddress)
+      if (!is.null(paleoDataId)){
         message("has paleoDataId")
-        checkLinks(L$paleoData[[jj]],"paleoDataId",L$chronData[[jj]],"linkedPaleoData",ask=ask)
+        checkLinks(paleoDataIdAddress,L$chronData[[jj]],"linkedPaleoData",ask=ask)
       }
       ##linkedChronData
       if (length(grep("linkedChronData", attributes(L$paleoData[[jj]])$names)) > 0){
@@ -153,7 +287,6 @@ if (!is.na(slot(site1@collunits@collunits[[jj]], "defaultchronology"))){
   message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
 }
 
-pointer1 <- list("paleoData",1,"paleoDataId")
+pointer1 <- list("paleoData",0,"measurementTable",0)
 
-eval(parse(text=paste0("L",paste('[[',pointer1,']]',collapse = "",sep="'"))))
-sapply(pointer1, function(x) is.numeric(x))
+parseID(pointer1)
