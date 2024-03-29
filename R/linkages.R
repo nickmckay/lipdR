@@ -8,63 +8,93 @@ addressFromList <- function(pointer){
   listIt <- function(x,sep){paste('[[',x,']]',collapse = "",sep=sep)}
   parts <- sapply(pointer, function(x) ifelse(is.numeric(x),listIt(x,""),listIt(x,"'")))
   address <- paste0("L",paste(parts,collapse = "",sep="'"))
+  address
   #eval(parse(text=address))
 }
 incrementPointer <- function(pointer,loc){
-    pointer[[loc]] <- pointer[[loc]] + 1
+  tryCatch(
+    {
+      pointer[[loc]] <- pointer[[loc]] + 1
+    },
+    error=function(cond) {
+      NULL
+    },
+    warning = function(cond) {
+      NULL
+    }
+  )
     pointer
 }
 
-addressFromListM <- function(pointer,addAddresses = list(),counter=0,branchNow=NULL,success=TRUE){
-  zeros <- which(!is.na(unlist(lapply(pointer,function(x) as.numeric(x)))))
-  #First round only
-  if (counter==0){
-    #Find locations of zeros (branch points)
-    zeros <- which(unlist(pointer)==0)
-    if (is.null(branchNow)){
-      branchNow <- max(zeros)
-    }
-    #Increment all branch points until all are non zero
-    while (sum(zeros) > 0){
-      branchPoint <- min(zeros)
-      pointer <- incrementPointer(pointer,branchPoint)
+addressFromListM <- function(L,pointer){
+  #initiate values
+  done <- FALSE
+  success=TRUE
+  branchNow=NULL
+  counter=0
+  allAddresses = list()
+  allIds = list()
+  while (!done){
+    zeros <- which(!is.na(unlist(lapply(pointer,function(x) as.numeric(x)))))
+    #First round only
+    if (counter==0){
+      #Find locations of zeros (branch points)
       zeros <- which(unlist(pointer)==0)
+      if (is.null(branchNow)){
+        branchNow <- max(zeros)
+      }
+      #Increment all branch points until all are non zero
+      while (sum(zeros) > 0){
+        branchPoint <- min(zeros)
+        pointer <- incrementPointer(pointer,branchPoint)
+        zeros <- which(unlist(pointer)==0)
+      }
+    }
+
+    #if the last run failed, the branching location should be moved up and the previous branch tip should be restarted at 1
+    if(success==FALSE){
+      #Reset the previous working branch tip to 1
+      pointer[[branchNow]] <- 1
+      #Move branchpoint up one
+      branchNow <- zeros[(which(branchNow == zeros)-1)]
+
+      #If we find the top-most branch, exit
+      if (length(branchNow)<1){
+        done <- TRUE
+        break
+      }
+      pointer <- incrementPointer(pointer,branchNow)
+      success=TRUE
+    }
+
+    #convert the pointer to an address
+    address1 <- addressFromList(pointer)
+    if (is.null(address1)){
+      stop("address1 is null")
+    }
+    #If the address points to a valid lipd element...
+    if (validAddress(L,address1)){
+      #count the valid address, add it to the list, and print to console
+      counter <- counter + 1
+      allAddresses[[counter]] <- address1
+
+      if (is.null(eval(parse(text=address1)))){
+        allIds[[counter]] <- NULL
+      } else {
+        allIds[[counter]] <- eval(parse(text=address1))
+      }
+      pointer <- incrementPointer(pointer,branchNow)
+      #note the success to suggest incrementing the branchNow
+      success=TRUE
+    } else {
+      pointer <- incrementPointer(pointer,branchNow)
+      #note the failure to suggest decrementing the branchNow value and adjusting a new branch
+      success=FALSE
     }
   }
-  #print(paste0("zeros: ", zeros))
+  returns <- list(Address=allAddresses,Ids=allIds)
 
-  #if the last run failed, the branching location should be moved up and the previous branch tip should be restarted at 1
-  if(success==FALSE){
-    pointer[[branchNow]] <- 1
-    branchNow <- zeros[(which(branchNow == zeros)-1)]
-    if (length(branchNow)<1){
-      return(addAddresses)
-    }
-    #print(paste0("branchNow: ", branchNow))
-    pointer <- incrementPointer(pointer,branchNow)
-    #print(paste0("branch Change: ", branchNow))
-    addressFromListM(pointer,addAddresses = addAddresses,counter=counter,branchNow=branchNow,success=TRUE)
-  }
-
-  #convert the pointer to an address
-  address1 <- addressFromList(pointer)
-  #If the address points to a valid lipd element...
-  if (validAddress(address1)){
-    #count the valid address, add it to the list, and print to console
-    counter <- counter + 1
-    print(paste0("Count: ", counter))
-    print(address1)
-    addAddresses[[counter]] <- address1
-    #note the success to suggest incrementing the branchNow
-    pointer <- incrementPointer(pointer,branchNow)
-    addressFromListM(pointer,addAddresses=addAddresses,counter=counter,branchNow=branchNow,success=TRUE)
-  } else {
-    #print("failed, invalid pointer")
-    pointer <- incrementPointer(pointer,branchNow)
-    #note the failure to suggest decrementing the branchNow value and adjusting a new branch
-    addressFromListM(pointer,addAddresses=addAddresses,counter=counter,branchNow=branchNow,success=FALSE)
-  }
-  return(addAddresses)
+  return(returns)
 }
 
 #' Extract the ID of an element based on its address
@@ -93,21 +123,20 @@ parseID <- function(pointer){
 #' test a lipd element address for validity
 #'
 #' @param address1 the address of a lipd element
+#' @param L the lipd object
 #'
 #' @return the TRUE if valid, else return FALSE
 #'
-validAddress <- function(address1){
+validAddress <- function(L,address1){
   tryCatch(
     {
       eval(parse(text=address1))
       TRUE
     },
     error=function(cond) {
-      message(conditionMessage(cond))
       FALSE
     },
     warning = function(cond) {
-      message(conditionMessage(cond))
       FALSE
     }
   )
@@ -287,6 +316,6 @@ if (!is.na(slot(site1@collunits@collunits[[jj]], "defaultchronology"))){
   message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
 }
 
-pointer1 <- list("paleoData",0,"measurementTable",0)
+pointer1 <- list("paleoData",0,"measurementTable",0,"measurementTableId")
 
 parseID(pointer1)
