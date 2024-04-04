@@ -11,6 +11,14 @@ addressFromList <- function(pointer){
   address
   #eval(parse(text=address))
 }
+
+
+#' Move to the next object in the list
+#'
+#' @param pointer location within the lipd
+#' @param loc location within pointer
+#'
+#' @return pointer
 incrementPointer <- function(pointer,loc){
   tryCatch(
     {
@@ -26,6 +34,12 @@ incrementPointer <- function(pointer,loc){
     pointer
 }
 
+#' Given a generic pointer and its associated lipd object, return all valid addresses
+#'
+#' @param L lipd object
+#' @param pointer location within the lipd
+#'
+#' @return list object with addresses and corresponding values
 addressFromListM <- function(L,pointer){
   #initiate values
   done <- FALSE
@@ -142,6 +156,13 @@ validAddress <- function(L,address1){
   )
 }
 
+#' get thwe address given a pointer and the ID
+#'
+#' @param ID ID at the address
+#' @param addressTop where to look within
+#'
+#' @return address
+#'
 getIdAddress <- function(ID, addressTop){
   address1 <- addressFromList(addressTop)
   IDexists <- sum(unlist(L$paleoData[[1]]$measurementTable[[1]])==ID,na.rm=TRUE)>0
@@ -151,10 +172,11 @@ getIdAddress <- function(ID, addressTop){
   } else {
     message(paste0("ID: ", ID, " exists"))
   }
+  return(IDexists)
 }
-getIdAddress(ID="093klsimpl-d-f7777d32",addressTop=list("chronData",0,"measurementTable",0,"measurementTableId"))
-
-addressFromList(list("chronData",1,"measurementTable",1,"measurementTableId"))
+# getIdAddress(ID="093klsimpl-d-f7777d32",addressTop=list("chronData",0,"measurementTable",0,"measurementTableId"))
+#
+# addressFromList(list("chronData",1,"measurementTable",1,"measurementTableId"))
 
 
 
@@ -231,6 +253,11 @@ lipdObjectLinkages <- function(L, ask=TRUE){
   ####distributionTableId
 }
 
+#' verify that a given ID is valid, Neotoma wants an integer
+#'
+#' @param ID
+#'
+#' @return 0 or 1
 validNetotomaID <- function(ID){
   if (is.null(ID)){
     warning("ID is null")
@@ -245,16 +272,32 @@ validNetotomaID <- function(ID){
   return(1)
 }
 
+#' Get an ID from the user
+#'
+#' @param name1
+#'
+#' @returns ID of class integer
 takeID <- function(name1){
   x <- readline(paste0("What is the value of ", name1, "?"))
   x <- as.integer(x)
   if (!is.integer(x) || is.na(x)){
     message("invalid, enter an integer")
     takeID(name1)
+  } else {
+    x
   }
 }
 
-checkLinks <- function(pointer1, pointer2 ,auto=TRUE){
+
+#' given a location requiring a linkage, check for its counterpart
+#'
+#' @param L a lipd object
+#' @param pointer1 location within the lipd
+#' @param pointer2 location within the lipd correspond to pointer1
+#' @param auto automatically assign Ids if necessary
+#'
+#' @return an updated lipd object
+checkLinks <- function(L, pointer1, pointer2, auto=TRUE){
   valid1 <- validNetotomaID(loc1[[name1]])
   valid2 <- validNetotomaID(loc2[[name2]])
   #if name1 doesn't exist, create it
@@ -286,36 +329,40 @@ checkLinks <- function(pointer1, pointer2 ,auto=TRUE){
   } else {
     message("objects are not class integer")
   }
+  return(L)
 }
-
-library(lipdR)
-
-L <- readLipd("C:\\Users\\dce25\\Downloads\\093kliso_simpl.lpd")
-L <- readLipd("C:\\Users\\dce25\\Downloads\\Arc-GRIP.Vinther.2010.lpd")
-
-rapply(L, function(x) grepl(x,"link"),how = "unlist")
-
-checkLinks(L$paleoData[[1]],"linkedChronData",L$chronData[[1]],"chronDataId")
-
-
-#link any associated chron data
-
-#if there is a default chronology (linked chron data), go find it
-if (!is.na(slot(site1@collunits@collunits[[jj]], "defaultchronology"))){
-  chronNow <- slot(site1@collunits@collunits[[jj]], "defaultchronology")
-
-  chronNum <- which(chronNow == unlist(lapply(L$paleoData, function(x) x$linkedChronData)))
-
-  if (length(chronNum) < 1){
-    message("No chronology found, please make explicit link to chronData.")
-    message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
-  }
-#otherwise, report lack of chron data
-} else{
-  message("No chronology found, please make explicit link to chronData.")
-  message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
-}
-
-pointer1 <- list("paleoData",0,"measurementTable",0,"measurementTableId")
-
-parseID(pointer1)
+#
+# library(lipdR)
+#
+# L <- readLipd("C:\\Users\\dce25\\Downloads\\093kliso_simpl.lpd")
+# L <- readLipd("C:\\Users\\dce25\\Downloads\\Arc-GRIP.Vinther.2010.lpd")
+#
+# rapply(L, function(x) grepl(x,"link"),how = "unlist")
+#
+# checkLinks(L$paleoData[[1]],"linkedChronData",L$chronData[[1]],"chronDataId")
+#
+#
+# #link any associated chron data
+#
+# #if there is a default chronology (linked chron data), go find it
+# if (!is.na(slot(site1@collunits@collunits[[jj]], "defaultchronology"))){
+#   chronNow <- slot(site1@collunits@collunits[[jj]], "defaultchronology")
+#
+#   chronNum <- which(chronNow == unlist(lapply(L$paleoData, function(x) x$linkedChronData)))
+#
+#   if (length(chronNum) < 1){
+#     message("No chronology found, please make explicit link to chronData.")
+#     message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
+#   }
+# #otherwise, report lack of chron data
+# } else{
+#   message("No chronology found, please make explicit link to chronData.")
+#   message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
+# }
+#
+# pointer1 <- list("paleoData",0,"measurementTable",0,"measurementTableId")
+#
+# parseID(pointer1)
+#
+# addressFromListM()
+# structure(x, class = "first")
