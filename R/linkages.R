@@ -207,6 +207,10 @@ getIdAddress <- function(ID, addressTop){
 
 
 #' Format/create explicit linkages for various chron/paleoData and measurement tables
+#' This function addresses the following possible issues that might exist in the linkages:
+#' 1. The lipd object may lack linkages altogether
+#' 2. The linkage IDs may not be formatted correctly
+#' 3. The link IDs may not be paired correctly
 #'
 #' @param L lipd object
 #'
@@ -222,7 +226,7 @@ lipdObjectLinkages <- function(L, ask=TRUE){
   if (length(grep("paleo", attributes(L)$names)) > 0){
     #iterate over paleoData objects
     for (jj in 1:length(L$paleoData)){
-      ##paleoDataId
+      ##paleoDataId may have 1 or more "linkedPaleoData" at L$chronData[[1-n]]
       paleoDataIdAddress <- list("paleoData",jj,"paleoDataId")
       paleoDataId <- parseID(paleoDataIdAddress)
       if (!is.null(paleoDataId)){
@@ -313,6 +317,22 @@ takeID <- function(name1){
   }
 }
 
+#' Find duplicate links
+#'
+#' @param Ids1 set of Ids
+#' @param Ids2 set of ids
+#'
+#' @return NULL
+#'
+findDuplicates <- function(Ids1, Ids2){
+  for (ii in Ids1){
+    iiLinkIndex <- which(ii == Ids2)
+    if (length(iiLinkIndex) > 1){
+      stop(paste0("Duplicate links for: ", ii))
+    }
+  }
+}
+
 
 #' given a location requiring a linkage, check for its counterpart eg. paleoDataId/linkedPaleoData
 #'
@@ -322,7 +342,7 @@ takeID <- function(name1){
 #' @param auto automatically assign Ids if necessary
 #'
 #' @return an updated lipd object
-checkLinks <- function(L, pointer1, pointer2, auto=TRUE){
+checkLinks <- function(L, pointer1, pointer2){
   addresses1 <- addressFromListM(L,pointer1)
   addresses2 <- addressFromListM(L,pointer2)
   for (ii in addresses1$Ids){
