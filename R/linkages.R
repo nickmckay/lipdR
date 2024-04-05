@@ -12,6 +12,24 @@ addressFromList <- function(pointer){
   #eval(parse(text=address))
 }
 
+#' check that an object is a valid pointer
+#'
+#' @param pointer1 a pointer is a list of character and numeric objects
+#'
+#' @return TRUE/FALSE
+#'
+is.pointer <- function(pointer1){
+  if(is.list(pointer1)){
+    if (all(sapply(pointer1, function(x) is.character(x) || is.numeric(x)))){
+      return(TRUE)
+    } else {
+      return(FALSE)
+    }
+  } else {
+    return(FALSE)
+  }
+}
+
 
 #' Move to the next object in the list
 #'
@@ -41,6 +59,10 @@ incrementPointer <- function(pointer,loc){
 #'
 #' @return list object with addresses and corresponding values
 addressFromListM <- function(L,pointer){
+  startTime <- Sys.time()
+  if(!is.pointer(pointer)){
+    stop('Pointer is not valid. Must be a list of character and numeric objects. eg. list("paleoData",0,"linkedChronData")')
+  }
   #initiate values
   done <- FALSE
   success=TRUE
@@ -49,6 +71,9 @@ addressFromListM <- function(L,pointer){
   allAddresses = list()
   allIds = list()
   while (!done){
+    if ((Sys.time() - startTime) > 2){
+      stop("Problem locating address from pointer. Check that location is valid.")
+    }
     zeros <- which(!is.na(unlist(lapply(pointer,function(x) as.numeric(x)))))
     #First round only
     if (counter==0){
@@ -289,7 +314,7 @@ takeID <- function(name1){
 }
 
 
-#' given a location requiring a linkage, check for its counterpart
+#' given a location requiring a linkage, check for its counterpart eg. paleoDataId/linkedPaleoData
 #'
 #' @param L a lipd object
 #' @param pointer1 location within the lipd
@@ -298,37 +323,45 @@ takeID <- function(name1){
 #'
 #' @return an updated lipd object
 checkLinks <- function(L, pointer1, pointer2, auto=TRUE){
-  valid1 <- validNetotomaID(loc1[[name1]])
-  valid2 <- validNetotomaID(loc2[[name2]])
-  #if name1 doesn't exist, create it
-  if(!auto){
-    auto = askYesNo(paste0(name1,": ", loc1[[name1]], " is missing or of wrong class. Should all unfit IDs be replaced automatically? (Answer 'No' to provide an ID)"))
-  }
-  ID1 <- round(runif(1,0,100000),0)
-  if (!valid1){
-    if (ask){
-      if (replaceAll){
-        loc1[[name1]] <- ID1
-      }
-    } else {
-      loc1[[name1]] <- takeID(name1)
+  addresses1 <- addressFromListM(L,pointer1)
+  addresses2 <- addressFromListM(L,pointer2)
+  for (ii in addresses1$Ids){
+    iiLinkIndex <- which(ii == addresses2$Ids)
+    if (length(iiLinkIndex) > 1){
+      stop(paste0("Duplicate links for: ", ii))
     }
-
   }
-  #if name2 doesn't exist, check elsewhere
-  if (length(grep(name2, attributes(loc2)$names)) == 0 || !methods::is(loc2[[name2]], "integer")){
-    loc2[[name2]] <- ID1
-  }
-
-  if (loc1[[name1]] == loc2[[name2]]){
-    message("fields match")
-  }
-
-  if (methods::is(loc1[[name1]], "integer") && methods::is(loc2[[name2]], "integer")){
-    message("linkage check passed!")
-  } else {
-    message("objects are not class integer")
-  }
+  # valid1 <- validNetotomaID(loc1[[name1]])
+  # valid2 <- validNetotomaID(loc2[[name2]])
+  #if name1 doesn't exist, create it
+  # if(!auto){
+  #   auto = askYesNo(paste0(name1,": ", loc1[[name1]], " is missing or of wrong class. Should all unfit IDs be replaced automatically? (Answer 'No' to provide an ID)"))
+  # }
+  # ID1 <- round(runif(1,0,100000),0)
+  # if (!valid1){
+  #   if (ask){
+  #     if (replaceAll){
+  #       loc1[[name1]] <- ID1
+  #     }
+  #   } else {
+  #     loc1[[name1]] <- takeID(name1)
+  #   }
+  #
+  # }
+  # #if name2 doesn't exist, check elsewhere
+  # if (length(grep(name2, attributes(loc2)$names)) == 0 || !methods::is(loc2[[name2]], "integer")){
+  #   loc2[[name2]] <- ID1
+  # }
+  #
+  # if (loc1[[name1]] == loc2[[name2]]){
+  #   message("fields match")
+  # }
+  #
+  # if (methods::is(loc1[[name1]], "integer") && methods::is(loc2[[name2]], "integer")){
+  #   message("linkage check passed!")
+  # } else {
+  #   message("objects are not class integer")
+  # }
   return(L)
 }
 #
@@ -364,5 +397,5 @@ checkLinks <- function(L, pointer1, pointer2, auto=TRUE){
 #
 # parseID(pointer1)
 #
-# addressFromListM()
+# addressFromListM(L, )
 # structure(x, class = "first")
