@@ -1,10 +1,22 @@
+# The linkages are a set of functions written to handle explicit object relationships, eg. linkedChronData - {points to} - chronDataId
+# The high-level functions are:
+# checkLinks() - checks for corresponding IDs given their approximate locations
+# lipdObjectLinkages() - checks all such linkages with an option to interactively assign missing ones
+
 #' Build the address to a lipd element from its constituent parts
 #'
-#' @param pointer list to build address
+#' @param pointer a pointer is a list of character and numeric objects which serve as an address within a lipd
 #'
 #' @return full address as string
 #'
 addressFromList <- function(pointer){
+
+  numbers <- which(!is.na(unlist(lapply(pointer,function(x) as.numeric(x)))))
+  zeros <- which(pointer[numbers] == 0)
+  if (length(zeros>0)){
+    stop("Pointer contains branch points with '0 address', please use addressFromListM()")
+  }
+
   listIt <- function(x,sep){paste('[[',x,']]',collapse = "",sep=sep)}
   parts <- sapply(pointer, function(x) ifelse(is.numeric(x),listIt(x,""),listIt(x,"'")))
   address <- paste0("L",paste(parts,collapse = "",sep="'"))
@@ -14,13 +26,13 @@ addressFromList <- function(pointer){
 
 #' check that an object is a valid pointer
 #'
-#' @param pointer1 a pointer is a list of character and numeric objects
+#' @param pointer a pointer is a list of character and numeric objects which serve as an address within a lipd
 #'
 #' @return TRUE/FALSE
 #'
-is.pointer <- function(pointer1){
-  if(is.list(pointer1)){
-    if (all(sapply(pointer1, function(x) is.character(x) || is.numeric(x)))){
+is.pointer <- function(pointer){
+  if(is.list(pointer)){
+    if (all(sapply(pointer, function(x) is.character(x) || is.numeric(x)))){
       return(TRUE)
     } else {
       return(FALSE)
@@ -31,9 +43,25 @@ is.pointer <- function(pointer1){
 }
 
 
+#' check if a pointer has branch points
+#'
+#' @param pointer a pointer is a list of character and numeric objects which serve as an address within a lipd
+#'
+#' @return TRUE/FALSE
+#'
+is.branching.pointer <- function(pointer){
+  numbers <- which(!is.na(unlist(lapply(pointer,function(x) as.numeric(x)))))
+  zeros <- which(pointer[numbers] == 0)
+  if (length(zeros>0)){
+    return(TRUE)
+  }
+  return(FALSE)
+}
+
+
 #' Move to the next object in the list
 #'
-#' @param pointer location within the lipd
+#' @param pointer a pointer is a list of character and numeric objects which serve as an address within a lipd
 #' @param loc location within pointer
 #'
 #' @return pointer
@@ -55,13 +83,22 @@ incrementPointer <- function(pointer,loc){
 #' Given a generic pointer and its associated lipd object, return all valid addresses
 #'
 #' @param L lipd object
-#' @param pointer location within the lipd
+#' @param pointer a pointer is a list of character and numeric objects which serve as an address within a lipd
 #'
 #' @return list object with addresses and corresponding values
 addressFromListM <- function(L,pointer){
   startTime <- Sys.time()
+  if(is.null(L) || !methods::is(L,"lipd")){
+    stop("L must be a lipd object!")
+  }
   if(!is.pointer(pointer)){
     stop('Pointer is not valid. Must be a list of character and numeric objects. eg. list("paleoData",0,"linkedChronData")')
+  }
+
+  if(!is.branching.pointer(pointer)){
+    returns <- list(Address=addressFromList(pointer),Ids=parseID(L,pointer))
+
+    return(returns)
   }
   #initiate values
   done <- FALSE
@@ -74,7 +111,13 @@ addressFromListM <- function(L,pointer){
     if ((Sys.time() - startTime) > 2){
       stop("Problem locating address from pointer. Check that location is valid.")
     }
-    zeros <- which(!is.na(unlist(lapply(pointer,function(x) as.numeric(x)))))
+    numbers <- which(!is.na(unlist(lapply(pointer,function(x) as.numeric(x)))))
+    zeros <- which(pointer[numbers] == 0)
+    print(numbers)
+    print(zeros)
+    # if (length(zeros) < 1){
+    #   stop("Pointer must contain branch points with '0 Address' to use this function, check pointer")
+    # }
     #First round only
     if (counter==0){
       #Find locations of zeros (branch points)
@@ -138,12 +181,18 @@ addressFromListM <- function(L,pointer){
 
 #' Extract the ID of an element based on its address
 #'
-#' @param pointer the address of the ID as a list
+#' @param pointer a pointer is a list of character and numeric objects which serve as an address within a lipd
 #'
 #' @return the ID
 #'
-parseID <- function(pointer){
-  expr1 <- addressFromList(pointer)
+parseID <- function(L,pointer){
+
+  if(is.branching.pointer(pointer)){
+    address1 <- addressFromListM(L,pointer)
+    expr1 <- address1$Address[[1]]
+  } else {
+    expr1 <- addressFromList(pointer)
+  }
   tryCatch(
     {
       eval(parse(text=expr1))
@@ -169,8 +218,13 @@ parseID <- function(pointer){
 validAddress <- function(L,address1){
   tryCatch(
     {
-      eval(parse(text=address1))
-      TRUE
+      try1 <- eval(parse(text=address1))
+      if(!is.null(try1)){
+        TRUE
+      } else {
+        FALSE
+      }
+
     },
     error=function(cond) {
       FALSE
@@ -181,7 +235,7 @@ validAddress <- function(L,address1){
   )
 }
 
-#' get thwe address given a pointer and the ID
+#' get the address given a pointer and the ID
 #'
 #' @param ID ID at the address
 #' @param addressTop where to look within
@@ -213,10 +267,17 @@ getIdAddress <- function(ID, addressTop){
 #' 3. The link IDs may not be paired correctly
 #'
 #' @param L lipd object
+#' @param action one of: c("report","interactive","new","repair"), see checkLinks()
 #'
 #' @return lipd object
 #'
-lipdObjectLinkages <- function(L, ask=TRUE){
+lipdObjectLinkages <- function(L, action="report"){
+  if(is.null(L) || !methods::is(L,"lipd")){
+    stop("L must be a lipd object!")
+  }
+  if (!action %in% c("report","interactive","new","repair")){
+    stop("'action' must be one of: 'report', 'interactive', 'new', 'repair'")
+  }
   #For each object requiring a linked object:
   ##check for ID, create one if needed
   ##find linked object
@@ -227,44 +288,37 @@ lipdObjectLinkages <- function(L, ask=TRUE){
     #iterate over paleoData objects
     for (jj in 1:length(L$paleoData)){
       ##paleoDataId may have 1 or more "linkedPaleoData" at L$chronData[[1-n]]
-      paleoDataIdAddress <- list("paleoData",jj,"paleoDataId")
-      paleoDataId <- parseID(paleoDataIdAddress)
-      if (!is.null(paleoDataId)){
-        message("has paleoDataId")
-        checkLinks(paleoDataIdAddress,L$chronData[[jj]],"linkedPaleoData",ask=ask)
-      }
-      ##linkedChronData
-      if (length(grep("linkedChronData", attributes(L$paleoData[[jj]])$names)) > 0){
-        message("has linkedChronData")
-        checkLinks(L$paleoData[[jj]],"linkedChronData",L$chronData[[jj]],"chronDataId",ask=ask)
-      }
+      addressNow <- list("paleoData",jj,"paleoDataId")
+      addressLink <- list("chronData",0,"linkedPaleoData")
+      links <- checkLinks(L,addressNow,addressLink,action=action)
+      # ##linkedChronData
+      # if (length(grep("linkedChronData", attributes(L$paleoData[[jj]])$names)) > 0){
+      #   message("has linkedChronData")
+      #   checkLinks(L$paleoData[[jj]],"linkedChronData",L$chronData[[jj]],"chronDataId",ask=ask)
+      # }
       if (length(grep("measurementTable", attributes(L$paleoData[[jj]])$names)) > 0){
         #iterate over measurement tables
         for (kk in 1:length(L$paleoData[[jj]]$measurementTable)){
-          ###measurementTableId
-          if (length(grep("measurementTableId", attributes(L$paleoData[[jj]]$measurementTable[[kk]])$names)) > 0){
-            message("has measurementTableId")
-          }
-          ###linkedMeasurementTable
-          if (length(grep("linkedMeasurementTable", attributes(L$paleoData[[jj]]$measurementTable[[kk]])$names)) > 0){
-            message("has linkedMeasurementTable")
-          }
+          ###measurementTableId may have 1 or more "linkedMeasurementTable" at L$chronData[[1-n]]$measurementTable[[1-n]]
+          addressNow <- list("paleoData",jj,"measurementTable",kk,"measurementTableId")
+          addressLink <- list("chronData",0,"measurementTable",0,"linkedMeasurementTable")
+          links <- checkLinks(L,addressNow,addressLink,action=action)
         }
       }
     }
   }
 
 
-  #Chron 1,2,3,etc.
-  if (length(grep("chron", attributes(L)$names)) > 0){
-    #iterate over chronData objects
-    for (jj in 1:length(L$chronData)){
-      ##linkedChronData
-      if (length(grep("linkedChronData", attributes(L)$names)) > 0){
-        message("has linkedChronData")
-      }
-    }
-  }
+  # #Chron 1,2,3,etc.
+  # if (length(grep("chron", attributes(L)$names)) > 0){
+  #   #iterate over chronData objects
+  #   for (jj in 1:length(L$chronData)){
+  #     ##linkedChronData
+  #     if (length(grep("linkedChronData", attributes(L)$names)) > 0){
+  #       message("has linkedChronData")
+  #     }
+  #   }
+  # }
   ##Measurement Table 1,2,3,etc.
   ###measurementTableId
   ###linkedMeasurementTable
@@ -325,6 +379,9 @@ takeID <- function(name1){
 #' @return NULL
 #'
 findDuplicates <- function(Ids1, Ids2){
+  if (!validNetotomaID(Ids1) || !validNetotomaID(Ids1)){
+    stop("Ids1 and Ids2 must be valid Neotoma Ids")
+  }
   for (ii in Ids1){
     iiLinkIndex <- which(ii == Ids2)
     if (length(iiLinkIndex) > 1){
@@ -334,88 +391,79 @@ findDuplicates <- function(Ids1, Ids2){
 }
 
 
-#' given a location requiring a linkage, check for its counterpart eg. paleoDataId/linkedPaleoData
+#' Given a location requiring a linkage, check for its counterpart eg. paleoDataId/linkedPaleoData
+#' Pointers may be branching (containing 0's) or specific (pointing to 1 particular location)
 #'
 #' @param L a lipd object
-#' @param pointer1 location within the lipd
-#' @param pointer2 location within the lipd correspond to pointer1
-#' @param auto automatically assign Ids if necessary
+#' @param pointer1 a pointer is a list of character and numeric objects which serve as an address within a lipd
+#' @param pointer2 location within the lipd corresponding to pointer1
+#' @param action one of: c("report","interactive","new","repair")
+#'
+#' @details
+#' action options:
+#' report: print to console
+#' interactive: ask user to fill any missing IDs
+#' new: generate new,random IDs based on positions in the lipd structure, eg. L$paleoData$[[1]]$paleoDataId and L$chronData$[[1]]$linkedPaleoData would be assigned the same IDs
+#' repair: asssumes the pairing of IDs is correct, but the IDs are in the wrong format, and assigns new, random integers
 #'
 #' @return an updated lipd object
-checkLinks <- function(L, pointer1, pointer2){
+checkLinks <- function(L, pointer1, pointer2, action="report"){
+  if(is.null(L) || !methods::is(L,"lipd")){
+    stop("L must be a lipd object!")
+  }
+  if(!is.pointer(pointer1) || !is.pointer(pointer2)){
+    stop('Pointer(s) not valid. Must be a list of character and numeric objects. eg. list("paleoData",0,"linkedChronData")')
+  }
+  if (!action %in% c("report","interactive","new","repair")){
+    stop("'action' must be one of: 'report', 'interactive', 'new', 'repair")
+  }
+  #get the address from the pointers, or return FALSE if it doesn't exist
+  #pointer1
+  if(is.branching.pointer(pointer1)){
+    address1 <- addressFromListM(L,pointer1)
+    if (length(address1$address<1)){
+      message(paste0(pointer1[length(pointer1)]," does not exist at ", paste0(pointer1,collapse = " ")))
+      return(FALSE)
+    } else {
+      address1 <- address1$Address[[1]]
+      ID1 <- address1$Ids[[1]]
+    }
+  } else {
+    address1 <- addressFromList(pointer1)
+    ID1 <- parseID(L,pointer1)
+  }
+  #pointer2
+  if(is.branching.pointer(pointer2)){
+    address2 <- addressFromListM(L,pointer2)
+    if (length(address2$address<1)){
+      message(paste0(pointer2[length(pointer2)]," does not exist at ", paste0(pointer2,collapse = " ")))
+      return(FALSE)
+    } else {
+      address2 <- address2$Address[[1]]
+      ID2 <- address2$Ids[[1]]
+    }
+  } else {
+    address2 <- addressFromList(pointer2)
+    ID2 <- parseID(L,pointer2)
+  }
+
+
+  if(is.null(parseID(L, pointer1))){
+    message(paste0(pointer1[length(pointer1)]," does not exist at ", address1))
+    return(FALSE)
+  }
+  if(is.null(parseID(L, pointer2))){
+    message(paste0(pointer2[length(pointer2)]," does not exist ", address2))
+    return(FALSE)
+  }
   addresses1 <- addressFromListM(L,pointer1)
   addresses2 <- addressFromListM(L,pointer2)
-  for (ii in addresses1$Ids){
-    iiLinkIndex <- which(ii == addresses2$Ids)
-    if (length(iiLinkIndex) > 1){
-      stop(paste0("Duplicate links for: ", ii))
+  for (ii in 1:length(addresses1$Ids)){
+    iiLinkIndex <- which(unlist(addresses1$Ids[ii]) == unlist(addresses2$Ids))
+    if (length(iiLinkIndex) < 1){
+      message(paste0("No corresponding links for '", addresses1$Ids[ii], "' from ", addresses1$Address[ii], " located in ", paste0(unlist(addresses2$Address),collapse=", ")))
+      return(FALSE)
     }
   }
-  # valid1 <- validNetotomaID(loc1[[name1]])
-  # valid2 <- validNetotomaID(loc2[[name2]])
-  #if name1 doesn't exist, create it
-  # if(!auto){
-  #   auto = askYesNo(paste0(name1,": ", loc1[[name1]], " is missing or of wrong class. Should all unfit IDs be replaced automatically? (Answer 'No' to provide an ID)"))
-  # }
-  # ID1 <- round(runif(1,0,100000),0)
-  # if (!valid1){
-  #   if (ask){
-  #     if (replaceAll){
-  #       loc1[[name1]] <- ID1
-  #     }
-  #   } else {
-  #     loc1[[name1]] <- takeID(name1)
-  #   }
-  #
-  # }
-  # #if name2 doesn't exist, check elsewhere
-  # if (length(grep(name2, attributes(loc2)$names)) == 0 || !methods::is(loc2[[name2]], "integer")){
-  #   loc2[[name2]] <- ID1
-  # }
-  #
-  # if (loc1[[name1]] == loc2[[name2]]){
-  #   message("fields match")
-  # }
-  #
-  # if (methods::is(loc1[[name1]], "integer") && methods::is(loc2[[name2]], "integer")){
-  #   message("linkage check passed!")
-  # } else {
-  #   message("objects are not class integer")
-  # }
-  return(L)
+  return(TRUE)
 }
-#
-# library(lipdR)
-#
-# L <- readLipd("C:\\Users\\dce25\\Downloads\\093kliso_simpl.lpd")
-# L <- readLipd("C:\\Users\\dce25\\Downloads\\Arc-GRIP.Vinther.2010.lpd")
-#
-# rapply(L, function(x) grepl(x,"link"),how = "unlist")
-#
-# checkLinks(L$paleoData[[1]],"linkedChronData",L$chronData[[1]],"chronDataId")
-#
-#
-# #link any associated chron data
-#
-# #if there is a default chronology (linked chron data), go find it
-# if (!is.na(slot(site1@collunits@collunits[[jj]], "defaultchronology"))){
-#   chronNow <- slot(site1@collunits@collunits[[jj]], "defaultchronology")
-#
-#   chronNum <- which(chronNow == unlist(lapply(L$paleoData, function(x) x$linkedChronData)))
-#
-#   if (length(chronNum) < 1){
-#     message("No chronology found, please make explicit link to chronData.")
-#     message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
-#   }
-# #otherwise, report lack of chron data
-# } else{
-#   message("No chronology found, please make explicit link to chronData.")
-#   message("See documentation here: https://docs.google.com/document/d/1BvVcnj1VfDscIAwV5vEM4CIVwRLtRz74hqW9-8j6icM/edit?usp=sharing")
-# }
-#
-# pointer1 <- list("paleoData",0,"measurementTable",0,"measurementTableId")
-#
-# parseID(pointer1)
-#
-# addressFromListM(L, )
-# structure(x, class = "first")
