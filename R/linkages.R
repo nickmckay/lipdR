@@ -1,7 +1,7 @@
 # The linkages are a set of functions written to handle explicit object relationships, eg. linkedChronData - {points to} - chronDataId
 # The high-level functions are:
-# checkLinks() - checks for corresponding IDs given their approximate locations
-# lipdObjectLinkages() - checks all such linkages with an option to interactively assign missing ones
+# checkLinks() - checks for corresponding IDs given their exact or approximate locations
+# lipdObjectLinkages() - checks all such linkages from expected relationships
 
 #' Build the address to a lipd element from its constituent parts
 #'
@@ -9,7 +9,7 @@
 #'
 #' @return full address as string
 #'
-addressFromList <- function(pointer){
+addressFromList <- function(L,pointer){
 
   numbers <- which(!is.na(unlist(lapply(pointer,function(x) as.numeric(x)))))
   zeros <- which(pointer[numbers] == 0)
@@ -20,7 +20,11 @@ addressFromList <- function(pointer){
   listIt <- function(x,sep){paste('[[',x,']]',collapse = "",sep=sep)}
   parts <- sapply(pointer, function(x) ifelse(is.numeric(x),listIt(x,""),listIt(x,"'")))
   address <- paste0("L",paste(parts,collapse = "",sep="'"))
-  address
+  if (validAddress(L,address)){
+    return(address)
+  } else {
+    return(NULL)
+  }
   #eval(parse(text=address))
 }
 
@@ -96,7 +100,7 @@ addressFromListM <- function(L,pointer){
   }
 
   if(!is.branching.pointer(pointer)){
-    returns <- list(Address=addressFromList(pointer),Ids=parseID(L,pointer))
+    returns <- list(Address=addressFromList(L,pointer),Ids=parseID(L,pointer))
 
     return(returns)
   }
@@ -150,9 +154,9 @@ addressFromListM <- function(L,pointer){
     }
 
     #convert the pointer to an address
-    address1 <- addressFromList(pointer)
+    address1 <- addressFromList(L,pointer)
     if (is.null(address1)){
-      stop("address1 is null")
+      return(list(Address=NULL,Ids=NULL))
     }
     #If the address points to a valid lipd element...
     if (validAddress(L,address1)){
@@ -199,7 +203,7 @@ parseID <- function(L,pointer){
     }
     expr1 <- address1$Address[[1]]
   } else {
-    expr1 <- addressFromList(pointer)
+    expr1 <- addressFromList(L,pointer)
   }
   tryCatch(
     {
@@ -243,26 +247,6 @@ validAddress <- function(L,address1){
   )
 }
 
-#' get the address given a pointer and the ID
-#'
-#' @param ID ID at the address
-#' @param addressTop where to look within
-#'
-#' @return address
-#'
-getIdAddress <- function(ID, addressTop){
-  address1 <- addressFromList(addressTop)
-  IDexists <- sum(unlist(L$paleoData[[1]]$measurementTable[[1]])==ID,na.rm=TRUE)>0
-  if (!IDexists){
-    message("No such ID in this location")
-    NULL
-  } else {
-    message(paste0("ID: ", ID, " exists"))
-  }
-  return(IDexists)
-}
-
-
 #' Format/create explicit linkages for various chron/paleoData and measurement tables
 #' This function addresses the following possible issues that might exist in the linkages:
 #' 1. The lipd object may lack linkages altogether
@@ -297,8 +281,6 @@ lipdObjectLinkages <- function(L, action="report"){
   #Check for chronData model(s)
   hasChronDataModel <- !is.null(addressFromListM(L,list("chronData",0,"model")))
 
-  print(hasChronData)
-  print(hasPaleoData)
   #Paleo 1,2,3,etc.
   if (hasPaleoData && hasChronData){
     #iterate over paleoData objects
@@ -306,7 +288,7 @@ lipdObjectLinkages <- function(L, action="report"){
       ##paleoDataId may have 1 or more "linkedPaleoData" at L$chronData[[1-n]]
       addressNow <- list("paleoData",jj,"paleoDataId")
       addressLink <- list("chronData",0,"linkedPaleoData")
-      links <- checkLinks(L,addressNow,addressLink,action=action)
+      L <- checkLinks(L,addressNow,addressLink,action=action)
       # ##linkedChronData
       # if (length(grep("linkedChronData", attributes(L$paleoData[[jj]])$names)) > 0){
       #   message("has linkedChronData")
@@ -319,12 +301,13 @@ lipdObjectLinkages <- function(L, action="report"){
             ###measurementTableId may have 1 or more "linkedMeasurementTable" at L$chronData[[1-n]]$measurementTable[[1-n]]
             addressNow <- list("paleoData",jj,"measurementTable",kk,"measurementTableId")
             addressLink <- list("chronData",0,"measurementTable",0,"linkedMeasurementTable")
-            links <- checkLinks(L,addressNow,addressLink,action=action)
+            L <- checkLinks(L,addressNow,addressLink,action=action)
 
             ###linkedMeasurementTable may have 1 or more "measurementTableId" at L$chronData[[1-n]]$measurementTable[[1-n]]
             addressNow <- list("paleoData",jj,"measurementTable",kk,"linkedMeasurementTable")
             addressLink <- list("chronData",0,"measurementTable",0,"measurementTableId")
-            links <- checkLinks(L,addressNow,addressLink,action=action)
+            L <- checkLinks(L,addressNow,addressLink,action=action)
+
           } else {
             message("Missing chronData measurementTable")
           }
@@ -333,23 +316,23 @@ lipdObjectLinkages <- function(L, action="report"){
             ###linkedModel may have 1 or more "modelId" at L$chronData[[1-n]]$model[[1-n]]
             addressNow <- list("paleoData",jj,"measurementTable",kk,"linkedModel")
             addressLink <- list("chronData",0,"model",0,"modelId")
-            links <- checkLinks(L,addressNow,addressLink,action=action)
-
+            L <- checkLinks(L,addressNow,addressLink,action=action)
 
             ###linkedSummaryTable may have 1 or more "summaryTableId" at L$chronData[[1-n]]$model[[1-n]]$summaryTable[[1-n]]
             addressNow <- list("paleoData",jj,"measurementTable",kk,"linkedSummaryTable")
             addressLink <- list("chronData",0,"model",0,"summaryTable",0,"summaryTableId")
-            links <- checkLinks(L,addressNow,addressLink,action=action)
+            L <- checkLinks(L,addressNow,addressLink,action=action)
 
             ###linkedDistributionTable may have 1 or more "distributionTableId" at L$chronData[[1-n]]$model[[1-n]]$distributionTable[[1-n]]
             addressNow <- list("paleoData",jj,"measurementTable",kk,"linkedDistributionTable")
             addressLink <- list("chronData",0,"model",0,"distributionTable",0,"distributionTableId")
-            links <- checkLinks(L,addressNow,addressLink,action=action)
+            L <- checkLinks(L,addressNow,addressLink,action=action)
 
             ###linkedEnsembleTable may have 1 or more "ensembleTableId" at L$chronData[[1-n]]$model[[1-n]]$ensembleTable[[1-n]]
             addressNow <- list("paleoData",jj,"measurementTable",kk,"linkedEnsembleTable")
             addressLink <- list("chronData",0,"model",0,"ensembleTable",0,"ensembleTableId")
-            links <- checkLinks(L,addressNow,addressLink,action=action)
+            L <- checkLinks(L,addressNow,addressLink,action=action)
+
           } else {
             message("Missing chronData model")
           }
@@ -387,6 +370,7 @@ lipdObjectLinkages <- function(L, action="report"){
   ####ensembleTableId
   ###Distribution Table 1,2,3,etc.
   ####distributionTableId
+  return(L)
 }
 
 #' verify that a given ID is valid, Neotoma wants an integer
@@ -397,15 +381,15 @@ lipdObjectLinkages <- function(L, action="report"){
 validNetotomaID <- function(ID){
   if (is.null(ID)){
     warning("ID is null")
-    return(0)
+    return(FALSE)
   } else if (length(ID) == 0){
     warning("ID is of length 0")
-    return(0)
+    return(FALSE)
   } else if (!methods::is(ID, "integer")){
-    warning(paste0("class of ID is ", class(ID), " must be class integer"))
-    return(0)
+    message(glue::glue("class of {ID} is {class(ID)}, must be class integer"))
+    return(FALSE)
   }
-  return(1)
+  return(TRUE)
 }
 
 #' Get an ID from the user
@@ -424,27 +408,7 @@ takeID <- function(name1){
   }
 }
 
-#' Find duplicate links
-#'
-#' @param Ids1 set of Ids
-#' @param Ids2 set of ids
-#'
-#' @return NULL
-#'
-findDuplicates <- function(Ids1, Ids2){
-  if (!validNetotomaID(Ids1) || !validNetotomaID(Ids1)){
-    stop("Ids1 and Ids2 must be valid Neotoma Ids")
-  }
-  for (ii in Ids1){
-    iiLinkIndex <- which(ii == Ids2)
-    if (length(iiLinkIndex) > 1){
-      stop(paste0("Duplicate links for: ", ii))
-    }
-  }
-}
-
-
-#' Given a location requiring a linkage, check for its counterpart eg. paleoDataId/linkedPaleoData
+#' Given a location requiring a linkage in pointer1, check for its counterpart in pointer2 eg. paleoDataId/linkedPaleoData
 #' Pointers may be branching (containing 0's) or specific (pointing to 1 particular location)
 #'
 #' @param L a lipd object
@@ -459,7 +423,7 @@ findDuplicates <- function(Ids1, Ids2){
 #' new: generate new,random IDs based on positions in the lipd structure, eg. L$paleoData$[[1]]$paleoDataId and L$chronData$[[1]]$linkedPaleoData would be assigned the same IDs
 #' repair: asssumes the pairing of IDs is correct, but the IDs are in the wrong format, and assigns new, random integers
 #'
-#' @return an updated lipd object
+#' @return TRUE/FALSE (must all have links to return TRUE)
 checkLinks <- function(L, pointer1, pointer2, action="report"){
   if(is.null(L) || !methods::is(L,"lipd")){
     stop("L must be a lipd object!")
@@ -473,60 +437,82 @@ checkLinks <- function(L, pointer1, pointer2, action="report"){
   #get the address from the pointers, or return FALSE if it doesn't exist
   #pointer1
   if(is.branching.pointer(pointer1)){
-    address1 <- addressFromListM(L,pointer1)
-    if (is.null(address1)){
+    addresses1 <- addressFromListM(L,pointer1)
+    if (is.null(addresses1)){
       message(paste0(pointer1[length(pointer1)]," does not exist at ", paste0(pointer1,collapse = " ")))
-      return(FALSE)
+      return(L)
     } else {
-      address1 <- address1$Address
-      ID1 <- address1$Ids
+      address1 <- addresses1$Address
+      ID1 <- addresses1$Ids
     }
   } else {
-    address1 <- addressFromList(pointer1)
+    address1 <- addressFromList(L,pointer1)
     ID1 <- parseID(L,pointer1)
   }
   #pointer2
   if(is.branching.pointer(pointer2)){
-    address2 <- addressFromListM(L,pointer2)
-    if (is.null(address2)){
+    addresses2 <- addressFromListM(L,pointer2)
+    if (is.null(addresses2)){
       message(paste0(pointer2[length(pointer2)]," does not exist at ", paste0(pointer2,collapse = " ")))
-      return(FALSE)
+      return(L)
     } else {
-      address2 <- address2$Address
-      ID2 <- address2$Ids
+      address2 <- addresses2$Address
+      ID2 <- addresses2$Ids
     }
   } else {
-    address2 <- addressFromList(pointer2)
+    address2 <- addressFromList(L,pointer2)
     ID2 <- parseID(L,pointer2)
   }
 
-  # #
-  # if(is.null(parseID(L, pointer1))){
-  #   message(paste0(pointer1[length(pointer1)]," does not exist at ", paste0(pointer1,collapse = " ")))
-  #   return(FALSE)
-  # }
-  # if(is.null(parseID(L, pointer2))){
-  #   message(paste0(pointer2[length(pointer2)]," does not exist ", paste0(pointer2,collapse = " ")))
-  #   return(FALSE)
-  # }
+  # print(ID1)
+  # print(ID2)
 
   #check that Ids exist
   if (length(ID1)<1){
+    if (action == "new"){
+      pointerHead <- pointer1[-length(pointer1)]
+      addressHead <- addressFromList(L,pointerHead)
+      isHeadValid <- !is.null(addressHead)
+      if(!isHeadValid){
+        warning(glue::glue("Could not assign new ID for {glue::glue_collapse(pointer1,sep='_')}, not a valid address"))
+      } else {
+        count1 <- 0
+        for (ii in 1:length(unlist(address1[ii]))){
+          count1 <- count1 + 1
+          newID <- as.integer(runif(1,min=10000,max=99999))
+          eval(parse(text=sprintf('%s <- %s', unlist(address1[ii]), newID)))
+          print(glue::glue("Repaired {unlist(address1[ii])} and linked counterpart(s) with new ID: {newID}"))
+          ID1[[count1]] <- newID
+        }
+      }
+    }
     message("ID does not exist at ", paste0(pointer1,collapse = " "))
-    return(FALSE)
+    return(L)
   }
   if (length(ID2)<1){
     message("ID does not exist at ", paste0(pointer2,collapse = " "))
-    return(FALSE)
+    return(L)
   }
 
   #match the Ids
   for (ii in 1:length(ID1)){
-    iiLinkIndex <- which(unlist(address1$Ids[ii]) == unlist(address2$Ids))
+    iiLinkIndex <- which(unlist(ID1)[ii] == unlist(ID2))
     if (length(iiLinkIndex) < 1){
-      message(paste0("No corresponding links for '", address1$Ids[ii], "' from ", address1$Address[ii], " located in ", paste0(unlist(address2$Address),collapse=", ")))
-      return(FALSE)
+      message(paste0("No corresponding links for '", ID1[ii], "' from ", address1[ii], " located in ", paste0(unlist(address2),collapse=", ")))
+      return(L)
+    } else {
+      print(glue::glue("Found link between {glue::glue_collapse(address1,sep='_')} and {glue::glue_collapse(address2,sep='_')}"))
+      linkedAddresses <- unlist(address2)[iiLinkIndex]
+      isValid <- validNetotomaID(unlist(ID1)[ii])
+      if (!isValid && action=="repair"){
+        newID <- as.integer(runif(1,min=10000,max=99999))
+        eval(parse(text=sprintf('%s <- %s', unlist(address1[ii]), newID)))
+        for (zz in linkedAddresses){
+          eval(parse(text=sprintf('%s <- %s', zz, newID)))
+        }
+        print(glue::glue("Repaired {unlist(address1[ii])} and linked counterpart(s) with new ID: {newID}"))
+      }
     }
   }
-  return(TRUE)
+  return(L)
 }
