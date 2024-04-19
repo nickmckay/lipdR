@@ -230,8 +230,7 @@ fromOrigLipd <- function(L){
 
             ###########################################################################
             #Build new chronology
-          if (length(chronTabNum)>1){
-
+          if (length(chronTabNum)>0){
             chronos1 <- new("chronologies")
             #copy lipd "chron data measurement table" as neotoma "chron controls" table
             chronos1@chronologies[[j]] <- new("chronology")
@@ -473,7 +472,7 @@ fromOrigLipd <- function(L){
               }
 
               if (length(slot(sample1, eval("ages")))<1 || is.na(slot(sample1, eval("depth")))){
-                print("looking for ages in summary table")
+                #print("looking for ages in summary table")
                 if (length(modelNum)<1){
                   print("no model")
                 } else {
@@ -855,6 +854,8 @@ fromOrigNeotoma <- function(L){
   #######################################################################
 
   chronos1 <- new("chronologies")
+
+  print(glue::glue("attributes(mtabs1)$names: {attributes(mtabs1)$names}"))
 
   for (j in 1:sum(grepl("chron", attributes(mtabs1)$names))){
     print("attempting chronology")
