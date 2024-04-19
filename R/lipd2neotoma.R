@@ -36,6 +36,9 @@ lipd2neotoma <- function(L){
 #'
 fromOrigLipd <- function(L){
 
+  # Add links if necessary
+  L <- lipdObjectLinkages(L,action = "new")
+
   #define the lithology class if it does not exist
   # if(!isClass("lithology")){
   #   setClass("lithology",representation(lithologyid="integer",
@@ -61,11 +64,11 @@ fromOrigLipd <- function(L){
     whichChronMetaNotPlaced <- whichChronMetaNotPlaced[!whichChronMetaNotPlaced %in% "dataSetName"]
   }
   if (!is.null(L$geo$elevation)){
-    slot(site1, "altitude") <- L$geo$elevation
+    slot(site1, "altitude") <- as.numeric(L$geo$elevation)
     whichChronMetaNotPlaced <- whichChronMetaNotPlaced[!whichChronMetaNotPlaced %in% "geo"]
   }
   if (!is.null(L$geo$longitude) & !is.null(L$geo$longitude)){
-    slot(site1, "geography") <- st_as_sf(st_sfc(st_point(c(L$geo$longitude,L$geo$latitude))))
+    slot(site1, "geography") <- st_as_sf(st_sfc(st_point(c(as.numeric(L$geo$longitude),as.numeric(L$geo$latitude)))))
     whichChronMetaNotPlaced <- whichChronMetaNotPlaced[!whichChronMetaNotPlaced %in% "geo"]
   }
   if (!is.null(L$geo$description)){
@@ -193,24 +196,24 @@ fromOrigLipd <- function(L){
 
             ###########################################################################
             #Link any chron data
-            if (!is.null(L$paleoData[[jj]]$measurementTable[[j]]$measurementTableId) & !is.null(chronNum)& !is.null(paleoNow)){
+            if (!is.null(L$paleoData[[jj]]$measurementTable[[j]]$measurementTableId) && !is.null(chronNum) && !is.null(paleoNow)){
               #use the known paleo-chron linkage to find measurement table
-              if (is.null(L$paleoData[[jj]]$measurementTable[[j]]$linkedMeasurementTable)){
-                stop(paste0("Missing 'linkedMeasurementTable' at paleoData ", jj, " measurementTable ", j))
-              }
+              # if (is.null(L$paleoData[[jj]]$measurementTable[[j]]$linkedMeasurementTable)){
+              #   stop(paste0("Missing 'linkedMeasurementTable' at paleoData ", jj, " measurementTable ", j))
+              # }
               chronTabNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedMeasurementTable
               if (is.null(which(chronTabNow == unlist(lapply(L$chronData[[chronNum]]$measurementTable, function(x) x$measurementTableId))))){
                 stop(paste0("Unable to locate a chronData Measurement Table with measurementTableId: ", chronTabNow))
               }
               chronTabNum <- which(chronTabNow == unlist(lapply(L$chronData[[chronNum]]$measurementTable, function(x) x$measurementTableId)))
               #and model
-              if (is.null(L$paleoData[[jj]]$measurementTable[[j]]$linkedModel)){
-                stop(paste0("Missing 'linkedModel' at paleoData ", jj, " measurementTable ", j))
-              }
+              # if (is.null(L$paleoData[[jj]]$measurementTable[[j]]$linkedModel)){
+              #   stop(paste0("Missing 'linkedModel' at paleoData ", jj, " measurementTable ", j))
+              # }
               modelNow <- L$paleoData[[jj]]$measurementTable[[j]]$linkedModel
-              if (is.null(which(modelNow == unlist(lapply(L$chronData[[chronNum]]$model, function(x) x$modelId))))){
-                stop(paste0("Unable to locate a model Summary Table with modelId: ", modelNow))
-              }
+              # if (is.null(which(modelNow == unlist(lapply(L$chronData[[chronNum]]$model, function(x) x$modelId))))){
+              #   stop(paste0("Unable to locate a model Summary Table with modelId: ", modelNow))
+              # }
               modelNum <- which(modelNow == unlist(lapply(L$chronData[[chronNum]]$model, function(x) x$modelId)))
               #and summary table
 
@@ -219,14 +222,16 @@ fromOrigLipd <- function(L){
                 summaryTabNum <- which(summaryTabNow == unlist(lapply(L$chronData[[chronNum]]$model[[modelNum]]$summaryTable, function(x) x$summaryTableId)))
               }
 
-
-              if (length(chronTabNum) < 0){
-                message(paste0("The paleodata (", paleoNow, ") and chronData (", chronNow, ") link was established, but the measurement table linkage was not found."))
-              }
+            } else {
+              chronTabNum <- NULL
+              modelNum <- NULL
+              summaryTabNum <- NULL
             }
 
             ###########################################################################
             #Build new chronology
+          if (length(chronTabNum)>1){
+
             chronos1 <- new("chronologies")
             #copy lipd "chron data measurement table" as neotoma "chron controls" table
             chronos1@chronologies[[j]] <- new("chronology")
@@ -248,7 +253,9 @@ fromOrigLipd <- function(L){
                 slot(chronos1@chronologies[[j]], zz) <- L$chronData[[chronNum]]$measurementTable[[chronTabNum]][eval(aa)][[1]][[1]]
               }
             }
-            if (!is.null(L$chronData[[chronNum]]$model[[modelNum]]$methods$method) && !is.null(L$chronData[[chronNum]]$model[[modelNum]]$methods$units)){
+            if (length(chronNum)<1){
+              message("Could not find model methods. Chronology metadata fields 'agemodel' and 'modelagetype' not filled.")
+            } else if (!is.null(L$chronData[[chronNum]]$model[[modelNum]]$methods$method) && !is.null(L$chronData[[chronNum]]$model[[modelNum]]$methods$units)){
               slot(chronos1@chronologies[[j]], "agemodel") <- L$chronData[[chronNum]]$model[[modelNum]]$methods$method
               slot(chronos1@chronologies[[j]], "modelagetype") <- L$chronData[[chronNum]]$model[[modelNum]]$methods$units
             }else{
@@ -268,7 +275,7 @@ fromOrigLipd <- function(L){
                              "Consider renaming to one of the controlled neotoma terms: ", paste(chrnSlots, collapse = " "),"\n"))
             }
             slot(site1@collunits@collunits[[jj]], "chronologies") <- chronos1
-
+          }
 
             ###########################################################################
             #dataset metadata
@@ -340,7 +347,7 @@ fromOrigLipd <- function(L){
                 "igsn",
                 "neotomaSampleId",
                 "thickness",
-                "neotomaSampleName",
+                "sampleName",
                 "neotomaSampleAnalyst",
                 "neotomaAnalysisUnitId",
                 "neotomaAnalysisUnitName",
@@ -349,8 +356,6 @@ fromOrigLipd <- function(L){
 
             lipdSampleKeys <- names(L$paleoData[[jj]]$measurementTable[[j]])[names(L$paleoData[[jj]]$measurementTable[[j]]) %in% possibleLipdSampleKeys]
 
-            message("sample keys: ")
-            print(lipdSampleKeys)
             #Note unplaced sample metadata
             doTheyHaveMetadata <- names(L$paleoData[[jj]]$measurementTable[[j]])[unlist(lapply(L$paleoData[[jj]]$measurementTable[[j]], function(x) length(names(x))==2))]
             areTheyKnownKeys <- doTheyHaveMetadata[!doTheyHaveMetadata %in% possibleLipdSampleKeys]
@@ -369,6 +374,16 @@ fromOrigLipd <- function(L){
                   names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "values")] = "value"
                 }else if (dd == "neotomaElement"){
                   names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaElement")] = "element"
+                }else if (dd == "OnProxyObservationProperty"){
+                  names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "OnProxyObservationProperty")] = "element"
+                }else if (dd == "variableType"){
+                  PD1[sampleTabNames[i]][[1]][which(names(PD1[sampleTabNames[i]][[1]]) == "variableType")] = NULL
+                }else if (dd == "number"){
+                  PD1[sampleTabNames[i]][[1]][which(names(PD1[sampleTabNames[i]][[1]]) == "number")] = NULL
+                }else if (dd == "TSid"){
+                  PD1[sampleTabNames[i]][[1]][which(names(PD1[sampleTabNames[i]][[1]]) == "TSid")] = NULL
+                }else if (dd == "notes"){
+                  PD1[sampleTabNames[i]][[1]][which(names(PD1[sampleTabNames[i]][[1]]) == "notes")] = NULL
                 }else if (dd == "neotomaTaxonId"){
                   names(PD1[sampleTabNames[i]][[1]])[which(names(PD1[sampleTabNames[i]][[1]]) == "neotomaTaxonId")] = "taxonid"
                 }else if (dd == "neotomaTaxonGroup"){
@@ -438,7 +453,7 @@ fromOrigLipd <- function(L){
                   aa = "ages"
                 }else if (rr == "neotomaSampleId"){
                   aa = "sampleid"
-                }else if (rr == "neotomaSampleName"){
+                }else if (rr == "sampleName"){
                   aa = "samplename"
                 }else if (rr == "neotomaSampleAnalyst"){
                   aa = "sampleanalyst"
@@ -449,21 +464,31 @@ fromOrigLipd <- function(L){
                 }else{
                   aa=rr
                 }
-                slot(sample1, eval(aa)) <- as.numeric(unname(L$paleoData[[jj]]$measurementTable[[j]][eval(rr)])[[1]]$values[k])
+                if (aa %in% c("ages","sampleid","analysisunitid")){
+                  slot(sample1, eval(aa)) <- as.numeric(unname(L$paleoData[[jj]]$measurementTable[[j]][eval(rr)])[[1]]$values[k])
+                } else {
+                  slot(sample1, eval(aa)) <- unname(L$paleoData[[jj]]$measurementTable[[j]][eval(rr)])[[1]]$values[k]
+                }
+
               }
 
-              if (length(slot(sample1, eval("ages")))<1 | is.na(slot(sample1, eval("depth")))){
-                summaryTab <- L$chronData[[chronNum]]$model[[modelNum]]$summaryTable[[summaryTabNum]]
-                #toss out any metadata fields
-                summaryTab <- summaryTab[unlist(lapply(summaryTab, function(x) class(x)=="list"))]
-                #add additonal sample metadata
-                for (rr in names(summaryTab)){
-                  if (rr == "age"){
-                    aa = "ages"
-                  }else{
-                    aa=rr
+              if (length(slot(sample1, eval("ages")))<1 || is.na(slot(sample1, eval("depth")))){
+                print("looking for ages in summary table")
+                if (length(modelNum)<1){
+                  print("no model")
+                } else {
+                  summaryTab <- L$chronData[[chronNum]]$model[[modelNum]]$summaryTable[[summaryTabNum]]
+                  #toss out any metadata fields
+                  summaryTab <- summaryTab[unlist(lapply(summaryTab, function(x) class(x)=="list"))]
+                  #add additonal sample metadata
+                  for (rr in names(summaryTab)){
+                    if (rr == "age"){
+                      aa = "ages"
+                    }else{
+                      aa=rr
+                    }
+                    slot(sample1, eval(aa)) <- as.numeric(summaryTab[eval(rr)][[1]]$values[k])
                   }
-                  slot(sample1, eval(aa)) <- as.numeric(summaryTab[eval(rr)][[1]]$values[k])
                 }
               }
 
@@ -832,9 +857,12 @@ fromOrigNeotoma <- function(L){
   chronos1 <- new("chronologies")
 
   for (j in 1:sum(grepl("chron", attributes(mtabs1)$names))){
+    print("attempting chronology")
 
     chronTabIndex <- grep("chron", attributes(mtabs1)$names)[j]
     CD1 <- mtabs1[[chronTabIndex]]
+    print(glue::glue("chronTabIndex: {chronTabIndex}"))
+    print(glue::glue("j: {j}"))
 
     chronos1@chronologies[[j]] <- new("chronology")
 
