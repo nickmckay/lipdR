@@ -1,3 +1,5 @@
+# lipdR 0.5.6
+
 # lipdR 0.5.5
 
 * Fixed the bug that made `lipdTSSummary()` fail if no age columns were present
