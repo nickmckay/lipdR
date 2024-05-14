@@ -1,5 +1,7 @@
 # lipdR 0.5.6
 
+* Upgraded csv loading to use data.table::fread instead of readr::read_csv. This is much faster and avoids a version check.
+
 # lipdR 0.5.5
 
 * Fixed the bug that made `lipdTSSummary()` fail if no age columns were present

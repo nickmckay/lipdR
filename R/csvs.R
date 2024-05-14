@@ -80,8 +80,7 @@ clean_csv <- function(csvs){
 }
 
 #' Opens the target CSV file and creates a dictionary with one list for each CSV column.
-#' @export
-#' @importFrom readr read_csv
+#' @importFrom data.table fread
 #' @importFrom utils count.fields
 #' @keywords internal
 #' @return data.list List of data for one LiPD file
@@ -95,11 +94,11 @@ read_csv_from_file <- function(path){
     # Get n.rows before reading in file
 
     n.rows <- length(count.fields(c[ci], blank.lines.skip = FALSE))
-
-    if(packageVersion("readr") > 2){
-      #warning("version 2.0.0 and higher of readr have made this much slower. If you're loadning lots of files consider downgrading to version 1.4.0 until we figure out how to fix this. ")
-      readr::local_edition(1)
-    }
+#
+#     if(packageVersion("readr") > 2){
+#       #warning("version 2.0.0 and higher of readr have made this much slower. If you're loadning lots of files consider downgrading to version 1.4.0 until we figure out how to fix this. ")
+#       readr::local_edition(1)
+#     }
 
     # This is code for version >2.0.0, not necessary if using local_edition
     # df <- readr::read_csv(c[ci],
@@ -110,14 +109,20 @@ read_csv_from_file <- function(path){
     #                       lazy = FALSE)
     # }else{
 
-    df <- readr::read_csv(c[ci],
-                          col_names = FALSE,
-                          na = c("nan", "NaN", "NAN", "NA", ""),
-                          col_types = readr::cols(),
-                          guess_max = n.rows,
-                          progress = FALSE)
+    #this is the local edition method:
+    # df <- readr::read_csv(c[ci],
+    #                       col_names = FALSE,
+    #                       na = c("nan", "NaN", "NAN", "NA", ""),
+    #                       col_types = readr::cols(),
+    #                       guess_max = n.rows,
+    #                       progress = FALSE)
 
 
+    #let's try data.table!
+    df <- data.table::fread(c[ci],
+                            header = FALSE,
+                            na.strings =  c("nan", "NaN", "NAN", "NA", ""),
+                            showProgress = FALSE)
 
     #check column types #nope, not now.
 

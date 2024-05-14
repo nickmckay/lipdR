@@ -10,19 +10,16 @@
 #' @param d Metadata
 #' @return list d: Metadata
 merge_csv_metadata <- function(d,path){
-  tryCatch({
-    # Read in CSV data
-    csvs <- read_csv_from_file(path)
-    # Run for each section that exists
-    if ("paleoData" %in% names(d)){
-      d[["paleoData"]] <- merge_csv_section(d[["paleoData"]], "paleo", csvs)
-    }
-    if ("chronData" %in% names(d)){
-      d[["chronData"]] <- merge_csv_section(d[["chronData"]], "chron", csvs)
-    }
-  }, error=function(cond){
-    print(paste0("Error: merge_csv_metadata: ", cond))
-  })
+  # Read in CSV data
+  csvs <- read_csv_from_file(path)
+  # Run for each section that exists
+  if ("paleoData" %in% names(d)){
+    d[["paleoData"]] <- merge_csv_section(d[["paleoData"]], "paleo", csvs)
+  }
+  if ("chronData" %in% names(d)){
+    d[["chronData"]] <- merge_csv_section(d[["chronData"]], "chron", csvs)
+  }
+
   return(d)
 }
 
@@ -75,10 +72,10 @@ merge_csv_model <- function(models, crumbs, csvs){
   }, error=function(cond){
     print(paste0("Error: merge_csv_model: ", cond))
   })
-  return(models) 
+  return(models)
 }
 
-  
+
 #' Merge CSV data into each table
 #' @export
 #' @keywords internal

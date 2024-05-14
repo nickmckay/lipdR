@@ -4,7 +4,6 @@
 #' @param fill unused parameter
 #'
 #' @return bound columns
-#' @export
 cbind.NA <- function (..., fill = NA)
 {
   DFx <- list(...)

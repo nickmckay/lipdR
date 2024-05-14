@@ -127,7 +127,7 @@ get_src_or_dst<- function(path){
 convert_dsid_to_path <- function(dsid,vers = NA){
   webpath <- paste0("https://lipdverse.org/data/",dsid)
   if(is.na(vers)){#get most recent
-    vers <- try(stringr::str_extract(string = readr::read_file(webpath) , pattern = "\\d{1,}_\\d{1,}_\\d{1,}"),silent = TRUE)
+    vers <- try(stringr::str_extract(string = paste(readLines(webpath),collapse = " ") , pattern = "\\d{1,}_\\d{1,}_\\d{1,}"),silent = TRUE)
 
     if(is(vers,"try-error")){
       stop("Cant get dataset version from path.")
