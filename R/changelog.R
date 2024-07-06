@@ -849,7 +849,7 @@ updateChangelog <- function(L,
       vers[[1,1]] <- lastVers[[1,1]]+1
       vers[[1,2:3]] <- 0
     }else{
-      vers <- as.numeric_version(version)
+      vers <- as.numeric_version(as.character(version))
     }
   }
 
@@ -902,7 +902,7 @@ getChangelog <- function(L,version = "newest"){
     wv <- which(allvers == min(allvers))
     if(length(wv)>1){wv <- length(allvers)}
   }else{#try to match the version
-    wv <- which(allvers == as.numeric_version(version))
+    wv <- which(allvers == as.numeric_version(as.character(version)))
     if(length(wv)>1){stop("multiple version matches")}
   }
 
@@ -1012,7 +1012,7 @@ createMarkdownChangelog <- function(L){
 
 createSingleMarkdownChangelog<- function(scl){
   #don;t show fourth digit version
-  printvers <- as.numeric_version(scl$version)[1,1:3]
+  printvers <- as.numeric_version(as.character(scl$version)[1,1:3])
   scl$version <- NULL
 
   clmd <-  glue::glue("### Version: {printvers} \n") %>%
