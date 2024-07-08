@@ -12,14 +12,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="LiPD Queries">
-<meta property="og:description" content="lipdR">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -45,7 +44,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -72,7 +71,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -80,7 +79,7 @@
       <h1 data-toc-skip>LiPD Queries</h1>
             
       
-      
+
       <div class="hidden name"><code>Query.Rmd</code></div>
 
     </div>
@@ -98,9 +97,8 @@ time series available on LiPDverse</p>
 <p>Let’s get a sense for what the table holds</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>That’s a lot of rows! There’s a row for every time series in the
 LiPDverse database</p>
@@ -112,7 +110,7 @@ but it’s a good idea to check for updates each time you start a new
 session</p>
 <p>If you tell <code>queryLipdverse</code> to <code>skip.update</code>
 once, it will not prompt you again in a given R session</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>variable.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"δ18O"</span><span class="op">)</span>,</span>
 <span>                     skip.update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 0 available time series in 0 datasets</span></span></code></pre></div>
@@ -120,12 +118,12 @@ once, it will not prompt you again in a given R session</p>
 <p>Let’s have a look at the unique paleoData
 <code>variable.name</code></p>
 <p>We’ll just look at the first 250, there are quite a few</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">paleoData_variableName</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">250</span><span class="op">]</span></span>
 <span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>There’s quite a few notation styles, but they all have “18o” in
 common, so let’s try that</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>variable.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"18o"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 1688 available time series in 1069 datasets</span></span></code></pre></div>
 <p>Now that is a lot more data</p>
@@ -136,7 +134,7 @@ options</p>
 <p>For the <code>variable.name</code> parameter, multiple entries are
 combined with “OR” logic, so more entries will generally pull more
 datasets</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>variable.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"δ18O"</span>, <span class="st">"d18O"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 1688 available time series in 1069 datasets</span></span></code></pre></div>
 <p>This gets us almost the same result, but we see the simplified filter
@@ -144,24 +142,24 @@ is still pulling one more dataset</p>
 <p>Also note that capitalization makes no difference here</p>
 <p>The <code>archive.type</code> filter works similarly, let’s look at
 our options</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">archiveType</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>Note that we have distinct options: “Lake”, “LakeSediment”,
 “LakeDeposits”, “LakeDeposit”, and “Lake Sediment”</p>
 <p>We can grab the <code>archive.type</code> names and search for all of
 them like this</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>archive.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">archiveType</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">39</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>Or we can use the simplification strategy again</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>archive.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lake"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 46308 available time series in 2309 datasets</span></span></code></pre></div>
 <p>As we saw last time, the results are similar</p>
 <p>We can also filter based on publications: Author, DOI, Title, etc.
 using <code>pub.info</code></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>pub.info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"10.1016/j.quascirev.2008.09.005"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 20 available time series in 7 datasets</span></span></code></pre></div>
 <p>This query can be a little slow if you don’t narrow the results with
@@ -171,11 +169,11 @@ another parameter first</p>
 <code>coord</code>, <code>country</code>, <code>continent</code>, and
 <code>ocean</code></p>
 <p>Let’s grab all the North American datasets</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 46652 available time series in 1817 datasets</span></span></code></pre></div>
 <p>Let’s grab just those from Mexico</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>country <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Mexico"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 512 available time series in 36 datasets</span></span></code></pre></div>
 <p>Note that the country and contient filters are not filtered based on
@@ -186,12 +184,12 @@ unreliable near country borders</p>
 <code>continent</code> with <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code></p>
 <p>We can also use latitude and longitude directly with a bounding
 box</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 14062 available time series in 772 datasets</span></span></code></pre></div>
 <p>We can limit this to only marine data by setting <code>ocean</code>
 to <code>TRUE</code></p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>         ocean <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 1485 available time series in 85 datasets</span></span></code></pre></div>
@@ -200,11 +198,11 @@ to <code>TRUE</code></p>
 unreliable in coastal areas</p>
 <p>We can also grab all the data from a <code>compilation</code>, such
 as the Western North America (WNAm)</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>compilation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wNAm"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 392 available time series in 184 datasets</span></span></code></pre></div>
 <p>or multiple compilations</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>compilation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wnam"</span>, <span class="st">"temp12k"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 1717 available time series in 799 datasets</span></span></code></pre></div>
 <p>the <code>compilation</code> filter uses “OR” logic</p>
@@ -213,13 +211,13 @@ as the Western North America (WNAm)</p>
 <p>We can pull summer, commonly defined as June, July, and August, for
 the Northern Hemisphere</p>
 <p><code>seasonality</code> input is taken as a list</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"June"</span>, <span class="st">"July"</span>, <span class="st">"August"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 1 available time series in 1 datasets</span></span></code></pre></div>
 <p>Okay, so this must not be a good choice of format, let’s see how LiPD
 authors define their seasons</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">interpretation1_seasonality</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>It looks like numeric months are most common. Season names,
@@ -234,7 +232,7 @@ list(list(“June”), list(“July”), list(“August)) would filter for seaso
 data with ANY of these months</p>
 <p>Let’s try to get all of the summer datasets by entering a few
 different notations</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"8"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"summer"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"JJA"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Based on your query parameters, there are 219 available time series in 165 datasets</span></span></code></pre></div>
@@ -245,7 +243,7 @@ can see that this probably includes a lot of annual data too</p>
 <code>season.not</code></p>
 <p>The input for for <code>season.not</code> works the same as
 <code>seasonality</code></p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"8"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"summer"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"JJA"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>               season.not <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"annual"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"December"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"12"</span>,<span class="st">"1"</span>,<span class="st">"2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"winter"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"cold"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -257,16 +255,15 @@ available</p>
 <p>These variables are expressed in two different formats:
 interpretation variable and interpretation detail</p>
 <p>Each of these variables has four possible interpretation slots</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">interp_Vars</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">interp_Details</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
 <p>Let’s look at some marine <code>interp.vars</code> in the northeast
 Pacific</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>               ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>               interp.vars <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SST"</span>, <span class="st">"upwelling"</span>, <span class="st">"SSS"</span><span class="op">)</span><span class="op">)</span></span>
@@ -274,7 +271,7 @@ Pacific</p>
 <p>That gives us just a few datasets</p>
 <p>Perhaps we’ll have more luck with <code>interp.details</code>, which
 is more standardized</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>               ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>               interp.details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sea@surface"</span>, <span class="st">"elNino"</span><span class="op">)</span><span class="op">)</span></span>
@@ -282,7 +279,7 @@ is more standardized</p>
 <p>let’s see if we grab more using both</p>
 <p>These inputs combine with “OR” logic, so we may gather more datasets
 by using both parameters</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>               ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>               interp.details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sea@surface"</span>, <span class="st">"elNino"</span><span class="op">)</span>,</span>
@@ -294,7 +291,7 @@ filter</p>
 <p>We’ll look for marine archives in the northeast Pacific, with
 interpretations related to marine climate variables in the summer months
 only</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>               archive.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"marine"</span>, <span class="st">"ocean"</span><span class="op">)</span>,</span>
 <span>               ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -307,7 +304,7 @@ only</p>
 have what effect on filtering</p>
 <p>We’ll narrow the results further by adding author names to find
 within the publication info</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>               archive.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"marine"</span>, <span class="st">"ocean"</span><span class="op">)</span>,</span>
 <span>               ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -351,7 +348,7 @@ within the publication info</p>
 <p>When you’re satisfied with the query results, we can simply put the
 filtered query table into the <code><a href="../reference/readLipd.html">readLipd()</a></code> function to
 download the datasets</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">D</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readLipd.html">readLipd</a></span><span class="op">(</span><span class="va">qt</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in value[[3L]](cond): Error: get_src_or_dst: Error in if (!dir.exists(path)) {: argument is of length zero</span></span></code></pre></div>
   </div>
@@ -371,16 +368,16 @@ download the datasets</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

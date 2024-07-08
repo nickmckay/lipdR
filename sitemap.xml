@@ -1,501 +1,169 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>/articles/Query.html</loc>
-  </url>
-  <url>
-    <loc>/articles/Summary.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/lipd2neotoma.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/addTSidToLipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_created_by.html</loc>
-  </url>
-  <url>
-    <loc>/reference/as.lipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/as.lipdTs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/as.lipdTsTibble.html</loc>
-  </url>
-  <url>
-    <loc>/reference/as.lipdTsTibbleLong.html</loc>
-  </url>
-  <url>
-    <loc>/reference/as.multiLipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ask_how_many.html</loc>
-  </url>
-  <url>
-    <loc>/reference/browse_dialog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/build_structure.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cbind.NA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cconv.html</loc>
-  </url>
-  <url>
-    <loc>/reference/checkZipMd5.html</loc>
-  </url>
-  <url>
-    <loc>/reference/check_match.html</loc>
-  </url>
-  <url>
-    <loc>/reference/clean_csv.html</loc>
-  </url>
-  <url>
-    <loc>/reference/collapseTs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/collapse_block.html</loc>
-  </url>
-  <url>
-    <loc>/reference/collapse_block_indexed.html</loc>
-  </url>
-  <url>
-    <loc>/reference/collapse_column.html</loc>
-  </url>
-  <url>
-    <loc>/reference/collapse_table.html</loc>
-  </url>
-  <url>
-    <loc>/reference/collapse_table_root.html</loc>
-  </url>
-  <url>
-    <loc>/reference/combineInterpretationByScope.html</loc>
-  </url>
-  <url>
-    <loc>/reference/convert_dsid_to_path.html</loc>
-  </url>
-  <url>
-    <loc>/reference/createChangelog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/createColumn.html</loc>
-  </url>
-  <url>
-    <loc>/reference/createDatasetId.html</loc>
-  </url>
-  <url>
-    <loc>/reference/createMarkdownChangelog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/createTSid.html</loc>
-  </url>
-  <url>
-    <loc>/reference/create_range.html</loc>
-  </url>
-  <url>
-    <loc>/reference/create_tmp_dir.html</loc>
-  </url>
-  <url>
-    <loc>/reference/download_from_url.html</loc>
-  </url>
-  <url>
-    <loc>/reference/duplicateTable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/export_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/export_section.html</loc>
-  </url>
-  <url>
-    <loc>/reference/extractTs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filterTs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/find_data_dir.html</loc>
-  </url>
-  <url>
-    <loc>/reference/fix_doi.html</loc>
-  </url>
-  <url>
-    <loc>/reference/formatCitation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getChangelog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getChronDataNeotoma2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getGeoNeotoma2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getMeasurementTables.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getPaleoDataNeotoma2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getPubNeotoma2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getQueryTable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getTimestamp.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getVersion.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_csv_from_columns.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_csv_from_metadata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_csv_from_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_csv_from_section.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_csv_from_table.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_datasetname.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_download_path.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_lipd_paths.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_lipd_version.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_matches.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_os.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_src_or_dst.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_table.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_ts_lipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_vn.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hasData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/idx_col_by_name.html</loc>
-  </url>
-  <url>
-    <loc>/reference/idx_col_by_num.html</loc>
-  </url>
-  <url>
-    <loc>/reference/idx_name_to_num.html</loc>
-  </url>
-  <url>
-    <loc>/reference/idx_num_to_name.html</loc>
-  </url>
-  <url>
-    <loc>/reference/idx_table_by_name.html</loc>
-  </url>
-  <url>
-    <loc>/reference/idx_table_by_num.html</loc>
-  </url>
-  <url>
-    <loc>/reference/import_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/import_section.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index_geo.html</loc>
-  </url>
-  <url>
-    <loc>/reference/initializeChangelog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is.lipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is.lipdTs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is.lipdTsTibble.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is.lipdTsTibbleLong.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is.multiLipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/is.url.html</loc>
-  </url>
-  <url>
-    <loc>/reference/isDirectory.html</loc>
-  </url>
-  <url>
-    <loc>/reference/isNullOb.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lipd2neotoma.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lipdSummary.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lipdTSSummary.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lipd_read.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lipd_write.html</loc>
-  </url>
-  <url>
-    <loc>/reference/list_files_recursive.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lumpTsMetaVariables.html</loc>
-  </url>
-  <url>
-    <loc>/reference/matchCols.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_csv_columns.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_csv_metadata.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_csv_model.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_csv_section.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_csv_table.html</loc>
-  </url>
-  <url>
-    <loc>/reference/merge_interpretations.html</loc>
-  </url>
-  <url>
-    <loc>/reference/multiLipdSummary.html</loc>
-  </url>
-  <url>
-    <loc>/reference/nc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/neotoma2lipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/newQueryTable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/past.html</loc>
-  </url>
-  <url>
-    <loc>/reference/print.lipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/print.lipd_ts.html</loc>
-  </url>
-  <url>
-    <loc>/reference/print.lipd_ts_tibble.html</loc>
-  </url>
-  <url>
-    <loc>/reference/print.multi_lipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/printCitations.html</loc>
-  </url>
-  <url>
-    <loc>/reference/printModel.html</loc>
-  </url>
-  <url>
-    <loc>/reference/printSummaryData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/process_expression.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pullTsVariable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pushTsVariable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/put_base_data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/put_table.html</loc>
-  </url>
-  <url>
-    <loc>/reference/queryLipdverse.html</loc>
-  </url>
-  <url>
-    <loc>/reference/queryTs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/readLipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_csv_from_file.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_jsonld.html</loc>
-  </url>
-  <url>
-    <loc>/reference/removeEnsembles.html</loc>
-  </url>
-  <url>
-    <loc>/reference/remove_names_from_lists.html</loc>
-  </url>
-  <url>
-    <loc>/reference/replaceLocalZipMD5.html</loc>
-  </url>
-  <url>
-    <loc>/reference/replace_invalid_chars.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rm_empty_fields.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rm_existing_tables.html</loc>
-  </url>
-  <url>
-    <loc>/reference/splitInterpretationByScope.html</loc>
-  </url>
-  <url>
-    <loc>/reference/standardizeQCsheetValues.html</loc>
-  </url>
-  <url>
-    <loc>/reference/stripExtension.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary.lipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary.lipd_ts.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary.lipd_ts_tibble.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summary.multi_lipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/swapGeoCoordinates.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tabulateTs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tidyTs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tidyTsOld.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ts2tibble.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tsPluck.html</loc>
-  </url>
-  <url>
-    <loc>/reference/unindex_geo.html</loc>
-  </url>
-  <url>
-    <loc>/reference/untidyTs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/unzipper.html</loc>
-  </url>
-  <url>
-    <loc>/reference/updateChangelog.html</loc>
-  </url>
-  <url>
-    <loc>/reference/updateQueryTable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_lipd_v1_1.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_lipd_v1_2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_lipd_v1_2_section.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_lipd_v1_3.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_lipd_v1_3_keys.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_lipd_v1_3_structure.html</loc>
-  </url>
-  <url>
-    <loc>/reference/update_lipd_version.html</loc>
-  </url>
-  <url>
-    <loc>/reference/validLipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/warn_ensembles_in_paleo.html</loc>
-  </url>
-  <url>
-    <loc>/reference/writeLipd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/writeVersionToRoot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/write_csv_to_file.html</loc>
-  </url>
-  <url>
-    <loc>/reference/zipper.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/articles/Query.html</loc></url>
+<url><loc>/articles/Summary.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/lipd2neotoma.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/addTSidToLipd.html</loc></url>
+<url><loc>/reference/add_created_by.html</loc></url>
+<url><loc>/reference/as.lipd.html</loc></url>
+<url><loc>/reference/as.lipdTs.html</loc></url>
+<url><loc>/reference/as.lipdTsTibble.html</loc></url>
+<url><loc>/reference/as.lipdTsTibbleLong.html</loc></url>
+<url><loc>/reference/as.multiLipd.html</loc></url>
+<url><loc>/reference/ask_how_many.html</loc></url>
+<url><loc>/reference/browse_dialog.html</loc></url>
+<url><loc>/reference/build_structure.html</loc></url>
+<url><loc>/reference/cbind.NA.html</loc></url>
+<url><loc>/reference/cconv.html</loc></url>
+<url><loc>/reference/checkZipMd5.html</loc></url>
+<url><loc>/reference/check_match.html</loc></url>
+<url><loc>/reference/clean_csv.html</loc></url>
+<url><loc>/reference/collapseTs.html</loc></url>
+<url><loc>/reference/collapse_block.html</loc></url>
+<url><loc>/reference/collapse_block_indexed.html</loc></url>
+<url><loc>/reference/collapse_column.html</loc></url>
+<url><loc>/reference/collapse_table.html</loc></url>
+<url><loc>/reference/collapse_table_root.html</loc></url>
+<url><loc>/reference/combineInterpretationByScope.html</loc></url>
+<url><loc>/reference/convert_dsid_to_path.html</loc></url>
+<url><loc>/reference/createChangelog.html</loc></url>
+<url><loc>/reference/createColumn.html</loc></url>
+<url><loc>/reference/createDatasetId.html</loc></url>
+<url><loc>/reference/createMarkdownChangelog.html</loc></url>
+<url><loc>/reference/createTSid.html</loc></url>
+<url><loc>/reference/create_range.html</loc></url>
+<url><loc>/reference/create_tmp_dir.html</loc></url>
+<url><loc>/reference/download_from_url.html</loc></url>
+<url><loc>/reference/duplicateTable.html</loc></url>
+<url><loc>/reference/export_model.html</loc></url>
+<url><loc>/reference/export_section.html</loc></url>
+<url><loc>/reference/extractTs.html</loc></url>
+<url><loc>/reference/filterTs.html</loc></url>
+<url><loc>/reference/find_data_dir.html</loc></url>
+<url><loc>/reference/fix_doi.html</loc></url>
+<url><loc>/reference/formatCitation.html</loc></url>
+<url><loc>/reference/getChangelog.html</loc></url>
+<url><loc>/reference/getChronDataNeotoma2.html</loc></url>
+<url><loc>/reference/getGeoNeotoma2.html</loc></url>
+<url><loc>/reference/getMeasurementTables.html</loc></url>
+<url><loc>/reference/getPaleoDataNeotoma2.html</loc></url>
+<url><loc>/reference/getPubNeotoma2.html</loc></url>
+<url><loc>/reference/getQueryTable.html</loc></url>
+<url><loc>/reference/getTimestamp.html</loc></url>
+<url><loc>/reference/getVersion.html</loc></url>
+<url><loc>/reference/get_csv_from_columns.html</loc></url>
+<url><loc>/reference/get_csv_from_metadata.html</loc></url>
+<url><loc>/reference/get_csv_from_model.html</loc></url>
+<url><loc>/reference/get_csv_from_section.html</loc></url>
+<url><loc>/reference/get_csv_from_table.html</loc></url>
+<url><loc>/reference/get_datasetname.html</loc></url>
+<url><loc>/reference/get_download_path.html</loc></url>
+<url><loc>/reference/get_lipd_paths.html</loc></url>
+<url><loc>/reference/get_lipd_version.html</loc></url>
+<url><loc>/reference/get_matches.html</loc></url>
+<url><loc>/reference/get_os.html</loc></url>
+<url><loc>/reference/get_src_or_dst.html</loc></url>
+<url><loc>/reference/get_table.html</loc></url>
+<url><loc>/reference/get_ts_lipd.html</loc></url>
+<url><loc>/reference/get_vn.html</loc></url>
+<url><loc>/reference/hasData.html</loc></url>
+<url><loc>/reference/idx_col_by_name.html</loc></url>
+<url><loc>/reference/idx_col_by_num.html</loc></url>
+<url><loc>/reference/idx_name_to_num.html</loc></url>
+<url><loc>/reference/idx_num_to_name.html</loc></url>
+<url><loc>/reference/idx_table_by_name.html</loc></url>
+<url><loc>/reference/idx_table_by_num.html</loc></url>
+<url><loc>/reference/import_model.html</loc></url>
+<url><loc>/reference/import_section.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/index_geo.html</loc></url>
+<url><loc>/reference/initializeChangelog.html</loc></url>
+<url><loc>/reference/is.lipd.html</loc></url>
+<url><loc>/reference/is.lipdTs.html</loc></url>
+<url><loc>/reference/is.lipdTsTibble.html</loc></url>
+<url><loc>/reference/is.lipdTsTibbleLong.html</loc></url>
+<url><loc>/reference/is.multiLipd.html</loc></url>
+<url><loc>/reference/is.url.html</loc></url>
+<url><loc>/reference/isDirectory.html</loc></url>
+<url><loc>/reference/isNullOb.html</loc></url>
+<url><loc>/reference/lipd2neotoma.html</loc></url>
+<url><loc>/reference/lipdSummary.html</loc></url>
+<url><loc>/reference/lipdTSSummary.html</loc></url>
+<url><loc>/reference/lipd_read.html</loc></url>
+<url><loc>/reference/lipd_write.html</loc></url>
+<url><loc>/reference/list_files_recursive.html</loc></url>
+<url><loc>/reference/lumpTsMetaVariables.html</loc></url>
+<url><loc>/reference/matchCols.html</loc></url>
+<url><loc>/reference/merge_csv_columns.html</loc></url>
+<url><loc>/reference/merge_csv_metadata.html</loc></url>
+<url><loc>/reference/merge_csv_model.html</loc></url>
+<url><loc>/reference/merge_csv_section.html</loc></url>
+<url><loc>/reference/merge_csv_table.html</loc></url>
+<url><loc>/reference/merge_interpretations.html</loc></url>
+<url><loc>/reference/multiLipdSummary.html</loc></url>
+<url><loc>/reference/nc.html</loc></url>
+<url><loc>/reference/neotoma2lipd.html</loc></url>
+<url><loc>/reference/newQueryTable.html</loc></url>
+<url><loc>/reference/past.html</loc></url>
+<url><loc>/reference/print.lipd.html</loc></url>
+<url><loc>/reference/print.lipd_ts.html</loc></url>
+<url><loc>/reference/print.lipd_ts_tibble.html</loc></url>
+<url><loc>/reference/print.multi_lipd.html</loc></url>
+<url><loc>/reference/printCitations.html</loc></url>
+<url><loc>/reference/printModel.html</loc></url>
+<url><loc>/reference/printSummaryData.html</loc></url>
+<url><loc>/reference/process_expression.html</loc></url>
+<url><loc>/reference/pullTsVariable.html</loc></url>
+<url><loc>/reference/pushTsVariable.html</loc></url>
+<url><loc>/reference/put_base_data.html</loc></url>
+<url><loc>/reference/put_table.html</loc></url>
+<url><loc>/reference/queryLipdverse.html</loc></url>
+<url><loc>/reference/queryTs.html</loc></url>
+<url><loc>/reference/readLipd.html</loc></url>
+<url><loc>/reference/read_csv_from_file.html</loc></url>
+<url><loc>/reference/read_jsonld.html</loc></url>
+<url><loc>/reference/removeEnsembles.html</loc></url>
+<url><loc>/reference/remove_names_from_lists.html</loc></url>
+<url><loc>/reference/replaceLocalZipMD5.html</loc></url>
+<url><loc>/reference/replace_invalid_chars.html</loc></url>
+<url><loc>/reference/rm_empty_fields.html</loc></url>
+<url><loc>/reference/rm_existing_tables.html</loc></url>
+<url><loc>/reference/splitInterpretationByScope.html</loc></url>
+<url><loc>/reference/standardizeQCsheetValues.html</loc></url>
+<url><loc>/reference/stripExtension.html</loc></url>
+<url><loc>/reference/summary.lipd.html</loc></url>
+<url><loc>/reference/summary.lipd_ts.html</loc></url>
+<url><loc>/reference/summary.lipd_ts_tibble.html</loc></url>
+<url><loc>/reference/summary.multi_lipd.html</loc></url>
+<url><loc>/reference/swapGeoCoordinates.html</loc></url>
+<url><loc>/reference/tabulateTs.html</loc></url>
+<url><loc>/reference/tidyTs.html</loc></url>
+<url><loc>/reference/tidyTsOld.html</loc></url>
+<url><loc>/reference/ts2tibble.html</loc></url>
+<url><loc>/reference/tsPluck.html</loc></url>
+<url><loc>/reference/unindex_geo.html</loc></url>
+<url><loc>/reference/untidyTs.html</loc></url>
+<url><loc>/reference/unzipper.html</loc></url>
+<url><loc>/reference/updateChangelog.html</loc></url>
+<url><loc>/reference/updateQueryTable.html</loc></url>
+<url><loc>/reference/update_lipd_v1_1.html</loc></url>
+<url><loc>/reference/update_lipd_v1_2.html</loc></url>
+<url><loc>/reference/update_lipd_v1_2_section.html</loc></url>
+<url><loc>/reference/update_lipd_v1_3.html</loc></url>
+<url><loc>/reference/update_lipd_v1_3_keys.html</loc></url>
+<url><loc>/reference/update_lipd_v1_3_structure.html</loc></url>
+<url><loc>/reference/update_lipd_version.html</loc></url>
+<url><loc>/reference/validLipd.html</loc></url>
+<url><loc>/reference/warn_ensembles_in_paleo.html</loc></url>
+<url><loc>/reference/writeLipd.html</loc></url>
+<url><loc>/reference/writeVersionToRoot.html</loc></url>
+<url><loc>/reference/write_csv_to_file.html</loc></url>
+<url><loc>/reference/zipper.html</loc></url>
 </urlset>
+
