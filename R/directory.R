@@ -59,12 +59,12 @@ get_src_or_dst<- function(path){
         if(!any("datasetId" %in% names(path))){
           stop("To use a data.frame as input, one of the columns must be named 'datasetId' and include datasetIds from the LiPDverse.")
         }
-        path <- c(path$datasetId)
         if(any("datasetVersion" %in% names(path))){
-          vers <- c(path$datasetVersion)
+          vers <- c(path$datasetVersion) |> str_replace_all("\\.","_")
         }else{
           vers <- rep(NA,length(path))
         }
+        path <- c(path$datasetId)
       }
       if(length(path) > 1){
         if(!all(purrr::map_lgl(path,~ tools::file_ext(.x) == "lpd"))){

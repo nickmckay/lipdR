@@ -95,7 +95,21 @@ download_from_url <- function(path){
     dir.create(dir)
     local_path <- file.path(dir, paste0(basename(dirname(dirname(path))), ".lpd"))
     print(glue::glue("Downloading {length(path)} datasets from lipdverse.org..."))
-    purrr::walk2(path,local_path,purrr::possibly(download.file),method = dmeth,quiet = TRUE,otherwise = NULL)
+    purrr::walk2(path,
+                 local_path,
+                 purrr::possibly(download.file,otherwise = NA),
+                 method = dmeth,
+                 quiet = TRUE,
+                 .progress = TRUE)
+
+    #check for consistency
+    downloadedFiles <- list.files(unique(dirname(local_path)),full.names = TRUE)
+    diffFiles <- setdiff(local_path,downloadedFiles)
+    if(length(diffFiles) > 0){
+      cat(crayon::bold(crayon::red(glue::glue('{length(diffFiles)} datasets failed to download. You are missing the following datasetIds: \n{paste0(basename(stripExtension(diffFiles)),collapse = ";\n")}'))))
+      cat("\n\n")
+    }
+
     path <- dir
     }else if(all(!isUrl)){
       path <- path
