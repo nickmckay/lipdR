@@ -51,6 +51,7 @@ getQueryTable <- function(){
     queryTable <- newQueryTable()
   }
 
+
   assign("queryTable", queryTable, envir = lipdEnv)
   return(queryTable)
 }
