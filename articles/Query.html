@@ -97,9 +97,9 @@ time series available on LiPDverse</p>
 <p>Let’s get a sense for what the table holds</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span>
+<span><span class="co">#&gt; Error: object 'queryTable' not found</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
+<span><span class="co">#&gt; Error: object 'queryTable' not found</span></span></code></pre></div>
 <p>That’s a lot of rows! There’s a row for every time series in the
 LiPDverse database</p>
 <p>If you have used the LiPD format, you will recognize some of these
@@ -120,7 +120,7 @@ once, it will not prompt you again in a given R session</p>
 <p>We’ll just look at the first 250, there are quite a few</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">paleoData_variableName</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">250</span><span class="op">]</span></span>
-<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
+<span><span class="co">#&gt; Error: object 'queryTable' not found</span></span></code></pre></div>
 <p>There’s quite a few notation styles, but they all have “18o” in
 common, so let’s try that</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -144,14 +144,14 @@ is still pulling one more dataset</p>
 our options</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">archiveType</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
+<span><span class="co">#&gt; Error: object 'queryTable' not found</span></span></code></pre></div>
 <p>Note that we have distinct options: “Lake”, “LakeSediment”,
 “LakeDeposits”, “LakeDeposit”, and “Lake Sediment”</p>
 <p>We can grab the <code>archive.type</code> names and search for all of
 them like this</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>archive.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">archiveType</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">39</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
+<span><span class="co">#&gt; Error: object 'queryTable' not found</span></span></code></pre></div>
 <p>Or we can use the simplification strategy again</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>archive.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lake"</span><span class="op">)</span><span class="op">)</span></span>
@@ -219,7 +219,7 @@ the Northern Hemisphere</p>
 authors define their seasons</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">interpretation1_seasonality</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
+<span><span class="co">#&gt; Error: object 'queryTable' not found</span></span></code></pre></div>
 <p>It looks like numeric months are most common. Season names,
 “warm”/“cold”, and series of first-letter abbreviations (ie. JJA) are
 all common.</p>
@@ -257,10 +257,10 @@ interpretation variable and interpretation detail</p>
 <p>Each of these variables has four possible interpretation slots</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">interp_Vars</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span>
+<span><span class="co">#&gt; Error: object 'queryTable' not found</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">queryTable</span><span class="op">$</span><span class="va">interp_Details</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in eval(expr, envir, enclos): object 'queryTable' not found</span></span></code></pre></div>
+<span><span class="co">#&gt; Error: object 'queryTable' not found</span></span></code></pre></div>
 <p>Let’s look at some marine <code>interp.vars</code> in the northeast
 Pacific</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -368,7 +368,7 @@ download the datasets</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer>
