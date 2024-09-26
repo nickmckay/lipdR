@@ -375,10 +375,11 @@ getPaleoDataNeotoma2 <- function(site){
 #'
 #' @examples
 #'
+#' \dontrun{
 #' B <- neotoma2::get_sites(sitename = "Bambili 2")
 #' D <- neotoma2::get_downloads(B)
 #' L <- neotoma2lipd(D)
-#'
+#' }
 neotoma2lipd <- function(site){
 
   if (!requireNamespace("neotoma2", quietly = TRUE)) {

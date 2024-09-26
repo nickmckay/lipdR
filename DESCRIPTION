@@ -55,6 +55,5 @@ Suggests:
     rmarkdown,
     testthat,
     googlesheets4
-Remotes: 
 VignetteBuilder: knitr
 LazyData: true

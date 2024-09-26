@@ -17,8 +17,9 @@ Convert a neotoma dataset into a LiPD object
 }
 \examples{
 
+\dontrun{
 B <- neotoma2::get_sites(sitename = "Bambili 2")
 D <- neotoma2::get_downloads(B)
 L <- neotoma2lipd(D)
-
+}
 }

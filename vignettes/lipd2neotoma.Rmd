@@ -19,9 +19,10 @@ The example file (site) used is Bambili 2. Bambili 2 is loaded using Neotoma and
 first translated to LiPD. This makes for a simple use case
 
 ```{r}
-B <- neotoma2::get_sites(sitename = "Bambili 2")
-D <- neotoma2::get_downloads(B)
-L <- lipdR:::neotoma2lipd(D)
+#Neotoma2 down as of 7/8/24
+#B <- neotoma2::get_sites(sitename = "Bambili 2")
+#D <- neotoma2::get_downloads(B)
+#L <- lipdR:::neotoma2lipd(D)
 
-summary(L)
+#summary(L)
 ```
