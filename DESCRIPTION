@@ -1,7 +1,7 @@
 Package: lipdR
 Type: Package
 Title: LiPD utilities for R
-Version: 0.5.6
+Version: 0.5.6.9000
 Date: 2015-06-05
 Updated: 2022-08-18
 Authors@R: 
@@ -38,7 +38,8 @@ Imports:
     methods,
     jsonlite,
     sets,
-    neotoma2
+    neotoma2,
+    furrr
 Suggests: 
     tools,
     gt,
@@ -51,7 +52,6 @@ Suggests:
     knitr,
     devtools,
     lubridate,
-    covr,
     rmarkdown,
     testthat,
     googlesheets4
