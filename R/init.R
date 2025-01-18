@@ -141,10 +141,11 @@ stripExtension <- function(filename){
 #' @export
 #' @author Chris Heiser
 #' @author Nick McKay
-#' @import stringr
+#' @import stringr furrr purrr
 #' @keywords high-level
 #' @param path A string specifying a file, url, or directory, or a vector of strings specifying files or urls. Alternatively, no entry (default) will open a selection windw..
 #' @param jsonOnly Load data from json only (not lpd file? Typically only used for web connections)
+#' @param parallel load data in parallel? Default = FALSE. Can greatly increase load time for large collections of data. Uses furrr, so you'll need to run future::plan() before calling the function. e.g. `future::plan(multisession,workers = 8)`
 #' @return D : LiPD dataset(s)
 #' @examples
 #' \dontrun{

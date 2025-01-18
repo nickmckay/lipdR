@@ -1,5 +1,7 @@
 # lipdR (development version)
 
+* readLipd() now optionally can be parallelized.
+
 # lipdR 0.5.6
 
 * Upgraded csv loading to use data.table::fread instead of readr::read_csv. This is much faster and avoids a version check.

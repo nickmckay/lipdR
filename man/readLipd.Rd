@@ -4,7 +4,7 @@
 \alias{readLipd}
 \title{Read LiPD files into R workspace}
 \usage{
-readLipd(path = NULL, jsonOnly = FALSE)
+readLipd(path = NULL, jsonOnly = FALSE, parallel = FALSE)
 }
 \arguments{
 \item{path}{A string specifying a file, url, or directory, or a vector of strings specifying files or urls. Alternatively, no entry (default) will open a selection windw..}
