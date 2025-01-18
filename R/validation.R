@@ -20,13 +20,13 @@ validLipd <- function(L,allow.ensemble = TRUE){
   rootRequired <- c("archiveType",
                     "dataSetName",
                     "datasetId",
-                    "changelog",
                     "geo",
-                    "lipdVersion",
-                    "createdBy")
+                    "lipdVersion")
 
   rootRecommended <- c("paleoData",
                        "chronData",
+                       "changelog",
+                       "createdBy",
                        "pub")
 
   if(!("paleoData" %in% names(L) | "chronData" %in% names(L))){
