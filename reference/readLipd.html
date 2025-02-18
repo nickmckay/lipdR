@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.6.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.7</span>
       </span>
     </div>
 
@@ -76,6 +76,10 @@
 
 <dt id="arg-jsononly">jsonOnly<a class="anchor" aria-label="anchor" href="#arg-jsononly"></a></dt>
 <dd><p>Load data from json only (not lpd file? Typically only used for web connections)</p></dd>
+
+
+<dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
+<dd><p>load data in parallel? Default = FALSE. Can greatly increase load time for large collections of data. Uses furrr, so you'll need to run future::plan() before calling the function. e.g. `future::plan(multisession,workers = 8)`</p></dd>
 
 </dl></div>
     <div id="value">
