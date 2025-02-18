@@ -1,4 +1,4 @@
-# lipdR (development version)
+# lipdR 0.5.7
 
 * readLipd() now optionally can be parallelized.
 
