@@ -129,10 +129,13 @@ replaceLocalZipMD5 <- function(){
 #' @export
 stripExtension <- function(filename){
   basef <- basename(filename)
-  if(stringr::str_detect(basef,"[.]")){#there's a period, strip
-    dsn <- stringr::str_sub(basef,1,max(stringr::str_locate_all(basef,pattern = "[.]")[[1]][,1])-1)
-  }else{#if not then just return the base name
-    dsn <- basef
+  dsn <- rep(NA,times = length(basef))
+  for(i in 1:length(basef)){
+    if(stringr::str_detect(basef[i],"[.]")){#there's a period, strip
+      dsn[i] <- stringr::str_sub(basef[i],1,max(stringr::str_locate_all(basef[i],pattern = "[.]")[[1]][,1])-1)
+    }else{#if not then just return the base name
+      dsn[i] <- basef[i]
+    }
   }
   return(dsn)
 }

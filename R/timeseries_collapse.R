@@ -13,9 +13,17 @@
 #' D <- collapseTs(ts)
 #' }
 #'
-collapseTs <- function(ts, force=FALSE){
+collapseTs <- function(ts, force=FALSE, verbose = NA){
   #before doing anything else, reorder the data by dataset name.
   dsn <- pullTsVariable(ts,"dataSetName",strict.search = TRUE)
+  if(all(is.na(verbose))){
+    if(length(unique(dsn)) > 20){
+      verbose <- FALSE
+    }else{
+      verbose <- TRUE
+    }
+  }
+
   ts <- ts[order(dsn)]
   ts_storage <- list()
   timeID <- NA
@@ -38,19 +46,26 @@ collapseTs <- function(ts, force=FALSE){
     raw_datasets <- ts_storage[[timeID]]
     mode <- ts[[1]][["mode"]]
   }
-
+if(!verbose){
+  pb <- txtProgressBar(min = 0, max = length(ts),title = "Collapsing to LiPD objects",style = 3)
+}
   D <- list()
   tryCatch({
     # Do some collapse stuff
     for(i in 1:length(ts)){
+      if(!verbose){
+        setTxtProgressBar(pb = pb,value = i)
+      }
       ts[[i]] = add_missing_ts_data(ts[[i]])
       pc <- paste0(ts[[i]][["mode"]], "Data")
       # ONLY PROCESS BASE DATA ON FIRST DATASET OCCURENCE. All subsequent timeseries entries from the same dataset will only add its unique column data to the running dataset.
       if(!ts[[i]][["dataSetName"]] %in% names(D)){
         dsn <- ts[[i]][["dataSetName"]]
-        print(paste0("collapsing: ", dsn))
+        if(verbose){
+          print(paste0("collapsing: ", dsn))
+        }
         # Recover paleoData OR chronData from raw data. Recovers only the section opposite of the current mode.
-        D[[dsn]] <- put_base_data(ts[[i]], raw_datasets, dsn, force, mode)
+        D[[dsn]] <- put_base_data(ts[[i]], raw_datasets, dsn, force, mode, verbose)
         if(!force){
           # Remove the old target tables, as we'll be writing these fresh. Other tables as-is.
           D[[dsn]] <- rm_existing_tables(D[[dsn]], pc, whichtables)
@@ -66,6 +81,7 @@ collapseTs <- function(ts, force=FALSE){
   }, error=function(cond){
     print(paste0("Error: collapseTs: ", cond))
   })
+  close(pb)
   D <- rm_empty_fields(D)
   # Is there only one dataset after all this? Set it directly in D.
   if(length(D)==1){
@@ -599,12 +615,14 @@ rm_existing_tables <- function(d, pc, whichtables){
 #' @param mode paleo or chron mode
 #'
 #' @return d: Metadata
-put_base_data <- function(entry, raw_datasets, dsn, force, mode){
+put_base_data <- function(entry, raw_datasets, dsn, force, mode, verbose){
   d <- list()
 
   # We do not have the original datasets OR the user is requesting a collapseTs without using the original datasets
   if(force==TRUE || is.null(raw_datasets)){
+    if(verbose){
     print("Attempting to collapse time series without the original raw datasets. Your results may be missing data.")
+    }
     d[["paleoData"]] <- list()
     d[["chronData"]] <- list()
     d$dataSetName <- entry$dataSetName
