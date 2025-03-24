@@ -30,48 +30,48 @@ download_from_url <- function(path){
   }
 
   if(length(path) == 1){
-  # Test if the string is a URL or not
-  if(is.url(path)){
-    #check to see if the url is https
-    path <- stringr::str_replace(path,"http://lipdverse.org","https://lipdverse.org")#replace with https
-    pext <- tools::file_ext(path)
-    if(pext == "zip"){#download and unzip
-      #create a download dir:
-      dp <- file.path(get_download_path(),"lpdDownload")
-      if(dir.exists(dp)){#delete it.
-        unlink(dp,recursive = TRUE,force = TRUE)
-      }
-      #create the directory
-      dir.create(file.path(get_download_path(),"lpdDownload"))
+    # Test if the string is a URL or not
+    if(is.url(path)){
+      #check to see if the url is https
+      path <- stringr::str_replace(path,"http://lipdverse.org","https://lipdverse.org")#replace with https
+      pext <- tools::file_ext(path)
+      if(pext == "zip"){#download and unzip
+        #create a download dir:
+        dp <- file.path(get_download_path(),"lpdDownload")
+        if(dir.exists(dp)){#delete it.
+          unlink(dp,recursive = TRUE,force = TRUE)
+        }
+        #create the directory
+        dir.create(file.path(get_download_path(),"lpdDownload"))
 
-      #download it
-      download.file(path, file.path(get_download_path(), "zippedLipds.zip"), method = dmeth)
+        #download it
+        download.file(path, file.path(get_download_path(), "zippedLipds.zip"), method = dmeth)
 
-      #unzip it
-      unzip(zipfile = file.path(get_download_path(), "zippedLipds.zip"),exdir = dp)
+        #unzip it
+        unzip(zipfile = file.path(get_download_path(), "zippedLipds.zip"),exdir = dp)
 
-      path <- dp
-    }else{
-      if(pext == "lpd"){
-        dsn <- stringr::str_sub(basename(path),1,-5)
+        path <- dp
       }else{
-        dsn <- basename(path)
-      }
+        if(pext == "lpd"){
+          dsn <- stringr::str_sub(basename(path),1,-5)
+        }else{
+          dsn <- basename(path)
+        }
 
 
-      #truncate for linkedearth
-      end <- nchar(dsn)
-      start <- max(unlist(stringr::str_locate_all(dsn,"=")))+1
-      if(!is.finite(start)){
-        start <- 1
-      }
-      dsn <- substr(dsn, start = start, stop = end)
+        #truncate for linkedearth
+        end <- nchar(dsn)
+        start <- max(unlist(stringr::str_locate_all(dsn,"=")))+1
+        if(!is.finite(start)){
+          start <- 1
+        }
+        dsn <- substr(dsn, start = start, stop = end)
 
 
 
 
-      # String together a local download path
-      # Initiate download
+        # String together a local download path
+        # Initiate download
         dir <- get_download_path()
         local_path <- file.path(dir, paste0(dsn, ".lpd"))
         succ <- try(download.file(path, local_path, method = dmeth),silent = TRUE)
@@ -81,36 +81,37 @@ download_from_url <- function(path){
 
         path <- local_path
 
-      # Set the local path as our output path
+        # Set the local path as our output path
+      }
     }
-  }
-  return(path)
+    return(path)
   }else if(length(path) > 1){# this is a vector of urls or files!
     isUrl <- purrr::map_lgl(path,is.url)
     if(all(isUrl)){
-    dir <- file.path(get_download_path(),"lpdDownload")
-    if(dir.exists(dir)){#delete it.
-      unlink(dir,recursive = TRUE,force = TRUE)
-    }
-    dir.create(dir)
-    local_path <- file.path(dir, paste0(basename(dirname(dirname(path))), ".lpd"))
-    print(glue::glue("Downloading {length(path)} datasets from lipdverse.org..."))
-    purrr::walk2(path,
-                 local_path,
-                 purrr::possibly(download.file,otherwise = NA),
-                 method = dmeth,
-                 quiet = TRUE,
-                 .progress = TRUE)
+      dir <- file.path(get_download_path(),"lpdDownload")
+      if(dir.exists(dir)){#delete it.
+        unlink(dir,recursive = TRUE,force = TRUE)
+      }
+      dir.create(dir)
+      local_path <- file.path(dir, paste0(basename(dirname(dirname(path))), ".lpd"))
+      print(glue::glue("Downloading {length(path)} datasets from lipdverse.org..."))
+      purrr::walk2(path,
+                   local_path,
+                   purrr::possibly(download.file,otherwise = NA),
+                   method = dmeth,
+                   quiet = TRUE,
+                   .progress = TRUE)
 
-    #check for consistency
-    downloadedFiles <- list.files(unique(dirname(local_path)),full.names = TRUE)
-    diffFiles <- setdiff(local_path,downloadedFiles)
-    if(length(diffFiles) > 0){
-      cat(crayon::bold(crayon::red(glue::glue('{length(diffFiles)} datasets failed to download. You are missing the following datasetIds: \n{paste0(basename(stripExtension(diffFiles)),collapse = ";\n")}'))))
-      cat("\n\n")
-    }
+      #check for consistency
+      downloadedFiles <- list.files(unique(dirname(local_path)),full.names = TRUE)
+      diffFiles <- setdiff(basename(local_path),basename(downloadedFiles))
 
-    path <- dir
+      if(length(diffFiles) > 0){
+        cat(crayon::bold(crayon::red(glue::glue('{length(diffFiles)} datasets failed to download. You are missing the following datasetIds: \n{paste0(basename(stripExtension(diffFiles)),collapse = ";\n")}'))))
+        cat("\n\n")
+      }
+
+      path <- dir
     }else if(all(!isUrl)){
       path <- path
     }else{
@@ -144,7 +145,7 @@ get_download_path <- function(){
   #   }
   #   dst_path <- "~/lipdTempDir"
   # }else{#just use tempdir
-    dst_path <- tempdir()
+  dst_path <- tempdir()
   #}
   return(dst_path)
 }
