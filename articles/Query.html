@@ -125,7 +125,7 @@ once, it will not prompt you again in a given R session</p>
 common, so let’s try that</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>variable.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"18o"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 1688 available time series in 1069 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 1032 available time series in 619 datasets</span></span></code></pre></div>
 <p>Now that is a lot more data</p>
 <p>Some query parameters will require considering what all the possible
 results have in common</p>
@@ -136,7 +136,7 @@ combined with “OR” logic, so more entries will generally pull more
 datasets</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>variable.name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"δ18O"</span>, <span class="st">"d18O"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 1688 available time series in 1069 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 1032 available time series in 619 datasets</span></span></code></pre></div>
 <p>This gets us almost the same result, but we see the simplified filter
 is still pulling one more dataset</p>
 <p>Also note that capitalization makes no difference here</p>
@@ -155,7 +155,7 @@ them like this</p>
 <p>Or we can use the simplification strategy again</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>archive.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lake"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 46308 available time series in 2309 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 45927 available time series in 2268 datasets</span></span></code></pre></div>
 <p>As we saw last time, the results are similar</p>
 <p>We can also filter based on publications: Author, DOI, Title, etc.
 using <code>pub.info</code></p>
@@ -171,11 +171,11 @@ another parameter first</p>
 <p>Let’s grab all the North American datasets</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 46652 available time series in 1817 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 45711 available time series in 1749 datasets</span></span></code></pre></div>
 <p>Let’s grab just those from Mexico</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>country <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Mexico"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 512 available time series in 36 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 485 available time series in 30 datasets</span></span></code></pre></div>
 <p>Note that the country and contient filters are not filtered based on
 LiPD content. A function in R uses the coordinates associated with the
 datasets to associate them with countries and the results can be
@@ -186,13 +186,13 @@ unreliable near country borders</p>
 box</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 14062 available time series in 772 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 13751 available time series in 727 datasets</span></span></code></pre></div>
 <p>We can limit this to only marine data by setting <code>ocean</code>
 to <code>TRUE</code></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>         ocean <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 1485 available time series in 85 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 1344 available time series in 74 datasets</span></span></code></pre></div>
 <p>The <code>ocean</code> parameter works on the same basis as the
 <code>country</code> and <code>continent</code> parameters and can be
 unreliable in coastal areas</p>
@@ -200,11 +200,11 @@ unreliable in coastal areas</p>
 as the Western North America (WNAm)</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>compilation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wNAm"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 392 available time series in 184 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 389 available time series in 182 datasets</span></span></code></pre></div>
 <p>or multiple compilations</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>compilation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wnam"</span>, <span class="st">"temp12k"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 1717 available time series in 799 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 1702 available time series in 793 datasets</span></span></code></pre></div>
 <p>the <code>compilation</code> filter uses “OR” logic</p>
 <p>Let’s try pulling datasets based on their
 <code>seasonality</code></p>
@@ -214,7 +214,7 @@ the Northern Hemisphere</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"June"</span>, <span class="st">"July"</span>, <span class="st">"August"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 1 available time series in 1 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 0 available time series in 0 datasets</span></span></code></pre></div>
 <p>Okay, so this must not be a good choice of format, let’s see how LiPD
 authors define their seasons</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
@@ -235,7 +235,7 @@ different notations</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"8"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"summer"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"JJA"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 219 available time series in 165 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 204 available time series in 169 datasets</span></span></code></pre></div>
 <p>This returns quite a few datasets</p>
 <p>From our look at all the unique <code>seasonality</code> entries, we
 can see that this probably includes a lot of annual data too</p>
@@ -247,7 +247,7 @@ can see that this probably includes a lot of annual data too</p>
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>continent <span class="op">=</span> <span class="st">"North America"</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"8"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"summer"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"JJA"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>               season.not <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"annual"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"December"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"12"</span>,<span class="st">"1"</span>,<span class="st">"2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"winter"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"cold"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 193 available time series in 139 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 179 available time series in 144 datasets</span></span></code></pre></div>
 <p>Now we’ve narrowed it down to summer-specific datasets</p>
 <p>Let’s look at interpretation variables now. These are the climate
 variables that may serve as a target for the proxy time series
@@ -275,7 +275,7 @@ is more standardized</p>
 <code class="sourceCode R"><span><span class="va">qt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryLipdverse.html">queryLipdverse</a></span><span class="op">(</span>coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">90</span>,<span class="op">-</span><span class="fl">180</span>,<span class="op">-</span><span class="fl">110</span><span class="op">)</span>,</span>
 <span>               ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>               interp.details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sea@surface"</span>, <span class="st">"elNino"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 59 available time series in 38 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 63 available time series in 37 datasets</span></span></code></pre></div>
 <p>let’s see if we grab more using both</p>
 <p>These inputs combine with “OR” logic, so we may gather more datasets
 by using both parameters</p>
@@ -284,7 +284,7 @@ by using both parameters</p>
 <span>               ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>               interp.details <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sea@surface"</span>, <span class="st">"elNino"</span><span class="op">)</span>,</span>
 <span>               interp.vars <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SST"</span>, <span class="st">"upwelling"</span>, <span class="st">"SSS"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 81 available time series in 42 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 85 available time series in 41 datasets</span></span></code></pre></div>
 <p>looks like we get a few extra datasets with this approach</p>
 <p>Now that we know how to use our filters, let’s go for a strict
 filter</p>
@@ -299,7 +299,7 @@ only</p>
 <span>               interp.vars <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SST"</span>, <span class="st">"upwelling"</span>, <span class="st">"SSS"</span><span class="op">)</span>,</span>
 <span>               seasonality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"6"</span>, <span class="st">"7"</span>, <span class="st">"8"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"summer"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"JJA"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>               season.not <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"annual"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"December"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"12"</span>,<span class="st">"1"</span>,<span class="st">"2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"winter"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"cold"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Based on your query parameters, there are 7 available time series in 1 datasets</span></span></code></pre></div>
+<span><span class="co">#&gt; Based on your query parameters, there are 10 available time series in 4 datasets</span></span></code></pre></div>
 <p>To fine-tune your query, set verbose to TRUE to see which parameters
 have what effect on filtering</p>
 <p>We’ll narrow the results further by adding author names to find
@@ -314,33 +314,33 @@ within the publication info</p>
 <span>               season.not <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"annual"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"December"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"12"</span>,<span class="st">"1"</span>,<span class="st">"2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"winter"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"cold"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>               pub.info <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mix"</span>, <span class="st">"caissie"</span><span class="op">)</span>,</span>
 <span>               verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Series available before filtering:  103920 </span></span>
+<span><span class="co">#&gt; Series available before filtering:  102213 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after coord filter:  14062 </span></span>
+<span><span class="co">#&gt; Series remaining after coord filter:  13751 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after marine filter:  1485 </span></span>
+<span><span class="co">#&gt; Series remaining after marine filter:  1344 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after continent filter:  1485 </span></span>
+<span><span class="co">#&gt; Series remaining after continent filter:  1344 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after country filter:  1485 </span></span>
+<span><span class="co">#&gt; Series remaining after country filter:  1344 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after time filter:  1485 </span></span>
+<span><span class="co">#&gt; Series remaining after time filter:  1344 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after paleo.proxy filter:  1485 </span></span>
+<span><span class="co">#&gt; Series remaining after paleo.proxy filter:  1344 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after paleo.units filter:  1485 </span></span>
+<span><span class="co">#&gt; Series remaining after paleo.units filter:  1344 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after archive.type filter:  893 </span></span>
+<span><span class="co">#&gt; Series remaining after archive.type filter:  802 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after variable.name filter:  893 </span></span>
+<span><span class="co">#&gt; Series remaining after variable.name filter:  802 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after interp.vars filter:  893 </span></span>
+<span><span class="co">#&gt; Series remaining after interp.vars filter:  802 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after interp.details filter:  76 </span></span>
+<span><span class="co">#&gt; Series remaining after interp.details filter:  82 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after compilation filter:  76 </span></span>
+<span><span class="co">#&gt; Series remaining after compilation filter:  82 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Series remaining after seasonality filter(s):  7 </span></span>
+<span><span class="co">#&gt; Series remaining after seasonality filter(s):  10 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Series remaining after pub.info filter:  0 </span></span>
 <span><span class="co">#&gt; </span></span>
