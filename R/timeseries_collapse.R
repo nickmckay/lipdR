@@ -81,7 +81,9 @@ if(!verbose){
   }, error=function(cond){
     print(paste0("Error: collapseTs: ", cond))
   })
-  close(pb)
+  if (exists(quote(pb))){
+    close(pb)
+  }
   D <- rm_empty_fields(D)
   # Is there only one dataset after all this? Set it directly in D.
   if(length(D)==1){
