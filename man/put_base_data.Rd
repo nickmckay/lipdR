@@ -4,7 +4,7 @@
 \alias{put_base_data}
 \title{Put in paleoData and chronData as the base for this dataset using the oroginal dataset data.}
 \usage{
-put_base_data(entry, raw_datasets, dsn, force, mode)
+put_base_data(entry, raw_datasets, dsn, force, mode, verbose)
 }
 \arguments{
 \item{entry}{ts entry}
@@ -16,6 +16,8 @@ put_base_data(entry, raw_datasets, dsn, force, mode)
 \item{force}{Build dataset without original data from lipd}
 
 \item{mode}{paleo or chron mode}
+
+\item{verbose}{detailed console output}
 }
 \value{
 d: Metadata

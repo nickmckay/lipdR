@@ -153,7 +153,7 @@ get_download_path <- function(){
 #' Get dataSetName from metadata. If one is not found, use filename as fallback.
 #' @export
 #' @keywords internal
-#' @param list d Metadata
+#' @param d Metadata
 #' @param name Filename fallback
 #' @return char dsn: Dataset name
 get_datasetname <- function(d, name){
@@ -379,7 +379,7 @@ get_os <- function() {
 #' upon loading with geoChronR::mapAgeEnsembleToPaleoData()
 #' @export
 #' @keywords internal
-#' @param d Metadata
+#' @param L lipd
 #' @return Metadata
 warn_ensembles_in_paleo <- function(L, ignore.warnings){
   ans <- NULL

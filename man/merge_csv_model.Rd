@@ -7,11 +7,11 @@
 merge_csv_model(models, crumbs, csvs)
 }
 \arguments{
+\item{models}{Metadata (list)}
+
 \item{crumbs}{Crumbs}
 
 \item{csvs}{CSV data}
-
-\item{list}{models Metadata}
 }
 \value{
 list models: Metadata

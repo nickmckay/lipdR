@@ -52,7 +52,7 @@ merge_csv_section <- function(section, crumbs, csvs){
 #' Merge CSV into each model
 #' @export
 #' @keywords internal
-#' @param  list models Metadata
+#' @param  models Metadata (list)
 #' @param crumbs Crumbs
 #' @param csvs CSV data
 #' @return list models: Metadata
@@ -79,7 +79,7 @@ merge_csv_model <- function(models, crumbs, csvs){
 #' Merge CSV data into each table
 #' @export
 #' @keywords internal
-#' @param  list models Metadata
+#' @param tables Metadata (list)
 #' @param crumbs Crumbs
 #' @param csvs CSV data
 #' @return list models: Metadata

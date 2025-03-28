@@ -2,7 +2,7 @@
 % Please edit documentation in R/timeseries.R
 \name{filterTs}
 \alias{filterTs}
-\title{Find all the time series objects that match a given search expression, 
+\title{Find all the time series objects that match a given search expression,
 and return a new time series with the matching objects
 Valid operators : ==, =, <=, >=, <, >}
 \usage{
@@ -19,7 +19,7 @@ filterTs(ts, expression, exact = FALSE)
 new.ts : Time series : list
 }
 \description{
-Find all the time series objects that match a given search expression, 
+Find all the time series objects that match a given search expression,
 and return a new time series with the matching objects
 Valid operators : ==, =, <=, >=, <, >
 }
@@ -30,7 +30,7 @@ ts = [ object1, object2, object3, object4 ]
 
 # Example 1
 new.ts = filterTs(ts, "archiveType == marine sediment")
-# result 
+# result
 [object1, object3, object4]
 
 # Example 2

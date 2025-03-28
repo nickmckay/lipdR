@@ -57,8 +57,8 @@ getMeasurementTables <- function(L,pc = "all"){
 #' Replace all blank values in csv matrices
 #' @export
 #' @keywords internal
-#' @param csv All csv data
-#' @return csv All csv data
+#' @param csvs All csv data
+#' @return csvs All csv data
 clean_csv <- function(csvs){
   tryCatch({
     # blanks <- c("", " ", "NA", "NaN", "NAN", "nan")

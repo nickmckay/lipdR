@@ -3,7 +3,7 @@
 #' @importFrom utils unzip
 #' @keywords internal
 #' @param path Path
-#' @param tmp Temporary directory
+#' @param dir_tmp Temporary directory
 #' @return none
 unzipper <- function(path, dir_tmp){
   if(length(path)>0){
@@ -35,17 +35,17 @@ zipper <- function(dir_original, dir_tmp, dsn, path){
       if(isDirectory(path)){#then name by dataset name
         path <- file.path(path,paste0(dsn,".lpd"))
       }
-      
+
       file.rename(file.path(dir_tmp,"zip.zip"), file.path(dir_tmp,basename(path)))
       file.copy(file.path(dir_tmp,basename(path)),file.path(path),overwrite=TRUE)
-      
+
     }else{
       stop("zip file not created")
     }
-    
+
   }, error=function(cond){
     setwd(orig_dir)
     print(paste0("Zipping failed: ", cond))
   })
-  
+
 }

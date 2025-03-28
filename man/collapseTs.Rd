@@ -4,12 +4,14 @@
 \alias{collapseTs}
 \title{Collapse time series into LiPD dataset form}
 \usage{
-collapseTs(ts, force = FALSE)
+collapseTs(ts, force = FALSE, verbose = NA)
 }
 \arguments{
 \item{ts}{Time series : list}
 
 \item{force}{Attempt to collapse time series when lipd ts_storage is not provided: bool}
+
+\item{verbose}{Print details of collapse process}
 }
 \value{
 D: LiPD data, sorted by dataset name : list

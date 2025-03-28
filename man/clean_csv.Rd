@@ -7,10 +7,10 @@
 clean_csv(csvs)
 }
 \arguments{
-\item{csv}{All csv data}
+\item{csvs}{All csv data}
 }
 \value{
-csv All csv data
+csvs All csv data
 }
 \description{
 Replace all blank values in csv matrices

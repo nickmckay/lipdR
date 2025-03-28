@@ -4,6 +4,7 @@
 #'
 #' @param ts Time series : list
 #' @param force Attempt to collapse time series when lipd ts_storage is not provided: bool
+#' @param verbose Print details of collapse process
 #'
 #' @return D: LiPD data, sorted by dataset name : list
 #' @examples
@@ -615,6 +616,7 @@ rm_existing_tables <- function(d, pc, whichtables){
 #' @param raw_datasets stored loaded data
 #' @param dsn datasetname
 #' @param mode paleo or chron mode
+#' @param verbose detailed console output
 #'
 #' @return d: Metadata
 put_base_data <- function(entry, raw_datasets, dsn, force, mode, verbose){

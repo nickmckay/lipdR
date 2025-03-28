@@ -1,5 +1,5 @@
-#' Find all the time series entries that match a given search expression, 
-#' and return vector of the indices that match. 
+#' Find all the time series entries that match a given search expression,
+#' and return vector of the indices that match.
 #' indices = queryTs(ts, "archiveType == marine sediment")
 #' Valid operators : ==, =, <=, >=, <, >
 #' @export
@@ -8,16 +8,16 @@
 #' @param expression Search expression  char (single query) or list (multiple query)
 #' @param exact Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
 #' @return idxs: Matching indices : list
-#' @examples 
+#' @examples
 #' \dontrun{
 #' # Time series
 #' ts = [ object1, object2, object3, object4 ]
 #'
 #' # Example 1
 #' idxs = filterTs(ts, "archiveType == marine sediment")
-#' # result 
+#' # result
 #' [1, 3, 4]
-#' 
+#'
 #' # Example 2
 #' idxs = filterTs(ts, "paleoData_variableName == d18O")
 #' # result
@@ -28,7 +28,7 @@ queryTs= function(ts, expression, exact=FALSE){
   return(results[["idx"]])
 }
 
-#' Find all the time series objects that match a given search expression, 
+#' Find all the time series objects that match a given search expression,
 #' and return a new time series with the matching objects
 #' Valid operators : ==, =, <=, >=, <, >
 #' @export
@@ -37,7 +37,7 @@ queryTs= function(ts, expression, exact=FALSE){
 #' @param expression Search expression  char (single query) or list (multiple query)
 #' @param exact Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
 #' @return new.ts : Time series : list
-#' @examples 
+#' @examples
 #' \dontrun{
 
 #' # Time series
@@ -45,14 +45,14 @@ queryTs= function(ts, expression, exact=FALSE){
 #'
 #' # Example 1
 #' new.ts = filterTs(ts, "archiveType == marine sediment")
-#' # result 
+#' # result
 #' [object1, object3, object4]
-#' 
+#'
 #' # Example 2
 #' new.ts = filterTs(ts, ["paleoData_variableName == d18O", "archiveType == marine sediment"])
 #' # result
 #' [object2]
-#' 
+#'
 #' }
 filterTs= function(ts, expression, exact=FALSE){
   results <- suppressWarnings(process_expression(ts, expression, exact))
@@ -65,7 +65,7 @@ filterTs= function(ts, expression, exact=FALSE){
 #' @param ts Time series  list , Time Series data
 #' @param expression Search expression  char (single query) or list (multiple query)
 #' @param exact Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName or variableName?
-#' @return results: list , Contains list of matching time series entries and a list of matching time series indicies. 
+#' @return results: list , Contains list of matching time series entries and a list of matching time series indicies.
 process_expression <- function(ts, expression, exact=FALSE){
   # Create a copy of the time series for processing
   results <- list()
@@ -78,7 +78,7 @@ process_expression <- function(ts, expression, exact=FALSE){
     m = stringr::str_match_all(expression, "([\\w\\s\\d]+)([<>=]+)([\\s\\w\\d\\.\\-\\/]+)")
     results <- get_matches(results[["new_ts"]], m, exact)
     print(paste0(length(results[["new_ts"]]), " results after query: ", expression))
-  } 
+  }
   # Multiple queries
   else if (is.list(expression)){
     # Loop for each query given
@@ -97,7 +97,7 @@ process_expression <- function(ts, expression, exact=FALSE){
 }
 
 
-#' Use the regex match groups and the time series to compile two lists: matching indices, and matching entries. 
+#' Use the regex match groups and the time series to compile two lists: matching indices, and matching entries.
 #' @export
 #' @author Chris Heiser
 #' @keywords internal
@@ -120,7 +120,7 @@ get_matches <- function(ts, m, exact){
       key = trimws(m[[1]][[2]])
       op = trimws(m[[1]][[3]])
       val = trimws(m[[1]][[4]])
-      # Attempt to cast value to numeric. If the result is NOT "NA", then keep it. Otherwise, it's not a numeric at all. 
+      # Attempt to cast value to numeric. If the result is NOT "NA", then keep it. Otherwise, it's not a numeric at all.
       if (!is.na(as.numeric(val))){
         val = as.numeric(val)
       }
@@ -157,18 +157,17 @@ get_matches <- function(ts, m, exact){
 }
 
 
-#' Compare the query value to the time series value. Does it meet the conditions? If so, add it to the output "new_ts" items. 
+#' Compare the query value to the time series value. Does it meet the conditions? If so, add it to the output "new_ts" items.
 #' @export
 #' @author Chris Heiser
 #' @keywords internal
 #' @param entry Time series entry list , Current time series entry being checked.
 #' @param new_ts New time series list , The list of successful query matches so far.
 #' @param idx Index  numeric , The index of this given entry within the time series list
-#' @param key Key  char , The 
-#' @param exact Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName 
+#' @param key Key  char , The
 check_match <- function(entry, new_ts, idx, key, op, val, i){
   res <- list()
-  # We can't parse the operator into the expression, so we have to manually make "switch"-like statments depending on the operator. 
+  # We can't parse the operator into the expression, so we have to manually make "switch"-like statments depending on the operator.
   if(op == "<"){
     # If the entry value is less than the query value
     if (entry[[key]] < val){
