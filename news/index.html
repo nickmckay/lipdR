@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -57,6 +57,11 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.6.0" id="lipdr-060">lipdR 0.6.0<a class="anchor" aria-label="anchor" href="#lipdr-060"></a></h2>
+<ul><li>a handful of improvements and error handling</li>
+<li>new option for <code><a href="../reference/readLipd.html">readLipd()</a></code>: <code>dont.load.ensemble()</code>. This option doesn’t load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using <code><a href="../reference/writeLipd.html">writeLipd()</a></code>, if that temporary directory still exists it will add the ensemble data back in.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.5.7" id="lipdr-057">lipdR 0.5.7<a class="anchor" aria-label="anchor" href="#lipdr-057"></a></h2>
 <ul><li>readLipd() now optionally can be parallelized.</li>

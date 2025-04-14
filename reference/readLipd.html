@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
@@ -63,7 +63,12 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readLipd</span><span class="op">(</span>path <span class="op">=</span> <span class="cn">NULL</span>, jsonOnly <span class="op">=</span> <span class="cn">FALSE</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readLipd</span><span class="op">(</span></span>
+<span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  jsonOnly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  dont.load.ensemble <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -80,6 +85,10 @@
 
 <dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
 <dd><p>load data in parallel? Default = FALSE. Can greatly increase load time for large collections of data. Uses furrr, so you'll need to run future::plan() before calling the function. e.g. `future::plan(multisession,workers = 8)`</p></dd>
+
+
+<dt id="arg-dont-load-ensemble">dont.load.ensemble<a class="anchor" aria-label="anchor" href="#arg-dont-load-ensemble"></a></dt>
+<dd><p>This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in. Default = FALSE</p></dd>
 
 </dl></div>
     <div id="value">
