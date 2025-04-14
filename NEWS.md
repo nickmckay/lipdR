@@ -1,3 +1,5 @@
+# lipdR 0.6.0
+
 # lipdR 0.5.7
 
 * readLipd() now optionally can be parallelized.
