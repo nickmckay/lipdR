@@ -5,12 +5,14 @@
 \title{Loads a LiPD file from local path. Unzip, read, and process data
 Steps: create tmp, unzip lipd, read files into memory, manipulate data, move to original dir, delete tmp.}
 \usage{
-lipd_read(path, jsonOnly = FALSE)
+lipd_read(path, jsonOnly = FALSE, dont.load.ensemble = FALSE)
 }
 \arguments{
 \item{path}{Local path OR url location of LiPD file}
 
 \item{jsonOnly}{Read data from jsonld only? The data will be included and the json file might be large (Typically only used for web connections)}
+
+\item{dont.load.ensemble}{This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in. Default = FALSE}
 }
 \value{
 j LiPD file data

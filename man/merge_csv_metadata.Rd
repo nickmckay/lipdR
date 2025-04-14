@@ -5,10 +5,14 @@
 \title{Using the given metadata dictionary, retrieve CSV data from CSV files, and insert the CSV
 values into their respective metadata columns.}
 \usage{
-merge_csv_metadata(d, path)
+merge_csv_metadata(d, path, dont.load.ensemble = FALSE)
 }
 \arguments{
 \item{d}{Metadata}
+
+\item{path}{Wgere to read the csv file}
+
+\item{dont.load.ensemble}{This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in. Default = FALSE}
 }
 \value{
 list d: Metadata

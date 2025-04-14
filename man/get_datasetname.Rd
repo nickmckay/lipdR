@@ -7,9 +7,9 @@
 get_datasetname(d, name)
 }
 \arguments{
-\item{name}{Filename fallback}
+\item{d}{dataset}
 
-\item{list}{d Metadata}
+\item{name}{Filename fallback}
 }
 \value{
 char dsn: Dataset name

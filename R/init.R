@@ -146,9 +146,12 @@ stripExtension <- function(filename){
 #' @author Nick McKay
 #' @import stringr furrr purrr
 #' @keywords high-level
+#'
 #' @param path A string specifying a file, url, or directory, or a vector of strings specifying files or urls. Alternatively, no entry (default) will open a selection windw..
 #' @param jsonOnly Load data from json only (not lpd file? Typically only used for web connections)
+#' @param dont.load.ensemble This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in. Default = FALSE
 #' @param parallel load data in parallel? Default = FALSE. Can greatly increase load time for large collections of data. Uses furrr, so you'll need to run future::plan() before calling the function. e.g. `future::plan(multisession,workers = 8)`
+#'
 #' @return D : LiPD dataset(s)
 #' @examples
 #' \dontrun{
@@ -164,7 +167,7 @@ stripExtension <- function(filename){
 #' read in one dataset - with path argument
 #' L <- readLipd("/Users/bobsmith/Desktop/lipd_files/dataset.lpd")
 #' }
-readLipd <- function(path=NULL,jsonOnly = FALSE,parallel = FALSE){
+readLipd <- function(path=NULL,jsonOnly = FALSE,parallel = FALSE,dont.load.ensemble = FALSE){
   D = list()
   # Silence warnings
   options(warn = -1)
@@ -220,7 +223,7 @@ readLipd <- function(path=NULL,jsonOnly = FALSE,parallel = FALSE){
 
 if(parallel & !few){
 
-  FO <- furrr::future_map(entries,purrr::quietly(lipd_read),jsonOnly = jsonOnly,.progress = TRUE)
+  FO <- furrr::future_map(entries,purrr::quietly(lipd_read),jsonOnly = jsonOnly,dont.load.ensemble = dont.load.ensemble, .progress = TRUE)
 
   D <- purrr::map(FO,purrr::pluck,"result")
   dsn <- purrr::map_chr(D,"dataSetName")
@@ -258,7 +261,7 @@ if(parallel & !few){
         # assign("directory_source", directory_source, envir = lipdEnv)
       }
 
-      J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly)
+      J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly, dont.load.ensemble = dont.load.ensemble)
       j <- J[[1]]$result
 
       # Get the datasetname
@@ -447,7 +450,7 @@ lipdFromEntry <- function(entry,jsonOnly){
     # assign("directory_source", directory_source, envir = lipdEnv)
   }
 
-  J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly)
+  J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly,dont.load.ensemble = dont.load.ensemble)
 
   return(J)
 }

@@ -182,6 +182,7 @@ validGeo <- function(L){
   #remove some common exceptions
   probablyOk <- stringr::str_detect(tolower(otherNames),"depth") |
     stringr::str_detect(tolower(otherNames),"volume") |
+    stringr::str_detect(tolower(otherNames),"catchment") |
     stringr::str_detect(tolower(otherNames),"area")
 
   if(any(probablyOk)){
@@ -421,7 +422,7 @@ validChron <- function(L,allow.ensemble = TRUE){
 
 
 validVariable <- function(V,allow.ensemble = TRUE){
-  reqNames <- c("TSid","variableName","values","number")
+  reqNames <- c("TSid","variableName","values")
   for(r in reqNames){
     if(! r %in% names(V)){
       print(glue::glue("Required variable {r} is missing"))

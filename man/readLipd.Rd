@@ -4,7 +4,12 @@
 \alias{readLipd}
 \title{Read LiPD files into R workspace}
 \usage{
-readLipd(path = NULL, jsonOnly = FALSE, parallel = FALSE)
+readLipd(
+  path = NULL,
+  jsonOnly = FALSE,
+  parallel = FALSE,
+  dont.load.ensemble = FALSE
+)
 }
 \arguments{
 \item{path}{A string specifying a file, url, or directory, or a vector of strings specifying files or urls. Alternatively, no entry (default) will open a selection windw..}
@@ -12,6 +17,8 @@ readLipd(path = NULL, jsonOnly = FALSE, parallel = FALSE)
 \item{jsonOnly}{Load data from json only (not lpd file? Typically only used for web connections)}
 
 \item{parallel}{load data in parallel? Default = FALSE. Can greatly increase load time for large collections of data. Uses furrr, so you'll need to run future::plan() before calling the function. e.g. `future::plan(multisession,workers = 8)`}
+
+\item{dont.load.ensemble}{This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in. Default = FALSE}
 }
 \value{
 D : LiPD dataset(s)

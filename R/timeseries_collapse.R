@@ -4,7 +4,7 @@
 #'
 #' @param ts Time series : list
 #' @param force Attempt to collapse time series when lipd ts_storage is not provided: bool
-#'
+#' @param verbose Be verbose while running? (default = NA, which decides based on the number of datasets)
 #' @return D: LiPD data, sorted by dataset name : list
 #' @examples
 #' \dontrun{
@@ -46,9 +46,9 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
     raw_datasets <- ts_storage[[timeID]]
     mode <- ts[[1]][["mode"]]
   }
-if(!verbose){
-  pb <- txtProgressBar(min = 0, max = length(ts),title = "Collapsing to LiPD objects",style = 3)
-}
+  if(!verbose){
+    pb <- txtProgressBar(min = 0, max = length(ts),title = "Collapsing to LiPD objects",style = 3)
+  }
   D <- list()
   tryCatch({
     # Do some collapse stuff
@@ -81,7 +81,9 @@ if(!verbose){
   }, error=function(cond){
     print(paste0("Error: collapseTs: ", cond))
   })
-  close(pb)
+  if(!verbose){
+    close(pb)
+  }
   D <- rm_empty_fields(D)
   # Is there only one dataset after all this? Set it directly in D.
   if(length(D)==1){
@@ -606,13 +608,13 @@ rm_existing_tables <- function(d, pc, whichtables){
 }
 
 #' Put in paleoData and chronData as the base for this dataset using the oroginal dataset data.
-#' @export
 #'
 #' @param force Build dataset without original data from lipd
 #' @param entry ts entry
 #' @param raw_datasets stored loaded data
 #' @param dsn datasetname
 #' @param mode paleo or chron mode
+#' @param verbose Be verbose?
 #'
 #' @return d: Metadata
 put_base_data <- function(entry, raw_datasets, dsn, force, mode, verbose){
@@ -621,7 +623,7 @@ put_base_data <- function(entry, raw_datasets, dsn, force, mode, verbose){
   # We do not have the original datasets OR the user is requesting a collapseTs without using the original datasets
   if(force==TRUE || is.null(raw_datasets)){
     if(verbose){
-    print("Attempting to collapse time series without the original raw datasets. Your results may be missing data.")
+      print("Attempting to collapse time series without the original raw datasets. Your results may be missing data.")
     }
     d[["paleoData"]] <- list()
     d[["chronData"]] <- list()

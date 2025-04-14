@@ -9,7 +9,9 @@ upon loading with geoChronR::mapAgeEnsembleToPaleoData()}
 warn_ensembles_in_paleo(L, ignore.warnings)
 }
 \arguments{
-\item{d}{Metadata}
+\item{L}{LiPD file}
+
+\item{ignore.warnings}{ignore warnings?}
 }
 \value{
 Metadata

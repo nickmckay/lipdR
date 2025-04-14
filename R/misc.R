@@ -153,8 +153,10 @@ get_download_path <- function(){
 #' Get dataSetName from metadata. If one is not found, use filename as fallback.
 #' @export
 #' @keywords internal
-#' @param list d Metadata
+#'
+#' @param d dataset
 #' @param name Filename fallback
+#'
 #' @return char dsn: Dataset name
 get_datasetname <- function(d, name){
   dsn <- name
@@ -377,9 +379,11 @@ get_os <- function() {
 #' Warn people about writing ageEnsembles that have been mapped into paleoData. This is a common procedure in GeoChronR,
 #' and thus will come up, however it can greatly increase the size of the LiPD file, and is easily and quickly replicated
 #' upon loading with geoChronR::mapAgeEnsembleToPaleoData()
-#' @export
+#'
+#' @param L LiPD file
+#' @param ignore.warnings ignore warnings?
+#'
 #' @keywords internal
-#' @param d Metadata
 #' @return Metadata
 warn_ensembles_in_paleo <- function(L, ignore.warnings){
   ans <- NULL
