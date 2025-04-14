@@ -380,10 +380,8 @@ get_os <- function() {
 #' and thus will come up, however it can greatly increase the size of the LiPD file, and is easily and quickly replicated
 #' upon loading with geoChronR::mapAgeEnsembleToPaleoData()
 #'
-#' @param L LiPD file
+#' @param L LiPD object
 #' @param ignore.warnings ignore warnings?
-#'
-#' @keywords internal
 #' @return Metadata
 warn_ensembles_in_paleo <- function(L, ignore.warnings){
   ans <- NULL

@@ -1,9 +1,8 @@
 #' Unzip LiPD file to the temporary directory
 #' @importFrom utils unzip
 #' @keywords internal
-#' @param dir_tmp temperorary directory
 #' @param path Path
-#'
+#' @param dir_tmp Temporary directory
 #' @return none
 unzipper <- function(path, dir_tmp){
   if(length(path)>0){

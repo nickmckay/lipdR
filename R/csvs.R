@@ -58,7 +58,7 @@ getMeasurementTables <- function(L,pc = "all"){
 #' @export
 #' @keywords internal
 #' @param csvs All csv data
-#' @return csv All csv data
+#' @return csvs All csv data
 clean_csv <- function(csvs){
   tryCatch({
     # blanks <- c("", " ", "NA", "NaN", "NAN", "nan")

@@ -17,7 +17,7 @@ put_base_data(entry, raw_datasets, dsn, force, mode, verbose)
 
 \item{mode}{paleo or chron mode}
 
-\item{verbose}{Be verbose?}
+\item{verbose}{detailed console output}
 }
 \value{
 d: Metadata
