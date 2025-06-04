@@ -342,7 +342,8 @@ writeLipd <- function(D,
                       path=NULL,
                       ignore.warnings=FALSE,
                       removeNamesFromLists = FALSE,
-                      jsonOnly = FALSE){
+                      jsonOnly = FALSE,
+                      delete.saved.ensembles = FALSE){
   if(get_os() == "windows" & pkgbuild::find_rtools() == FALSE){
     stop("Rtools package required to use writeLipd. Please go to https://cran.r-project.org/bin/windows/Rtools/ and install Rtools.")
   }
@@ -387,7 +388,8 @@ writeLipd <- function(D,
                  D[["dataSetName"]],
                  ignore.warnings,
                  removeNamesFromLists = removeNamesFromLists,
-                 jsonOnly = jsonOnly)
+                 jsonOnly = jsonOnly,
+                 delete.saved.ensembles = delete.saved.ensembles)
     } else {
       if(!isDirectory(path)){
         path <- dir_original
@@ -415,7 +417,8 @@ writeLipd <- function(D,
                    entry,
                    ignore.warnings,
                    removeNamesFromLists = removeNamesFromLists,
-                   jsonOnly = jsonOnly)
+                   jsonOnly = jsonOnly,
+                   delete.saved.ensembles = delete.saved.ensembles)
 
         if(o != 0){
           error <- dsns[[i]]

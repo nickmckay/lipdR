@@ -39,6 +39,8 @@ lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
         j$savedEnsembles <- ensembleStoreDir
         dir.create(ensembleStoreDir)
         unzipper(path, ensembleStoreDir)
+      }else{
+        j$savedEnsembles <- NULL
       }
       j <- idx_num_to_name(j)
       # j = put_tsids(j)
@@ -65,7 +67,7 @@ lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
 #' @param jsonOnly Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)
 #' @importFrom stats complete.cases
 #' @return none:
-lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFromLists = FALSE,jsonOnly = FALSE){
+lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFromLists = FALSE,jsonOnly = FALSE,delete.saved.ensembles = FALSE){
   tryCatch({
     # dsn <- replace_invalid_chars(dsn)
     if(!jsonOnly){
@@ -93,6 +95,13 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
       write_csv_to_file(dat[["csvs"]],dir_zip)
 
       if(!is.null(j$savedEnsembles)){#then we need to write in the ensembles stored in the this directory
+        if(!dir.exists(j$savedEnsembles)){
+          all_dirs <- list.dirs(file.path(tempdir()))
+          dsidmatch <- which(grepl(j$datasetId,all_dirs))
+          if(length(dsidmatch) > 1){
+            j$savedEnsembles <- sort(all_dirs,decreasing = TRUE)[1]
+          }
+        }
         if(dir.exists(j$savedEnsembles)){
             enscsvs <- list_files_recursive(x = "csv",path = j$savedEnsembles)
             enscsvs <- enscsvs[grepl(pattern = "ensemble",enscsvs)]
@@ -100,10 +109,12 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
               stop(glue::glue("This LiPD file has ensembles that were not loaded in, but there don't appear to be any csv files labeled 'ensemble' in the temporary folder here: {j$savedEnsembles}"))
             }
             purrr::walk(enscsvs,file.copy,to = dir_zip,overwrite = TRUE)
-            if(grepl(j$savedEnsembles, pattern = tempdir())){#make sure it's a tempdir() before deleting
-              unlink(j$savedEnsembles, recursive = TRUE)
+            if(delete.saved.ensembles){
+              if(grepl(j$savedEnsembles, pattern = tempdir())){#make sure it's a tempdir() before deleting
+                unlink(j$savedEnsembles, recursive = TRUE)
+              }
+              j$savedEnsembles <- NULL
             }
-            j$savedEnsembles <- NULL
         }else{
           stop(glue::glue("This LiPD file has ensembles that were not loaded in, and that should be stored in a temporary folder here: {j$savedEnsembles}, however that directory doesn't exist. To write the file without the ensembles, set L$savedEnsembles <- NULL."))
       }

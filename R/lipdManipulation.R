@@ -35,6 +35,8 @@ removeEnsembles <- function(L){
     }
   }
 
+  L$savedEnsembles <- NULL
+
   return(L)
 
 }

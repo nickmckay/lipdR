@@ -665,7 +665,7 @@ lipdSummary <- function(L, skip.table = FALSE){
   cat("################################################################################################\n")
   cat(crayon::bold(glue::glue("\n{L$dataSetName}\n")))
   cat(crayon::bold(glue::glue("\n\n{L$datasetId}\n")))
-  cat(crayon::bold(glue::glue("\n\nv.{L$changelog[[length(L$changelog)]]$version}\n")))
+  cat(crayon::bold(glue::glue("\n\nv{L$datasetVersion}\n")))
   cat("\n################################################################################################\n\n")
 
   #archiveType
