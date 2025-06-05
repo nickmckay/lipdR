@@ -42,7 +42,6 @@ Imports:
 Suggests: 
     tools,
     gt,
-    neotoma2,
     base,
     Rcpp,
     sf,
