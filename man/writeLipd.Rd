@@ -9,7 +9,8 @@ writeLipd(
   path = NULL,
   ignore.warnings = FALSE,
   removeNamesFromLists = FALSE,
-  jsonOnly = FALSE
+  jsonOnly = FALSE,
+  delete.saved.ensembles = FALSE
 )
 }
 \arguments{

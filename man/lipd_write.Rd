@@ -13,7 +13,8 @@ lipd_write(
   dsn,
   ignore.warnings,
   removeNamesFromLists = FALSE,
-  jsonOnly = FALSE
+  jsonOnly = FALSE,
+  delete.saved.ensembles = FALSE
 )
 }
 \arguments{
