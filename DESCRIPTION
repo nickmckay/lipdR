@@ -38,11 +38,11 @@ Imports:
     methods,
     jsonlite,
     sets,
-    neotoma2,
     furrr
 Suggests: 
     tools,
     gt,
+    neotoma2,
     base,
     Rcpp,
     sf,
