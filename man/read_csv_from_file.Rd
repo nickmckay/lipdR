@@ -4,7 +4,10 @@
 \alias{read_csv_from_file}
 \title{Opens the target CSV file and creates a dictionary with one list for each CSV column.}
 \usage{
-read_csv_from_file(path)
+read_csv_from_file(path, dont.load.ensemble = FALSE)
+}
+\arguments{
+\item{dont.load.ensemble}{This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in. Default = FALSE}
 }
 \value{
 data.list List of data for one LiPD file

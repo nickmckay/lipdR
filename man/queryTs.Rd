@@ -2,8 +2,8 @@
 % Please edit documentation in R/timeseries.R
 \name{queryTs}
 \alias{queryTs}
-\title{Find all the time series entries that match a given search expression, 
-and return vector of the indices that match. 
+\title{Find all the time series entries that match a given search expression,
+and return vector of the indices that match.
 indices = queryTs(ts, "archiveType == marine sediment")
 Valid operators : ==, =, <=, >=, <, >}
 \usage{
@@ -20,8 +20,8 @@ queryTs(ts, expression, exact = FALSE)
 idxs: Matching indices : list
 }
 \description{
-Find all the time series entries that match a given search expression, 
-and return vector of the indices that match. 
+Find all the time series entries that match a given search expression,
+and return vector of the indices that match.
 indices = queryTs(ts, "archiveType == marine sediment")
 Valid operators : ==, =, <=, >=, <, >
 }
@@ -32,7 +32,7 @@ ts = [ object1, object2, object3, object4 ]
 
 # Example 1
 idxs = filterTs(ts, "archiveType == marine sediment")
-# result 
+# result
 [1, 3, 4]
 
 # Example 2

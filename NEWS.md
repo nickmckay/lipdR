@@ -1,3 +1,12 @@
+# lipdR 0.6.0
+
+* a handful of improvements and error handling
+* new option for `readLipd()`: `dont.load.ensemble()`. This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in.
+
+# lipdR 0.5.7
+
+* readLipd() now optionally can be parallelized.
+
 # lipdR 0.5.6
 
 * Upgraded csv loading to use data.table::fread instead of readr::read_csv. This is much faster and avoids a version check.

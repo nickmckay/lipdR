@@ -15,7 +15,11 @@ check_match(entry, new_ts, idx, key, op, val, i)
 
 \item{key}{Key  char , The}
 
-\item{exact}{Key match  char. Is the provided key an exact key match or a piece of the key? ie. paleoData_variableName}
+\item{op}{operator}
+
+\item{val}{value}
+
+\item{i}{i}
 }
 \description{
 Compare the query value to the time series value. Does it meet the conditions? If so, add it to the output "new_ts" items.

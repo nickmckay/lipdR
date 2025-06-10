@@ -5,13 +5,15 @@
 
 #' Using the given metadata dictionary, retrieve CSV data from CSV files, and insert the CSV
 #' values into their respective metadata columns.
-#' @export
 #' @keywords internal
+#' @param path Wgere to read the csv file
+#' @param dont.load.ensemble This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in. Default = FALSE
 #' @param d Metadata
+#'
 #' @return list d: Metadata
-merge_csv_metadata <- function(d,path){
+merge_csv_metadata <- function(d,path,dont.load.ensemble = FALSE){
   # Read in CSV data
-  csvs <- read_csv_from_file(path)
+  csvs <- read_csv_from_file(path, dont.load.ensemble = dont.load.ensemble)
   # Run for each section that exists
   if ("paleoData" %in% names(d)){
     d[["paleoData"]] <- merge_csv_section(d[["paleoData"]], "paleo", csvs)
@@ -50,11 +52,11 @@ merge_csv_section <- function(section, crumbs, csvs){
 
 
 #' Merge CSV into each model
-#' @export
 #' @keywords internal
-#' @param  list models Metadata
 #' @param crumbs Crumbs
+#' @param models Models to merge
 #' @param csvs CSV data
+#'
 #' @return list models: Metadata
 merge_csv_model <- function(models, crumbs, csvs){
   tryCatch({
@@ -77,11 +79,11 @@ merge_csv_model <- function(models, crumbs, csvs){
 
 
 #' Merge CSV data into each table
-#' @export
 #' @keywords internal
-#' @param  list models Metadata
 #' @param crumbs Crumbs
+#' @param tables tables to merge
 #' @param csvs CSV data
+#'
 #' @return list models: Metadata
 merge_csv_table <- function(tables, crumbs, csvs){
   tryCatch({

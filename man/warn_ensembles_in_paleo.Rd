@@ -9,7 +9,9 @@ upon loading with geoChronR::mapAgeEnsembleToPaleoData()}
 warn_ensembles_in_paleo(L, ignore.warnings)
 }
 \arguments{
-\item{d}{Metadata}
+\item{L}{LiPD object}
+
+\item{ignore.warnings}{ignore warnings?}
 }
 \value{
 Metadata
@@ -19,4 +21,3 @@ Warn people about writing ageEnsembles that have been mapped into paleoData. Thi
 and thus will come up, however it can greatly increase the size of the LiPD file, and is easily and quickly replicated
 upon loading with geoChronR::mapAgeEnsembleToPaleoData()
 }
-\keyword{internal}

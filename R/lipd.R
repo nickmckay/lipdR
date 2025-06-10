@@ -5,8 +5,9 @@
 #' @keywords internal
 #' @param path Local path OR url location of LiPD file
 #' @param jsonOnly Read data from jsonld only? The data will be included and the json file might be large (Typically only used for web connections)
+#' @param dont.load.ensemble This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in. Default = FALSE
 #' @return j LiPD file data
-lipd_read <- function(path,jsonOnly = FALSE){
+lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
   j <- new_lipd()
   tryCatch({
     if(jsonOnly){
@@ -20,12 +21,25 @@ lipd_read <- function(path,jsonOnly = FALSE){
     }else{
       dir_tmp <- create_tmp_dir()
       unzipper(path, dir_tmp)
+      #any ensemble data?
+      if(dont.load.ensemble & !any(grepl(list_files_recursive("csv",dir_tmp),pattern = "ensemble"))){#only allow this option if there are ensembles
+        dont.load.ensemble <- FALSE
+      }
       data_dir <- find_data_dir(dir_tmp)
       j <- read_jsonld(data_dir)
       # j = rm_empty_doi(j)
       j <- rm_empty_fields(j)
       j <- update_lipd_version(j)
-      j <- merge_csv_metadata(j,data_dir)
+      j <- merge_csv_metadata(j,data_dir,dont.load.ensemble = dont.load.ensemble)
+      if(dont.load.ensemble){#then copy the unzipped lipd appropriately.
+        if(is.null(j$datasetId)){
+          j$datasetId <- createDatasetId()
+        }
+        ensembleStoreDir <- file.path(tempdir(),paste0(j$datasetId,"_",str_replace_all(as.character(lubridate::now()),pattern = "[^0-9-]",replacement = "-")))
+        j$savedEnsembles <- ensembleStoreDir
+        dir.create(ensembleStoreDir)
+        unzipper(path, ensembleStoreDir)
+      }
       j <- idx_num_to_name(j)
       # j = put_tsids(j)
       unlink(dir_tmp, recursive=TRUE)
@@ -60,8 +74,6 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
       dir_zip <- file.path(dir_tmp, "zip")
       dir.create(dir_zip, showWarnings=FALSE)
 
-
-
       #remove names from lists in key spots, since these cause errors in the json
       if(removeNamesFromLists){
         j <- remove_names_from_lists(j)
@@ -79,13 +91,33 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
       j <- tmp[["meta"]]
       dat <- get_csv_from_metadata(j, dsn)
       write_csv_to_file(dat[["csvs"]],dir_zip)
+
+      if(!is.null(j$savedEnsembles)){#then we need to write in the ensembles stored in the this directory
+        if(dir.exists(j$savedEnsembles)){
+            enscsvs <- list_files_recursive(x = "csv",path = j$savedEnsembles)
+            enscsvs <- enscsvs[grepl(pattern = "ensemble",enscsvs)]
+            if(length(enscsvs) == 0){
+              stop(glue::glue("This LiPD file has ensembles that were not loaded in, but there don't appear to be any csv files labeled 'ensemble' in the temporary folder here: {j$savedEnsembles}"))
+            }
+            purrr::walk(enscsvs,file.copy,to = dir_zip,overwrite = TRUE)
+            if(grepl(j$savedEnsembles, pattern = tempdir())){#make sure it's a tempdir() before deleting
+              unlink(j$savedEnsembles, recursive = TRUE)
+            }
+            j$savedEnsembles <- NULL
+        }else{
+          stop(glue::glue("This LiPD file has ensembles that were not loaded in, and that should be stored in a temporary folder here: {j$savedEnsembles}, however that directory doesn't exist. To write the file without the ensembles, set L$savedEnsembles <- NULL."))
+      }
+
+      }
+
+
       j <- rm_empty_fields(dat[["meta"]])
       j <- jsonlite::toJSON(j, pretty=TRUE, auto_unbox = TRUE)
       write(j, file=file.path(dir_zip,"metadata.jsonld"))
 
       #Calculate Payload-Oxum
       OctetCount <- sum(nchar(tmp[["meta"]], type = "bytes"),
-                        nchar(dat[["csvs"]], type = "bytes"))
+                        nchar(dat[["csvs"]], type = "bytes")) #this is slow for big csvs
 
       StreamCount <- length(list.files(dir_zip))
       payloadOxum <- paste(OctetCount, StreamCount, sep = ".")

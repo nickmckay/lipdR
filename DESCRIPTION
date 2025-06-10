@@ -1,7 +1,7 @@
 Package: lipdR
 Type: Package
 Title: LiPD utilities for R
-Version: 0.5.6
+Version: 0.6.0
 Date: 2015-06-05
 Updated: 2022-08-18
 Authors@R: 
@@ -18,7 +18,7 @@ Maintainer: Nicholas McKay <nick@nau.edu>
 Description: Functions to open, modify, analyze, and save LiPD data. 
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 URL: www.lipd.net
 Encoding: UTF-8
 Imports: 
@@ -38,7 +38,8 @@ Imports:
     methods,
     jsonlite,
     sets,
-    neotoma2
+    neotoma2,
+    furrr
 Suggests: 
     tools,
     gt,
@@ -51,7 +52,6 @@ Suggests:
     knitr,
     devtools,
     lubridate,
-    covr,
     rmarkdown,
     testthat,
     googlesheets4

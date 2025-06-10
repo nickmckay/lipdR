@@ -51,6 +51,7 @@ getQueryTable <- function(){
     queryTable <- newQueryTable()
   }
 
+
   assign("queryTable", queryTable, envir = lipdEnv)
   return(queryTable)
 }
@@ -128,10 +129,13 @@ replaceLocalZipMD5 <- function(){
 #' @export
 stripExtension <- function(filename){
   basef <- basename(filename)
-  if(stringr::str_detect(basef,"[.]")){#there's a period, strip
-    dsn <- stringr::str_sub(basef,1,max(stringr::str_locate_all(basef,pattern = "[.]")[[1]][,1])-1)
-  }else{#if not then just return the base name
-    dsn <- basef
+  dsn <- rep(NA,times = length(basef))
+  for(i in 1:length(basef)){
+    if(stringr::str_detect(basef[i],"[.]")){#there's a period, strip
+      dsn[i] <- stringr::str_sub(basef[i],1,max(stringr::str_locate_all(basef[i],pattern = "[.]")[[1]][,1])-1)
+    }else{#if not then just return the base name
+      dsn[i] <- basef[i]
+    }
   }
   return(dsn)
 }
@@ -140,10 +144,14 @@ stripExtension <- function(filename){
 #' @export
 #' @author Chris Heiser
 #' @author Nick McKay
-#' @import stringr
+#' @import stringr furrr purrr
 #' @keywords high-level
+#'
 #' @param path A string specifying a file, url, or directory, or a vector of strings specifying files or urls. Alternatively, no entry (default) will open a selection windw..
 #' @param jsonOnly Load data from json only (not lpd file? Typically only used for web connections)
+#' @param dont.load.ensemble This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in. Default = FALSE
+#' @param parallel load data in parallel? Default = FALSE. Can greatly increase load time for large collections of data. Uses furrr, so you'll need to run future::plan() before calling the function. e.g. `future::plan(multisession,workers = 8)`
+#'
 #' @return D : LiPD dataset(s)
 #' @examples
 #' \dontrun{
@@ -159,7 +167,7 @@ stripExtension <- function(filename){
 #' read in one dataset - with path argument
 #' L <- readLipd("/Users/bobsmith/Desktop/lipd_files/dataset.lpd")
 #' }
-readLipd <- function(path=NULL,jsonOnly = FALSE){
+readLipd <- function(path=NULL,jsonOnly = FALSE,parallel = FALSE,dont.load.ensemble = FALSE){
   D = list()
   # Silence warnings
   options(warn = -1)
@@ -213,6 +221,28 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
 
     errors <- parseFail <- c()
 
+if(parallel & !few){
+
+  FO <- furrr::future_map(entries,purrr::quietly(lipd_read),jsonOnly = jsonOnly,dont.load.ensemble = dont.load.ensemble, .progress = TRUE)
+
+  D <- purrr::map(FO,purrr::pluck,"result")
+  dsn <- purrr::map_chr(D,"dataSetName")
+  names(D) <- dsn
+
+
+  #check for parsing failures
+
+  allWarnings <- purrr::map(FO,purrr::pluck,"warnings") |>
+    purrr::map_chr(.f = \(x) ifelse(any(grepl(pattern = "parsing fail",x)),yes = "parse_fail",no = NA))
+
+  allErrors <- map(FO,purrr::pluck,"messages") |>
+    purrr::map_chr(.f = \(x) ifelse(length(x) > 0,yes = "read_failure",no = NA))
+
+  parseFail <- dsn[which(!is.na(allWarnings))]
+  errors <- dsn[which(!is.na(allErrors))]
+
+}else{#old way, may not be necessary
+
 
     for (i in 1:length(entries)){
       j <- list()
@@ -231,7 +261,7 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
         # assign("directory_source", directory_source, envir = lipdEnv)
       }
 
-      J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly)
+      J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly, dont.load.ensemble = dont.load.ensemble)
       j <- J[[1]]$result
 
       # Get the datasetname
@@ -241,6 +271,7 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
         any(grepl(pattern = "parsing fail",J[[1]]$warnings)),
         yes = dsn,
         no = NA)
+
       errors[i] <- ifelse(
       length(J[[1]]$messages) > 0,
         yes = dsn,
@@ -252,6 +283,9 @@ readLipd <- function(path=NULL,jsonOnly = FALSE){
       # Set the data in D using the datasetname
       D[[dsn]] <- j
     }
+}
+
+
     if(length(D) == 1){
       D <- D[[1]]
       D <- new_lipd(D)
@@ -405,4 +439,18 @@ writeLipd <- function(D,
 
 
 
+}
+
+lipdFromEntry <- function(entry,jsonOnly){
+
+
+  if(!jsonOnly){
+    # Do initial set up
+    dir_source <- dirname(entry)
+    # assign("directory_source", directory_source, envir = lipdEnv)
+  }
+
+  J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly,dont.load.ensemble = dont.load.ensemble)
+
+  return(J)
 }

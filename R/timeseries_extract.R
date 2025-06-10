@@ -51,10 +51,10 @@ extractTs= function(D, whichtables = "all", mode = "paleo"){
     # Run ONE dataset through for processing
     new_entries <- extract(L, whichtables, mode, time_id)
     for(add in 1:length(new_entries)){
-      step1 <- try(new_entries[[add]])
+      step1 <- try(new_entries[[add]],silent = TRUE)
 
       if(methods::is(step1, "try-error")){
-        print("uhoh")
+        #no matching new entries, which is ok?
       }else{
         TS[[length(TS)+1]] <- new_entries[[add]]
       }

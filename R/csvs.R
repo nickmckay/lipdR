@@ -57,8 +57,8 @@ getMeasurementTables <- function(L,pc = "all"){
 #' Replace all blank values in csv matrices
 #' @export
 #' @keywords internal
-#' @param csv All csv data
-#' @return csv All csv data
+#' @param csvs All csv data
+#' @return csvs All csv data
 clean_csv <- function(csvs){
   tryCatch({
     # blanks <- c("", " ", "NA", "NaN", "NAN", "nan")
@@ -83,56 +83,23 @@ clean_csv <- function(csvs){
 #' @importFrom data.table fread
 #' @importFrom utils count.fields
 #' @keywords internal
+#' @param dont.load.ensemble This option doesn't load in ensemble data, but stores them in a temporary directory. If when that object is then written back out using `writeLipd()`, if that temporary directory still exists it will add the ensemble data back in. Default = FALSE
 #' @return data.list List of data for one LiPD file
-read_csv_from_file <- function(path){
-  c <- list_files_recursive("csv",path = path)
-  c.data <- vector(mode="list",length=length(c))
+read_csv_from_file <- function(path,dont.load.ensemble = FALSE){
+  csvs <- list_files_recursive("csv",path = path)
+  if(dont.load.ensemble){
+    w.ens <- which(!grepl(csvs,pattern = "ensemble"))
+    csvs <- csvs[w.ens]
+  }
+  c.data <- vector(mode="list",length=length(csvs))
   # import each csv file
-  for (ci in seq_along(c)){
-    # Robust column type guessing with minimal overhead. Use all rows to guess
-    # but no more.
-    # Get n.rows before reading in file
-
-    n.rows <- length(count.fields(c[ci], blank.lines.skip = FALSE))
-#
-#     if(packageVersion("readr") > 2){
-#       #warning("version 2.0.0 and higher of readr have made this much slower. If you're loadning lots of files consider downgrading to version 1.4.0 until we figure out how to fix this. ")
-#       readr::local_edition(1)
-#     }
-
-    # This is code for version >2.0.0, not necessary if using local_edition
-    # df <- readr::read_csv(c[ci],
-    #                       col_names = FALSE,
-    #                       na = c("nan", "NaN", "NAN", "NA", ""),
-    #                       col_types = readr::cols(),
-    #                       guess_max = n.rows,
-    #                       lazy = FALSE)
-    # }else{
-
-    #this is the local edition method:
-    # df <- readr::read_csv(c[ci],
-    #                       col_names = FALSE,
-    #                       na = c("nan", "NaN", "NAN", "NA", ""),
-    #                       col_types = readr::cols(),
-    #                       guess_max = n.rows,
-    #                       progress = FALSE)
-
-
+  for (ci in seq_along(csvs)){
     #let's try data.table!
-    df <- data.table::fread(c[ci],
+    df <- data.table::fread(csvs[ci],
                             header = FALSE,
                             na.strings =  c("nan", "NaN", "NAN", "NA", ""),
                             showProgress = FALSE)
 
-    #check column types #nope, not now.
-
-
-    # #deal with missing characters
-    # blanks <- c(""," ", "NA", "NaN", "NAN", "nan","")
-    # blanks <- "\\s"
-    # censor <- function(x){stringr::str_replace(x,  c("", " ", "NaN", "NAN", "nan"), "NA")}
-    # dplyr::mutate_all(df, dplyr::funs(censor))
-    #
     #remove rows that are all NAs
     goodRows = which(rowSums(!is.na(df))>0)
     # If there are 0 good rows, then we need to make 8 rows of NA's
@@ -152,7 +119,7 @@ read_csv_from_file <- function(path){
 
   }
 
-  names(c.data) <- basename(c)
+  names(c.data) <- basename(csvs)
 
   return(c.data)
 }
@@ -232,6 +199,7 @@ write_csv_to_file <- function(csvs,path){
       if (!is.null(tmp)){
         success <- tryCatch({
           write.table(tmp, file=file.path(path,entry), col.names = FALSE, row.names=FALSE, sep=",")
+          #data.table::fwrite(data.table::as.data.table(tmp),file.path(path,entry),col.names = FALSE, row.names=FALSE, sep=",")
           success <- TRUE
         }, error=function(cond){
           print(paste0("Error: write_csv_to_file: write.table: ", entry, cond))
