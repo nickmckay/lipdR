@@ -221,69 +221,66 @@ readLipd <- function(path=NULL,jsonOnly = FALSE,parallel = FALSE,dont.load.ensem
 
     errors <- parseFail <- c()
 
-if(parallel & !few){
+    if(parallel & !few){
 
-  FO <- furrr::future_map(entries,purrr::quietly(lipd_read),jsonOnly = jsonOnly,dont.load.ensemble = dont.load.ensemble, .progress = TRUE)
+      FO <- furrr::future_map(entries,purrr::quietly(lipd_read),jsonOnly = jsonOnly,dont.load.ensemble = dont.load.ensemble, .progress = TRUE)
 
-  D <- purrr::map(FO,purrr::pluck,"result")
-  dsn <- purrr::map_chr(D,"dataSetName")
-  names(D) <- dsn
-
-
-  #check for parsing failures
-
-  allWarnings <- purrr::map(FO,purrr::pluck,"warnings") |>
-    purrr::map_chr(.f = \(x) ifelse(any(grepl(pattern = "parsing fail",x)),yes = "parse_fail",no = NA))
-
-  allErrors <- map(FO,purrr::pluck,"messages") |>
-    purrr::map_chr(.f = \(x) ifelse(length(x) > 0,yes = "read_failure",no = NA))
-
-  parseFail <- dsn[which(!is.na(allWarnings))]
-  errors <- dsn[which(!is.na(allErrors))]
-
-}else{#old way, may not be necessary
+      D <- purrr::map(FO,purrr::pluck,"result")
+      dsn <- purrr::map_chr(D,"dataSetName")
+      names(D) <- dsn
 
 
-    for (i in 1:length(entries)){
-      j <- list()
-      # Entry is one file path
-      entry <- entries[[i]]
+      #check for parsing failures
 
-      if(few){
-        print(paste0("reading: ", basename(entry)))
-      }else{
-        setTxtProgressBar(pb, i)
+      allWarnings <- purrr::map(FO,purrr::pluck,"warnings") |>
+        purrr::map_chr(.f = \(x) ifelse(any(grepl(pattern = "parsing fail",x)),yes = "parse_fail",no = NA))
+
+      allErrors <- map(FO,purrr::pluck,"messages") |>
+        purrr::map_chr(.f = \(x) ifelse(length(x) > 0,yes = "read_failure",no = NA))
+
+      parseFail <- dsn[which(!is.na(allWarnings))]
+      errors <- dsn[which(!is.na(allErrors))]
+
+    }else{#old way, may not be necessary
+
+
+      for (i in 1:length(entries)){
+        j <- list()
+        # Entry is one file path
+        entry <- entries[[i]]
+
+        if(few){
+          print(paste0("reading: ", basename(entry)))
+        }else{
+          setTxtProgressBar(pb, i)
+        }
+
+        if(!jsonOnly){
+          # Do initial set up
+          dir_source <- dirname(entry)
+          # assign("directory_source", directory_source, envir = lipdEnv)
+        }
+
+        J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly, dont.load.ensemble = dont.load.ensemble)
+        j <- J[[1]]$result
+
+        # Get the datasetname
+        dsn <- get_datasetname(j, stripExtension(entry))
+
+        parseFail[i] <- ifelse(
+          any(grepl(pattern = "parsing fail",J[[1]]$warnings)),
+          yes = dsn,
+          no = NA)
+
+        errors[i] <- ifelse(
+          length(J[[1]]$messages) > 0,
+          yes = dsn,
+          no = NA)
+
+        # Set the data in D using the datasetname
+        D[[dsn]] <- j
       }
-
-      if(!jsonOnly){
-        # Do initial set up
-        dir_source <- dirname(entry)
-        # assign("directory_source", directory_source, envir = lipdEnv)
-      }
-
-      J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly, dont.load.ensemble = dont.load.ensemble)
-      j <- J[[1]]$result
-
-      # Get the datasetname
-      dsn <- get_datasetname(j, stripExtension(entry))
-
-      parseFail[i] <- ifelse(
-        any(grepl(pattern = "parsing fail",J[[1]]$warnings)),
-        yes = dsn,
-        no = NA)
-
-      errors[i] <- ifelse(
-      length(J[[1]]$messages) > 0,
-        yes = dsn,
-        no = NA)
-
-      # assign most recent version to datasetVersion
-      j$datasetVersion <- getVersion(j)
-
-      # Set the data in D using the datasetname
-      D[[dsn]] <- j
     }
-}
 
 
     if(length(D) == 1){
@@ -412,13 +409,13 @@ writeLipd <- function(D,
         }
         entry <- dsns[[i]]
         o <- lipd_write(D[[entry]],
-                   dir_original,
-                   path,
-                   entry,
-                   ignore.warnings,
-                   removeNamesFromLists = removeNamesFromLists,
-                   jsonOnly = jsonOnly,
-                   delete.saved.ensembles = delete.saved.ensembles)
+                        dir_original,
+                        path,
+                        entry,
+                        ignore.warnings,
+                        removeNamesFromLists = removeNamesFromLists,
+                        jsonOnly = jsonOnly,
+                        delete.saved.ensembles = delete.saved.ensembles)
 
         if(o != 0){
           error <- dsns[[i]]

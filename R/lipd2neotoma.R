@@ -53,7 +53,7 @@ lipd2neotoma <- function(L){
         for(h in which(pullAge)){
           ans1 <- 0
           while (!ans1 %in% c("y","n")){
-            ans1 <- readline(prompt = paste0("Is this your 'age' column header? ", sampleTabNames[h], " (y/n): "))
+            ans1 <- readlineSafe(prompt = paste0("Is this your 'age' column header? ", sampleTabNames[h], " (y/n): "),default = "y")
             if (ans1 == "y"){
               var1 <- h
               message(paste0("Okay, setting 'age' column to ", sampleTabNames[var1]))
@@ -67,8 +67,8 @@ lipd2neotoma <- function(L){
             message("column headers: ")
             lapply(1:length(sampleTabNames), function(x) cat(paste0(x, " ", sampleTabNames[x], "\n")))
 
-            var1 <- readline(prompt = paste0("Enter the index corresponding to your 'age' column from 1 to ", length(pullAge),
-                                            ". Enter 0 if no 'age' column: "))
+            var1 <- readlineSafe(prompt = paste0("Enter the index corresponding to your 'age' column from 1 to ", length(pullAge),
+                                            ". Enter 0 if no 'age' column: "), default = 1)
             var1 <- as.numeric(var1)
             if (!is.na(var1)){
               if (var1 >= 0 & var1 <= length(pullAge)){
@@ -92,7 +92,7 @@ lipd2neotoma <- function(L){
         for(h in which(pullDepth)){
           ans1 <- 0
           while (!ans1 %in% c("y","n")){
-            ans1 <- readline(prompt = paste0("Is this your 'depth' column header? ", sampleTabNames[h], " (y/n): "))
+            ans1 <- readlineSafe(prompt = paste0("Is this your 'depth' column header? ", sampleTabNames[h], " (y/n): "),default = "y")
             if (ans1 == "y"){
               var2 <- h
               message(paste0("Okay, setting 'depth' column to ", sampleTabNames[var2]))
@@ -106,8 +106,8 @@ lipd2neotoma <- function(L){
             message("column headers: ")
             lapply(1:length(sampleTabNames), function(x) cat(paste0(x, " ", sampleTabNames[x], "\n")))
 
-            var2 <- readline(prompt = paste0("Enter the index corresponding to your 'depth' column from 1 to ", length(pullAge),
-                                             ". Enter 0 if no 'depth' column: "))
+            var2 <- readlineSafe(prompt = paste0("Enter the index corresponding to your 'depth' column from 1 to ", length(pullAge),
+                                             ". Enter 0 if no 'depth' column: "), default = 1)
             var2 <- as.numeric(var2)
             if (!is.na(var2)){
               if (var1 >= 0 & var2 <= length(pullAge)){

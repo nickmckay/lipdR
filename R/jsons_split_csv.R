@@ -125,9 +125,19 @@ get_csv_from_table <- function(tables, crumbs, csvs){
       csvs[[crumbs_2]] <- tmp[["csvs"]]
       # overwrite old table
       tables[[i]]<- tmp[["meta"]]
-      # overwrite old filename
-      tables[[i]][["filename"]]<- crumbs_2
-      tables[[i]][["tableName"]] <- strsplit(crumbs_3, "\\.")[[1]][[2]]
+      if(is.null(tables[[i]]$tableName) | all(is.na(tables[[i]]$tableName))){
+        # overwrite old filename
+        tables[[i]][["filename"]]<- crumbs_2
+        # check for table name
+        tables[[i]][["tableName"]] <- strsplit(crumbs_3, "\\.")[[1]][[2]]
+      }else{
+        #create a regex pattern to find everything between the two periods
+        pattern <- "(?<=\\.)[^.]+(?=\\.)"
+        tables[[i]][["filename"]] <- stringr::str_replace(crumbs_2,pattern = pattern,replacement = tables[[i]]$tableName)
+        #which name to change?
+        tc <- which(grepl(x = names(csvs),pattern = crumbs_2,fixed = TRUE))
+        names(csvs)[tc] <- tables[[i]][["filename"]]
+      }
     }
   }, error=function(cond){
     print(paste0("Error: get_csv_from_table: ", cond))

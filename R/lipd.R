@@ -70,6 +70,9 @@ lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
 lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFromLists = FALSE,jsonOnly = FALSE,delete.saved.ensembles = FALSE){
   tryCatch({
     # dsn <- replace_invalid_chars(dsn)
+    if(is.null(j$datasetVersion)){
+      j$datasetVersion <- "0.0.0"
+    }
     if(!jsonOnly){
       dir_tmp <- create_tmp_dir()
       # Create a lipd dir

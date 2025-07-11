@@ -38,7 +38,8 @@ Imports:
     methods,
     jsonlite,
     sets,
-    furrr
+    furrr,
+    digest
 Suggests: 
     tools,
     gt,

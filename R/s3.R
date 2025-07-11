@@ -104,7 +104,7 @@ as.lipd <- function(x){
     x <- quiet(collapseTs(x,force = "if necessary"))
 
     if(any("dataSetName" %in% names(x))){
-      structure(x,class = c("multi_lipd",class(list()))) %>%
+      structure(x,class = c("lipd",class(list()))) %>%
         return()
     }else{
       stop("Tried to convert from a lipd_ts to a multi_lipd, but it looks like more than one dataset was represented, so cannot convert this to lipd class. Perhaps you want as.multiLipd?")

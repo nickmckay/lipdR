@@ -26,6 +26,7 @@ read_jsonld <- function(path){
       j.string.clean <- gsub("[\001-\037]", "", j.string)
       # Parse the jsonld string data as a list
       j.data <- jsonlite::fromJSON(j.string.clean, simplifyDataFrame = FALSE)
+      j.data$datasetVersion <- getVersion(j.data)
     }, error=function(cond){
       print(paste0("Error: read_jsonld: Unable to import metadata in JSONLD file. Check that it is valid JSON: ", cond))
     })

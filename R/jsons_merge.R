@@ -93,8 +93,10 @@ merge_csv_table <- function(tables, crumbs, csvs){
         csv.cols <- csvs[[filename]]
         meta.cols <- tables[[i]][["columns"]]
         tables[[i]][["columns"]] <- merge_csv_columns(csv.cols, meta.cols)
-        # insert crumbs. this is the standardized table name
-        tables[[i]][["tableName"]] <- paste0(crumbs, i)
+        if(is.null(tables[[i]][["tableName"]])){
+          # insert crumbs. this is the standardized table name
+          tables[[i]][["tableName"]] <- paste0(crumbs, i)
+        }
         # remove filename. we have the values imported, so we dont need it anymore. we'll make a new standarized one!
         tables[[i]][["filename"]] <- NULL
       }

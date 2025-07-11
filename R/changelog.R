@@ -52,6 +52,7 @@ tibDiff <- function(tcol){
 #' @param good.base A vector of base level metadata to check
 #' @param exclude.paleo A vector of paleo metadata to exclude
 #' @param exclude.chron A vector of chron metadata to exclude
+#' @importFrom digest digest
 #'
 #' @return a changelog data frame
 #' @export
@@ -76,9 +77,8 @@ createChangelog <- function(Lold,
   ct <- c() #initialize change type
   cv <- c() #initialize change variable
 
-
   #first, let's just make sure the objects are different sizes
-  if(object.size(Lold) != object.size(Ln)){
+  if(digest::digest(Lold, algo = "md5") != digest::digest(Lnew, algo = "md5")){
 
 
     checked.base <- FALSE #initialize
@@ -396,20 +396,22 @@ createChangelog <- function(Lold,
       # compare the paleoData_values --------------------------------------------
       for(i in 1:nrow(tn)){
         tov <- to$paleoData_values[[i]]
-        tov[is.na(tov)] <- -999
-        tnv <- tn$paleoData_values[[i]]
-        tnv[is.na(tnv)] <- -999
-
-        if(is.character(tov) & is.character(tnv)){
-          valChange <- !all(tov == tnv)
-        }else if(is.numeric(tov) & is.numeric(tnv)){
-          valChange <- !all(dplyr::near(tov,tnv))
+        if(is.character(tov)){
+          tov[is.na(tov)] <- "-999"
         }else{
-          warning("it seems like the old and new values are of different classes, which is bad. Converting to character for comparison")
-          valChange <- !all(as.character(tov) == as.character(tnv))
+          tov[is.na(tov)] <- -999
         }
 
-        if(valChange){
+        tnv <- tn$paleoData_values[[i]]
+        if(is.character(tnv)){
+          tnv[is.na(tnv)] <- "-999"
+        }else{
+          tnv[is.na(tnv)] <- -999
+        }
+
+        valSizeChange <- length(tov) != length(tnv)
+
+        if(valSizeChange){
           tsi <- tn$paleoData_TSid[i]
           tsname <- tn$paleoData_variableName[i]
           cl <- c(cl,
@@ -417,7 +419,17 @@ createChangelog <- function(Lold,
           ct <- c(ct,"PaleoData values")
           cv <- c(cv,"paleoData_values")
         }else{
-          if(!all(tov == tnv)){
+
+          if(is.character(tov) & is.character(tnv)){
+            valChange <- !all(tov == tnv)
+          }else if(is.numeric(tov) & is.numeric(tnv)){
+            valChange <- !all(dplyr::near(tov,tnv))
+          }else{
+            warning("it seems like the old and new values are of different classes, which is bad. Converting to character for comparison")
+            valChange <- !all(as.character(tov) == as.character(tnv))
+          }
+
+          if(valChange){
             tsi <- tn$paleoData_TSid[i]
             tsname <- tn$paleoData_variableName[i]
             cl <- c(cl,
@@ -718,37 +730,46 @@ createChangelog <- function(Lold,
 
       # compare the chronData_values --------------------------------------------
       for(i in 1:nrow(tn)){
-        #change NAs to allow testing
         tov <- to$chronData_values[[i]]
-        tov[is.na(tov)] <- -999
-        tnv <- tn$chronData_values[[i]]
-        tnv[is.na(tnv)] <- -999
-
-        if(is.character(tov) & is.character(tnv)){
-          valChange <- !all(tov == tnv)
-        }else if(is.numeric(tov) & is.numeric(tnv)){
-          valChange <- !all(dplyr::near(tov,tnv))
+        if(is.character(tov)){
+          tov[is.na(tov)] <- "-999"
         }else{
-
-          warning("it seems like the old and new values are of different classes, which is bad. Converting to character for comparison")
-          valChange <- !all(as.character(tov) == as.character(tnv))
-
+          tov[is.na(tov)] <- -999
         }
 
-        if(valChange){
+        tnv <- tn$chronData_values[[i]]
+        if(is.character(tnv)){
+          tnv[is.na(tnv)] <- "-999"
+        }else{
+          tnv[is.na(tnv)] <- -999
+        }
+
+        valSizeChange <- length(tov) != length(tnv)
+
+        if(valSizeChange){
           tsi <- tn$chronData_TSid[i]
           tsname <- tn$chronData_variableName[i]
           cl <- c(cl,
                   glue::glue("{tsname} ({tsi}): The size of the chronData_values have changed, from {length(tov)} to {length(tnv)} entries."))
-          ct <- c(ct,"ChronData values")
+          ct <- c(ct,"chronData values")
           cv <- c(cv,"chronData_values")
         }else{
-          if(!all(tov == tnv)){
+
+          if(is.character(tov) & is.character(tnv)){
+            valChange <- !all(tov == tnv)
+          }else if(is.numeric(tov) & is.numeric(tnv)){
+            valChange <- !all(dplyr::near(tov,tnv))
+          }else{
+            warning("it seems like the old and new values are of different classes, which is bad. Converting to character for comparison")
+            valChange <- !all(as.character(tov) == as.character(tnv))
+          }
+
+          if(valChange){
             tsi <- tn$chronData_TSid[i]
             tsname <- tn$chronData_variableName[i]
             cl <- c(cl,
                     glue::glue("{tsname} ({tsi}): The chronData_values have changed"))
-            ct <- c(ct,"ChronData values")
+            ct <- c(ct,"chronData values")
             cv <- c(cv,"chronData_values")
           }
         }
@@ -1019,6 +1040,12 @@ createMarkdownChangelog <- function(L){
 
 }
 
+#' Create a markdown file of a changelog
+#'
+#' @param scl a changelog for a single file
+#'
+#' @returns markdown
+#' @export
 createSingleMarkdownChangelog<- function(scl){
   #don;t show fourth digit version
   #printvers <- as.numeric_version(as.character(scl$version)[1,1:3])

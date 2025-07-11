@@ -15,6 +15,11 @@ validLipd <- function(L,allow.ensemble = TRUE){
   }
 
 
+  #check unique TSids
+  if(!hasUniqueTSids(L)){
+    print(glue::glue("{L$dataSetName}: has duplicated TSids. This is not allowed"))
+    good <- FALSE
+  }
 
   #check root
   rootRequired <- c("archiveType",
@@ -475,4 +480,10 @@ variableLength <- function(VL){
     return(length(VL$values))
   }
 
+}
+
+
+hasUniqueTSids <- function(L){
+  attsid <- extract_by_key(L,"TSid")
+  return(!any(duplicated(attsid)))
 }

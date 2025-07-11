@@ -49,7 +49,8 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
   if(!verbose){
     pb <- txtProgressBar(min = 0, max = length(ts),title = "Collapsing to LiPD objects",style = 3)
   }
-  D <- list()
+  unique_dsn <- unique(pullTsVariable(ts, "dataSetName", strict.search = TRUE))
+  D <- vector(mode = "list",length = length(unique_dsn))
   tryCatch({
     # Do some collapse stuff
     for(i in 1:length(ts)){
@@ -75,6 +76,8 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
       }
       # Use the time series entry to overwrite the (old) raw data for this column
       D[[dsn]] <- collapse_table(D[[dsn]], ts[[i]], pc)
+
+      D[[dsn]] <- fixPubAuthorList(D[[dsn]])
 
       D[[dsn]] <- structure(D[[dsn]],class = c("lipd",class(list())))
     }
@@ -102,7 +105,7 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
 is_include_key <- function(key, pc){
   exclude <- c("mode", "whichtables", "paleoNumber", "chronNumber", "tableNumber", "modelNumber", "timeID", "tableType",
                "raw", "depth", "depthUnits", "age", "ageUnits", "interpretation", "calibration", "hasResolution","inCompilationBeta", "physicalSample",
-               "depthUnits","year","yearUnits")
+               "depthUnits","year","yearUnits","compSpecificMeta")
   match_idx <- stringr::str_match_all(key, "(\\w+)(\\d+)[_](\\w+)")
   match_non_idx <- stringr::str_match_all(key, "(\\w+)[_](\\w+)")
 
@@ -240,7 +243,9 @@ collapse_column <- function(table, entry, pc){
   res <- list()
   phys <- list()
   inComp <- list()
-  include <- c("paleoData", "chronData", "interpretation", "calibration", "hasResolution","inCompilationBeta")
+  inCompBeta <- list()
+  csm <- list()
+  include <- c("paleoData", "chronData", "interpretation", "calibration", "hasResolution","inCompilationBeta","compSpecificMeta")
   exclude <- c('filename', 'googleWorkSheetKey', 'tableName', "missingValue", "tableMD5", "dataMD5", "googWorkSheetKey", "pub", "geo")
   ts_keys <- names(entry)
 
@@ -257,7 +262,11 @@ collapse_column <- function(table, entry, pc){
       } else if (grepl("physicalSample", curr_key)){
         phys <- collapse_block(entry, phys, curr_key, pc)
       } else if (grepl("inCompilationBeta", curr_key)){
+        inCompBeta <- collapse_block_indexed(entry, inCompBeta, curr_key)
+      } else if (grepl("inCompilation", curr_key)){
         inComp <- collapse_block_indexed(entry, inComp, curr_key)
+      } else if (grepl("compSpecificMeta", curr_key)){
+        csm <- collapse_block_indexed(entry, csm, curr_key)
       } else if (grepl(pc, curr_key)){
         new_column <- collapse_block(entry, new_column, curr_key, pc)
       }
@@ -276,7 +285,13 @@ collapse_column <- function(table, entry, pc){
       new_column[["physicalSample"]] <- phys
     }
     if(!isNullOb(inComp)){
-      new_column[["inCompilationBeta"]] <- inComp
+      new_column[["inCompilation"]] <- inComp
+    }
+    if(!isNullOb(inCompBeta)){
+      new_column[["inCompilationBeta"]] <- inCompBeta
+    }
+    if(!isNullOb(csm)){
+      new_column[["compSpecificMetadata"]] <- csm
     }
     vn <- get_vn(new_column[["variableName"]], names(table))
     # Set the new column into the table using the variableName
@@ -580,8 +595,8 @@ rm_existing_tables <- function(d, pc, whichtables){
         if(whichtables %in% c("ens", "summ","all")){
           if("model" %in% names(d[[pc]][[i]])){
             for(j in 1:length(d[[pc]][[i]][["model"]])){
-              if(whichtables %in% c("summ")){
-                if("summaryTable" %in% d[[pc]][[i]][["model"]][[j]]){
+              if(whichtables %in% c("summ","all")){
+                if("summaryTable" %in% names(d[[pc]][[i]][["model"]][[j]])){
                   for(k in 1:length(d[[pc]][[i]][["model"]][[j]][["summaryTable"]])){
                     d[[pc]][[i]][["model"]][[j]][["summaryTable"]][[k]] <- list()
                   }

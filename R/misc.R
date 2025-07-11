@@ -1,3 +1,60 @@
+
+#' Recursively find all values for a specific key in a nested list.
+#'
+#' @param lst The list to search through.
+#' @param key The character name of the key to find.
+#' @import purrr
+#' @author Gemini, Nick McKay
+#' @return A vector containing all the values found for the specified key.
+#' @export
+#'
+#' @examples
+#' example_list <- list(
+#'   a = 1,
+#'   b = list(
+#'     c = 2,
+#'     target_key = "value1"
+#'   ),
+#'   d = list(
+#'     e = list(
+#'       f = 3,
+#'       target_key = "value2"
+#'     )
+#'   ),
+#'   target_key = "value3",
+#'   g = list(h = 4)
+#' )
+#'
+#' extract_by_key(example_list, "target_key")
+#' #> [1] "value3" "value1" "value2"
+
+extract_by_key <- function(lst, key) {
+
+  # Use purrr::reduce to recursively walk through the list
+  purrr::reduce(lst, function(acc, elem) {
+
+    # This is the recursive part:
+    # If the current element is another list, call this function on it.
+    if (is.list(elem)) {
+      # c() combines the results from deeper levels with what we've found so far.
+      return(c(acc, extract_by_key(elem, key)))
+    }
+
+    # This is the base case for the recursion:
+    # If the element is not a list, check if it has the named key.
+    # We use `names(elem)` in case the element is a named vector.
+    if (key %in% names(elem)) {
+      # If we find the key, add its value to our accumulator.
+      return(c(acc, elem[[key]]))
+    }
+
+    # If the key is not found in this element, just return the accumulator.
+    return(acc)
+
+  }, .init = lst[[key]]) # Initialize with the value if key is at the top level
+}
+
+
 #' Create the range for ensemble table "number" field
 #' @export
 #' @keywords internal

@@ -197,6 +197,10 @@ write_csv_to_file <- function(csvs,path){
         }
       }
       if (!is.null(tmp)){
+        if(file.exists(file.path(path,entry))){
+          stop("This csv file already exists, you likely have duplicated table names.")
+        }
+
         success <- tryCatch({
           write.table(tmp, file=file.path(path,entry), col.names = FALSE, row.names=FALSE, sep=",")
           #data.table::fwrite(data.table::as.data.table(tmp),file.path(path,entry),col.names = FALSE, row.names=FALSE, sep=",")
