@@ -182,9 +182,26 @@ extract_special= function(table_data, current){
     nameToUse <- specialColumns[which(tolower(names(table_data)[sc]) == tolower(specialColumns))]
     current[[paste0(nameToUse,"Units")]] = table_data[[sc]]$units
     current[[nameToUse]] = table_data[[sc]]$values
+
+    #also assign time and time metadata, calculate resolution, and time max/min
   }
   return(current)
 }
+
+#
+# createTimeMetadata <- function(values, variableName, units){
+#   #figure out what it is first
+#
+#   hu <- heuristi
+#
+#   #case1
+#   if(variableName == "age" * uits)
+#
+#   #year AD/CE
+#
+#
+# }
+
 
 extract_column=function(column, current_fork, pc){
 

@@ -130,11 +130,13 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
       write(j, file=file.path(dir_zip,"metadata.jsonld"))
 
       #Calculate Payload-Oxum
-      OctetCount <- sum(nchar(tmp[["meta"]], type = "bytes"),
-                        nchar(dat[["csvs"]], type = "bytes")) #this is slow for big csvs
 
-      StreamCount <- length(list.files(dir_zip))
-      payloadOxum <- paste(OctetCount, StreamCount, sep = ".")
+      #Omitting for speed
+      # OctetCount <- sum(nchar(tmp[["meta"]], type = "bytes"),
+      #                   nchar(dat[["csvs"]], type = "width")) #this is slow for big csvs
+      #
+      # StreamCount <- length(list.files(dir_zip))
+      # payloadOxum <- paste(OctetCount, StreamCount, sep = ".")
 
 
       #create data subfolder and move payload files
@@ -163,8 +165,8 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
 
       #write bag-info.txt
       write(paste0("Bag-Software-Agent: lipd_write <https://github.com/nickmckay/lipdR/tree/main/R/lipd.R>\n",
-                   "Bagging-Date: ", Sys.Date(), "\n",
-                   "Payload-Oxum: ", payloadOxum),
+                   "Bagging-Date: ", Sys.Date(), "\n"),
+  #                 "Payload-Oxum: ", payloadOxum), #omitting for speed
             file=file.path(dir_bag,"bag-info.txt"))
 
       #write MD5 tag manifest

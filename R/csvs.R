@@ -146,6 +146,15 @@ write_csv_to_file <- function(csvs,path){
       entry <- entries[[f]]
       if(!isNullOb(csvs[[entry]])){
         # Loop over csv cols
+        #preallocate table
+        allLengths <- map_dbl(csvs[[entry]],length)
+        nrcsv <- unique(allLengths)
+        if(length(nrcsv) > 1){
+          stop("All columns must be the same length")
+        }
+
+        tmp <- matrix(nrow = nrcsv, ncol = length(csvs[[entry]]))
+
         for (i in 1:length(csvs[[entry]])){
           # one column of values
           col <- csvs[[entry]][[i]]
@@ -161,39 +170,42 @@ write_csv_to_file <- function(csvs,path){
           # replace all NA values with "NaN" before writing to file
           col <- replace(col, is.na(col), "NaN")
 
+
+          tmp[,i] <- col
+          #old appending strategy
           # check if tmp matrix has data or is fresh.
-          if(all(is.na(tmp))){
-            # fresh, so just bind the col itself
-            tmp <- tryCatch({
-              cbind(col, deparse.level = 0)
-            }, error = function(cond){
-              print(sprintf("cbind error: %s", entry))
-              return(NULL)
-            })
-          }else{
-            # not fresh, bind the existing with the col
-            tmp <- tryCatch({
-              cbind(tmp, col, deparse.level = 0)
-            }, error = function(cond){
-              if(is.matrix(col)){
-                tmp <- tryCatch({
-                  col <- t(col)
-                  cbind(tmp, col, deparse.level = 0)
-                }, error = function(cond){
-                  print(sprintf("cbind error: %s", entry))
-                  return(NULL)
-                })
-              }
-              else{
-                return(NULL)
-              }
-            })
-            # cbind didn't work here, it's possible the matrix is transposed wrong.
-            # give it another try after transposing it.
-            # if (is.null(tmp) & is.matrix(col)){
-            #
-            # }
-          }
+          # if(all(is.na(tmp))){
+          #   # fresh, so just bind the col itself
+          #   tmp <- tryCatch({
+          #     cbind(col, deparse.level = 0)
+          #   }, error = function(cond){
+          #     print(sprintf("cbind error: %s", entry))
+          #     return(NULL)
+          #   })
+          # }else{
+          #   # not fresh, bind the existing with the col
+          #   tmp <- tryCatch({
+          #     cbind(tmp, col, deparse.level = 0)
+          #   }, error = function(cond){
+          #     if(is.matrix(col)){
+          #       tmp <- tryCatch({
+          #         col <- t(col)
+          #         cbind(tmp, col, deparse.level = 0)
+          #       }, error = function(cond){
+          #         print(sprintf("cbind error: %s", entry))
+          #         return(NULL)
+          #       })
+          #     }
+          #     else{
+          #       return(NULL)
+          #     }
+          #   })
+          #   # cbind didn't work here, it's possible the matrix is transposed wrong.
+          #   # give it another try after transposing it.
+          #   # if (is.null(tmp) & is.matrix(col)){
+          #   #
+          #   # }
+          # }
         }
       }
       if (!is.null(tmp)){
@@ -202,8 +214,8 @@ write_csv_to_file <- function(csvs,path){
         }
 
         success <- tryCatch({
-          write.table(tmp, file=file.path(path,entry), col.names = FALSE, row.names=FALSE, sep=",")
-          #data.table::fwrite(data.table::as.data.table(tmp),file.path(path,entry),col.names = FALSE, row.names=FALSE, sep=",")
+          #write.table(tmp, file=file.path(path,entry), col.names = FALSE, row.names=FALSE, sep=",")
+          data.table::fwrite(data.table::as.data.table(tmp),file.path(path,entry),col.names = FALSE, row.names=FALSE, sep=",")
           success <- TRUE
         }, error=function(cond){
           print(paste0("Error: write_csv_to_file: write.table: ", entry, cond))
