@@ -171,7 +171,7 @@ validGeo <- function(L){
   }
 
 
-  mustNumeric <- c("latitude","longitude","elevation","sisalSiteId")
+  mustNumeric <- c("latitude","longitude","elevation")
 
   for(mn in mustNumeric){
     if(mn %in% names(geo)){
@@ -188,6 +188,7 @@ validGeo <- function(L){
   probablyOk <- stringr::str_detect(tolower(otherNames),"depth") |
     stringr::str_detect(tolower(otherNames),"volume") |
     stringr::str_detect(tolower(otherNames),"catchment") |
+    stringr::str_detect(tolower(otherNames),"sisalsiteid") |
     stringr::str_detect(tolower(otherNames),"area")
 
   if(any(probablyOk)){
