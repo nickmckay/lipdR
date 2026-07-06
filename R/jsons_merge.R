@@ -116,25 +116,49 @@ merge_csv_table <- function(tables, crumbs, csvs){
 #' @return list meta: Table metadata
 merge_csv_columns <- function(csvs, meta){
   tryCatch({
+    total_csv_cols <- length(csvs)
+    max_claimed <- 0L
+
     for (i in 1:length(meta)){
-      # special case for ensemble tables - a "column" that holds many columns
-      if (is.list(meta[[i]][["number"]]) | length(meta[[i]][["number"]]) > 1){
-        tmp <- list()
-        nums <- meta[[i]][["number"]]
-        for (j in 1:length(nums)){
-          tmp[[j]] <- csvs[[nums[[j]]]]
+      num <- meta[[i]][["number"]]
+
+      if (is.null(num)){
+        # Count how many null-number columns remain after position i
+        after_indices <- if (i < length(meta)) (i + 1):length(meta) else integer(0)
+        null_after <- sum(purrr::map_lgl(after_indices, function(k) is.null(meta[[k]][["number"]])))
+        unclaimed <- total_csv_cols - max_claimed
+
+        if (null_after == 0L && unclaimed > 0L){
+          # This is the last null-number column and CSV columns remain.
+          # Assign all unclaimed CSV columns (single or ensemble).
+          if (unclaimed == 1L){
+            num <- max_claimed + 1L
+          } else {
+            num <- as.list(seq(max_claimed + 1L, total_csv_cols))
+          }
+          meta[[i]][["number"]] <- num
         }
-        meta[[i]][["values"]] <- matrix(unlist(tmp), ncol=length(tmp))
-        # meta[[i]][["values"]] <- as.matrix(as.data.frame(tmp))
-        # turn the columns into a matrix - transpose
-        # meta[[i]][["values"]] <- t(do.call(rbind, tmp))
-      } else {
-        idx <- meta[[i]][["number"]]
-        if(is.character(idx)){
-          idx <- as.numeric(idx)
+        # else: not the last null-number col, or no CSV cols remain; leave values NULL
+      }
+
+      if (!is.null(meta[[i]][["number"]])){
+        num <- meta[[i]][["number"]]
+        # special case for ensemble tables - a "column" that holds many columns
+        if (is.list(num) | length(num) > 1){
+          tmp <- list()
+          for (j in 1:length(num)){
+            tmp[[j]] <- csvs[[num[[j]]]]
+          }
+          meta[[i]][["values"]] <- matrix(unlist(tmp), ncol=length(tmp))
+          max_claimed <- max(unlist(num))
+        } else {
+          idx <- num
+          if(is.character(idx)){
+            idx <- as.numeric(idx)
+          }
+          meta[[i]][["values"]] <- csvs[[idx]]
+          max_claimed <- max(max_claimed, as.integer(idx))
         }
-        # assign values. already numeric
-        meta[[i]][["values"]] <- csvs[[idx]]
       }
     }
   }, error=function(cond){

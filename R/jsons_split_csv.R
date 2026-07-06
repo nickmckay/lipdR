@@ -125,18 +125,13 @@ get_csv_from_table <- function(tables, crumbs, csvs){
       csvs[[crumbs_2]] <- tmp[["csvs"]]
       # overwrite old table
       tables[[i]]<- tmp[["meta"]]
+      # Always use the standardized crumbs-based filename for the CSV.
+      # This ensures unique filenames regardless of tableName.
+      tables[[i]][["filename"]] <- crumbs_2
+      # Set tableName from crumbs when absent
       if(is.null(tables[[i]]$tableName) | all(is.na(tables[[i]]$tableName))){
-        # overwrite old filename
-        tables[[i]][["filename"]]<- crumbs_2
-        # check for table name
-        tables[[i]][["tableName"]] <- strsplit(crumbs_3, "\\.")[[1]][[2]]
-      }else{
-        #create a regex pattern to find everything between the two periods
-        pattern <- "(?<=\\.)[^.]+(?=\\.)"
-        tables[[i]][["filename"]] <- stringr::str_replace(crumbs_2,pattern = pattern,replacement = tables[[i]]$tableName)
-        #which name to change?
-        tc <- which(grepl(x = names(csvs),pattern = crumbs_2,fixed = TRUE))
-        names(csvs)[tc] <- tables[[i]][["filename"]]
+        crumbs_parts <- strsplit(crumbs_3, "\\.")[[1]]
+        tables[[i]][["tableName"]] <- crumbs_parts[[length(crumbs_parts)]]
       }
     }
   }, error=function(cond){

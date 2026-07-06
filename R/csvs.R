@@ -153,7 +153,7 @@ write_csv_to_file <- function(csvs,path){
           stop("All columns must be the same length")
         }
 
-        tmp <- matrix(nrow = nrcsv, ncol = length(csvs[[entry]]))
+        tmp <- matrix(NA_real_, nrow = nrcsv, ncol = length(csvs[[entry]]))
 
         for (i in 1:length(csvs[[entry]])){
           # one column of values
@@ -167,11 +167,8 @@ write_csv_to_file <- function(csvs,path){
           if (is.list(col)){
             col <- as.numeric(col)
           }
-          # replace all NA values with "NaN" before writing to file
-          col <- replace(col, is.na(col), "NaN")
 
-
-          tmp[,i] <- col
+          tmp[,i] <- as.numeric(col)
           #old appending strategy
           # check if tmp matrix has data or is fresh.
           # if(all(is.na(tmp))){
@@ -215,7 +212,7 @@ write_csv_to_file <- function(csvs,path){
 
         success <- tryCatch({
           #write.table(tmp, file=file.path(path,entry), col.names = FALSE, row.names=FALSE, sep=",")
-          data.table::fwrite(data.table::as.data.table(tmp),file.path(path,entry),col.names = FALSE, row.names=FALSE, sep=",")
+          data.table::fwrite(data.table::as.data.table(tmp),file.path(path,entry),col.names = FALSE, row.names=FALSE, sep=",", na = "NaN")
           success <- TRUE
         }, error=function(cond){
           print(paste0("Error: write_csv_to_file: write.table: ", entry, cond))

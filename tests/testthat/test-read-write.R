@@ -122,3 +122,44 @@ test_that("don.load.ensemble option works as expected", {
   # Check that the path to the saved ensembles was not stored
   expect_null(L_read_yes_ens$savedEnsembles)
 })
+
+test_that("paleo model ensemble round-trips correctly", {
+  L <- create_test_lipd_object("PaleoEnsembleTest")
+  n_rows <- 50L
+  n_members <- 100L
+  ens_matrix <- matrix(rnorm(n_rows * n_members), nrow = n_rows, ncol = n_members)
+  depth_vals <- seq_len(n_rows)
+
+  L$paleoData[[1]]$model <- list(list(
+    ensembleTable = list(list(
+      depth = list(
+        variableName = "depth",
+        TSid = "TStest_paleo_depth",
+        units = "cm",
+        values = depth_vals
+      ),
+      temperature = list(
+        variableName = "temperature",
+        TSid = "TStest_paleo_temp",
+        units = "degC",
+        values = ens_matrix
+      )
+    ))
+  ))
+
+  temp_dir <- tempfile()
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  lipd_path <- file.path(temp_dir, "PaleoEnsembleTest.lpd")
+
+  suppressMessages(writeLipd(L, path = lipd_path))
+  expect_true(file.exists(lipd_path))
+
+  L2 <- suppressMessages(readLipd(lipd_path))
+  ens2 <- L2$paleoData[[1]]$model[[1]]$ensembleTable[[1]]
+
+  expect_true(is.matrix(ens2$temperature$values))
+  expect_equal(dim(ens2$temperature$values), c(n_rows, n_members))
+  expect_equal(ens2$temperature$values, ens_matrix)
+  expect_equal(ens2$depth$values, depth_vals)
+})
