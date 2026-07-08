@@ -31,20 +31,19 @@ lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
       j <- rm_empty_fields(j)
       j <- update_lipd_version(j)
       j <- merge_csv_metadata(j,data_dir,dont.load.ensemble = dont.load.ensemble)
-      if(dont.load.ensemble){#then copy the unzipped lipd appropriately.
+      if(dont.load.ensemble){#keep the already-unzipped ensembles for writing later
         if(is.null(j$datasetId)){
           j$datasetId <- createDatasetId()
         }
-        ensembleStoreDir <- file.path(tempdir(),paste0(j$datasetId,"_",str_replace_all(as.character(lubridate::now()),pattern = "[^0-9-]",replacement = "-")))
-        j$savedEnsembles <- ensembleStoreDir
-        dir.create(ensembleStoreDir)
-        unzipper(path, ensembleStoreDir)
+        # dir_tmp already contains the fully-unzipped file (ensembles included),
+        # so reuse it rather than unzipping the whole archive a second time.
+        j$savedEnsembles <- dir_tmp
       }else{
         j$savedEnsembles <- NULL
+        unlink(dir_tmp, recursive=TRUE)
       }
       j <- idx_num_to_name(j)
       # j = put_tsids(j)
-      unlink(dir_tmp, recursive=TRUE)
     }
   }, error = function(cond){
     if(exists("dir_tmp")){
@@ -67,7 +66,7 @@ lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
 #' @param jsonOnly Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)
 #' @importFrom stats complete.cases
 #' @return none:
-lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFromLists = FALSE,jsonOnly = FALSE,delete.saved.ensembles = FALSE){
+lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFromLists = FALSE,jsonOnly = FALSE,delete.saved.ensembles = FALSE,compression_level = 2){
   tryCatch({
     # dsn <- replace_invalid_chars(dsn)
     if(is.null(j$datasetVersion)){
@@ -182,7 +181,7 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
 
 
 
-      zipper(dir_original, dir_tmp, dsn, path)
+      zipper(dir_original, dir_tmp, dsn, path, compression_level = compression_level)
       unlink(dir_tmp, recursive=TRUE)
     }else{
       j <- jsonlite::toJSON(j, pretty=TRUE, auto_unbox = TRUE)

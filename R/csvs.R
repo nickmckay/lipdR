@@ -140,70 +140,34 @@ write_csv_to_file <- function(csvs,path){
 
     # loop for csv file
     for (f in 1:length(entries)){
-      tmp <- matrix()
+      tmp <- NULL
 
       # one csv file: list of lists. [V1: [column values], V2: [columns values], etc.]
       entry <- entries[[f]]
       if(!isNullOb(csvs[[entry]])){
-        # Loop over csv cols
-        #preallocate table
-        allLengths <- map_dbl(csvs[[entry]],length)
+        # Normalize each column to an atomic vector, preserving its type.
+        # Character/logical columns (e.g. labID, materialDated, notes) must NOT be
+        # coerced to numeric, or their data is lost as NaN.
+        cols <- lapply(csvs[[entry]], function(col){
+          # A stored value may be a 1-column data.frame/matrix; flatten it.
+          if (is.data.frame(col) || is.matrix(col)){
+            col <- col[, 1]
+          }
+          if (is.list(col)){
+            col <- unlist(col, use.names = FALSE)
+          }
+          col
+        })
+
+        allLengths <- map_dbl(cols, length)
         nrcsv <- unique(allLengths)
         if(length(nrcsv) > 1){
           stop("All columns must be the same length")
         }
 
-        tmp <- matrix(NA_real_, nrow = nrcsv, ncol = length(csvs[[entry]]))
-
-        for (i in 1:length(csvs[[entry]])){
-          # one column of values
-          col <- csvs[[entry]][[i]]
-          # check if data.frame
-          if (is.data.frame(col)){
-            col <- as.matrix(col)
-          }
-
-          # convert to numeric if needed
-          if (is.list(col)){
-            col <- as.numeric(col)
-          }
-
-          tmp[,i] <- as.numeric(col)
-          #old appending strategy
-          # check if tmp matrix has data or is fresh.
-          # if(all(is.na(tmp))){
-          #   # fresh, so just bind the col itself
-          #   tmp <- tryCatch({
-          #     cbind(col, deparse.level = 0)
-          #   }, error = function(cond){
-          #     print(sprintf("cbind error: %s", entry))
-          #     return(NULL)
-          #   })
-          # }else{
-          #   # not fresh, bind the existing with the col
-          #   tmp <- tryCatch({
-          #     cbind(tmp, col, deparse.level = 0)
-          #   }, error = function(cond){
-          #     if(is.matrix(col)){
-          #       tmp <- tryCatch({
-          #         col <- t(col)
-          #         cbind(tmp, col, deparse.level = 0)
-          #       }, error = function(cond){
-          #         print(sprintf("cbind error: %s", entry))
-          #         return(NULL)
-          #       })
-          #     }
-          #     else{
-          #       return(NULL)
-          #     }
-          #   })
-          #   # cbind didn't work here, it's possible the matrix is transposed wrong.
-          #   # give it another try after transposing it.
-          #   # if (is.null(tmp) & is.matrix(col)){
-          #   #
-          #   # }
-          # }
-        }
+        # Assemble as a data.table so columns keep their individual types
+        # (numeric, integer, character, logical). fwrite handles the mix.
+        tmp <- data.table::setDT(cols)
       }
       if (!is.null(tmp)){
         if(file.exists(file.path(path,entry))){
@@ -211,11 +175,10 @@ write_csv_to_file <- function(csvs,path){
         }
 
         success <- tryCatch({
-          #write.table(tmp, file=file.path(path,entry), col.names = FALSE, row.names=FALSE, sep=",")
-          data.table::fwrite(data.table::as.data.table(tmp),file.path(path,entry),col.names = FALSE, row.names=FALSE, sep=",", na = "NaN")
+          data.table::fwrite(tmp,file.path(path,entry),col.names = FALSE, row.names=FALSE, sep=",", na = "NaN")
           success <- TRUE
         }, error=function(cond){
-          print(paste0("Error: write_csv_to_file: write.table: ", entry, cond))
+          print(paste0("Error: write_csv_to_file: fwrite: ", entry, cond))
           print("Check data for unequal row or column lengths")
           return(NULL)
         })
