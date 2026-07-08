@@ -5,21 +5,33 @@
 #' @param D LiPD data, sorted by dataset name  list
 #' @param whichtables : char: Options: "all", "summ", "meas", "ens"  Table type to output in the time series.
 #' @param mode : char: Options "paleo", "chron"
+#' @param calculateResolution : logical: If TRUE, compute resolution statistics
+#'   (min/mean/median/max spacing) for each column along the standardized time axis
+#'   and store them in the `hasResolution_*` fields. Default FALSE.
 #' @importFrom methods is
 #' @return ts:  Time series : list
+#' @details In addition to flattening each column, `extractTs()` identifies the
+#'   primary time axis of each table (an `age`/`year` column, or a column flagged
+#'   `isPrimary`/`primaryAgeColumn`) and adds a standardized time description to every
+#'   entry: `time` (the values), `timeUnits`, `timeDatum` (reference year, e.g. 1950
+#'   for BP, 0 for CE/AD), `timeDirection` (`"prograde"` or `"retrograde"`),
+#'   `timeExponent` (base-10 exponent of the units, e.g. 0 for yr, 3 for ka), and
+#'   `timeMin`/`timeMax`. The `timeMin`/`timeMax` fields make it easy to filter a time
+#'   series by age range with e.g. `dplyr::filter()`.
 #' @examples
 #' \dontrun{
 #' D <- readLipd()
 #' ts <- extractTs(D)
 #' }
 #'
-extractTs= function(D, whichtables = "all", mode = "paleo"){
+extractTs= function(D, whichtables = "all", mode = "paleo", calculateResolution = FALSE){
 
   TS <- list()
   # TOP FUNCTION
   # Check if this is one or multiple datasets.
   # Backup full data to lipd space (for collapseTs).
   # Loop datasets and send to next function (extract1) ONE at a time for processing
+  assign("calculateResolution", isTRUE(calculateResolution), envir = lipdEnv)
   time_id = set_ts_lipd(D)
   # Flag that stops looping if this is a single dataset. Otherwise, flag never sets and continues looping for N datasets.
   breakFlag=FALSE
@@ -182,31 +194,239 @@ extract_special= function(table_data, current){
     nameToUse <- specialColumns[which(tolower(names(table_data)[sc]) == tolower(specialColumns))]
     current[[paste0(nameToUse,"Units")]] = table_data[[sc]]$units
     current[[nameToUse]] = table_data[[sc]]$values
+  }
 
-    #also assign time and time metadata, calculate resolution, and time max/min
+  # Identify the primary time axis and attach standardized time metadata
+  # (time, timeUnits, timeDatum, timeDirection, timeExponent, timeMin, timeMax)
+  timeCol <- identify_time_column(table_data)
+  if(!is.null(timeCol)){
+    current <- createTimeMetadata(current, timeCol$values, timeCol$variableName, timeCol$units)
   }
   return(current)
 }
 
-#
-# createTimeMetadata <- function(values, variableName, units){
-#   #figure out what it is first
-#
-#   hu <- heuristi
-#
-#   #case1
-#   if(variableName == "age" * uits)
-#
-#   #year AD/CE
-#
-#
-# }
+#' Identify the primary time column of a measurement table
+#'
+#' Chooses, in priority order: a column flagged `isPrimary` (synonym
+#' `primaryAgeColumn`), then a column named `age`, then a column named `year`.
+#' @keywords internal
+#' @param table_data A measurement/summary table (named list of columns + root keys)
+#' @return list(variableName, units, values) for the chosen column, or NULL if none
+identify_time_column <- function(table_data){
+  isCol <- sapply(table_data, is.list)
+  cols <- which(isCol)
+  if(length(cols) == 0){
+    return(NULL)
+  }
+
+  # variableName of each candidate column (fall back to the list name)
+  colNames <- names(table_data)
+  vn <- vapply(cols, function(i){
+    v <- table_data[[i]]$variableName
+    if(is.null(v)){
+      v <- colNames[i]
+    }
+    if(is.null(v) || length(v) == 0) NA_character_ else tolower(as.character(v)[[1]])
+  }, character(1))
+
+  # primary flag on each candidate column
+  isPrim <- vapply(cols, function(i){
+    col <- table_data[[i]]
+    flag <- col$isPrimary
+    if(is.null(flag)){
+      flag <- col$primaryAgeColumn
+    }
+    is_primary_flag(flag)
+  }, logical(1))
+
+  chosen <- NULL
+  if(any(isPrim)){
+    chosen <- cols[[which(isPrim)[[1]]]]
+  } else if(any(vn == "age", na.rm = TRUE)){
+    chosen <- cols[[which(vn == "age")[[1]]]]
+  } else if(any(vn == "year", na.rm = TRUE)){
+    chosen <- cols[[which(vn == "year")[[1]]]]
+  }
+
+  if(is.null(chosen)){
+    return(NULL)
+  }
+  col <- table_data[[chosen]]
+  if(is.null(col$values)){
+    return(NULL)
+  }
+  list(variableName = col$variableName %||% colNames[chosen],
+       units = col$units,
+       values = col$values)
+}
+
+#' Attach standardized time metadata to a time series entry
+#' @keywords internal
+#' @param current The (shared) time series entry being built
+#' @param values The values of the identified time column
+#' @param variableName The variableName of the time column
+#' @param units The units of the time column
+#' @return current with time, timeUnits, timeDatum, timeDirection, timeExponent,
+#'   timeMin and timeMax added
+createTimeMetadata <- function(current, values, variableName, units){
+  meta <- time_metadata_from_units(variableName, units)
+  current[["time"]] <- values
+  current[["timeUnits"]] <- meta$timeUnits
+  current[["timeDatum"]] <- meta$timeDatum
+  current[["timeDirection"]] <- meta$timeDirection
+  current[["timeExponent"]] <- meta$timeExponent
+
+  vv <- suppressWarnings(as.numeric(unlist(values)))
+  vv <- vv[is.finite(vv)]
+  if(length(vv) > 0){
+    current[["timeMin"]] <- min(vv)
+    current[["timeMax"]] <- max(vv)
+  }
+  return(current)
+}
+
+#' Derive time datum/direction/exponent/units from a column's units and name
+#' @keywords internal
+#' @param variableName The variableName of the time column
+#' @param units The units of the time column
+#' @return list(timeUnits, timeDatum, timeDirection, timeExponent)
+time_metadata_from_units <- function(variableName, units){
+  u <- tolower(trimws(paste(units, collapse = " ")))
+  vn <- tolower(trimws(paste(variableName, collapse = " ")))
+  if(length(u) == 0 || is.na(u) || u %in% c("", "null", "na")){
+    u <- NA_character_
+  }
+
+  # base-10 exponent of the units magnitude
+  exponent <- 0
+  if(!is.na(u)){
+    if(grepl("\\bga\\b|gyr|giga", u)){
+      exponent <- 9
+    } else if(grepl("\\bma\\b|myr|mega", u)){
+      exponent <- 6
+    } else if(grepl("\\bka\\b|kyr|kilo", u)){
+      exponent <- 3
+    }
+  }
+
+  # default from variableName, then refine from units
+  if(grepl("year", vn) || (!is.na(u) && grepl("\\bad\\b|\\bce\\b", u))){
+    datum <- 0
+    direction <- "prograde"
+  } else {
+    datum <- 1950
+    direction <- "retrograde"
+  }
+  if(!is.na(u)){
+    if(grepl("b2k", u)){
+      datum <- 2000
+      direction <- "retrograde"
+    } else if(grepl("\\bbp\\b|before present", u)){
+      datum <- 1950
+      direction <- "retrograde"
+    } else if(grepl("\\bbc\\b|\\bbce\\b|\\bad\\b|\\bce\\b", u)){
+      datum <- 0
+      direction <- "prograde"
+    }
+  }
+
+  timeUnits <- standardize_time_units(exponent, direction, u)
+  list(timeUnits = timeUnits, timeDatum = datum, timeDirection = direction, timeExponent = exponent)
+}
+
+#' Standardized time-units string
+#' @keywords internal
+#' @param exponent base-10 exponent of the units
+#' @param direction "prograde" or "retrograde"
+#' @param u lowercased original units string (may be NA)
+#' @return a standardized units string
+standardize_time_units <- function(exponent, direction, u){
+  if(!is.na(u) && grepl("14c", u)){
+    return("yr 14C BP")
+  }
+  if(direction == "prograde"){
+    return("yr AD")
+  }
+  if(!is.na(u) && grepl("b2k", u)){
+    return("yr b2k")
+  }
+  switch(as.character(exponent),
+         "0" = "yr BP",
+         "3" = "ka",
+         "6" = "Ma",
+         "9" = "Ga",
+         "yr BP")
+}
+
+#' Is a column's primary flag truthy?
+#' @keywords internal
+#' @param x value of an isPrimary / primaryAgeColumn field
+#' @return logical
+is_primary_flag <- function(x){
+  if(is.null(x) || length(x) == 0){
+    return(FALSE)
+  }
+  x <- x[[1]]
+  if(is.logical(x)){
+    return(isTRUE(x))
+  }
+  if(is.numeric(x)){
+    return(!is.na(x) && x != 0)
+  }
+  if(is.character(x)){
+    return(tolower(trimws(x)) %in% c("true", "t", "yes", "y", "1", "primary"))
+  }
+  FALSE
+}
+
+#' Compute resolution statistics along a time axis and add hasResolution_* fields
+#' @keywords internal
+#' @param entry a time series entry (must contain a `time` field)
+#' @param timeValues the time axis values
+#' @param colValues optional column values; when the same length as timeValues,
+#'   resolution is computed only where the column has finite data
+#' @return entry with hasResolution_hasMinValue/hasMeanValue/hasMedianValue/hasMaxValue
+#'   and hasResolution_units added
+add_resolution <- function(entry, timeValues, colValues = NULL){
+  t <- suppressWarnings(as.numeric(unlist(timeValues)))
+  if(!is.null(colValues)){
+    cv <- suppressWarnings(as.numeric(unlist(colValues)))
+    if(length(cv) == length(t)){
+      t <- t[is.finite(cv)]
+    }
+  }
+  t <- sort(t[is.finite(t)])
+  if(length(t) >= 2){
+    d <- diff(t)
+    entry[["hasResolution_hasMinValue"]] <- min(d)
+    entry[["hasResolution_hasMaxValue"]] <- max(d)
+    entry[["hasResolution_hasMeanValue"]] <- mean(d)
+    entry[["hasResolution_hasMedianValue"]] <- stats::median(d)
+    entry[["hasResolution_units"]] <- entry[["timeUnits"]]
+  }
+  return(entry)
+}
+
+#' Read the calculateResolution flag set by extractTs
+#' @keywords internal
+#' @return logical
+get_calculate_resolution <- function(){
+  if(exists("calculateResolution", envir = lipdEnv)){
+    isTRUE(get("calculateResolution", envir = lipdEnv))
+  } else {
+    FALSE
+  }
+}
 
 
 extract_column=function(column, current_fork, pc){
 
   #grab data and metadata from this column
-  excludeColumn = c("number", "tableName")
+  # Note: "number" is carried through (as paleoData_number/chronData_number) so that
+  # collapseTs() can restore column ordering even without the stored original table.
+  # The write path (jsons_split_csv.R) always recomputes number from column position,
+  # so carrying it here never conflicts with what is written to disk.
+  excludeColumn = c("tableName")
 
   # get any items that are NOT a list, and add them to this TS entry. i.e. anything that's NOT interpretation blocks or other indexed blocks.
   colGrab = which(!(names(column) %in% excludeColumn) & !sapply(column,is.list))
@@ -259,6 +479,15 @@ extract_column=function(column, current_fork, pc){
       }#end second hierarchy  loop
     }
   }#end hier data loop
+
+  # Optionally (re)compute resolution for this column along the standardized time axis.
+  # This overrides any hasResolution values carried in from the file, so the flag can be
+  # used to refresh stale resolution statistics.
+  if(get_calculate_resolution() && !is.null(current_fork[["time"]])){
+    current_fork <- add_resolution(current_fork,
+                                   current_fork[["time"]],
+                                   current_fork[[paste0(pc, "_values")]])
+  }
   return(current_fork)
 }
 

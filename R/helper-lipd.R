@@ -133,35 +133,38 @@ create_mock_neotoma_object <- function() {
   chronology <- neotoma2::set_chronology(
     chronologyid = 987,
     notes = "Test chronology",
+    isdefault = TRUE,
     chroncontrols = chron_controls
   )
 
-  # 6. Create publications
-  pub <- neotoma2::set_publications(
+  # 6. Create publications (neotoma2 >= 1.0 uses set_publication; wrap in a collection)
+  pub <- neotoma2::set_publication(
     publicationid = 1,
     citation = "Test Scientist, A. (2024). A Fake Paper. Journal of Testing, 1(1), 1-10.",
     doi = "10.fake/doi"
   )
-  publications <- neotoma2::set_publications(pub)
+  publications <- methods::new("publications", publications = list(pub))
 
-  # 7. Create the dataset, including the correctly built samples object
+  # 7. Create the dataset (samples must be a 'samples' collection; neotoma2 >= 1.0
+  #    no longer accepts a publications argument here)
+  samples_obj <- methods::new("samples", samples = sample_list)
   dataset <- neotoma2::set_dataset(
     datasetid = 54321,
     datasettype = "pollen",
     notes = "Pollen data.",
-    samples = sample_list,
-    publications = publications
+    samples = samples_obj
   )
-  datasets <- neotoma2::set_datasets(dataset)
+  datasets <- methods::new("datasets", datasets = list(dataset))
 
   # 8. Create the collection unit
+  chronologies <- methods::new("chronologies", chronologies = list(chronology))
   collunit <- neotoma2::set_collunit(
     collectionunitid = 111,
     handle = "TEST01",
     datasets = datasets,
-    chronologies = neotoma2::set_chronologies(chronology)
+    chronologies = chronologies
   )
-  collunits <- neotoma2::set_collunits(collunit)
+  collunits <- methods::new("collunits", collunits = list(collunit))
 
   # 9. Finally, create the site
   site <- neotoma2::set_site(

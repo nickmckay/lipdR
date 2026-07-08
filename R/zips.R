@@ -14,7 +14,6 @@ unzipper <- function(path, dir_tmp){
 }
 
 #' Zip a directory, and move up a level
-#' @export
 #' @importFrom utils zip
 #' @keywords internal
 #' @param dir_original Directory to move the LiPD to

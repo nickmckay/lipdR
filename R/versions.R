@@ -18,7 +18,6 @@ add_created_by <- function(d){
 }
 
 #' Switch DOI from BibJSON structure 'identifier' key to a root level "doi" key
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return list d: Metadata
@@ -52,7 +51,6 @@ fix_doi <- function(d){
 
 
 #' Check what version of LiPD this file is using. If none is found, assume it's using version 1.0
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return list tmp: Version number and meta
@@ -96,7 +94,6 @@ get_lipd_version <- function(d){
 #' Use the current version number to determine where to start updating from. Use "chain versioning" to make it
 #' modular. If a file is a few versions behind, convert to EACH version until reaching current. If a file is one
 #' version behind, it will only convert once to the newest.
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return d Metadata
@@ -109,6 +106,10 @@ update_lipd_version <- function(d){
 
     # d <- fix_authors(d[["pub"]])
     d <- fix_doi(d)
+
+    # Legacy cleanup: rename any "inCompilationBeta" metadata to "inCompilation".
+    # Runs for every file regardless of lipdVersion so old files are cleaned on read.
+    d <- migrate_incompilation_keys(d)
 
     # Update from (N/A or 1.0) to 1.1
     if (version == 1.0 || version == "1.0"){
@@ -142,7 +143,6 @@ update_lipd_version <- function(d){
 #' - paleoData entry is a list that allows multiple tables
 #' - chronData now allows measurement, model, summary, ensemble, calibratedAges tables
 #' - Added 'lipdVersion' key
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return d Metadata
@@ -156,7 +156,6 @@ update_lipd_v1_1 <- function(d){
 #' - 'calibratedAges' key is now 'distribution' (handled in update_lipd_v1_3_keys instead)
 #' - paleoData structure mirrors chronData. Allows measurement, model, summary, ensemble,
 #'   distribution tables
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return list d: Metadata
@@ -201,7 +200,6 @@ update_lipd_v1_2_section <- function(d, pc){
 #' - Merge isotopeInterpretation and climateInterpretation into "interpretation" block
 #' - ensemble table entry is a list that allows multiple tables
 #' - summary table entry is a list that allows multiple tables
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return d Metadata
@@ -217,8 +215,50 @@ update_lipd_v1_3 <- function(d){
   return(d)
 }
 
+#' Rename legacy "inCompilationBeta" metadata keys to "inCompilation": recursive
+#'
+#' The compilation-membership block on measurement-table columns was historically
+#' named `inCompilationBeta`. It is now `inCompilation`. This walker recursively
+#' descends the metadata list and renames any key beginning with
+#' `inCompilationBeta` to the corresponding `inCompilation` key, so legacy files
+#' are cleaned as they are read.
+#' @keywords internal
+#' @param d Metadata
+#' @return d Metadata with any inCompilationBeta keys renamed to inCompilation
+migrate_incompilation_keys <- function(d){
+  keys <- names(d)
+
+  # For lists indexed by name
+  if(!isNullOb(keys) && sum(!is.na(keys)) > 0){
+    for(i in 1:length(keys)){
+      old_key <- keys[[i]]
+      # Dive down first
+      if(typeof(d[[old_key]]) == "list"){
+        d[[old_key]] <- migrate_incompilation_keys(d[[old_key]])
+      }
+      # When bubbling back up, rename the key if it is a legacy beta key
+      if(grepl("^inCompilationBeta", old_key)){
+        new_key <- sub("^inCompilationBeta", "inCompilation", old_key)
+        d[[new_key]] <- d[[old_key]]
+        d[[old_key]] <- NULL
+      }
+    }
+  } else {
+    # For lists indexed by number
+    if(typeof(d) == "list"){
+      for(i in seq_along(d)){
+        tryCatch({
+          d[[i]] <- migrate_incompilation_keys(d[[i]])
+        }, error=function(cond){
+          print(paste0("Error: migrate_incompilation_keys: ", cond))
+        })
+      }
+    }
+  }
+  return(d)
+}
+
 #' Update v1.2 keys to v1.3 keys: recursive
-#' @export
 #' @importFrom stats setNames
 #' @keywords internal
 #' @param d Metadata
@@ -271,7 +311,6 @@ update_lipd_v1_3_keys <- function(d){
 }
 
 #' Update the structure for summary and ensemble tables
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return d Metadata

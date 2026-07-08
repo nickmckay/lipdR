@@ -135,11 +135,18 @@ printSummaryData <- function(dataIn, run.quiet = FALSE, skip.table = FALSE){
   tableCount <- 0
 
   if (skip.table == TRUE){
-    for (i in 1:PDnum){
+    for (i in seq_len(PDnum)){
 
       measTabNum <- length(dataIn[[i]]$measurementTable)
 
-      for (j in 1:measTabNum){
+      if (measTabNum == 0){
+        if(run.quiet == FALSE){
+          cat("Object", i, "does not include a measurement table\n\n")
+        }
+        next
+      }
+
+      for (j in seq_len(measTabNum)){
 
         tableCount <- tableCount + 1
 
@@ -174,19 +181,22 @@ printSummaryData <- function(dataIn, run.quiet = FALSE, skip.table = FALSE){
         if(run.quiet==FALSE){
           cat(crayon::bold(paste0("\nSummary data for object ", i, ","), "Measurement Table", j, "of", paste0(measTabNum, ":\n")))
           cat("Measurement table contains", numObs, "observations of", numVars, "variables\n\n")
-        }
-
-        if (measTabNum == 0){
-          stop("Could not read measurement table, check format\n")
         }
       }
     }
   }else{
-    for (i in 1:PDnum){
+    for (i in seq_len(PDnum)){
 
       measTabNum <- length(dataIn[[i]]$measurementTable)
 
-      for (j in 1:measTabNum){
+      if (measTabNum == 0){
+        if(run.quiet == FALSE){
+          cat("Object", i, "does not include a measurement table\n\n")
+        }
+        next
+      }
+
+      for (j in seq_len(measTabNum)){
 
         tableCount <- tableCount + 1
 
@@ -221,10 +231,6 @@ printSummaryData <- function(dataIn, run.quiet = FALSE, skip.table = FALSE){
         if(run.quiet==FALSE){
           cat(crayon::bold(paste0("\nSummary data for object ", i, ","), "Measurement Table", j, "of", paste0(measTabNum, ":\n")))
           cat("Measurement table contains", numObs, "observations of", numVars, "variables\n\n")
-        }
-
-        if (measTabNum == 0){
-          stop("Could not read measurement table, check format\n")
         }
 
         varsTableMatch <- matchCols(paleoMeasTableDF, tableVars)

@@ -15,3 +15,4 @@ LiPD chronData section
 \description{
 get chronData info from neotoma
 }
+\keyword{internal}

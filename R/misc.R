@@ -56,7 +56,6 @@ extract_by_key <- function(lst, key) {
 
 
 #' Create the range for ensemble table "number" field
-#' @export
 #' @keywords internal
 #' @param start Number to start at
 #' @param len Amount of times to loop
@@ -225,7 +224,6 @@ get_datasetname <- function(d, name){
 }
 
 #' Get dataSetName from metadata. If one is not found, use filename as fallback.
-#' @export
 #' @keywords internal
 #' @param vn Variable name
 #' @return char vn: Variable name, possibly appended with a number
@@ -269,7 +267,6 @@ is.url <-function(x) {
 }
 
 #' Checks if an object is null/empty
-#' @export
 #' @keywords internal
 #' @param x Data object to check
 #' @return boolean
@@ -329,7 +326,6 @@ index_geo <- function(d){
 }
 
 #' Remove all NA, NULL, and empty objects from the data structure
-#' @export
 #' @keywords internal
 #' @param x Data structure
 #' @return x Modified data structure
@@ -407,7 +403,6 @@ unindex_geo <- function(d){
 
 #' Check if output datasetname has invalid characters. Replace if necessary
 #' R will not zip directories with certain characters.
-#' @export
 #' @keywords internal
 #' @param dsn Dataset name
 #' @return char dsn: Dataset name
@@ -418,7 +413,6 @@ replace_invalid_chars <- function(dsn){
 
 
 #' Detect the OS being used
-#' @export
 #' @keywords internal
 #' @return char: OS name
 get_os <- function() {
@@ -485,7 +479,7 @@ warn_ensembles_in_paleo <- function(L, ignore.warnings){
 #' @param L a LiPD object
 #'
 #' @return L without named lists in key spots
-#' @export
+#' @keywords internal
 remove_names_from_lists <- function(L){
   if(!is.null(L$paleoData)){
     for(i in 1:length(L$paleoData)){

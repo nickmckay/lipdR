@@ -60,7 +60,7 @@ filterTs= function(ts, expression, exact=FALSE){
 }
 
 #' Worker function that sends through the query expressions for finding matching entries in the time series
-#' @export
+#' @keywords internal
 #' @author Chris Heiser
 #' @param ts Time series  list , Time Series data
 #' @param expression Search expression  char (single query) or list (multiple query)

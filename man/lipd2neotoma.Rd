@@ -2,16 +2,24 @@
 % Please edit documentation in R/lipd2neotoma.R
 \name{lipd2neotoma}
 \alias{lipd2neotoma}
-\title{Convert lipd to neotoma}
+\title{Convert a LiPD object into a Neotoma site}
 \usage{
 lipd2neotoma(L)
 }
 \arguments{
-\item{L}{lipd object}
+\item{L}{a LiPD object}
 }
 \value{
-neotoma site
+a `neotoma2` site object
 }
 \description{
-Convert lipd to neotoma
+Converts a LiPD object into a `neotoma2` `site` object, enabling round-tripping
+between the LiPD and Neotoma ecosystems. Requires the suggested packages `neotoma2`
+and `sf`.
+}
+\examples{
+\dontrun{
+L <- readLipd()
+site <- lipd2neotoma(L)
+}
 }

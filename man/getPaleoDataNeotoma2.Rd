@@ -15,3 +15,4 @@ LiPD paleoData section
 \description{
 get paleoData info from neotoma
 }
+\keyword{internal}

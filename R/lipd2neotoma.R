@@ -1,10 +1,18 @@
-#' Convert lipd to neotoma
+#' Convert a LiPD object into a Neotoma site
 #'
-#' @param L lipd object
+#' Converts a LiPD object into a `neotoma2` `site` object, enabling round-tripping
+#' between the LiPD and Neotoma ecosystems. Requires the suggested packages `neotoma2`
+#' and `sf`.
+#'
+#' @param L a LiPD object
 #' @importFrom methods new
-#'
-#' @return neotoma site
-#'
+#' @export
+#' @return a `neotoma2` site object
+#' @examples
+#' \dontrun{
+#' L <- readLipd()
+#' site <- lipd2neotoma(L)
+#' }
 lipd2neotoma <- function(L){
 
   if (!requireNamespace("neotoma2", quietly = TRUE)) {
@@ -30,9 +38,9 @@ lipd2neotoma <- function(L){
   #######################################################################
 
   #grab paleoData names and dataframe
-  for (j in 1:sum(grep("paleo", attributes(mtabs1)$names))){
-    paleoTabName <- attributes(mtabs1)$names[paleoTabIndex]
+  for (j in seq_along(grep("paleo", attributes(mtabs1)$names))){
     paleoTabIndex <- grep("paleo", attributes(mtabs1)$names)[j]
+    paleoTabName <- attributes(mtabs1)$names[paleoTabIndex]
     PD1 <- mtabs1[[paleoTabIndex]]
 
     #initiate list for neotoma "samples"
@@ -46,85 +54,26 @@ lipd2neotoma <- function(L){
 
       sampleTabNames <- names(sampleTab)
 
+      # Identify the 'age' column (required). Prefer an exact match, then any
+      # column whose name contains "age".
       pullAge <- which(tolower(sampleTabNames) %in% "age")
-      if(length(pullAge)<1){
-        message("No clear age column")
-        pullAge <- grepl("age",tolower(sampleTabNames))
-        for(h in which(pullAge)){
-          ans1 <- 0
-          while (!ans1 %in% c("y","n")){
-            ans1 <- readlineSafe(prompt = paste0("Is this your 'age' column header? ", sampleTabNames[h], " (y/n): "),default = "y")
-            if (ans1 == "y"){
-              var1 <- h
-              message(paste0("Okay, setting 'age' column to ", sampleTabNames[var1]))
-              break
-            }
-          }
-        }
-        if (ans1 != "y"){
-          var1Check <- FALSE
-          while (!var1Check){
-            message("column headers: ")
-            lapply(1:length(sampleTabNames), function(x) cat(paste0(x, " ", sampleTabNames[x], "\n")))
-
-            var1 <- readlineSafe(prompt = paste0("Enter the index corresponding to your 'age' column from 1 to ", length(pullAge),
-                                            ". Enter 0 if no 'age' column: "), default = 1)
-            var1 <- as.numeric(var1)
-            if (!is.na(var1)){
-              if (var1 >= 0 & var1 <= length(pullAge)){
-                var1Check <- TRUE
-                if (var1==0){
-                  message("Okay, no 'age' column")
-                }else{
-                  message(paste0("Okay, setting 'age' column to ", sampleTabNames[var1]))
-                }
-              }
-            }
-          }
-        }
-        pullAge <- var1
+      if(length(pullAge) < 1){
+        pullAge <- which(grepl("age", tolower(sampleTabNames)))
       }
+      if(length(pullAge) < 1){
+        stop("No 'age' column found in the measurement table; cannot convert to Neotoma")
+      }
+      var1 <- pullAge[1]
 
+      # Identify the 'depth' column (optional).
       pullDepth <- which(tolower(sampleTabNames) %in% "depth")
-      if(length(pullDepth)<1){
-        message("No clear depth column")
-        pullDepth <- grepl("depth",tolower(sampleTabNames))
-        for(h in which(pullDepth)){
-          ans1 <- 0
-          while (!ans1 %in% c("y","n")){
-            ans1 <- readlineSafe(prompt = paste0("Is this your 'depth' column header? ", sampleTabNames[h], " (y/n): "),default = "y")
-            if (ans1 == "y"){
-              var2 <- h
-              message(paste0("Okay, setting 'depth' column to ", sampleTabNames[var2]))
-              break
-            }
-          }
-        }
-        if (ans1 != "y"){
-          var1Check <- FALSE
-          while (!var1Check){
-            message("column headers: ")
-            lapply(1:length(sampleTabNames), function(x) cat(paste0(x, " ", sampleTabNames[x], "\n")))
-
-            var2 <- readlineSafe(prompt = paste0("Enter the index corresponding to your 'depth' column from 1 to ", length(pullAge),
-                                             ". Enter 0 if no 'depth' column: "), default = 1)
-            var2 <- as.numeric(var2)
-            if (!is.na(var2)){
-              if (var1 >= 0 & var2 <= length(pullAge)){
-                var1Check <- TRUE
-                if (var2==0){
-                  message("Okay, no 'depth' column")
-                }else{
-                  message(paste0("Okay, setting 'depth' column to ", sampleTabNames[var2]))
-                }
-              }
-            }
-          }
-        }
-        pullDepth <- var2
+      if(length(pullDepth) < 1){
+        pullDepth <- which(grepl("depth", tolower(sampleTabNames)))
       }
+      var2 <- if(length(pullDepth) >= 1) pullDepth[1] else NA_integer_
 
       pullAgeDepth <- c(sampleTabNames[var1], sampleTabNames[var2])
+      pullAgeDepth <- pullAgeDepth[!is.na(pullAgeDepth)]
       notAgeDepth <- which(!sampleTabNames %in% pullAgeDepth)
 
       neoSamples <- data.frame(matrix(ncol = 10, nrow = length(notAgeDepth), data=NA))
@@ -212,7 +161,9 @@ lipd2neotoma <- function(L){
       sample1 <- new("sample")
 
       sample1@datum <- neoSamples
-      sample1@depth <- sampleTab[pullDepth]
+      if(length(pullDepth) >= 1){
+        sample1@depth <- as.numeric(sampleTab[[pullDepth[1]]])
+      }
       sample1@ages <- ages1
 
       allSamps[[k]] <- sample1
@@ -222,8 +173,17 @@ lipd2neotoma <- function(L){
 
 
 
-    dataset1 <- neotoma2::set_dataset(datasetid = strsplit(L$originalDataUrl, "/")[[1]][length(strsplit(L$originalDataUrl, "/")[[1]])])
+    # Derive a Neotoma datasetid from the original data URL when available,
+    # otherwise leave it unset.
+    datasetIdFromUrl <- NA_integer_
+    if(!is.null(L$originalDataUrl) && is.character(L$originalDataUrl) && nzchar(L$originalDataUrl)){
+      urlParts <- strsplit(L$originalDataUrl, "/")[[1]]
+      datasetIdFromUrl <- suppressWarnings(as.integer(urlParts[length(urlParts)]))
+    }
+    dataset1 <- neotoma2::set_dataset(datasetid = datasetIdFromUrl)
 
+    # Initialise the samples slot (NULL by default) before populating it
+    dataset1@samples <- methods::new("samples")
     for (i in 1:length(allSamps)){
       dataset1@samples@samples[[i]] <- allSamps[[i]]
     }
@@ -257,19 +217,25 @@ lipd2neotoma <- function(L){
 
   site1 <- neotoma2::set_site()
 
-
-
+  # Initialise the collunits slot (NULL by default) before populating it
+  site1@collunits <- methods::new("collunits")
   site1@collunits@collunits[[1]] <- neotoma2::set_collunit(datasets = datasetAll, chronologies = chronos1, colldate = as.Date(character(0)))
 
-  site1$siteid <- L$geo$neotomaSiteId
-  site1$sitename <- L$geo$siteName
-  # site1$lat <- getGeoNeotoma2(D@sites[[1]])$latitude
-  # site1$long <- getGeoNeotoma2(D@sites[[1]])$longitude
-  site1$altitude <- L$geo$elevation
+  if(!is.null(L$geo$neotomaSiteId)){
+    site1@siteid <- as.integer(L$geo$neotomaSiteId)
+  }
+  if(!is.null(L$geo$siteName)){
+    site1@sitename <- L$geo$siteName
+  }
+  if(!is.null(L$geo$elevation)){
+    site1@altitude <- as.numeric(L$geo$elevation)
+  }
 
   site1@geography = sf::st_as_sf(sf::st_sfc(sf::st_point(c(L$geo$longitude,L$geo$latitude))))
 
-  site1@description <- L$geo$description
+  if(!is.null(L$geo$description)){
+    site1@description <- L$geo$description
+  }
 
   return(site1)
 

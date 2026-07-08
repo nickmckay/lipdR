@@ -15,3 +15,4 @@ LiPD geo section
 \description{
 get geo info from neotoma
 }
+\keyword{internal}

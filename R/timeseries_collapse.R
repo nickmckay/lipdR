@@ -104,7 +104,7 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
 
 is_include_key <- function(key, pc){
   exclude <- c("mode", "whichtables", "paleoNumber", "chronNumber", "tableNumber", "modelNumber", "timeID", "tableType",
-               "raw", "depth", "depthUnits", "age", "ageUnits", "interpretation", "calibration", "hasResolution","inCompilationBeta", "physicalSample",
+               "raw", "depth", "depthUnits", "age", "ageUnits", "interpretation", "calibration", "hasResolution","inCompilation", "physicalSample",
                "depthUnits","year","yearUnits","compSpecificMeta")
   match_idx <- stringr::str_match_all(key, "(\\w+)(\\d+)[_](\\w+)")
   match_non_idx <- stringr::str_match_all(key, "(\\w+)[_](\\w+)")
@@ -243,9 +243,8 @@ collapse_column <- function(table, entry, pc){
   res <- list()
   phys <- list()
   inComp <- list()
-  inCompBeta <- list()
   csm <- list()
-  include <- c("paleoData", "chronData", "interpretation", "calibration", "hasResolution","inCompilationBeta","compSpecificMeta")
+  include <- c("paleoData", "chronData", "interpretation", "calibration", "hasResolution","inCompilation","compSpecificMeta")
   exclude <- c('filename', 'googleWorkSheetKey', 'tableName', "missingValue", "tableMD5", "dataMD5", "googWorkSheetKey", "pub", "geo")
   ts_keys <- names(entry)
 
@@ -261,8 +260,6 @@ collapse_column <- function(table, entry, pc){
         res <- collapse_block(entry, res, curr_key, pc)
       } else if (grepl("physicalSample", curr_key)){
         phys <- collapse_block(entry, phys, curr_key, pc)
-      } else if (grepl("inCompilationBeta", curr_key)){
-        inCompBeta <- collapse_block_indexed(entry, inCompBeta, curr_key)
       } else if (grepl("inCompilation", curr_key)){
         inComp <- collapse_block_indexed(entry, inComp, curr_key)
       } else if (grepl("compSpecificMeta", curr_key)){
@@ -286,9 +283,6 @@ collapse_column <- function(table, entry, pc){
     }
     if(!isNullOb(inComp)){
       new_column[["inCompilation"]] <- inComp
-    }
-    if(!isNullOb(inCompBeta)){
-      new_column[["inCompilationBeta"]] <- inCompBeta
     }
     if(!isNullOb(csm)){
       new_column[["compSpecificMetadata"]] <- csm
@@ -330,7 +324,7 @@ collapse_column <- function(table, entry, pc){
 #' @description match[[1]][[2]] = first key (ex. "interpretation)
 #' @description match[[1]][[3]] = index number (ex. the "1" from "interpretation1")
 #' @description match[[1]][[4]] = second key (ex. "variableDetail")
-#' @export
+#' @keywords internal
 #' @param entry Time series entry
 #' @param l Metadata (to add new data to)
 #' @param key Current key from time series entry
@@ -362,7 +356,7 @@ collapse_block_indexed <- function(entry, l, key){
 #' match[[1]][[2]] = first key (ex. "physicalSample")
 #' match[[1]][[3]] = second key (ex. "tableName")
 #'
-#' @export
+#' @keywords internal
 #'
 #' @param entry Time series entry
 #' @param l Metadata (to append to)
@@ -385,7 +379,7 @@ collapse_block <- function(entry, l, key, pc){
 }
 
 #' Get the target table
-#' @export
+#' @keywords internal
 #' @param d Metadata
 #' @param current Current time series entry
 #' @param pc paleoData or chronData
@@ -483,7 +477,7 @@ put_table <- function(d, current, pc, table){
 
 
 #' Before you place a table, you must have the structure leading up to the location or you'll get errors. Build the structure
-#' @export
+#' @keywords internal
 #' @param d Metadata
 #' @param pc paleoData or chronData
 #' @param table_type meas, ens, or summ
