@@ -58,6 +58,10 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
         setTxtProgressBar(pb = pb,value = i)
       }
       ts[[i]] = add_missing_ts_data(ts[[i]])
+      # Fold <compilation>_csm_<field> back into the nested inCompilation
+      # structure. Merges rather than replaces, so an entry carrying only some
+      # compilations' metadata cannot delete the others'.
+      ts[[i]] = contract_csm_entry(ts[[i]])
       pc <- paste0(ts[[i]][["mode"]], "Data")
       # ONLY PROCESS BASE DATA ON FIRST DATASET OCCURENCE. All subsequent timeseries entries from the same dataset will only add its unique column data to the running dataset.
       if(!ts[[i]][["dataSetName"]] %in% names(D)){
@@ -105,7 +109,7 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
 is_include_key <- function(key, pc){
   exclude <- c("mode", "whichtables", "paleoNumber", "chronNumber", "tableNumber", "modelNumber", "timeID", "tableType",
                "raw", "depth", "depthUnits", "age", "ageUnits", "interpretation", "calibration", "hasResolution","inCompilation", "physicalSample",
-               "depthUnits","year","yearUnits","compSpecificMeta")
+               "depthUnits","year","yearUnits")
   match_idx <- stringr::str_match_all(key, "(\\w+)(\\d+)[_](\\w+)")
   match_non_idx <- stringr::str_match_all(key, "(\\w+)[_](\\w+)")
 
@@ -243,8 +247,7 @@ collapse_column <- function(table, entry, pc){
   res <- list()
   phys <- list()
   inComp <- list()
-  csm <- list()
-  include <- c("paleoData", "chronData", "interpretation", "calibration", "hasResolution","inCompilation","compSpecificMeta")
+  include <- c("paleoData", "chronData", "interpretation", "calibration", "hasResolution","inCompilation")
   exclude <- c('filename', 'googleWorkSheetKey', 'tableName', "missingValue", "tableMD5", "dataMD5", "googWorkSheetKey", "pub", "geo")
   ts_keys <- names(entry)
 
@@ -262,8 +265,6 @@ collapse_column <- function(table, entry, pc){
         phys <- collapse_block(entry, phys, curr_key, pc)
       } else if (grepl("inCompilation", curr_key)){
         inComp <- collapse_block_indexed(entry, inComp, curr_key)
-      } else if (grepl("compSpecificMeta", curr_key)){
-        csm <- collapse_block_indexed(entry, csm, curr_key)
       } else if (grepl(pc, curr_key)){
         new_column <- collapse_block(entry, new_column, curr_key, pc)
       }
@@ -283,9 +284,6 @@ collapse_column <- function(table, entry, pc){
     }
     if(!isNullOb(inComp)){
       new_column[["inCompilation"]] <- inComp
-    }
-    if(!isNullOb(csm)){
-      new_column[["compSpecificMetadata"]] <- csm
     }
     vn <- get_vn(new_column[["variableName"]], names(table))
     # Set the new column into the table using the variableName

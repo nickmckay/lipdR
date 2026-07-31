@@ -1,3 +1,16 @@
+# lipdR 0.7.0
+
+* Prepared the package for CRAN (passes `R CMD check --as-cran` cleanly).
+* `writeLipd()` is substantially faster for large files. Zip compression is now configurable via a new `compression_level` argument (default `2`), which writes datasets with large ensemble tables roughly 3-4x faster for slightly larger files. Pass `compression_level = 6-9` to prioritize file size over speed.
+* `writeLipd()` gained a `parallel` option for writing a `multiLipd` of many datasets in parallel (uses `furrr`; call `future::plan()` first, as with `readLipd(parallel = TRUE)`).
+* Reading with `dont.load.ensemble = TRUE` no longer extracts the archive twice, speeding up loads of ensemble-heavy files.
+* Fixed a bug where string and logical measurement columns (e.g. `labID`, `materialDated`, `notes`) were silently written as `NaN`, causing data loss on `writeLipd()`. Columns now keep their type through a read/write round trip.
+* `extractTs()` now adds standardized time metadata (`time`, `timeUnits`, `timeDatum`, `timeDirection`, `timeExponent`, `timeMin`/`timeMax`) to every entry, and an optional `calculateResolution` argument computes per-column resolution.
+* Renamed `inCompilationBeta` to `inCompilation`, with automatic migration of legacy keys on read. Added a new `filterByCompilation()` function.
+* Added support for compilation-specific metadata (`csm`), stored under `csm` inside each `inCompilation` entry. `extractTs()` flattens these to `<compilation>_csm_<field>` (e.g. `iso2k_csm_certification`), keyed by compilation name rather than array index, and `collapseTs()` folds them back into the matching entry. `csmFields()` lists what a time series carries. Note that `extractTs()` always emits every compilation's `csm`, and `collapseTs()` writes back exactly what the time series carries, so a filtered time series should not be collapsed.
+* Fixed the LiPD-to-Neotoma conversion (`lipd2neotoma()`), which is now working and tested.
+* Fixed a crash in `print()`/`summary()` for objects with no measurement table.
+
 # lipdR 0.6.0
 
 * a handful of improvements and error handling

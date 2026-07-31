@@ -73,6 +73,12 @@ extractTs= function(D, whichtables = "all", mode = "paleo", calculateResolution 
     }
   }
 
+  # Nested compilation-specific metadata becomes <compilation>_csm_<field>.
+  # Every compilation's csm is expanded, never a subset: collapseTs() merges
+  # what it is given, so extracting a partial view and collapsing it must not
+  # be able to delete another compilation's metadata.
+  TS <- expand_csm(TS)
+
   structure(TS,class = c("lipd_ts",class(list()))) %>%
   return()
 }
