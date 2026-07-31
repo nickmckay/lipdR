@@ -113,7 +113,21 @@ read_csv_from_file <- function(path,dont.load.ensemble = FALSE){
       c.data[[ci]]=tmp
     } else {
       # Normal case: all data is here
-      c.data[[ci]]=df[goodRows,]
+      df <- df[goodRows,]
+
+      # A column whose values are all missing carries no type information in the
+      # CSV, and fread types it logical. In a LiPD measurement table that is
+      # almost always a numeric column with no data, and leaving it logical
+      # makes the file fail validation on a read/write round trip ("depth values
+      # are not numeric"). Widening to double loses nothing: the values are NA
+      # either way.
+      for (j in seq_along(df)) {
+        if (is.logical(df[[j]]) && all(is.na(df[[j]]))) {
+          data.table::set(df, j = j, value = as.double(df[[j]]))
+        }
+      }
+
+      c.data[[ci]]=df
     }
     #pause here
 

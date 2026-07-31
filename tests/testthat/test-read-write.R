@@ -163,3 +163,36 @@ test_that("paleo model ensemble round-trips correctly", {
   expect_equal(ens2$temperature$values, ens_matrix)
   expect_equal(ens2$depth$values, depth_vals)
 })
+
+# An all-missing column carries no type information in the CSV, so fread types
+# it logical. In a LiPD measurement table that is a numeric column with no data,
+# and leaving it logical made the file fail validation on a round trip with
+# "depth values are not numeric". This affected 14 of the 7,177 files in the
+# LiPDverse database.
+test_that("an all-NaN numeric column keeps its type through a round trip", {
+  d <- withr::local_tempdir()
+  L <- create_test_lipd_object()
+  n <- length(L$paleoData[[1]]$measurementTable[[1]]$age$values)
+  L$paleoData[[1]]$measurementTable[[1]]$depth <- list(
+    variableName = "depth", units = "cm", TSid = "tsid-depth-test",
+    number = 3, values = rep(NaN, n))
+
+  writeLipd(L, path = d, removeNamesFromLists = TRUE)
+  back <- readLipd(file.path(d, "TestDSN.lpd"))
+  depth <- back$paleoData[[1]]$measurementTable[[1]]$depth$values
+
+  expect_true(is.numeric(unlist(depth)))
+  expect_false(is.logical(unlist(depth)))
+  expect_length(unlist(depth), n)
+})
+
+test_that("columns with data are unaffected by the all-missing coercion", {
+  d <- withr::local_tempdir()
+  L <- create_test_lipd_object()
+  writeLipd(L, path = d, removeNamesFromLists = TRUE)
+  back <- readLipd(file.path(d, "TestDSN.lpd"))
+  tb <- back$paleoData[[1]]$measurementTable[[1]]
+
+  expect_equal(unlist(tb$age$values), 1:5)
+  expect_equal(unlist(tb$temp$values), 20:24)
+})
