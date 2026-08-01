@@ -196,3 +196,59 @@ test_that("columns with data are unaffected by the all-missing coercion", {
   expect_equal(unlist(tb$age$values), 1:5)
   expect_equal(unlist(tb$temp$values), 20:24)
 })
+
+# merge_csv_columns() decides which CSV columns an entry with no `number` should
+# take. It used to compute that from the columns processed so far, so a
+# numberless column appearing *before* the column that claims the data was
+# handed the whole table -- and the claiming column then took it as well. Paleo
+# ensembles doubled in width on every read/write cycle as a result.
+test_that("a numberless column does not steal columns claimed later", {
+  csvs <- list(c(1, 2), c(3, 4), c(5, 6))
+  meta <- list(
+    list(variableName = "depth"),                       # no number, listed first
+    list(variableName = "ens", number = as.list(1:3))   # claims everything
+  )
+  out <- lipdR:::merge_csv_columns(csvs, meta)
+
+  expect_null(out[[1]]$values)          # nothing left for it
+  expect_null(out[[1]]$number)
+  expect_equal(dim(out[[2]]$values), c(2, 3))
+})
+
+test_that("a numberless column still takes genuinely unclaimed columns", {
+  csvs <- list(c(1, 2), c(3, 4), c(5, 6))
+  meta <- list(
+    list(variableName = "age", number = 1),
+    list(variableName = "ens")            # 2 and 3 are unclaimed
+  )
+  out <- lipdR:::merge_csv_columns(csvs, meta)
+
+  expect_equal(out[[1]]$values, c(1, 2))
+  expect_equal(unlist(out[[2]]$number), c(2, 3))
+  expect_equal(dim(out[[2]]$values), c(2, 2))
+})
+
+test_that("a single unclaimed column is assigned as a scalar, not a matrix", {
+  csvs <- list(c(1, 2), c(3, 4))
+  meta <- list(list(variableName = "age", number = 1), list(variableName = "temp"))
+  out <- lipdR:::merge_csv_columns(csvs, meta)
+  expect_equal(out[[2]]$number, 2)
+  expect_equal(out[[2]]$values, c(3, 4))
+})
+
+test_that("a paleo ensemble keeps its width through a round trip", {
+  d <- withr::local_tempdir()
+  L <- create_test_lipd_object()
+  ens <- matrix(seq_len(5 * 4), nrow = 5, ncol = 4)
+  L$paleoData[[1]]$model <- list(list(ensembleTable = list(list(
+    tableName = "paleo1model1ensemble1",
+    depth = list(variableName = "depth", TSid = "tsid-ens-depth"),
+    vals  = list(variableName = "ensemble", TSid = "tsid-ens-vals",
+                 number = as.list(1:4), values = ens)))))
+
+  writeLipd(L, path = d, removeNamesFromLists = TRUE)
+  back <- readLipd(file.path(d, "TestDSN.lpd"))
+  et <- back$paleoData[[1]]$model[[1]]$ensembleTable[[1]]
+  col <- Filter(function(c) is.list(c) && identical(c$variableName, "ensemble"), et)[[1]]
+  expect_equal(ncol(col$values), 4)
+})

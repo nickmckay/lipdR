@@ -117,7 +117,21 @@ merge_csv_table <- function(tables, crumbs, csvs){
 merge_csv_columns <- function(csvs, meta){
   tryCatch({
     total_csv_cols <- length(csvs)
-    max_claimed <- 0L
+
+    # First pass: every CSV column that some metadata column explicitly claims.
+    # This has to be gathered before assigning anything, because a column with
+    # no `number` may appear *before* the column that claims the data. Deciding
+    # what is unclaimed from only the columns seen so far handed the whole table
+    # to a numberless column and then handed it out again, which doubled paleo
+    # ensembles on a read/write round trip.
+    claimed <- integer(0)
+    for (i in seq_along(meta)){
+      num <- meta[[i]][["number"]]
+      if (!is.null(num)){
+        idx <- suppressWarnings(as.integer(unlist(num)))
+        claimed <- c(claimed, idx[!is.na(idx)])
+      }
+    }
 
     for (i in 1:length(meta)){
       num <- meta[[i]][["number"]]
@@ -126,19 +140,20 @@ merge_csv_columns <- function(csvs, meta){
         # Count how many null-number columns remain after position i
         after_indices <- if (i < length(meta)) (i + 1):length(meta) else integer(0)
         null_after <- sum(purrr::map_lgl(after_indices, function(k) is.null(meta[[k]][["number"]])))
-        unclaimed <- total_csv_cols - max_claimed
+        unclaimed <- setdiff(seq_len(total_csv_cols), claimed)
 
-        if (null_after == 0L && unclaimed > 0L){
-          # This is the last null-number column and CSV columns remain.
-          # Assign all unclaimed CSV columns (single or ensemble).
-          if (unclaimed == 1L){
-            num <- max_claimed + 1L
+        if (null_after == 0L && length(unclaimed) > 0L){
+          # This is the last null-number column and CSV columns remain unclaimed.
+          if (length(unclaimed) == 1L){
+            num <- unclaimed
           } else {
-            num <- as.list(seq(max_claimed + 1L, total_csv_cols))
+            num <- as.list(unclaimed)
           }
           meta[[i]][["number"]] <- num
+          claimed <- c(claimed, unclaimed)
         }
-        # else: not the last null-number col, or no CSV cols remain; leave values NULL
+        # else: not the last null-number col, or every CSV col is spoken for;
+        # leave values NULL rather than duplicating another column's data
       }
 
       if (!is.null(meta[[i]][["number"]])){
@@ -150,14 +165,12 @@ merge_csv_columns <- function(csvs, meta){
             tmp[[j]] <- csvs[[num[[j]]]]
           }
           meta[[i]][["values"]] <- matrix(unlist(tmp), ncol=length(tmp))
-          max_claimed <- max(unlist(num))
         } else {
           idx <- num
           if(is.character(idx)){
             idx <- as.numeric(idx)
           }
           meta[[i]][["values"]] <- csvs[[idx]]
-          max_claimed <- max(max_claimed, as.integer(idx))
         }
       }
     }
