@@ -331,6 +331,16 @@ collapse_block_indexed <- function(entry, l, key){
   # print(paste0("collapsing block: ", key))
   match <- stringr::str_match_all(key,"([A-Za-z]+)(\\d{1,})[_]([A-Za-z]+)")
   if(!isNullOb(match[[1]])){
+    # A ts tibble is rectangular: every column carries a cell for every indexed
+    # block any column in the dataset has. A column with three interpretations
+    # in a dataset whose richest column has six therefore arrives with three
+    # blocks' worth of NA. Assigning those materialises empty interpretations --
+    # scope NA and nothing else -- on every such column, including age and year
+    # columns that cannot have one, and they survive the write to file.
+    v <- entry[[key]]
+    if(isNullOb(v) || all(is.na(unlist(v)))){
+      return(l)
+    }
     currIdx <- as.numeric(match[[1]][[3]])
     place_key <- match[[1]][[4]]
     # If there isn't a list initialized yet for this index, then make it
