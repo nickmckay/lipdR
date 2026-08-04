@@ -21,7 +21,7 @@ unzipper <- function(path, dir_tmp){
 #' @param compression_level Integer 0-9 passed to zip. Lower is faster and produces
 #'   larger files; higher is slower and produces smaller files. LiPD files with large
 #'   ensemble tables spend nearly all of their write time here, so the default of 2 is a
-#'   good speed/size trade-off (roughly 4-5x faster than the old default of 6, for ~7%
+#'   good speed/size trade-off (roughly 4-5x faster than the old default of 6, for ~7\%
 #'   larger files). Set to 6-9 if minimizing file size matters more than write speed.
 #' @return none
 zipper <- function(dir_original, dir_tmp, dsn, path, compression_level = 2){

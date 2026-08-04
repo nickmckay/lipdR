@@ -10,7 +10,9 @@ writeLipd(
   ignore.warnings = FALSE,
   removeNamesFromLists = FALSE,
   jsonOnly = FALSE,
-  delete.saved.ensembles = FALSE
+  delete.saved.ensembles = FALSE,
+  compression_level = 2,
+  parallel = FALSE
 )
 }
 \arguments{
@@ -18,7 +20,23 @@ writeLipd(
 
 \item{path}{Destination path  char}
 
+\item{ignore.warnings}{Suppress warnings raised while writing? Default = FALSE.}
+
+\item{removeNamesFromLists}{Strip names from lists before writing, so that
+JSON arrays are emitted as arrays rather than objects. Default = FALSE.}
+
 \item{jsonOnly}{Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)}
+
+\item{delete.saved.ensembles}{Drop ensemble tables that have already been
+written, rather than writing them again. Default = FALSE.}
+
+\item{compression_level}{Integer 0-9 controlling zip compression. Lower is faster and
+produces larger files; higher is slower and smaller. Defaults to 2, which writes large
+ensemble-bearing files roughly 4-5x faster than the previous default (6) at the cost of
+~7\% larger files. Use 6-9 if minimizing file size matters more than write speed.}
+
+\item{parallel}{Write datasets in parallel when writing a multiLipd? Default = FALSE. Uses
+furrr, so call `future::plan()` first, e.g. `future::plan(future::multisession, workers = 8)`.}
 }
 \value{
 none
@@ -38,4 +56,3 @@ writeLipd(D, "/Users/bobsmith/Desktop/lipd_files")
 \author{
 Chris Heiser
 }
-\keyword{internal}

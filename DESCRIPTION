@@ -57,6 +57,7 @@ Suggests:
     lubridate,
     rmarkdown,
     testthat,
+    withr,
     googlesheets4
 VignetteBuilder: knitr
 LazyData: true

@@ -14,7 +14,8 @@ lipd_write(
   ignore.warnings,
   removeNamesFromLists = FALSE,
   jsonOnly = FALSE,
-  delete.saved.ensembles = FALSE
+  delete.saved.ensembles = FALSE,
+  compression_level = 2
 )
 }
 \arguments{

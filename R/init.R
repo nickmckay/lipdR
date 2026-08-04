@@ -319,14 +319,26 @@ readLipd <- function(path=NULL,jsonOnly = FALSE,parallel = FALSE,dont.load.ensem
 
 
 #' Write LiPD data onto disk as LiPD files
-#' @export
-#' @author Chris Heiser
-#' @keywords internal
+#'
 #' @param D LiPD datasets  list
 #' @param path Destination path  char
+#' @param ignore.warnings Suppress warnings raised while writing? Default = FALSE.
+#' @param removeNamesFromLists Strip names from lists before writing, so that
+#'   JSON arrays are emitted as arrays rather than objects. Default = FALSE.
 #' @param jsonOnly Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)
+#' @param delete.saved.ensembles Drop ensemble tables that have already been
+#'   written, rather than writing them again. Default = FALSE.
+#' @param compression_level Integer 0-9 controlling zip compression. Lower is faster and
+#'   produces larger files; higher is slower and smaller. Defaults to 2, which writes large
+#'   ensemble-bearing files roughly 4-5x faster than the previous default (6) at the cost of
+#'   ~7\% larger files. Use 6-9 if minimizing file size matters more than write speed.
+#' @param parallel Write datasets in parallel when writing a multiLipd? Default = FALSE. Uses
+#'   furrr, so call `future::plan()` first, e.g. `future::plan(future::multisession, workers = 8)`.
+#'
+#' @author Chris Heiser
 #' @importFrom pkgbuild find_rtools
 #' @return none
+#' @export
 #' @examples
 #' \dontrun{
 #' # write - without path argument
@@ -335,12 +347,6 @@ readLipd <- function(path=NULL,jsonOnly = FALSE,parallel = FALSE,dont.load.ensem
 #' # write - with path argument
 #' writeLipd(D, "/Users/bobsmith/Desktop/lipd_files")
 #' }
-#' @param compression_level Integer 0-9 controlling zip compression. Lower is faster and
-#'   produces larger files; higher is slower and smaller. Defaults to 2, which writes large
-#'   ensemble-bearing files roughly 4-5x faster than the previous default (6) at the cost of
-#'   ~7% larger files. Use 6-9 if minimizing file size matters more than write speed.
-#' @param parallel Write datasets in parallel when writing a multiLipd? Default = FALSE. Uses
-#'   furrr, so call `future::plan()` first, e.g. `future::plan(future::multisession, workers = 8)`.
 writeLipd <- function(D,
                       path=NULL,
                       ignore.warnings=FALSE,
