@@ -54,6 +54,101 @@ getMeasurementTables <- function(L,pc = "all"){
   return(at)
 }
 
+#' Convert a single LiPD table object into a data.frame
+#'
+#' Handles measurement, summary, ensemble, and distribution tables alike.
+#' Matrix-valued columns (e.g., an ensemble table's age draws) are expanded
+#' into one output column per matrix column.
+#'
+#' @param TT a LiPD table object (list of columns plus scalar metadata)
+#' @return a data.frame
+#' @keywords internal
+table2df <- function(TT){
+  loTT <- TT[purrr::map_lgl(TT,is.list)]
+
+  cols <- list()
+  cnames <- character(0)
+
+  for(ci in seq_along(loTT)){
+    col <- loTT[[ci]]
+    vals <- col$values
+    units <- if(!is.null(col$units)){col$units}else{"missing"}
+    vn <- if(!is.null(col$variableName)){col$variableName}else{names(loTT)[ci]}
+
+    if(is.matrix(vals)){
+      for(j in seq_len(ncol(vals))){
+        cols[[length(cols) + 1]] <- vals[,j]
+        cnames <- c(cnames,paste0(vn,j," (",units,")"))
+      }
+    }else{
+      cols[[length(cols) + 1]] <- vals
+      cnames <- c(cnames,paste0(vn," (",units,")"))
+    }
+  }
+
+  df <- as.data.frame(cols,stringsAsFactors = FALSE)
+  names(df) <- cnames
+  return(df)
+}
+
+#' Get all tables in a LiPD file as data.frames
+#'
+#' Extracts measurement, summary, ensemble, and/or distribution tables from
+#' the paleo and/or chron sections of a LiPD file and converts each into a
+#' data.frame.
+#'
+#' @param L a LiPD file
+#' @param pc paleo or chron tables? (default = "all")
+#' @param tableType which table types to extract: any combination of
+#' "measurement", "summary", "ensemble", "distribution", or "all" (default)
+#'
+#' @return a named list of data.frames
+#' @export
+getTables <- function(L,pc = "all",tableType = "all"){
+  if(identical(pc,"all")){
+    pc <- c("paleo","chron")
+  }
+  if(identical(tableType,"all")){
+    tableType <- c("measurement","summary","ensemble","distribution")
+  }
+
+  at <- list()#initialize alltables
+
+  for(tpc in pc){
+    PC <- L[[paste0(tpc,"Data")]]
+    if(is.null(PC)){
+      next
+    }
+
+    for(ni in seq_along(PC)){
+      if("measurement" %in% tableType){
+        mts <- PC[[ni]]$measurementTable
+        for(mi in seq_along(mts)){
+          TT <- mts[[mi]]
+          tt <- table2df(TT)
+          nm <- if(!is.null(TT$tableName)){TT$tableName}else{paste0(tpc,ni,"measurement",mi)}
+          at[[nm]] <- tt
+        }
+      }
+
+      models <- PC[[ni]]$model
+      for(mo in seq_along(models)){
+        for(mtype in intersect(tableType,c("summary","ensemble","distribution"))){
+          tabs <- models[[mo]][[paste0(mtype,"Table")]]
+          for(ti in seq_along(tabs)){
+            TT <- tabs[[ti]]
+            tt <- table2df(TT)
+            nm <- if(!is.null(TT$tableName)){TT$tableName}else{paste0(tpc,ni,"model",mo,mtype,ti)}
+            at[[nm]] <- tt
+          }
+        }
+      }
+    }
+  }
+
+  return(at)
+}
+
 #' Replace all blank values in csv matrices
 #' @export
 #' @keywords internal

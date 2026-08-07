@@ -4,6 +4,14 @@
 ## LiPD standards
 ###############################################
 
+#' Known LiPD format versions, and the one assumed when a file states none.
+#' @keywords internal
+LIPD_VERSIONS <- c(1, 1.0, 1.1, 1.2, 1.3)
+
+#' @rdname LIPD_VERSIONS
+#' @keywords internal
+LIPD_CURRENT_VERSION <- 1.3
+
 
 #' Add createdBy key to metdata
 #' @export
@@ -50,7 +58,11 @@ fix_doi <- function(d){
 }
 
 
-#' Check what version of LiPD this file is using. If none is found, assume it's using version 1.0
+#' Check what version of LiPD this file is using
+#'
+#' A file with no recognised version key is assumed to be current. Nearly all
+#' such files are recently written ones that simply omitted the key, and the
+#' alternative was a prompt that made reading a directory of files interactive.
 #' @keywords internal
 #' @param d Metadata
 #' @return list tmp: Version number and meta
@@ -66,22 +78,14 @@ get_lipd_version <- function(d){
   }
   version <- as.numeric(version)
   if (isNullOb(version) || is.na(version)){
-    # make a prompt that asks if they know what lipd version this file is.
-    yn <- readline("I didn't find a LiPD version number for this file. Do you know the version number? (y/n)")
-    if(yn == "y"){
-      vn <- readline("Enter the version number (1.0, 1.1, 1.2, 1.3): ")
-      if(vn %in% c(1, 1.0, 1.1, 1.2, 1.3)){
-        version <- vn
-      } else {
-        stop("That's not a valid response. Please try writeLipd again.")
-      }
-    } else if(yn == "n"){
-      print("I'll assume this is a current version (v1.3) file, but that may be an incorrect assumption. Please keep a backup!")
-      version <- 1.3
-    }
+    # A file with no version key is assumed current. This used to prompt, which
+    # made every batch read interactive, and answered nothing useful when it was
+    # not: a non-interactive readline() returns "", which matched neither branch
+    # and left the version NA to be written back into the file.
+    version <- LIPD_CURRENT_VERSION
   }
-  else if (!(version %in% c(1, 1.0, 1.1, 1.2, 1.3))){
-    print(sprintf("LiPD version is invalid: %s", version))
+  else if (!(version %in% LIPD_VERSIONS)){
+    warning(sprintf("LiPD version is invalid: %s", version))
   }
   tmp <- list()
   d[["lipdVersion"]] <- version

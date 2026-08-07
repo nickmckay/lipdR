@@ -2,7 +2,7 @@
 % Please edit documentation in R/versions.R
 \name{get_lipd_version}
 \alias{get_lipd_version}
-\title{Check what version of LiPD this file is using. If none is found, assume it's using version 1.0}
+\title{Check what version of LiPD this file is using}
 \usage{
 get_lipd_version(d)
 }
@@ -13,6 +13,8 @@ get_lipd_version(d)
 list tmp: Version number and meta
 }
 \description{
-Check what version of LiPD this file is using. If none is found, assume it's using version 1.0
+A file with no recognised version key is assumed to be current. Nearly all
+such files are recently written ones that simply omitted the key, and the
+alternative was a prompt that made reading a directory of files interactive.
 }
 \keyword{internal}

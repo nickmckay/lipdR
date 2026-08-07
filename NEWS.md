@@ -1,5 +1,8 @@
 # lipdR 0.7.0
 
+* Reading a file with no `lipdVersion` key no longer prompts. It asked on every such file, which made reading a directory interactive, and answered nothing useful when it could not ask: a non-interactive `readline()` returns `""`, which matched neither the yes nor the no branch, so the version was left `NA` and written back into the file that way. Files without a version key are now assumed to be current (1.3), and an unrecognised version warns instead of printing.
+* Fixed `collapse_block_indexed()` materialising empty interpretations on every column of a rectangular time series tibble, including `age` and `year` columns that cannot have one. This is the mechanism behind the empty interpretation shells that accumulated in the LiPDverse database, and it fired on every file passing through `as.lipdTsTibble()`/`as.lipd()`.
+
 * Prepared the package for CRAN (passes `R CMD check --as-cran` cleanly).
 * `writeLipd()` is substantially faster for large files. Zip compression is now configurable via a new `compression_level` argument (default `2`), which writes datasets with large ensemble tables roughly 3-4x faster for slightly larger files. Pass `compression_level = 6-9` to prioritize file size over speed.
 * `writeLipd()` gained a `parallel` option for writing a `multiLipd` of many datasets in parallel (uses `furrr`; call `future::plan()` first, as with `readLipd(parallel = TRUE)`).
@@ -12,6 +15,7 @@
 * Added support for compilation-specific metadata (`csm`), stored under `csm` inside each `inCompilation` entry. `extractTs()` flattens these to `<compilation>_csm_<field>` (e.g. `iso2k_csm_certification`), keyed by compilation name rather than array index, and `collapseTs()` folds them back into the matching entry. `csmFields()` lists what a time series carries. Note that `extractTs()` always emits every compilation's `csm`, and `collapseTs()` writes back exactly what the time series carries, so a filtered time series should not be collapsed.
 * Fixed the LiPD-to-Neotoma conversion (`lipd2neotoma()`), which is now working and tested.
 * Fixed a crash in `print()`/`summary()` for objects with no measurement table.
+* Added `getTables()`, which extracts every measurement, summary, ensemble, and/or distribution table from a LiPD file as a named list of data.frames. Generalizes `getMeasurementTables()` to all table types and correctly expands matrix-valued columns (e.g. ensemble table draws) into one output column each.
 
 # lipdR 0.6.0
 
