@@ -127,14 +127,45 @@ get_src_or_dst<- function(path){
 convert_dsid_to_path <- function(dsid,vers = NA){
   webpath <- paste0("https://lipdverse.org/data/",dsid)
   if(is.na(vers)){#get most recent
-    vers <- try(stringr::str_extract(string = paste(readLines(webpath),collapse = " ") , pattern = "\\d{1,}_\\d{1,}_\\d{1,}"),silent = TRUE)
-
-    if(is(vers,"try-error")){
-      stop("Cant get dataset version from path.")
-    }
+    vers <- get_dsid_version(webpath)
   }
   path <- file.path(webpath,vers,"lipd.lpd")
   return(path)
+}
+
+#' Read lines from a url without warnings
+#' @keywords internal
+#' @param url the url to read
+#' @return a character vector of lines
+read_url_lines <- function(url){
+  suppressWarnings(readLines(url,warn = FALSE))
+}
+
+#' Get the current version of a dataset on lipdverse
+#'
+#' Reads the plain text version.txt that is published with each dataset. Datasets
+#' without one fall back on the first version string in the dataset page.
+#' @keywords internal
+#' @param webpath the url of the dataset on lipdverse
+#' @return the current version, with underscores (e.g., 1_0_12)
+get_dsid_version <- function(webpath){
+  versionPattern <- "\\d+_\\d+_\\d+"
+
+  versionFile <- tryCatch(read_url_lines(file.path(webpath,"version.txt")),
+                          error = function(e) character(0))
+  versionFile <- trimws(versionFile)
+  #validate it, in case the server answered with a page rather than the file
+  if(length(versionFile) >= 1 && grepl(paste0("^",versionPattern,"$"),versionFile[1])){
+    return(versionFile[1])
+  }
+
+  page <- tryCatch(paste(read_url_lines(webpath),collapse = " "),
+                   error = function(e) stop(glue::glue("Can't get dataset version from {webpath}: {conditionMessage(e)}"),call. = FALSE))
+  vers <- stringr::str_extract(page,versionPattern)
+  if(is.na(vers)){
+    stop(glue::glue("Can't get dataset version from {webpath}: no version found."),call. = FALSE)
+  }
+  return(vers)
 }
 
 #' Get a list of paths to LiPD files
