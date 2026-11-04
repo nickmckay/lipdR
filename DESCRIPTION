@@ -12,7 +12,6 @@ Authors@R:
            family = "Heiser",
            role = c("aut"),
            email = "heiser@nau.edu"))
-Maintainer: Nicholas McKay <nick@nau.edu>
 Description: Read, write, manipulate, and analyze Linked Paleo Data ('LiPD')
     files. 'LiPD' is a structured data standard for paleoclimate and
     paleoenvironmental data that keeps measurements together with their
