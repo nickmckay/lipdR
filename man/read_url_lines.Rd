@@ -2,7 +2,7 @@
 % Please edit documentation in R/directory.R
 \name{read_url_lines}
 \alias{read_url_lines}
-\title{Read lines from a url without warnings}
+\title{Read lines from a url, keeping the reason if it fails}
 \usage{
 read_url_lines(url)
 }
@@ -13,6 +13,7 @@ read_url_lines(url)
 a character vector of lines
 }
 \description{
-Read lines from a url without warnings
+readLines() gives the reason in a warning, and a generic error afterwards, so
+the warnings are caught and used as the message of the error.
 }
 \keyword{internal}

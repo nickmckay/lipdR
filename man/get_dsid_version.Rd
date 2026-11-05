@@ -14,6 +14,7 @@ the current version, with underscores (e.g., 1_0_12)
 }
 \description{
 Reads the plain text version.txt that is published with each dataset. Datasets
-without one fall back on the first version string in the dataset page.
+without one (a 404) fall back on the first version string in the dataset page.
+Other failures are errors, because the page can name an older version.
 }
 \keyword{internal}
