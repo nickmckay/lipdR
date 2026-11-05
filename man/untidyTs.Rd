@@ -21,7 +21,6 @@ takes a long, tidy, data.frame and returns a TS object. This is the opposite of 
 Other LiPD manipulation: 
 \code{\link{pullTsVariable}()},
 \code{\link{pushTsVariable}()},
-\code{\link{tidyTs}()},
-\code{\link{tidyTsOld}()}
+\code{\link{tidyTs}()}
 }
 \concept{LiPD manipulation}

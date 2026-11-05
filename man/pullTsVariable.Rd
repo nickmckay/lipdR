@@ -23,7 +23,6 @@ pulls all instances of a single variable out of a TS
 Other LiPD manipulation: 
 \code{\link{pushTsVariable}()},
 \code{\link{tidyTs}()},
-\code{\link{tidyTsOld}()},
 \code{\link{untidyTs}()}
 }
 \concept{LiPD manipulation}

@@ -15,3 +15,4 @@ LiPD pub section
 \description{
 get pub info from neotoma
 }
+\keyword{internal}

@@ -49,7 +49,8 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
   if(!verbose){
     pb <- txtProgressBar(min = 0, max = length(ts),title = "Collapsing to LiPD objects",style = 3)
   }
-  D <- list()
+  unique_dsn <- unique(pullTsVariable(ts, "dataSetName", strict.search = TRUE))
+  D <- vector(mode = "list",length = length(unique_dsn))
   tryCatch({
     # Do some collapse stuff
     for(i in 1:length(ts)){
@@ -57,6 +58,10 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
         setTxtProgressBar(pb = pb,value = i)
       }
       ts[[i]] = add_missing_ts_data(ts[[i]])
+      # Fold <compilation>_csm_<field> back into the nested inCompilation
+      # structure. Merges rather than replaces, so an entry carrying only some
+      # compilations' metadata cannot delete the others'.
+      ts[[i]] = contract_csm_entry(ts[[i]])
       pc <- paste0(ts[[i]][["mode"]], "Data")
       # ONLY PROCESS BASE DATA ON FIRST DATASET OCCURENCE. All subsequent timeseries entries from the same dataset will only add its unique column data to the running dataset.
       if(!ts[[i]][["dataSetName"]] %in% names(D)){
@@ -75,6 +80,8 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
       }
       # Use the time series entry to overwrite the (old) raw data for this column
       D[[dsn]] <- collapse_table(D[[dsn]], ts[[i]], pc)
+
+      D[[dsn]] <- fixPubAuthorList(D[[dsn]])
 
       D[[dsn]] <- structure(D[[dsn]],class = c("lipd",class(list())))
     }
@@ -101,7 +108,7 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
 
 is_include_key <- function(key, pc){
   exclude <- c("mode", "whichtables", "paleoNumber", "chronNumber", "tableNumber", "modelNumber", "timeID", "tableType",
-               "raw", "depth", "depthUnits", "age", "ageUnits", "interpretation", "calibration", "hasResolution","inCompilationBeta", "physicalSample",
+               "raw", "depth", "depthUnits", "age", "ageUnits", "interpretation", "calibration", "hasResolution","inCompilation", "physicalSample",
                "depthUnits","year","yearUnits")
   match_idx <- stringr::str_match_all(key, "(\\w+)(\\d+)[_](\\w+)")
   match_non_idx <- stringr::str_match_all(key, "(\\w+)[_](\\w+)")
@@ -240,7 +247,7 @@ collapse_column <- function(table, entry, pc){
   res <- list()
   phys <- list()
   inComp <- list()
-  include <- c("paleoData", "chronData", "interpretation", "calibration", "hasResolution","inCompilationBeta")
+  include <- c("paleoData", "chronData", "interpretation", "calibration", "hasResolution","inCompilation")
   exclude <- c('filename', 'googleWorkSheetKey', 'tableName', "missingValue", "tableMD5", "dataMD5", "googWorkSheetKey", "pub", "geo")
   ts_keys <- names(entry)
 
@@ -256,7 +263,7 @@ collapse_column <- function(table, entry, pc){
         res <- collapse_block(entry, res, curr_key, pc)
       } else if (grepl("physicalSample", curr_key)){
         phys <- collapse_block(entry, phys, curr_key, pc)
-      } else if (grepl("inCompilationBeta", curr_key)){
+      } else if (grepl("inCompilation", curr_key)){
         inComp <- collapse_block_indexed(entry, inComp, curr_key)
       } else if (grepl(pc, curr_key)){
         new_column <- collapse_block(entry, new_column, curr_key, pc)
@@ -276,7 +283,7 @@ collapse_column <- function(table, entry, pc){
       new_column[["physicalSample"]] <- phys
     }
     if(!isNullOb(inComp)){
-      new_column[["inCompilationBeta"]] <- inComp
+      new_column[["inCompilation"]] <- inComp
     }
     vn <- get_vn(new_column[["variableName"]], names(table))
     # Set the new column into the table using the variableName
@@ -315,7 +322,7 @@ collapse_column <- function(table, entry, pc){
 #' @description match[[1]][[2]] = first key (ex. "interpretation)
 #' @description match[[1]][[3]] = index number (ex. the "1" from "interpretation1")
 #' @description match[[1]][[4]] = second key (ex. "variableDetail")
-#' @export
+#' @keywords internal
 #' @param entry Time series entry
 #' @param l Metadata (to add new data to)
 #' @param key Current key from time series entry
@@ -324,6 +331,16 @@ collapse_block_indexed <- function(entry, l, key){
   # print(paste0("collapsing block: ", key))
   match <- stringr::str_match_all(key,"([A-Za-z]+)(\\d{1,})[_]([A-Za-z]+)")
   if(!isNullOb(match[[1]])){
+    # A ts tibble is rectangular: every column carries a cell for every indexed
+    # block any column in the dataset has. A column with three interpretations
+    # in a dataset whose richest column has six therefore arrives with three
+    # blocks' worth of NA. Assigning those materialises empty interpretations --
+    # scope NA and nothing else -- on every such column, including age and year
+    # columns that cannot have one, and they survive the write to file.
+    v <- entry[[key]]
+    if(isNullOb(v) || all(is.na(unlist(v)))){
+      return(l)
+    }
     currIdx <- as.numeric(match[[1]][[3]])
     place_key <- match[[1]][[4]]
     # If there isn't a list initialized yet for this index, then make it
@@ -347,7 +364,7 @@ collapse_block_indexed <- function(entry, l, key){
 #' match[[1]][[2]] = first key (ex. "physicalSample")
 #' match[[1]][[3]] = second key (ex. "tableName")
 #'
-#' @export
+#' @keywords internal
 #'
 #' @param entry Time series entry
 #' @param l Metadata (to append to)
@@ -370,7 +387,7 @@ collapse_block <- function(entry, l, key, pc){
 }
 
 #' Get the target table
-#' @export
+#' @keywords internal
 #' @param d Metadata
 #' @param current Current time series entry
 #' @param pc paleoData or chronData
@@ -468,7 +485,7 @@ put_table <- function(d, current, pc, table){
 
 
 #' Before you place a table, you must have the structure leading up to the location or you'll get errors. Build the structure
-#' @export
+#' @keywords internal
 #' @param d Metadata
 #' @param pc paleoData or chronData
 #' @param table_type meas, ens, or summ
@@ -580,8 +597,8 @@ rm_existing_tables <- function(d, pc, whichtables){
         if(whichtables %in% c("ens", "summ","all")){
           if("model" %in% names(d[[pc]][[i]])){
             for(j in 1:length(d[[pc]][[i]][["model"]])){
-              if(whichtables %in% c("summ")){
-                if("summaryTable" %in% d[[pc]][[i]][["model"]][[j]]){
+              if(whichtables %in% c("summ","all")){
+                if("summaryTable" %in% names(d[[pc]][[i]][["model"]][[j]])){
                   for(k in 1:length(d[[pc]][[i]][["model"]][[j]][["summaryTable"]])){
                     d[[pc]][[i]][["model"]][[j]][["summaryTable"]][[k]] <- list()
                   }

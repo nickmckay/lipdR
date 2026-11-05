@@ -125,9 +125,14 @@ get_csv_from_table <- function(tables, crumbs, csvs){
       csvs[[crumbs_2]] <- tmp[["csvs"]]
       # overwrite old table
       tables[[i]]<- tmp[["meta"]]
-      # overwrite old filename
-      tables[[i]][["filename"]]<- crumbs_2
-      tables[[i]][["tableName"]] <- strsplit(crumbs_3, "\\.")[[1]][[2]]
+      # Always use the standardized crumbs-based filename for the CSV.
+      # This ensures unique filenames regardless of tableName.
+      tables[[i]][["filename"]] <- crumbs_2
+      # Set tableName from crumbs when absent
+      if(is.null(tables[[i]]$tableName) | all(is.na(tables[[i]]$tableName))){
+        crumbs_parts <- strsplit(crumbs_3, "\\.")[[1]]
+        tables[[i]][["tableName"]] <- crumbs_parts[[length(crumbs_parts)]]
+      }
     }
   }, error=function(cond){
     print(paste0("Error: get_csv_from_table: ", cond))

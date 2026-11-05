@@ -29,3 +29,4 @@ match[[1]][[1]] = full key with underscore and index (ex. "physicalSample_tableN
 match[[1]][[2]] = first key (ex. "physicalSample")
 match[[1]][[3]] = second key (ex. "tableName")
 }
+\keyword{internal}

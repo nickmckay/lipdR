@@ -31,18 +31,19 @@ lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
       j <- rm_empty_fields(j)
       j <- update_lipd_version(j)
       j <- merge_csv_metadata(j,data_dir,dont.load.ensemble = dont.load.ensemble)
-      if(dont.load.ensemble){#then copy the unzipped lipd appropriately.
+      if(dont.load.ensemble){#keep the already-unzipped ensembles for writing later
         if(is.null(j$datasetId)){
           j$datasetId <- createDatasetId()
         }
-        ensembleStoreDir <- file.path(tempdir(),paste0(j$datasetId,"_",str_replace_all(as.character(lubridate::now()),pattern = "[^0-9-]",replacement = "-")))
-        j$savedEnsembles <- ensembleStoreDir
-        dir.create(ensembleStoreDir)
-        unzipper(path, ensembleStoreDir)
+        # dir_tmp already contains the fully-unzipped file (ensembles included),
+        # so reuse it rather than unzipping the whole archive a second time.
+        j$savedEnsembles <- dir_tmp
+      }else{
+        j$savedEnsembles <- NULL
+        unlink(dir_tmp, recursive=TRUE)
       }
       j <- idx_num_to_name(j)
       # j = put_tsids(j)
-      unlink(dir_tmp, recursive=TRUE)
     }
   }, error = function(cond){
     if(exists("dir_tmp")){
@@ -65,9 +66,12 @@ lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
 #' @param jsonOnly Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)
 #' @importFrom stats complete.cases
 #' @return none:
-lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFromLists = FALSE,jsonOnly = FALSE){
+lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFromLists = FALSE,jsonOnly = FALSE,delete.saved.ensembles = FALSE,compression_level = 2){
   tryCatch({
     # dsn <- replace_invalid_chars(dsn)
+    if(is.null(j$datasetVersion)){
+      j$datasetVersion <- "0.0.0"
+    }
     if(!jsonOnly){
       dir_tmp <- create_tmp_dir()
       # Create a lipd dir
@@ -93,6 +97,13 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
       write_csv_to_file(dat[["csvs"]],dir_zip)
 
       if(!is.null(j$savedEnsembles)){#then we need to write in the ensembles stored in the this directory
+        if(!dir.exists(j$savedEnsembles)){
+          all_dirs <- list.dirs(file.path(tempdir()))
+          dsidmatch <- which(grepl(j$datasetId,all_dirs))
+          if(length(dsidmatch) > 1){
+            j$savedEnsembles <- sort(all_dirs,decreasing = TRUE)[1]
+          }
+        }
         if(dir.exists(j$savedEnsembles)){
             enscsvs <- list_files_recursive(x = "csv",path = j$savedEnsembles)
             enscsvs <- enscsvs[grepl(pattern = "ensemble",enscsvs)]
@@ -100,10 +111,12 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
               stop(glue::glue("This LiPD file has ensembles that were not loaded in, but there don't appear to be any csv files labeled 'ensemble' in the temporary folder here: {j$savedEnsembles}"))
             }
             purrr::walk(enscsvs,file.copy,to = dir_zip,overwrite = TRUE)
-            if(grepl(j$savedEnsembles, pattern = tempdir())){#make sure it's a tempdir() before deleting
-              unlink(j$savedEnsembles, recursive = TRUE)
+            if(delete.saved.ensembles){
+              if(grepl(j$savedEnsembles, pattern = tempdir())){#make sure it's a tempdir() before deleting
+                unlink(j$savedEnsembles, recursive = TRUE)
+              }
+              j$savedEnsembles <- NULL
             }
-            j$savedEnsembles <- NULL
         }else{
           stop(glue::glue("This LiPD file has ensembles that were not loaded in, and that should be stored in a temporary folder here: {j$savedEnsembles}, however that directory doesn't exist. To write the file without the ensembles, set L$savedEnsembles <- NULL."))
       }
@@ -116,11 +129,13 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
       write(j, file=file.path(dir_zip,"metadata.jsonld"))
 
       #Calculate Payload-Oxum
-      OctetCount <- sum(nchar(tmp[["meta"]], type = "bytes"),
-                        nchar(dat[["csvs"]], type = "bytes")) #this is slow for big csvs
 
-      StreamCount <- length(list.files(dir_zip))
-      payloadOxum <- paste(OctetCount, StreamCount, sep = ".")
+      #Omitting for speed
+      # OctetCount <- sum(nchar(tmp[["meta"]], type = "bytes"),
+      #                   nchar(dat[["csvs"]], type = "width")) #this is slow for big csvs
+      #
+      # StreamCount <- length(list.files(dir_zip))
+      # payloadOxum <- paste(OctetCount, StreamCount, sep = ".")
 
 
       #create data subfolder and move payload files
@@ -149,8 +164,8 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
 
       #write bag-info.txt
       write(paste0("Bag-Software-Agent: lipd_write <https://github.com/nickmckay/lipdR/tree/main/R/lipd.R>\n",
-                   "Bagging-Date: ", Sys.Date(), "\n",
-                   "Payload-Oxum: ", payloadOxum),
+                   "Bagging-Date: ", Sys.Date(), "\n"),
+  #                 "Payload-Oxum: ", payloadOxum), #omitting for speed
             file=file.path(dir_bag,"bag-info.txt"))
 
       #write MD5 tag manifest
@@ -166,7 +181,7 @@ lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFr
 
 
 
-      zipper(dir_original, dir_tmp, dsn, path)
+      zipper(dir_original, dir_tmp, dsn, path, compression_level = compression_level)
       unlink(dir_tmp, recursive=TRUE)
     }else{
       j <- jsonlite::toJSON(j, pretty=TRUE, auto_unbox = TRUE)

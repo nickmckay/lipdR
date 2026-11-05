@@ -4,6 +4,14 @@
 ## LiPD standards
 ###############################################
 
+#' Known LiPD format versions, and the one assumed when a file states none.
+#' @keywords internal
+LIPD_VERSIONS <- c(1, 1.0, 1.1, 1.2, 1.3)
+
+#' @rdname LIPD_VERSIONS
+#' @keywords internal
+LIPD_CURRENT_VERSION <- 1.3
+
 
 #' Add createdBy key to metdata
 #' @export
@@ -18,7 +26,6 @@ add_created_by <- function(d){
 }
 
 #' Switch DOI from BibJSON structure 'identifier' key to a root level "doi" key
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return list d: Metadata
@@ -34,10 +41,10 @@ fix_doi <- function(d){
       # Found DOI identifier. Reassign and then remove from 'identifier' key
       d$pub[[p]]$doi <- identifier
       d$pub[[p]]$identifier <- NULL
-    } 
+    }
     # Loop for each DOI key we don't want
     for(n in 1:length(dois)){
-      # Is this DOI key in the publication? 
+      # Is this DOI key in the publication?
       if(dois[[n]] %in% names(d$pub[[p]])){
         # Reassign the DOI/Doi to doi key
         d$pub[[p]]$doi <- d$pub[[p]][[dois[[n]]]]
@@ -51,8 +58,11 @@ fix_doi <- function(d){
 }
 
 
-#' Check what version of LiPD this file is using. If none is found, assume it's using version 1.0
-#' @export
+#' Check what version of LiPD this file is using
+#'
+#' A file with no recognised version key is assumed to be current. Nearly all
+#' such files are recently written ones that simply omitted the key, and the
+#' alternative was a prompt that made reading a directory of files interactive.
 #' @keywords internal
 #' @param d Metadata
 #' @return list tmp: Version number and meta
@@ -68,22 +78,14 @@ get_lipd_version <- function(d){
   }
   version <- as.numeric(version)
   if (isNullOb(version) || is.na(version)){
-    # make a prompt that asks if they know what lipd version this file is. 
-    yn <- readline("I didn't find a LiPD version number for this file. Do you know the version number? (y/n)")
-    if(yn == "y"){
-      vn <- readline("Enter the version number (1.0, 1.1, 1.2, 1.3): ")
-      if(vn %in% c(1, 1.0, 1.1, 1.2, 1.3)){
-        version <- vn
-      } else {
-        stop("That's not a valid response. Please try writeLipd again.")
-      }
-    } else if(yn == "n"){
-      print("I'll assume this is a current version (v1.3) file, but that may be an incorrect assumption. Please keep a backup!")
-      version <- 1.3
-    }
+    # A file with no version key is assumed current. This used to prompt, which
+    # made every batch read interactive, and answered nothing useful when it was
+    # not: a non-interactive readline() returns "", which matched neither branch
+    # and left the version NA to be written back into the file.
+    version <- LIPD_CURRENT_VERSION
   }
-  else if (!(version %in% c(1, 1.0, 1.1, 1.2, 1.3))){
-    print(sprintf("LiPD version is invalid: %s", version))
+  else if (!(version %in% LIPD_VERSIONS)){
+    warning(sprintf("LiPD version is invalid: %s", version))
   }
   tmp <- list()
   d[["lipdVersion"]] <- version
@@ -96,7 +98,6 @@ get_lipd_version <- function(d){
 #' Use the current version number to determine where to start updating from. Use "chain versioning" to make it
 #' modular. If a file is a few versions behind, convert to EACH version until reaching current. If a file is one
 #' version behind, it will only convert once to the newest.
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return d Metadata
@@ -106,24 +107,28 @@ update_lipd_version <- function(d){
     tmp <- get_lipd_version(d)
     version <- tmp[["version"]]
     d <- tmp[["meta"]]
-    
+
     # d <- fix_authors(d[["pub"]])
     d <- fix_doi(d)
-    
+
+    # Legacy cleanup: rename any "inCompilationBeta" metadata to "inCompilation".
+    # Runs for every file regardless of lipdVersion so old files are cleaned on read.
+    d <- migrate_incompilation_keys(d)
+
     # Update from (N/A or 1.0) to 1.1
     if (version == 1.0 || version == "1.0"){
       d = update_lipd_v1_1(d)
       version <- 1.1
       # print("updating to 1.1")
     }
-    
+
     # Update from 1.1 to 1.2
     if (version == 1.1 || version == "1.1"){
       d = update_lipd_v1_2(d)
       version = 1.2
       # print("updating to 1.2")
     }
-    
+
     # Update from 1.2 to 1.3
     if(version == 1.2 || version == "1.2"){
       d = update_lipd_v1_3(d)
@@ -142,7 +147,6 @@ update_lipd_version <- function(d){
 #' - paleoData entry is a list that allows multiple tables
 #' - chronData now allows measurement, model, summary, ensemble, calibratedAges tables
 #' - Added 'lipdVersion' key
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return d Metadata
@@ -156,7 +160,6 @@ update_lipd_v1_1 <- function(d){
 #' - 'calibratedAges' key is now 'distribution' (handled in update_lipd_v1_3_keys instead)
 #' - paleoData structure mirrors chronData. Allows measurement, model, summary, ensemble,
 #'   distribution tables
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return list d: Metadata
@@ -179,7 +182,7 @@ update_lipd_v1_2 <- function(d){
 #' @return list d: Metadata
 update_lipd_v1_2_section <- function(d, pc){
   if(!isNullOb(d[[pc]])){
-    # Create the structure that we want. 
+    # Create the structure that we want.
     tmp <- list()
     tmp[["measurementTable"]] <- list()
     # Append the existing tables as mesurement tables in the new structure
@@ -201,7 +204,6 @@ update_lipd_v1_2_section <- function(d, pc){
 #' - Merge isotopeInterpretation and climateInterpretation into "interpretation" block
 #' - ensemble table entry is a list that allows multiple tables
 #' - summary table entry is a list that allows multiple tables
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return d Metadata
@@ -217,14 +219,56 @@ update_lipd_v1_3 <- function(d){
   return(d)
 }
 
+#' Rename legacy "inCompilationBeta" metadata keys to "inCompilation": recursive
+#'
+#' The compilation-membership block on measurement-table columns was historically
+#' named `inCompilationBeta`. It is now `inCompilation`. This walker recursively
+#' descends the metadata list and renames any key beginning with
+#' `inCompilationBeta` to the corresponding `inCompilation` key, so legacy files
+#' are cleaned as they are read.
+#' @keywords internal
+#' @param d Metadata
+#' @return d Metadata with any inCompilationBeta keys renamed to inCompilation
+migrate_incompilation_keys <- function(d){
+  keys <- names(d)
+
+  # For lists indexed by name
+  if(!isNullOb(keys) && sum(!is.na(keys)) > 0){
+    for(i in 1:length(keys)){
+      old_key <- keys[[i]]
+      # Dive down first
+      if(typeof(d[[old_key]]) == "list"){
+        d[[old_key]] <- migrate_incompilation_keys(d[[old_key]])
+      }
+      # When bubbling back up, rename the key if it is a legacy beta key
+      if(grepl("^inCompilationBeta", old_key)){
+        new_key <- sub("^inCompilationBeta", "inCompilation", old_key)
+        d[[new_key]] <- d[[old_key]]
+        d[[old_key]] <- NULL
+      }
+    }
+  } else {
+    # For lists indexed by number
+    if(typeof(d) == "list"){
+      for(i in seq_along(d)){
+        tryCatch({
+          d[[i]] <- migrate_incompilation_keys(d[[i]])
+        }, error=function(cond){
+          print(paste0("Error: migrate_incompilation_keys: ", cond))
+        })
+      }
+    }
+  }
+  return(d)
+}
+
 #' Update v1.2 keys to v1.3 keys: recursive
-#' @export
 #' @importFrom stats setNames
 #' @keywords internal
 #' @param d Metadata
 #' @return list d: Metadata
 update_lipd_v1_3_keys <- function(d){
-  v12keys <- c("paleoMeasurementTable", "chronMeasurementTable", "paleoModel", "chronModel", "paleoDataMD5", "chronDataMD5", "paleoEnsembleMD5",  
+  v12keys <- c("paleoMeasurementTable", "chronMeasurementTable", "paleoModel", "chronModel", "paleoDataMD5", "chronDataMD5", "paleoEnsembleMD5",
                "chronEnsembleMD5", "paleoEnsembleTableMD5", "chronEnsembleTableMD5", "paleoMeasurementTableMD5", "chronMeasurementTableMD5", "name",
                "calibratedAges")
   v13keys <- c("measurementTable", "measurementTable", "model", "model", "dataMD5", "dataMD5", "tableMD5", "tableMD5", "tableMD5", "tableMD5",
@@ -232,18 +276,18 @@ update_lipd_v1_3_keys <- function(d){
   v13keymap <- setNames(as.list(v13keys), v12keys)
   v12keys_rm <- c("chronTableName", "paleoTableName", "paleoDataTableName", "chronDataTableName",
                   "chronMeasurementTableName", "paleoMeasurementTableName")
-  
+
   # Keys that are in this list
   keys <- names(d)
-  
-  # For any lists that are indexed by name 
+
+  # For any lists that are indexed by name
   if(!isNullOb(keys) && sum(!is.na(keys)) > 0){
     for(i in 1:length(keys)){
       old_key <- keys[[i]]
       # Dive down first
       if(typeof(d[[old_key]]) == "list"){
         d[[old_key]] <- update_lipd_v1_3_keys(d[[old_key]])
-      } 
+      }
       # When you bubble back up, then check if this key should be switched
       if(old_key %in% v12keys){
         # Set the old
@@ -265,33 +309,32 @@ update_lipd_v1_3_keys <- function(d){
           print(paste0("Error: update_lipd_v1_3_keys: ", cond))
         })
       }
-    }  
+    }
   }
   return(d)
 }
 
 #' Update the structure for summary and ensemble tables
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return d Metadata
 update_lipd_v1_3_structure <- function(d){
-  
+
   # Tables that need changing
   change <- c("ensembleTable", "summaryTable")
   interp <- c("isotopeInterpretation", "climateInterpretation")
-  
+
   # Keys in this data
   keys <- names(d)
-  
-  # For any lists that are indexed by name 
+
+  # For any lists that are indexed by name
   if(!isNullOb(keys) && sum(!is.na(keys)) > 0){
     for(i in 1:length(keys)){
       curr_key <- keys[[i]]
       # Dive down first
       if(typeof(d[[curr_key]]) == "list"){
         d[[curr_key]] <- update_lipd_v1_3_structure(d[[curr_key]])
-      } 
+      }
       # When you bubble back up, then check if this key should be switched
       if(curr_key %in% change){
         # Found a table. Do the 'ol switcheroo
@@ -336,219 +379,4 @@ merge_interpretations <- function(d, key){
   return(d)
 }
 
-# DEPRECATED CODE
-
-#' #' Convert LiPD version structure whenever necessary
-#' #' @export
-#' #' @keywords internal
-#' #' @param d Metadata
-#' #' @return d Metadata
-#' convertVersion <- function(d){
-#'   # Check which version this LiPD file is
-#'   d <- check_version(d)
-#'   # check and convert any data frames into lists
-#'   d <- convert_dataframes_list(d)
-#'   return(d)
-#' }
-#' 
-#' #' Check / convert and fixed data frames into scalable lists
-#' #' @export
-#' #' @keywords internal
-#' #' @param d LiPD metadata
-#' #' @return d Modified LiPD metadata
-#' convert_dataframes_list <- function(d){
-#'   # convert single entries to lists. matching structure to 1.2
-#'   d <- convert_single_multiple(d, "paleoData")
-#'   d <- convert_single_multiple(d, "chronData")
-#' 
-#'   return(d)
-#' }
-#' 
-#' #' Convert from a single fixed table, to a multiple scalable table
-#' #' (LiPD Verison 1.1 to 1.2 change)
-#' #' @export
-#' #' @keywords internal
-#' #' @param d LiPD metadata
-#' #' @return d Modified LiPD metadata
-#' convert_single_multiple <- function(d, pc){
-#' 
-#'   # data frame?
-#'   dat <- hasData(d, pc)
-#' 
-#'   # proceed of section exists
-#'   if (!is.null(dat)){
-#' 
-#'     if (is.data.frame(dat)){
-#'       d[[pc]] <- list()
-#'       d[[pc]][[1]] <- as.list(dat)
-#'     }
-#'     # multiples?
-#'     dat <- hasData(d[[pc]], 1)
-#'     # convert to multiples
-#'     if (is.null(dat)){
-#'       d[[pc]] <- list()
-#'       d[[pc]][[1]] <- dat
-#'     } # END PALEODATA
-#' 
-#'     # loop
-#'     for (i in 1:length(d[[pc]])){
-#' 
-#'       # PALEODATA[[i]]
-#'       # data frame?
-#'       dat <- hasData(d[[pc]], i)
-#'       if (is.data.frame(!is.null(dat))){
-#'           d[[pc]][[i]] <- as.list(dat)
-#'       }
-#'       # MEAS + MODEL
-#'       # table exists ?
-#'       # d$paleoData[[i]]$paleoMeasurementTable
-#'       dat.meas <- hasData(d[[pc]][[i]], "measurementTable")
-#' 
-#'       # table exists ?
-#'       # d$paleoData[[i]]$paleoModel
-#'       dat.model <- hasData(d[[pc]][[i]], "model")
-#' 
-#'       # tables do not exist.
-#'       # make a meas table
-#'       if (is.null(dat.meas) & is.null(dat.model)){
-#'         tmp <- d[[pc]][[i]]
-#'         d[[pc]][[i]] <- list()
-#'         d[[pc]][[i]][["measurementTable"]] <- list()
-#'         d[[pc]][[i]][["measurementTable"]][[1]] <- tmp
-#'       }  # end meas and model
-#' 
-#'       # DIRECT
-#'       # multiples ?
-#'       # d$paleoData[[i]]$paleoMeasurementTable$columns
-#'       dat <- hasData(d[[pc]][[i]][["measurementTable"]], "columns")
-#'       # convert to multiples
-#'       # d$paleoData[[i]]$paleoMeasurementTable
-#'       if (!is.null(dat)){
-#'         tmp <- d[[pc]][[i]][["measurementTable"]]
-#'         d[[pc]][[i]][["measurementTable"]] <- list()
-#'         d[[pc]][[i]][["measurementTable"]][[1]] <- tmp
-#'       } # end direct data
-#' 
-#'       # MEASUREMENT
-#'       # paleoData[[i]]paleoMeasurementTable
-#'       # data frame ?
-#'       dat <- hasData(d[[pc]][[i]], "measurementTable")
-#'       if (is.data.frame(!is.null(dat))){
-#'         d[[pc]][[i]][["measurementTable"]] <- as.list(dat)
-#'       }
-#'       # multiples ?
-#'       if (!is.null(dat)){
-#'         dat <- hasData(d[[pc]][[1]][["measurementTable"]], 1)
-#'         # convert to multiples
-#'         # d$paleoData[[i]]$paleoMeasurementTable[[j]]
-#'         if (is.null(dat)){
-#'           tmp <- d[[pc]][[1]][["measurementTable"]]
-#'           d[[pc]][[1]][["measurementTable"]] <- list()
-#'           d[[pc]][[1]][["measurementTable"]][[1]] <- tmp
-#'         } # END MEASUREMENT
-#' 
-#'         # loop
-#'         for (j in 1:length(d[[pc]][[i]][["measurementTable"]])){
-#' 
-#'           # MEASUREMENT[[j]]
-#'           # paleoData[[i]]paleoMeasurementTable[[j]]
-#'           # data frame?
-#'           dat <- hasData(d[[pc]][[i]][["measurementTable"]], j)
-#'           if (is.data.frame(!is.null(dat))){
-#'             d[[pc]][[i]][["measurementTable"]][[j]] <- as.list(dat)
-#'           } # END MEASUREMENT[[j]]
-#' 
-#'         } # end meas loop
-#'       } # end meas exists
-#' 
-#'       # continue if Model table present
-#'       if (length(d[[pc]][[i]][["model"]]) > 0){
-#'         # MODEL
-#'         # paleoData[[i]]paleoModel
-#'         # data frame ?
-#'         dat <- hasData( d[[pc]][[i]], "model")
-#'         if (is.data.frame(!is.null(dat))){
-#'           d[[pc]][[i]][["model"]] <- as.list(dat)
-#'         }
-#'         # multiples ?
-#'         # convert to multiples
-#'         if (!is.null(dat)){
-#'           dat <- hasData(d[[pc]][[1]][["model"]], 1)
-#'           if (is.null(dat)){
-#'             tmp <- d[[pc]][[1]][["model"]]
-#'             d[[pc]][[1]][["model"]] <- list()
-#'             d[[pc]][[1]][["model"]][[1]] <- tmp
-#'           } # END MODEL
-#' 
-#'           # loop
-#'           for (j in 1:length(d[[pc]][[i]][["model"]])){
-#' 
-#'             # MODEL[[j]]
-#'             # paleoModel[[j]]
-#'             # data frame ?
-#'             dat <- hasData(d[[pc]][[i]][["model"]], j)
-#'             if (is.data.frame(!is.null(dat))){
-#'               d[[pc]][[i]][["model"]][[j]] <- as.list(dat)
-#'             }
-#' 
-#'             # SUMMARY
-#'             # paleoModel[[j]]$summaryTable
-#'             # data frame ?
-#'             dat <- hasData(d[[pc]][[i]][["model"]][[j]], "summaryTable")
-#'             if (is.data.frame(!is.null(dat))){
-#'               d[[pc]][[i]][["model"]][[j]][["summaryTable"]] <- as.list(dat)
-#'             }
-#' 
-#'             # ENSEMBLE
-#'             # paleoModel[[j]]$ensembleTable
-#'             # data frame ?
-#'             dat <- hasData(d[[pc]][[i]][["model"]][[j]], "ensembleTable")
-#'             if (is.data.frame(!is.null(dat))){
-#'               d[[pc]][[i]][["model"]][[j]][["ensembleTable"]] <- as.list(dat)
-#'             }
-#' 
-#'             # DISTRIBUTION
-#'             # paleoModel[[j]]$distributionTable
-#'             dat <- hasData(d[[pc]][[i]][["model"]][[j]], "distributionTable")
-#'             if (is.data.frame(!is.null(dat))){
-#'               d[[pc]][[i]][["model"]][[j]][["distributionTable"]] <- as.list(dat)
-#'             } # end dist
-#' 
-#'             # multiples ?
-#'             # convert to multiples
-#'             if (!is.null(dat)){
-#'               dat <- hasData(d[[pc]][[1]][["model"]][[j]][["distributionTable"]], 1)
-#'               if (is.null(dat) & !is.null(dat)){
-#'                 tmp <- d[[pc]][[i]][["model"]][[j]][["distributionTable"]]
-#'                 d[[pc]][[i]][["model"]][[j]][["distributionTable"]] <- list()
-#'                 d[[pc]][[i]][["model"]][[j]][["distributionTable"]][[1]] <- tmp
-#'               } # end dist 1
-#' 
-#'               # loop
-#'               for (k in 1:length(d[[pc]][[i]][["model"]][[j]][["distributionTable"]])){
-#' 
-#'                 # DISTRIBUTION[[k]]
-#'                 dat <- hasData(d[[pc]][[i]][["model"]][[j]][["distributionTable"]], k)
-#'                 if (is.data.frame(!is.null(dat))){
-#'                   d[[pc]][[i]][["model"]][[j]][["distributionTable"]][[k]] <- as.list(dat)
-#'                 } # END DISTRIBUTION[[k]]
-#' 
-#'               } # end dist loop
-#' 
-#'             } # end dist exists
-#' 
-#'           } # end models
-#' 
-#'         } # end model exists
-#' 
-#'       } # end if
-#' 
-#'     } # end section
-#' 
-#'   } # end if section
-#' 
-#'   # change the LiPDVersion value to 1.2
-#'   d[["lipdVersion"]] <- 1.2
-#'   return(d)
-#' }
 

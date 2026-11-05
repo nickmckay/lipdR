@@ -5,6 +5,18 @@
 ^README\.Rmd$       # An Rmarkdown file used to generate README.md
 ^cran-comments\.md$ # Comments for CRAN submission
 ^\.github$
+^\.claude$
 ^LICENSE\.md$
 ^data-raw$
 ^codecov\.yml$
+# Stray development artifacts kept in the repo but excluded from the build
+^lipd2neotomaDemo\.Rmd$
+^lipd2neotomaDemo\.html$
+^standardizeKeys\.Rmd$
+^lipdKeystandardization\.html$
+^lipdKeystandardization_files$
+^pastSKOS\.R$
+^.*\.Rhistory$
+\.DS_Store$
+^tests/testthat/log$
+^cran-comments\.md$

@@ -1,8 +1,6 @@
 <!-- badges: start -->
 [![DOI](https://zenodo.org/badge/24036/nickmckay/LiPD-utilities.svg)](https://zenodo.org/badge/24036/nickmckay/LiPD-utilities.svg)
-[![R](https://img.shields.io/badge/R-1.0.136-blue.svg)]()
-[![R Studio](https://img.shields.io/badge/RStudio-3.3.1-blue.svg)]()
-[![license](https://img.shields.io/badge/license-GPL-brightgreen.svg)]()
+[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![R-CMD-check](https://github.com/nickmckay/lipdR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nickmckay/lipdR/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/nickmckay/lipdR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/nickmckay/lipdR?branch=main)
 <!-- badges: end -->

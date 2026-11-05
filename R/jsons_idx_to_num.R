@@ -1,5 +1,4 @@
 #' Switch all indexing from names to numbers. 
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return list d: Metadata
@@ -87,7 +86,6 @@ idx_table_by_num <- function(tables){
 
 #' Remove column names indexing. Set them to index by their column number
 #' Place the new columns under a "columns" list
-#' @export
 #' @keywords internal
 #' @param table Metadata
 #' @return list table: Metadata

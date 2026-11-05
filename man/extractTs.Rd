@@ -4,7 +4,7 @@
 \alias{extractTs}
 \title{Extract time series from LiPD data}
 \usage{
-extractTs(D, whichtables = "all", mode = "paleo")
+extractTs(D, whichtables = "all", mode = "paleo", calculateResolution = FALSE)
 }
 \arguments{
 \item{D}{LiPD data, sorted by dataset name  list}
@@ -12,12 +12,26 @@ extractTs(D, whichtables = "all", mode = "paleo")
 \item{whichtables}{: char: Options: "all", "summ", "meas", "ens"  Table type to output in the time series.}
 
 \item{mode}{: char: Options "paleo", "chron"}
+
+\item{calculateResolution}{: logical: If TRUE, compute resolution statistics
+(min/mean/median/max spacing) for each column along the standardized time axis
+and store them in the `hasResolution_*` fields. Default FALSE.}
 }
 \value{
 ts:  Time series : list
 }
 \description{
 Create a time series from a library of LiPD datasets. A Time series is a flattened version of LiPD data that can be queried and filtered for easier data analysis.
+}
+\details{
+In addition to flattening each column, `extractTs()` identifies the
+  primary time axis of each table (an `age`/`year` column, or a column flagged
+  `isPrimary`/`primaryAgeColumn`) and adds a standardized time description to every
+  entry: `time` (the values), `timeUnits`, `timeDatum` (reference year, e.g. 1950
+  for BP, 0 for CE/AD), `timeDirection` (`"prograde"` or `"retrograde"`),
+  `timeExponent` (base-10 exponent of the units, e.g. 0 for yr, 3 for ka), and
+  `timeMin`/`timeMax`. The `timeMin`/`timeMax` fields make it easy to filter a time
+  series by age range with e.g. `dplyr::filter()`.
 }
 \examples{
 \dontrun{

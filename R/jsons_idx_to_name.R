@@ -1,5 +1,4 @@
 #' Change index-by-number to index-by-variableName
-#' @export
 #' @keywords internal
 #' @param d Metadata
 #' @return list d: Metadata

@@ -93,8 +93,10 @@ merge_csv_table <- function(tables, crumbs, csvs){
         csv.cols <- csvs[[filename]]
         meta.cols <- tables[[i]][["columns"]]
         tables[[i]][["columns"]] <- merge_csv_columns(csv.cols, meta.cols)
-        # insert crumbs. this is the standardized table name
-        tables[[i]][["tableName"]] <- paste0(crumbs, i)
+        if(is.null(tables[[i]][["tableName"]])){
+          # insert crumbs. this is the standardized table name
+          tables[[i]][["tableName"]] <- paste0(crumbs, i)
+        }
         # remove filename. we have the values imported, so we dont need it anymore. we'll make a new standarized one!
         tables[[i]][["filename"]] <- NULL
       }
@@ -114,25 +116,62 @@ merge_csv_table <- function(tables, crumbs, csvs){
 #' @return list meta: Table metadata
 merge_csv_columns <- function(csvs, meta){
   tryCatch({
+    total_csv_cols <- length(csvs)
+
+    # First pass: every CSV column that some metadata column explicitly claims.
+    # This has to be gathered before assigning anything, because a column with
+    # no `number` may appear *before* the column that claims the data. Deciding
+    # what is unclaimed from only the columns seen so far handed the whole table
+    # to a numberless column and then handed it out again, which doubled paleo
+    # ensembles on a read/write round trip.
+    claimed <- integer(0)
+    for (i in seq_along(meta)){
+      num <- meta[[i]][["number"]]
+      if (!is.null(num)){
+        idx <- suppressWarnings(as.integer(unlist(num)))
+        claimed <- c(claimed, idx[!is.na(idx)])
+      }
+    }
+
     for (i in 1:length(meta)){
-      # special case for ensemble tables - a "column" that holds many columns
-      if (is.list(meta[[i]][["number"]]) | length(meta[[i]][["number"]]) > 1){
-        tmp <- list()
-        nums <- meta[[i]][["number"]]
-        for (j in 1:length(nums)){
-          tmp[[j]] <- csvs[[nums[[j]]]]
+      num <- meta[[i]][["number"]]
+
+      if (is.null(num)){
+        # Count how many null-number columns remain after position i
+        after_indices <- if (i < length(meta)) (i + 1):length(meta) else integer(0)
+        null_after <- sum(purrr::map_lgl(after_indices, function(k) is.null(meta[[k]][["number"]])))
+        unclaimed <- setdiff(seq_len(total_csv_cols), claimed)
+
+        if (null_after == 0L && length(unclaimed) > 0L){
+          # This is the last null-number column and CSV columns remain unclaimed.
+          if (length(unclaimed) == 1L){
+            num <- unclaimed
+          } else {
+            num <- as.list(unclaimed)
+          }
+          meta[[i]][["number"]] <- num
+          claimed <- c(claimed, unclaimed)
         }
-        meta[[i]][["values"]] <- matrix(unlist(tmp), ncol=length(tmp))
-        # meta[[i]][["values"]] <- as.matrix(as.data.frame(tmp))
-        # turn the columns into a matrix - transpose
-        # meta[[i]][["values"]] <- t(do.call(rbind, tmp))
-      } else {
-        idx <- meta[[i]][["number"]]
-        if(is.character(idx)){
-          idx <- as.numeric(idx)
+        # else: not the last null-number col, or every CSV col is spoken for;
+        # leave values NULL rather than duplicating another column's data
+      }
+
+      if (!is.null(meta[[i]][["number"]])){
+        num <- meta[[i]][["number"]]
+        # special case for ensemble tables - a "column" that holds many columns
+        if (is.list(num) | length(num) > 1){
+          tmp <- list()
+          for (j in 1:length(num)){
+            tmp[[j]] <- csvs[[num[[j]]]]
+          }
+          meta[[i]][["values"]] <- matrix(unlist(tmp), ncol=length(tmp))
+        } else {
+          idx <- num
+          if(is.character(idx)){
+            idx <- as.numeric(idx)
+          }
+          meta[[i]][["values"]] <- csvs[[idx]]
         }
-        # assign values. already numeric
-        meta[[i]][["values"]] <- csvs[[idx]]
       }
     }
   }, error=function(cond){

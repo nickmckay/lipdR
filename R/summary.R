@@ -135,11 +135,18 @@ printSummaryData <- function(dataIn, run.quiet = FALSE, skip.table = FALSE){
   tableCount <- 0
 
   if (skip.table == TRUE){
-    for (i in 1:PDnum){
+    for (i in seq_len(PDnum)){
 
       measTabNum <- length(dataIn[[i]]$measurementTable)
 
-      for (j in 1:measTabNum){
+      if (measTabNum == 0){
+        if(run.quiet == FALSE){
+          cat("Object", i, "does not include a measurement table\n\n")
+        }
+        next
+      }
+
+      for (j in seq_len(measTabNum)){
 
         tableCount <- tableCount + 1
 
@@ -174,19 +181,22 @@ printSummaryData <- function(dataIn, run.quiet = FALSE, skip.table = FALSE){
         if(run.quiet==FALSE){
           cat(crayon::bold(paste0("\nSummary data for object ", i, ","), "Measurement Table", j, "of", paste0(measTabNum, ":\n")))
           cat("Measurement table contains", numObs, "observations of", numVars, "variables\n\n")
-        }
-
-        if (measTabNum == 0){
-          stop("Could not read measurement table, check format\n")
         }
       }
     }
   }else{
-    for (i in 1:PDnum){
+    for (i in seq_len(PDnum)){
 
       measTabNum <- length(dataIn[[i]]$measurementTable)
 
-      for (j in 1:measTabNum){
+      if (measTabNum == 0){
+        if(run.quiet == FALSE){
+          cat("Object", i, "does not include a measurement table\n\n")
+        }
+        next
+      }
+
+      for (j in seq_len(measTabNum)){
 
         tableCount <- tableCount + 1
 
@@ -221,10 +231,6 @@ printSummaryData <- function(dataIn, run.quiet = FALSE, skip.table = FALSE){
         if(run.quiet==FALSE){
           cat(crayon::bold(paste0("\nSummary data for object ", i, ","), "Measurement Table", j, "of", paste0(measTabNum, ":\n")))
           cat("Measurement table contains", numObs, "observations of", numVars, "variables\n\n")
-        }
-
-        if (measTabNum == 0){
-          stop("Could not read measurement table, check format\n")
         }
 
         varsTableMatch <- matchCols(paleoMeasTableDF, tableVars)
@@ -278,7 +284,7 @@ printSummaryData <- function(dataIn, run.quiet = FALSE, skip.table = FALSE){
 
   }
 
-  }
+}
 
 
 ################################################################################################
@@ -521,13 +527,13 @@ lipdTSSummary <- function(ts.object, print.length=10, add.variable = NULL, skip.
   #look for "age" and "year" variables, do all TS have one or the other?
   hasYear <- rep(NA, numTS)
   hasAge <- rep(NA, numTS)
-    for (i in 1:nrow(ts.object)){
-      hasYear[i] <- !is_blank(unlist(ts.object$year[i]))
-      hasAge[i] <- !is_blank(unlist(ts.object$age[i]))
-    }
+  for (i in 1:nrow(ts.object)){
+    hasYear[i] <- !is_blank(unlist(ts.object$year[i]))
+    hasAge[i] <- !is_blank(unlist(ts.object$age[i]))
+  }
 
-    totYear <- sum(hasYear,na.rm = TRUE)
-    totAge <- sum(hasAge,na.rm = TRUE)
+  totYear <- sum(hasYear,na.rm = TRUE)
+  totAge <- sum(hasAge,na.rm = TRUE)
 
   if (totYear < numTS & totAge < numTS){
     cat("TS object contains a mixture of age (BP) and year (AD) units.\n")
@@ -665,7 +671,7 @@ lipdSummary <- function(L, skip.table = FALSE){
   cat("################################################################################################\n")
   cat(crayon::bold(glue::glue("\n{L$dataSetName}\n")))
   cat(crayon::bold(glue::glue("\n\n{L$datasetId}\n")))
-  cat(crayon::bold(glue::glue("\n\nv.{L$changelog[[length(L$changelog)]]$version}\n")))
+  cat(crayon::bold(glue::glue("\n\nv{L$datasetVersion}\n")))
   cat("\n################################################################################################\n\n")
 
   #archiveType
@@ -687,10 +693,14 @@ lipdSummary <- function(L, skip.table = FALSE){
     cat(glue::glue("{L$geo$siteName} "))
   }
 
-  if(!is.finite(L$geo$elevation)){
-    cat(glue::glue("({L$geo$latitude}N, {L$geo$longitude}E)"))
+  if(!is.null(L$geo$elevation)){
+    if(is.finite(L$geo$elevation)){
+      cat(glue::glue("({L$geo$latitude}N, {L$geo$longitude}E), {L$geo$elevation} masl"))
+    }else{
+      cat(glue::glue("({L$geo$latitude}N, {L$geo$longitude}E)"))
+    }
   }else{
-    cat(glue::glue("({L$geo$latitude}N, {L$geo$longitude}E), {L$geo$elevation} masl"))
+    cat(glue::glue("({L$geo$latitude}N, {L$geo$longitude}E)"))
   }
 
 

@@ -27,3 +27,4 @@ match[[1]][[3]] = index number (ex. the "1" from "interpretation1")
 
 match[[1]][[4]] = second key (ex. "variableDetail")
 }
+\keyword{internal}

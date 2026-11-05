@@ -1,28 +1,83 @@
 ---
-title: "Neotoma to LiPD"
-author: "Dave Edge"
-date: "2023-01-09"
+title: "LiPD and Neotoma interoperability"
+author: "lipdR authors"
+date: "`r Sys.Date()`"
 vignette: >
-  %\VignetteIndexEntry{Neotoma To LiPD}
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{LiPD and Neotoma interoperability}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 output: rmarkdown::html_vignette
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = FALSE)
 ```
 
-This vignette demonstrates a function to translate LiPD to Neotoma
+lipdR can convert between the [LiPD](https://lipdverse.org) and
+[Neotoma](https://www.neotomadb.org) ecosystems in both directions. This makes it
+possible to pull records out of the Neotoma Paleoecology Database, work with them
+using the LiPD tools, and push results back.
 
-The example file (site) used is Bambili 2. Bambili 2 is loaded using Neotoma and 
-first translated to LiPD. This makes for a simple use case
+The conversion functions require the suggested package `neotoma2` (available on CRAN)
+and, for spatial handling, `sf`:
 
-```{r}
-#Neotoma2 down as of 7/8/24
-#B <- neotoma2::get_sites(sitename = "Bambili 2")
-#D <- neotoma2::get_downloads(B)
-#L <- lipdR:::neotoma2lipd(D)
-
-#summary(L)
+```{r install}
+install.packages(c("neotoma2", "sf"))
 ```
+
+The code chunks below are not evaluated when the vignette is built, because they make
+live calls to the Neotoma API.
+
+## Neotoma to LiPD
+
+Download a site from Neotoma and convert it into a LiPD object with `neotoma2lipd()`:
+
+```{r neo2lipd}
+library(lipdR)
+
+# Retrieve a site and its data from Neotoma
+sites <- neotoma2::get_sites(sitename = "Bambili 2")
+downloads <- neotoma2::get_downloads(sites)
+
+# Convert to a LiPD object
+L <- neotoma2lipd(downloads)
+
+summary(L)
+```
+
+The resulting object is a standard LiPD object: it can be validated, written to a
+`.lpd` file, flattened to a time series, and passed to the rest of the ecosystem
+(geoChronR, actR, compositeR, and so on).
+
+```{r use-lipd}
+validLipd(L)
+ts <- extractTs(L)
+writeLipd(L, "~/Downloads/")
+```
+
+## LiPD to Neotoma
+
+The reverse conversion, `lipd2neotoma()`, builds a Neotoma `site` object from a LiPD
+object:
+
+```{r lipd2neo}
+L <- readLipd("path/to/a/file.lpd")
+
+site <- lipd2neotoma(L)
+
+# The result is a neotoma2 'site' object
+neotoma2::samples(site)
+```
+
+## Round-tripping
+
+Because both directions are supported, a LiPD object can be pushed to Neotoma and back:
+
+```{r roundtrip}
+site <- lipd2neotoma(L)
+L2   <- neotoma2lipd(site)
+```
+
+Core metadata (coordinates, publications, measurement data) is preserved across the
+round-trip, though the two data models are not identical, so some ecosystem-specific
+fields may not survive.

@@ -221,69 +221,66 @@ readLipd <- function(path=NULL,jsonOnly = FALSE,parallel = FALSE,dont.load.ensem
 
     errors <- parseFail <- c()
 
-if(parallel & !few){
+    if(parallel & !few){
 
-  FO <- furrr::future_map(entries,purrr::quietly(lipd_read),jsonOnly = jsonOnly,dont.load.ensemble = dont.load.ensemble, .progress = TRUE)
+      FO <- furrr::future_map(entries,purrr::quietly(lipd_read),jsonOnly = jsonOnly,dont.load.ensemble = dont.load.ensemble, .progress = TRUE)
 
-  D <- purrr::map(FO,purrr::pluck,"result")
-  dsn <- purrr::map_chr(D,"dataSetName")
-  names(D) <- dsn
-
-
-  #check for parsing failures
-
-  allWarnings <- purrr::map(FO,purrr::pluck,"warnings") |>
-    purrr::map_chr(.f = \(x) ifelse(any(grepl(pattern = "parsing fail",x)),yes = "parse_fail",no = NA))
-
-  allErrors <- map(FO,purrr::pluck,"messages") |>
-    purrr::map_chr(.f = \(x) ifelse(length(x) > 0,yes = "read_failure",no = NA))
-
-  parseFail <- dsn[which(!is.na(allWarnings))]
-  errors <- dsn[which(!is.na(allErrors))]
-
-}else{#old way, may not be necessary
+      D <- purrr::map(FO,purrr::pluck,"result")
+      dsn <- purrr::map_chr(D,"dataSetName")
+      names(D) <- dsn
 
 
-    for (i in 1:length(entries)){
-      j <- list()
-      # Entry is one file path
-      entry <- entries[[i]]
+      #check for parsing failures
 
-      if(few){
-        print(paste0("reading: ", basename(entry)))
-      }else{
-        setTxtProgressBar(pb, i)
+      allWarnings <- purrr::map(FO,purrr::pluck,"warnings") |>
+        purrr::map_chr(.f = \(x) ifelse(any(grepl(pattern = "parsing fail",x)),yes = "parse_fail",no = NA))
+
+      allErrors <- map(FO,purrr::pluck,"messages") |>
+        purrr::map_chr(.f = \(x) ifelse(length(x) > 0,yes = "read_failure",no = NA))
+
+      parseFail <- dsn[which(!is.na(allWarnings))]
+      errors <- dsn[which(!is.na(allErrors))]
+
+    }else{#old way, may not be necessary
+
+
+      for (i in 1:length(entries)){
+        j <- list()
+        # Entry is one file path
+        entry <- entries[[i]]
+
+        if(few){
+          print(paste0("reading: ", basename(entry)))
+        }else{
+          setTxtProgressBar(pb, i)
+        }
+
+        if(!jsonOnly){
+          # Do initial set up
+          dir_source <- dirname(entry)
+          # assign("directory_source", directory_source, envir = lipdEnv)
+        }
+
+        J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly, dont.load.ensemble = dont.load.ensemble)
+        j <- J[[1]]$result
+
+        # Get the datasetname
+        dsn <- get_datasetname(j, stripExtension(entry))
+
+        parseFail[i] <- ifelse(
+          any(grepl(pattern = "parsing fail",J[[1]]$warnings)),
+          yes = dsn,
+          no = NA)
+
+        errors[i] <- ifelse(
+          length(J[[1]]$messages) > 0,
+          yes = dsn,
+          no = NA)
+
+        # Set the data in D using the datasetname
+        D[[dsn]] <- j
       }
-
-      if(!jsonOnly){
-        # Do initial set up
-        dir_source <- dirname(entry)
-        # assign("directory_source", directory_source, envir = lipdEnv)
-      }
-
-      J <- purrr::map(entry,purrr::quietly(lipd_read),jsonOnly = jsonOnly, dont.load.ensemble = dont.load.ensemble)
-      j <- J[[1]]$result
-
-      # Get the datasetname
-      dsn <- get_datasetname(j, stripExtension(entry))
-
-      parseFail[i] <- ifelse(
-        any(grepl(pattern = "parsing fail",J[[1]]$warnings)),
-        yes = dsn,
-        no = NA)
-
-      errors[i] <- ifelse(
-      length(J[[1]]$messages) > 0,
-        yes = dsn,
-        no = NA)
-
-      # assign most recent version to datasetVersion
-      j$datasetVersion <- getVersion(j)
-
-      # Set the data in D using the datasetname
-      D[[dsn]] <- j
     }
-}
 
 
     if(length(D) == 1){
@@ -322,14 +319,26 @@ if(parallel & !few){
 
 
 #' Write LiPD data onto disk as LiPD files
-#' @export
-#' @author Chris Heiser
-#' @keywords internal
+#'
 #' @param D LiPD datasets  list
 #' @param path Destination path  char
+#' @param ignore.warnings Suppress warnings raised while writing? Default = FALSE.
+#' @param removeNamesFromLists Strip names from lists before writing, so that
+#'   JSON arrays are emitted as arrays rather than objects. Default = FALSE.
 #' @param jsonOnly Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)
+#' @param delete.saved.ensembles Drop ensemble tables that have already been
+#'   written, rather than writing them again. Default = FALSE.
+#' @param compression_level Integer 0-9 controlling zip compression. Lower is faster and
+#'   produces larger files; higher is slower and smaller. Defaults to 2, which writes large
+#'   ensemble-bearing files roughly 4-5x faster than the previous default (6) at the cost of
+#'   ~7\% larger files. Use 6-9 if minimizing file size matters more than write speed.
+#' @param parallel Write datasets in parallel when writing a multiLipd? Default = FALSE. Uses
+#'   furrr, so call `future::plan()` first, e.g. `future::plan(future::multisession, workers = 8)`.
+#'
+#' @author Chris Heiser
 #' @importFrom pkgbuild find_rtools
 #' @return none
+#' @export
 #' @examples
 #' \dontrun{
 #' # write - without path argument
@@ -342,7 +351,10 @@ writeLipd <- function(D,
                       path=NULL,
                       ignore.warnings=FALSE,
                       removeNamesFromLists = FALSE,
-                      jsonOnly = FALSE){
+                      jsonOnly = FALSE,
+                      delete.saved.ensembles = FALSE,
+                      compression_level = 2,
+                      parallel = FALSE){
   if(get_os() == "windows" & pkgbuild::find_rtools() == FALSE){
     stop("Rtools package required to use writeLipd. Please go to https://cran.r-project.org/bin/windows/Rtools/ and install Rtools.")
   }
@@ -387,7 +399,9 @@ writeLipd <- function(D,
                  D[["dataSetName"]],
                  ignore.warnings,
                  removeNamesFromLists = removeNamesFromLists,
-                 jsonOnly = jsonOnly)
+                 jsonOnly = jsonOnly,
+                 delete.saved.ensembles = delete.saved.ensembles,
+                 compression_level = compression_level)
     } else {
       if(!isDirectory(path)){
         path <- dir_original
@@ -396,31 +410,40 @@ writeLipd <- function(D,
       dsns <- names(D)
       print(paste0("Writing ", length(dsns)," datasets to ",path,"..."))
 
-      pbc<- txtProgressBar(min = 0,      # Minimum value of the progress bar
-                           max = length(dsns), # Maximum value of the progress bar
-                           style = 3,    # Progress bar style (also available style = 1 and style = 2)
-                           char = "=")   # Character used to create the bar
+      write_one <- function(entry){
+        tryCatch(
+          lipd_write(D[[entry]],
+                     dir_original,
+                     path,
+                     entry,
+                     ignore.warnings,
+                     removeNamesFromLists = removeNamesFromLists,
+                     jsonOnly = jsonOnly,
+                     delete.saved.ensembles = delete.saved.ensembles,
+                     compression_level = compression_level),
+          error = function(cond) 1)
+      }
 
-      error <- c()
-      for (i in 1:length(dsns)){
-        if(length(dsns) < 10){
-          print(paste0("writing: ", basename(dsns[i])))
-        }else{
-          setTxtProgressBar(pbc, i)
-        }
-        entry <- dsns[[i]]
-        o <- lipd_write(D[[entry]],
-                   dir_original,
-                   path,
-                   entry,
-                   ignore.warnings,
-                   removeNamesFromLists = removeNamesFromLists,
-                   jsonOnly = jsonOnly)
-
-        if(o != 0){
-          error <- dsns[[i]]
+      if(parallel & length(dsns) > 1){
+        outs <- furrr::future_map(dsns, write_one, .progress = TRUE)
+      }else{
+        pbc<- txtProgressBar(min = 0,      # Minimum value of the progress bar
+                             max = length(dsns), # Maximum value of the progress bar
+                             style = 3,    # Progress bar style (also available style = 1 and style = 2)
+                             char = "=")   # Character used to create the bar
+        outs <- vector("list", length(dsns))
+        for (i in 1:length(dsns)){
+          if(length(dsns) < 10){
+            print(paste0("writing: ", basename(dsns[i])))
+          }else{
+            setTxtProgressBar(pbc, i)
+          }
+          outs[[i]] <- write_one(dsns[[i]])
         }
       }
+
+      out_codes <- purrr::map_dbl(outs, function(o) if(is.null(o) || length(o) != 1 || !is.numeric(o)) 0 else as.numeric(o))
+      error <- dsns[which(out_codes != 0)]
       nerror <- length(error)
       nsuccess <- length(dsns)-nerror
       print(glue::glue("Successfully wrote {nsuccess} files with {nerror} failure(s)."))

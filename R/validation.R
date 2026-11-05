@@ -15,6 +15,11 @@ validLipd <- function(L,allow.ensemble = TRUE){
   }
 
 
+  #check unique TSids
+  if(!hasUniqueTSids(L)){
+    print(glue::glue("{L$dataSetName}: has duplicated TSids. This is not allowed"))
+    good <- FALSE
+  }
 
   #check root
   rootRequired <- c("archiveType",
@@ -166,7 +171,7 @@ validGeo <- function(L){
   }
 
 
-  mustNumeric <- c("latitude","longitude","elevation","sisalSiteId")
+  mustNumeric <- c("latitude","longitude","elevation")
 
   for(mn in mustNumeric){
     if(mn %in% names(geo)){
@@ -183,6 +188,7 @@ validGeo <- function(L){
   probablyOk <- stringr::str_detect(tolower(otherNames),"depth") |
     stringr::str_detect(tolower(otherNames),"volume") |
     stringr::str_detect(tolower(otherNames),"catchment") |
+    stringr::str_detect(tolower(otherNames),"sisalsiteid") |
     stringr::str_detect(tolower(otherNames),"area")
 
   if(any(probablyOk)){
@@ -475,4 +481,10 @@ variableLength <- function(VL){
     return(length(VL$values))
   }
 
+}
+
+
+hasUniqueTSids <- function(L){
+  attsid <- extract_by_key(L,"TSid")
+  return(!any(duplicated(attsid)))
 }

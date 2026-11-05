@@ -19,3 +19,4 @@ table: Metadata
 \description{
 Get the target table
 }
+\keyword{internal}

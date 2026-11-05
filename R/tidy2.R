@@ -7,12 +7,12 @@ tsPluck <- function(x){
   dopluck <- FALSE
   if(is.list(x)){
     ml <- max(purrr::map_dbl(x,~length(.x)))
-    
+
     if(ml == 1){
       dopluck <- TRUE
     }
   }
-  
+
   if(dopluck){
     x2 <- purrr::modify(x,.f = ~ ifelse(is.null(.x),NA,.x))
     x3 <- unlist(x2)
@@ -29,46 +29,46 @@ tsPluck <- function(x){
 #' Convert a LiPD TS object into an equivalent nested tibble
 #'
 #' @param TS a lipd-ts object
-#' @importFrom purrr transpose 
-#' @importFrom purrr modify 
-#' @importFrom tibble as_tibble 
+#' @importFrom purrr transpose
+#' @importFrom purrr modify
+#' @importFrom tibble as_tibble
 #' @return a nested tibble
 #' @export
 ts2tibble <- function(TS){
-  
+
   tibbleTS <- TS %>%
     purrr::transpose(.names = sort(unique(unlist(purrr::map(TS,names))))) %>%
-    tibble::as_tibble() %>% 
+    tibble::as_tibble() %>%
     purrr::modify(tsPluck) # this pulls all the single entry lists to the top level, and tries to use appropriate calsses
-  
+
   #check for TSid
   if(all(tibbleTS$mode == "chron")){
     if(is.null(tibbleTS$chronData_TSid)){
       tibbleTS$chronData_TSid <- NA
     }
-    
-    
+
+
     win <- which(is.na(tibbleTS$chronData_TSid))
     if(length(win > 0)){
       tibbleTS$chronData_TSid[win] <- paste0(tibbleTS$dataSetName[1],"-chron-NA",seq_along(win))
     }
   }
-  
-  
+
+
   if(all(tibbleTS$mode == "paleo")){
     if(is.null(tibbleTS$paleoData_TSid)){
       tibbleTS$paleoData_TSid <- paste0("NA",seq_len(nrow(tibbleTS)))
     }
-    
-    
+
+
     win <- which(is.na(tibbleTS$paleoData_TSid))
     if(length(win > 0)){
       tibbleTS$paleoData_TSid[win] <- paste0(tibbleTS$dataSetName[1],"-paleo-NA",seq_along(win))
     }
   }
-  
+
   tibbleTS <- structure(tibbleTS,class = c("lipd_ts_tibble",class(tibble::tibble())))
-  
+
   return(tibbleTS)
 }
 
@@ -86,12 +86,12 @@ ts2tibble <- function(TS){
 #' @export
 tidyTs <- function(TS,age.var = NA){
   if(!tibble::is_tibble(TS)){
-  tts <- TS %>% 
+  tts <- TS %>%
     ts2tibble()
   }else{
     tts <- TS
   }
-  
+
   if(is.na(age.var)){
   #make an intelligent guess about age.var
   if(sum(purrr::map_dbl(TS,~ length(.x$year))) > sum(purrr::map_dbl(TS,~ length(.x$age)))){
@@ -101,20 +101,20 @@ tidyTs <- function(TS,age.var = NA){
   }
   print(glue::glue("creating a lipd_Ts_Tibble_Long using {age.var} as the age.var"))
   }
-  
+
   isNum <- which(purrr::map_lgl(tts$paleoData_values,is.numeric))
   isChar <- which(purrr::map_lgl(tts$paleoData_values,is.character))
-  
+
   if(length(isChar)>0){
-    ttsc <- tts[isChar,] %>% 
+    ttsc <- tts[isChar,] %>%
       dplyr::rename(paleoData_values_char = paleoData_values)
     tts <- bind_rows(tts[-isChar,],ttsc)
   }
-  
-  
-  tidy <- tidyr::unchop(tts,c(tidyselect::all_of(age.var),tidyselect::starts_with("paleoData_values"))) %>% 
+
+
+  tidy <- tidyr::unchop(tts,c(tidyselect::all_of(age.var),tidyselect::starts_with("paleoData_values"))) %>%
     structure(class = c("lipd_ts_tibble_long",class(tibble::tibble())))
-  
+
     return(tidy)
 }
 
@@ -127,11 +127,11 @@ tidyTs <- function(TS,age.var = NA){
 #' @importFrom magrittr %>%
 #' @importFrom purrr map_lgl
 #' @param tTS a tidy data frame, such as those created by tidyTs()
-#' @inheritParams tidyTs 
+#' @inheritParams tidyTs
 #' @return a LiPD Timeseries object
 #' @export
 untidyTs <- function(tTS,age.var = "age"){
-  
+
 ut <- tidyr::chop(tTS,cols = c(tidyselect::all_of(age.var),tidyselect::starts_with("paleoData_values")))
 
 if("paleoData_values_char" %in% names(ut)){
@@ -144,11 +144,29 @@ if("paleoData_values_char" %in% names(ut)){
   ut$paleoData_values_char <- NULL
 }
 
-TS <- purrr::transpose(ut) %>% 
+TS <- purrr::transpose(ut) %>%
   structure(class = c("lipd_ts",class(list())))
 
-  
+
 return(TS)
 }
 
 
+#' Fix the structure of author lists
+#'
+#' @param L a LiPD object
+#' @description
+#' Fix common issue in author lists that get messed up during conversion from lipd.ts.tibble to lipd objects
+#'
+#' @returns a LiPD object
+#' @export
+fixPubAuthorList <- function(L){
+  for(p in 1:length(L$pub)){
+    if(!is.null(L$pub[[p]]$author)){
+      if(is.character(L$pub[[p]]$author)){
+        L$pub[[p]]$author <- list(list(name = L$pub[[p]]$author))
+      }
+    }
+  }
+  return(L)
+}

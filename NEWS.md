@@ -1,3 +1,22 @@
+# lipdR 0.7.0
+
+* Reading a file with no `lipdVersion` key no longer prompts. It asked on every such file, which made reading a directory interactive, and answered nothing useful when it could not ask: a non-interactive `readline()` returns `""`, which matched neither the yes nor the no branch, so the version was left `NA` and written back into the file that way. Files without a version key are now assumed to be current (1.3), and an unrecognised version warns instead of printing.
+* Fixed `collapse_block_indexed()` materialising empty interpretations on every column of a rectangular time series tibble, including `age` and `year` columns that cannot have one. This is the mechanism behind the empty interpretation shells that accumulated in the LiPDverse database, and it fired on every file passing through `as.lipdTsTibble()`/`as.lipd()`.
+
+* Prepared the package for CRAN (passes `R CMD check --as-cran` cleanly).
+* `writeLipd()` is substantially faster for large files. Zip compression is now configurable via a new `compression_level` argument (default `2`), which writes datasets with large ensemble tables roughly 3-4x faster for slightly larger files. Pass `compression_level = 6-9` to prioritize file size over speed.
+* `writeLipd()` gained a `parallel` option for writing a `multiLipd` of many datasets in parallel (uses `furrr`; call `future::plan()` first, as with `readLipd(parallel = TRUE)`).
+* Reading with `dont.load.ensemble = TRUE` no longer extracts the archive twice, speeding up loads of ensemble-heavy files.
+* Fixed a bug where string and logical measurement columns (e.g. `labID`, `materialDated`, `notes`) were silently written as `NaN`, causing data loss on `writeLipd()`. Columns now keep their type through a read/write round trip.
+* Fixed the mirror image of that bug: a numeric column whose values are all `NaN` was typed logical on re-read, because an all-missing CSV column carries no type information and `fread` defaults to logical. The file then failed `validLipd()` with e.g. "depth values are not numeric". All-missing columns are now read as numeric. This affected 14 of the 7,177 files in the LiPDverse database.
+* Fixed paleo ensemble tables doubling in width on a read/write round trip (1000 members became 2000). `merge_csv_columns()` decided which CSV columns a metadata entry with no `number` should take by looking only at the columns processed so far, so a numberless column listed *before* the column that claims the data was handed the whole table, and the claiming column then took it as well. Claims are now gathered across all columns before any assignment. Chron ensembles were unaffected, because their columns declare disjoint `number` ranges.
+* `extractTs()` now adds standardized time metadata (`time`, `timeUnits`, `timeDatum`, `timeDirection`, `timeExponent`, `timeMin`/`timeMax`) to every entry, and an optional `calculateResolution` argument computes per-column resolution.
+* Renamed `inCompilationBeta` to `inCompilation`, with automatic migration of legacy keys on read. Added a new `filterByCompilation()` function.
+* Added support for compilation-specific metadata (`csm`), stored under `csm` inside each `inCompilation` entry. `extractTs()` flattens these to `<compilation>_csm_<field>` (e.g. `iso2k_csm_certification`), keyed by compilation name rather than array index, and `collapseTs()` folds them back into the matching entry. `csmFields()` lists what a time series carries. Note that `extractTs()` always emits every compilation's `csm`, and `collapseTs()` writes back exactly what the time series carries, so a filtered time series should not be collapsed.
+* Fixed the LiPD-to-Neotoma conversion (`lipd2neotoma()`), which is now working and tested.
+* Fixed a crash in `print()`/`summary()` for objects with no measurement table.
+* Added `getTables()`, which extracts every measurement, summary, ensemble, and/or distribution table from a LiPD file as a named list of data.frames. Generalizes `getMeasurementTables()` to all table types and correctly expands matrix-valued columns (e.g. ensemble table draws) into one output column each.
+
 # lipdR 0.6.0
 
 * a handful of improvements and error handling
