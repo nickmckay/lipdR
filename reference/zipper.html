@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.0</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/lipd2neotoma.html">Neotoma to LiPD</a>
+      <a href="../articles/lipd2neotoma.html">LiPD and Neotoma interoperability</a>
     </li>
     <li>
       <a href="../articles/Query.html">LiPD Queries</a>
@@ -44,7 +44,13 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/nickmckay/lipdR/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -54,7 +60,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Zip a directory, and move up a level</h1>
-
+    <small class="dont-index">Source: <a href="https://github.com/nickmckay/lipdR/blob/main/R/zips.R" class="external-link"><code>R/zips.R</code></a></small>
     <div class="hidden name"><code>zipper.Rd</code></div>
     </div>
 
@@ -63,7 +69,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">zipper</span><span class="op">(</span><span class="va">dir_original</span>, <span class="va">dir_tmp</span>, <span class="va">dsn</span>, <span class="va">path</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">zipper</span><span class="op">(</span><span class="va">dir_original</span>, <span class="va">dir_tmp</span>, <span class="va">dsn</span>, <span class="va">path</span>, compression_level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -76,6 +82,14 @@
 
 <dt id="arg-dir-tmp">dir_tmp<a class="anchor" aria-label="anchor" href="#arg-dir-tmp"></a></dt>
 <dd><p>Temp directory</p></dd>
+
+
+<dt id="arg-compression-level">compression_level<a class="anchor" aria-label="anchor" href="#arg-compression-level"></a></dt>
+<dd><p>Integer 0-9 passed to zip. Lower is faster and produces
+larger files; higher is slower and produces smaller files. LiPD files with large
+ensemble tables spend nearly all of their write time here, so the default of 2 is a
+good speed/size trade-off (roughly 4-5x faster than the old default of 6, for ~7%
+larger files). Set to 6-9 if minimizing file size matters more than write speed.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -95,7 +109,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

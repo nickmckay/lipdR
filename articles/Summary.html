@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.0</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/lipd2neotoma.html">Neotoma to LiPD</a>
+      <a href="../articles/lipd2neotoma.html">LiPD and Neotoma interoperability</a>
     </li>
     <li>
       <a href="../articles/Query.html">LiPD Queries</a>
@@ -63,7 +63,14 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/nickmckay/lipdR/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -79,7 +86,7 @@
       <h1 data-toc-skip>LiPD Summaries</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/nickmckay/lipdR/blob/main/vignettes/Summary.Rmd" class="external-link"><code>vignettes/Summary.Rmd</code></a></small>
       <div class="hidden name"><code>Summary.Rmd</code></div>
 
     </div>
@@ -99,7 +106,7 @@ works.</p>
 <p>Let’s first grab at a single LiPD the Moose Lake dataset from Clegg
 et al. (2010) that’s part of the PAGES2k Temperature compilation.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">lipdR</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/nickmckay/lipdR" class="external-link">lipdR</a></span><span class="op">)</span></span>
 <span><span class="va">L</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readLipd.html">readLipd</a></span><span class="op">(</span><span class="st">"https://lipdverse.org/data/MD6jkgwSxsq0oilgYUjM/1_0_0//Arc-MooseLake.Clegg.2010-ensemble.lpd"</span><span class="op">)</span></span></code></pre></div>
 <p>First, let’s get a quick look using the <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>
 function, or by just returning the object:</p>
@@ -108,7 +115,7 @@ function, or by just returning the object:</p>
 <span><span class="co">#&gt; ################################################################################################</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Arc-MooseLake.Clegg.2010</span></span></span>
 <span><span class="co"><span style="font-weight: bold;">#&gt; MD6jkgwSxsq0oilgYUjM</span></span></span>
-<span><span class="co"><span style="font-weight: bold;">#&gt; v.1.0.0</span></span></span>
+<span><span class="co"><span style="font-weight: bold;">#&gt; v1.0.0</span></span></span>
 <span><span class="co">#&gt; ################################################################################################</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">### Archive Type ###</span></span></span>
@@ -149,7 +156,7 @@ function, or by just returning the object:</p>
 <span><span class="co">#&gt; ################################################################################################</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Arc-MooseLake.Clegg.2010</span></span></span>
 <span><span class="co"><span style="font-weight: bold;">#&gt; MD6jkgwSxsq0oilgYUjM</span></span></span>
-<span><span class="co"><span style="font-weight: bold;">#&gt; v.1.0.0</span></span></span>
+<span><span class="co"><span style="font-weight: bold;">#&gt; v1.0.0</span></span></span>
 <span><span class="co">#&gt; ################################################################################################</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">### Archive Type ###</span></span></span>
@@ -245,7 +252,7 @@ by subsetting the multi-lipd:</p>
 <span><span class="co">#&gt; ################################################################################################</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Arc-Agassiz.Vinther.2008</span></span></span>
 <span><span class="co"><span style="font-weight: bold;">#&gt; TlyrPuoYdCjvokqD1Jzn</span></span></span>
-<span><span class="co"><span style="font-weight: bold;">#&gt; v.1.0.0</span></span></span>
+<span><span class="co"><span style="font-weight: bold;">#&gt; v1.0.0</span></span></span>
 <span><span class="co">#&gt; ################################################################################################</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">### Archive Type ###</span></span></span>
@@ -880,283 +887,283 @@ package, or just not show that. </em></p>
 <tbody class="gt_table_body">
 <tr>
 <td headers="Dataset" class="gt_row gt_left">165_1002C.Herbert.2000</td>
-<td headers="Archive Type" class="gt_row gt_left">MarineSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">MarineSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">690 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">164970 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">AbantGolu.Bottema.1993</td>
-<td headers="Archive Type" class="gt_row gt_left">Lake</td>
+<td headers="Archive-Type" class="gt_row gt_left">Lake</td>
 <td headers="AgeMin" class="gt_row gt_left">200 yr BP</td>
 <td headers="AgeMax" class="gt_row gt_left">13200 yr BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Agassiz.Lecavalier.2017</td>
-<td headers="Archive Type" class="gt_row gt_left">GlacierIce</td>
+<td headers="Archive-Type" class="gt_row gt_left">GlacierIce</td>
 <td headers="AgeMin" class="gt_row gt_left">16 Calibrated</td>
 <td headers="AgeMax" class="gt_row gt_left">11366 Calibrated</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Ant-SiteDML05.Graf.2002</td>
-<td headers="Archive Type" class="gt_row gt_left">glacier ice</td>
+<td headers="Archive-Type" class="gt_row gt_left">glacier ice</td>
 <td headers="AgeMin" class="gt_row gt_left">1996 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">166 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Arc-Agassiz.Vinther.2008</td>
-<td headers="Archive Type" class="gt_row gt_left">glacier ice</td>
+<td headers="Archive-Type" class="gt_row gt_left">glacier ice</td>
 <td headers="AgeMin" class="gt_row gt_left">1972 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">0 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Asi-MONG033.Jacoby.2010</td>
-<td headers="Archive Type" class="gt_row gt_left">tree</td>
+<td headers="Archive-Type" class="gt_row gt_left">tree</td>
 <td headers="AgeMin" class="gt_row gt_left">1997 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1550 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Aus-DuckholeLake.Saunders.2013</td>
-<td headers="Archive Type" class="gt_row gt_left">lake sediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">lake sediment</td>
 <td headers="AgeMin" class="gt_row gt_left">2001.32 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1140.35 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">big_round.Thomas.2010</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">-56 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">10185.66 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">BlueMoundsCreek.Davis.1977Legacy</td>
-<td headers="Archive Type" class="gt_row gt_left">Lake</td>
+<td headers="Archive-Type" class="gt_row gt_left">Lake</td>
 <td headers="AgeMin" class="gt_row gt_left">-50 yr BP</td>
 <td headers="AgeMax" class="gt_row gt_left">12160 yr BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">BO14HTI01</td>
-<td headers="Archive Type" class="gt_row gt_left">coral</td>
+<td headers="Archive-Type" class="gt_row gt_left">coral</td>
 <td headers="AgeMin" class="gt_row gt_left">2005.04 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1977.37 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">CahabaPond.Delcourt.1983PaleoDIVER</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">-29 yr BP</td>
 <td headers="AgeMax" class="gt_row gt_left">13949 yr BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">CO03COPM</td>
-<td headers="Archive Type" class="gt_row gt_left">Coral</td>
+<td headers="Archive-Type" class="gt_row gt_left">Coral</td>
 <td headers="AgeMin" class="gt_row gt_left">1998.37 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">928.13 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">CO04LIRA</td>
-<td headers="Archive Type" class="gt_row gt_left">Coral</td>
+<td headers="Archive-Type" class="gt_row gt_left">Coral</td>
 <td headers="AgeMin" class="gt_row gt_left">1996.91 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1726.78 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">CrowsnestLake.author.1111</td>
-<td headers="Archive Type" class="gt_row gt_left">Lake</td>
+<td headers="Archive-Type" class="gt_row gt_left">Lake</td>
 <td headers="AgeMin" class="gt_row gt_left">60 yr BP</td>
 <td headers="AgeMax" class="gt_row gt_left">12840 yr BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">CuevaDiablo.Bernal.2011</td>
-<td headers="Archive Type" class="gt_row gt_left">Speleothem</td>
+<td headers="Archive-Type" class="gt_row gt_left">Speleothem</td>
 <td headers="AgeMin" class="gt_row gt_left">672 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">-8920 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">DE14DTO04</td>
-<td headers="Archive Type" class="gt_row gt_left">coral</td>
+<td headers="Archive-Type" class="gt_row gt_left">coral</td>
 <td headers="AgeMin" class="gt_row gt_left">2008.63 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1896.54 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">EDML.Stenni.2010</td>
-<td headers="Archive Type" class="gt_row gt_left">GlacierIce</td>
+<td headers="Archive-Type" class="gt_row gt_left">GlacierIce</td>
 <td headers="AgeMin" class="gt_row gt_left">1193 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">12992 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Emerald.Shuman.2014</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">1700 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">-9950 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">GeoB5901_2.Kim.2004</td>
-<td headers="Archive Type" class="gt_row gt_left">MarineSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">MarineSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">1130 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">9920 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Glattalp.Wirth.2013</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">1960 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">-8099 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">GRIP_accumulation.Vinther.2006</td>
-<td headers="Archive Type" class="gt_row gt_left">GlacierIce</td>
+<td headers="Archive-Type" class="gt_row gt_left">GlacierIce</td>
 <td headers="AgeMin" class="gt_row gt_left">1989 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">-246813 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Hoqcave.VanRampelbergh.2013</td>
-<td headers="Archive Type" class="gt_row gt_left">Speleothem</td>
+<td headers="Archive-Type" class="gt_row gt_left">Speleothem</td>
 <td headers="AgeMin" class="gt_row gt_left">-45.63 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">9249.4 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">IC09VICC</td>
-<td headers="Archive Type" class="gt_row gt_left">GlacierIce</td>
+<td headers="Archive-Type" class="gt_row gt_left">GlacierIce</td>
 <td headers="AgeMin" class="gt_row gt_left">1967 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1242 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">IndianPrairieFen.Whitlock.1995</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">362.8 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">16023.9 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Karujarv.EPD</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">484.76 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">8373.49 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">KI14PAR01</td>
-<td headers="Archive Type" class="gt_row gt_left">coral</td>
+<td headers="Archive-Type" class="gt_row gt_left">coral</td>
 <td headers="AgeMin" class="gt_row gt_left">1669 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1469 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">LeVernydesBrulons.JouffroyBapicot.2010</td>
-<td headers="Archive Type" class="gt_row gt_left">Peat</td>
+<td headers="Archive-Type" class="gt_row gt_left">Peat</td>
 <td headers="AgeMin" class="gt_row gt_left">-90 yr BP</td>
 <td headers="AgeMax" class="gt_row gt_left">13840 yr BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">LS05ANJE</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">2002 unitless</td>
 <td headers="AgeMax" class="gt_row gt_left">-5606 unitless</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">LS13LUBA</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">1553 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">-6744 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">MD95_2039</td>
-<td headers="Archive Type" class="gt_row gt_left">MarineSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">MarineSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">0 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">50568 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">MottaNaluns.vanderKnaap.1997</td>
-<td headers="Archive Type" class="gt_row gt_left">Peat</td>
+<td headers="Archive-Type" class="gt_row gt_left">Peat</td>
 <td headers="AgeMin" class="gt_row gt_left">330 yr BP</td>
 <td headers="AgeMax" class="gt_row gt_left">11350 yr BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">MS14MOLS</td>
-<td headers="Archive Type" class="gt_row gt_left">MarineSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">MarineSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">1186.64 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">35.35 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">NAm-SnakeCreek.Kenigsberg.2013</td>
-<td headers="Archive Type" class="gt_row gt_left">tree</td>
+<td headers="Archive-Type" class="gt_row gt_left">tree</td>
 <td headers="AgeMin" class="gt_row gt_left">1999 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1645 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">NikolayLake.Andreev.2004</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">95 Calibrated</td>
 <td headers="AgeMax" class="gt_row gt_left">10210 Calibrated</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Ocn-TurrumoteReefPuertoRico.Kilbourne.2008</td>
-<td headers="Archive Type" class="gt_row gt_left">coral</td>
+<td headers="Archive-Type" class="gt_row gt_left">coral</td>
 <td headers="AgeMin" class="gt_row gt_left">2004 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1751 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">ParkPond2.Lynch.1998</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">0 yr 14C BP</td>
 <td headers="AgeMax" class="gt_row gt_left">12131 yr 14C BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">POS362_2_33</td>
-<td headers="Archive Type" class="gt_row gt_left">MarineSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">MarineSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">630 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">9560 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">RanViken.EPD</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">265.22 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">11599.91 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">Rugozero.Elina.1981</td>
-<td headers="Archive Type" class="gt_row gt_left">Peat</td>
+<td headers="Archive-Type" class="gt_row gt_left">Peat</td>
 <td headers="AgeMin" class="gt_row gt_left">390 yr BP</td>
 <td headers="AgeMax" class="gt_row gt_left">10910 yr BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">SAm-CentralAndes6.Villalba.2014</td>
-<td headers="Archive Type" class="gt_row gt_left">tree</td>
+<td headers="Archive-Type" class="gt_row gt_left">tree</td>
 <td headers="AgeMin" class="gt_row gt_left">2006 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1435 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">SellediCarnino.deBeaulieu.1977</td>
-<td headers="Archive Type" class="gt_row gt_left">Peat</td>
+<td headers="Archive-Type" class="gt_row gt_left">Peat</td>
 <td headers="AgeMin" class="gt_row gt_left">310 yr BP</td>
 <td headers="AgeMax" class="gt_row gt_left">16570 yr BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">SS49.Perren.2012</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">1780.25 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">-7583.77 AD</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">StellaLake.Reinemann.2009</td>
-<td headers="Archive Type" class="gt_row gt_left">LakeSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">LakeSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">0 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">6678.09 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">SV_04</td>
-<td headers="Archive Type" class="gt_row gt_left">MarineSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">MarineSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">726 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">10486 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">TR163_22.Lea.2006</td>
-<td headers="Archive Type" class="gt_row gt_left">MarineSediment</td>
+<td headers="Archive-Type" class="gt_row gt_left">MarineSediment</td>
 <td headers="AgeMin" class="gt_row gt_left">1137.5 BP</td>
 <td headers="AgeMax" class="gt_row gt_left">135100 BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">TriangleLakeBog.Jensen.2021</td>
-<td headers="Archive Type" class="gt_row gt_left">Lake</td>
+<td headers="Archive-Type" class="gt_row gt_left">Lake</td>
 <td headers="AgeMin" class="gt_row gt_left">8880 yr BP</td>
 <td headers="AgeMax" class="gt_row gt_left">17160 yr BP</td>
 </tr>
 <tr>
 <td headers="Dataset" class="gt_row gt_left">ZI04IFR01</td>
-<td headers="Archive Type" class="gt_row gt_left">coral</td>
+<td headers="Archive-Type" class="gt_row gt_left">coral</td>
 <td headers="AgeMin" class="gt_row gt_left">1995.62 AD</td>
 <td headers="AgeMax" class="gt_row gt_left">1659.62 AD</td>
 </tr>
@@ -1180,15 +1187,15 @@ you’ll probably prefer the latter, so we’ll do that here:</p>
 <p>Let’s quickly check the size of this tibble</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">tibTS</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 583 382</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 583 390</span></span></code></pre></div>
 <p>Wow - that’s pretty big. That means that there are 583 variables
-across all our datasets, and 382 data or metadata fields present in one
+across all our datasets, and 390 data or metadata fields present in one
 or more of the datasets.</p>
 <p>Again, let’s print out a quick overview:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tibTS</span></span>
 <span><span class="co">#&gt; LiPD TS object containing 47 datasets</span></span>
-<span><span class="co">#&gt; 583 variables and 382 data and metadata fields.</span></span>
+<span><span class="co">#&gt; 583 variables and 390 data and metadata fields.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; TS object contains a mixture of age (BP) and year (AD) units.</span></span>
 <span><span class="co">#&gt; 139 variables contain year (AD), while 486 contain age (BP).</span></span>
@@ -1206,7 +1213,7 @@ first 10 rows only</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tibTS</span>, print.length <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; LiPD TS object containing 47 datasets</span></span>
-<span><span class="co">#&gt; 583 variables and 382 data and metadata fields.</span></span>
+<span><span class="co">#&gt; 583 variables and 390 data and metadata fields.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; TS object contains a mixture of age (BP) and year (AD) units.</span></span>
 <span><span class="co">#&gt; 139 variables contain year (AD), while 486 contain age (BP).</span></span>
@@ -1237,7 +1244,7 @@ which metadata fields we’d like to summarize using the
 <span>        print.length <span class="op">=</span> <span class="fl">10</span>, </span>
 <span>        add.variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"archiveType"</span>, <span class="st">"paleoData_meanValue12k"</span>,<span class="st">"geo_continent"</span>, <span class="st">"geo_elevation"</span>, <span class="st">"agesPerKyr"</span>, <span class="st">"dataSetName"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; LiPD TS object containing 47 datasets</span></span>
-<span><span class="co">#&gt; 583 variables and 382 data and metadata fields.</span></span>
+<span><span class="co">#&gt; 583 variables and 390 data and metadata fields.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; TS object contains a mixture of age (BP) and year (AD) units.</span></span>
 <span><span class="co">#&gt; 139 variables contain year (AD), while 486 contain age (BP).</span></span>
@@ -1253,7 +1260,7 @@ which metadata fields we’d like to summarize using the
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 69 × 8</span></span></span>
 <span><span class="co">#&gt;    paleoData_variableName   varName_freq archiveType    archiveType_freq geo_continent         geo_continent_freq dataSetName                            dataSetName_freq</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> temperature                        90 Lake                        124 NA's                                 335 Hoqcave.VanRampelbergh.2013                          78</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> temperature                        90 Lake                        124 NAs                                  335 Hoqcave.VanRampelbergh.2013                          78</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> temperatureUncertainty             64 Peat                        124 Europe                               155 AbantGolu.Bottema.1993                               31</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> precipitation                      44 Speleothem                   81 Eastern North America                 62 BlueMoundsCreek.Davis.1977Legacy                     31</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> precipitationUncertainty           40 LakeSediment                 71 Western North America                 31 CrowsnestLake.author.1111                            31</span></span>
@@ -1297,7 +1304,7 @@ output.</p>
 <span>                                     <span class="st">"interpretation1_variableDetail"</span>,</span>
 <span>                                     <span class="st">"interpretation1_seasonality"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; LiPD TS object containing 3 datasets</span></span>
-<span><span class="co">#&gt; 29 variables and 382 data and metadata fields.</span></span>
+<span><span class="co">#&gt; 29 variables and 390 data and metadata fields.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; All variables contain age (BP) data, 1 variables contain year (AD) data.</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1332,7 +1339,7 @@ output.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>

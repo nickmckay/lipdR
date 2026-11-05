@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.0</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/lipd2neotoma.html">Neotoma to LiPD</a>
+      <a href="../articles/lipd2neotoma.html">LiPD and Neotoma interoperability</a>
     </li>
     <li>
       <a href="../articles/Query.html">LiPD Queries</a>
@@ -44,7 +44,13 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/nickmckay/lipdR/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -54,7 +60,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Extract time series from LiPD data</h1>
-
+    <small class="dont-index">Source: <a href="https://github.com/nickmckay/lipdR/blob/main/R/timeseries_extract.R" class="external-link"><code>R/timeseries_extract.R</code></a></small>
     <div class="hidden name"><code>extractTs.Rd</code></div>
     </div>
 
@@ -63,7 +69,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extractTs</span><span class="op">(</span><span class="va">D</span>, whichtables <span class="op">=</span> <span class="st">"all"</span>, mode <span class="op">=</span> <span class="st">"paleo"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extractTs</span><span class="op">(</span><span class="va">D</span>, whichtables <span class="op">=</span> <span class="st">"all"</span>, mode <span class="op">=</span> <span class="st">"paleo"</span>, calculateResolution <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -81,10 +87,27 @@
 <dt id="arg-mode">mode<a class="anchor" aria-label="anchor" href="#arg-mode"></a></dt>
 <dd><p>: char: Options "paleo", "chron"</p></dd>
 
+
+<dt id="arg-calculateresolution">calculateResolution<a class="anchor" aria-label="anchor" href="#arg-calculateresolution"></a></dt>
+<dd><p>: logical: If TRUE, compute resolution statistics
+(min/mean/median/max spacing) for each column along the standardized time axis
+and store them in the `hasResolution_*` fields. Default FALSE.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>ts:  Time series : list</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>In addition to flattening each column, `extractTs()` identifies the
+  primary time axis of each table (an `age`/`year` column, or a column flagged
+  `isPrimary`/`primaryAgeColumn`) and adds a standardized time description to every
+  entry: `time` (the values), `timeUnits`, `timeDatum` (reference year, e.g. 1950
+  for BP, 0 for CE/AD), `timeDirection` (`"prograde"` or `"retrograde"`),
+  `timeExponent` (base-10 exponent of the units, e.g. 0 for yr, 3 for ka), and
+  `timeMin`/`timeMax`. The `timeMin`/`timeMax` fields make it easy to filter a time
+  series by age range with e.g. `dplyr::filter()`.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -112,7 +135,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

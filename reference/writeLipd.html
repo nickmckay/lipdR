@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.0</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/lipd2neotoma.html">Neotoma to LiPD</a>
+      <a href="../articles/lipd2neotoma.html">LiPD and Neotoma interoperability</a>
     </li>
     <li>
       <a href="../articles/Query.html">LiPD Queries</a>
@@ -44,7 +44,13 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/nickmckay/lipdR/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -54,7 +60,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Write LiPD data onto disk as LiPD files</h1>
-
+    <small class="dont-index">Source: <a href="https://github.com/nickmckay/lipdR/blob/main/R/init.R" class="external-link"><code>R/init.R</code></a></small>
     <div class="hidden name"><code>writeLipd.Rd</code></div>
     </div>
 
@@ -68,7 +74,10 @@
 <span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ignore.warnings <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  removeNamesFromLists <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  jsonOnly <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  jsonOnly <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  delete.saved.ensembles <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  compression_level <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -84,8 +93,34 @@
 <dd><p>Destination path  char</p></dd>
 
 
+<dt id="arg-ignore-warnings">ignore.warnings<a class="anchor" aria-label="anchor" href="#arg-ignore-warnings"></a></dt>
+<dd><p>Suppress warnings raised while writing? Default = FALSE.</p></dd>
+
+
+<dt id="arg-removenamesfromlists">removeNamesFromLists<a class="anchor" aria-label="anchor" href="#arg-removenamesfromlists"></a></dt>
+<dd><p>Strip names from lists before writing, so that
+JSON arrays are emitted as arrays rather than objects. Default = FALSE.</p></dd>
+
+
 <dt id="arg-jsononly">jsonOnly<a class="anchor" aria-label="anchor" href="#arg-jsononly"></a></dt>
 <dd><p>Write data to jsonld only? The data will be included and the json file might be large (Typically only used for web connections)</p></dd>
+
+
+<dt id="arg-delete-saved-ensembles">delete.saved.ensembles<a class="anchor" aria-label="anchor" href="#arg-delete-saved-ensembles"></a></dt>
+<dd><p>Drop ensemble tables that have already been
+written, rather than writing them again. Default = FALSE.</p></dd>
+
+
+<dt id="arg-compression-level">compression_level<a class="anchor" aria-label="anchor" href="#arg-compression-level"></a></dt>
+<dd><p>Integer 0-9 controlling zip compression. Lower is faster and
+produces larger files; higher is slower and smaller. Defaults to 2, which writes large
+ensemble-bearing files roughly 4-5x faster than the previous default (6) at the cost of
+~7% larger files. Use 6-9 if minimizing file size matters more than write speed.</p></dd>
+
+
+<dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
+<dd><p>Write datasets in parallel when writing a multiLipd? Default = FALSE. Uses
+furrr, so call `future::plan()` first, e.g. `future::plan(future::multisession, workers = 8)`.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -120,7 +155,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

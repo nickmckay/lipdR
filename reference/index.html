@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.0</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/lipd2neotoma.html">Neotoma to LiPD</a>
+      <a href="../articles/lipd2neotoma.html">LiPD and Neotoma interoperability</a>
     </li>
     <li>
       <a href="../articles/Query.html">LiPD Queries</a>
@@ -44,7 +44,13 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/nickmckay/lipdR/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -85,10 +91,6 @@
         </td>
         <td><p>Convert a compatible object into a multiLiPD Structure</p></td>
       </tr><tr><td>
-          <p><code><a href="build_structure.html">build_structure()</a></code> </p>
-        </td>
-        <td><p>Before you place a table, you must have the structure leading up to the location or you'll get errors. Build the structure</p></td>
-      </tr><tr><td>
           <p><code><a href="cbind.NA.html">cbind(<i>&lt;NA&gt;</i>)</a></code> </p>
         </td>
         <td><p>handle NAs in cbind</p></td>
@@ -104,14 +106,6 @@
           <p><code><a href="collapseTs.html">collapseTs()</a></code> </p>
         </td>
         <td><p>Collapse time series into LiPD dataset form</p></td>
-      </tr><tr><td>
-          <p><code><a href="collapse_block.html">collapse_block()</a></code> </p>
-        </td>
-        <td><p>Collapses blocks: calibration, physicalSample, hasResolution, These follow the regex format of "&lt;key1&gt;_&lt;key2&gt;" match[[1]][[1]] = full key with underscore and index (ex. "physicalSample_tableName") match[[1]][[2]] = first key (ex. "physicalSample") match[[1]][[3]] = second key (ex. "tableName")</p></td>
-      </tr><tr><td>
-          <p><code><a href="collapse_block_indexed.html">collapse_block_indexed()</a></code> </p>
-        </td>
-        <td><p>Collapses blocks: funding, publication calibration, interpretation</p></td>
       </tr><tr><td>
           <p><code><a href="collapse_column.html">collapse_column()</a></code> </p>
         </td>
@@ -149,9 +143,33 @@
         </td>
         <td><p>Create a Markdown representation of a LiPD changelog</p></td>
       </tr><tr><td>
+          <p><code><a href="createSingleMarkdownChangelog.html">createSingleMarkdownChangelog()</a></code> </p>
+        </td>
+        <td><p>Create a markdown file of a changelog</p></td>
+      </tr><tr><td>
           <p><code><a href="createTSid.html">createTSid()</a></code> </p>
         </td>
         <td><p>Create a random TSid</p></td>
+      </tr><tr><td>
+          <p><code><a href="create_mock_neotoma_object.html">create_mock_neotoma_object()</a></code> </p>
+        </td>
+        <td><p>Create a mock neotoma2 site object for testing conversions</p></td>
+      </tr><tr><td>
+          <p><code><a href="create_test_lipd_object.html">create_test_lipd_object()</a></code> </p>
+        </td>
+        <td><p>Create a basic, valid LiPD object for testing</p></td>
+      </tr><tr><td>
+          <p><code><a href="csm.html">csm</a></code> </p>
+        </td>
+        <td><p>Compilation-specific metadata (csm)</p></td>
+      </tr><tr><td>
+          <p><code><a href="csmCompilationKey.html">csmCompilationKey()</a></code> </p>
+        </td>
+        <td><p>Sanitise a compilation name for use in a flat key</p></td>
+      </tr><tr><td>
+          <p><code><a href="csmFields.html">csmFields()</a></code> </p>
+        </td>
+        <td><p>List the compilation-specific metadata present in a time series</p></td>
       </tr><tr><td>
           <p><code><a href="duplicateTable.html">duplicateTable()</a></code> </p>
         </td>
@@ -161,9 +179,21 @@
         </td>
         <td><p>Extract time series from LiPD data</p></td>
       </tr><tr><td>
+          <p><code><a href="extract_by_key.html">extract_by_key()</a></code> </p>
+        </td>
+        <td><p>Recursively find all values for a specific key in a nested list.</p></td>
+      </tr><tr><td>
+          <p><code><a href="filterByCompilation.html">filterByCompilation()</a></code> </p>
+        </td>
+        <td><p>Filter a time series by compilation membership</p></td>
+      </tr><tr><td>
           <p><code><a href="filterTs.html">filterTs()</a></code> </p>
         </td>
         <td><p>Find all the time series objects that match a given search expression, and return a new time series with the matching objects Valid operators : ==, =, &lt;=, &gt;=, &lt;, &gt;</p></td>
+      </tr><tr><td>
+          <p><code><a href="fixPubAuthorList.html">fixPubAuthorList()</a></code> </p>
+        </td>
+        <td><p>Fix the structure of author lists</p></td>
       </tr><tr><td>
           <p><code><a href="formatCitation.html">formatCitation()</a></code> </p>
         </td>
@@ -173,29 +203,17 @@
         </td>
         <td><p>Get one instance from a LiPD changelog</p></td>
       </tr><tr><td>
-          <p><code><a href="getChronDataNeotoma2.html">getChronDataNeotoma2()</a></code> </p>
-        </td>
-        <td><p>get chronData info from neotoma</p></td>
-      </tr><tr><td>
-          <p><code><a href="getGeoNeotoma2.html">getGeoNeotoma2()</a></code> </p>
-        </td>
-        <td><p>get geo info from neotoma</p></td>
-      </tr><tr><td>
           <p><code><a href="getMeasurementTables.html">getMeasurementTables()</a></code> </p>
         </td>
         <td><p>Get measTables</p></td>
       </tr><tr><td>
-          <p><code><a href="getPaleoDataNeotoma2.html">getPaleoDataNeotoma2()</a></code> </p>
-        </td>
-        <td><p>get paleoData info from neotoma</p></td>
-      </tr><tr><td>
-          <p><code><a href="getPubNeotoma2.html">getPubNeotoma2()</a></code> </p>
-        </td>
-        <td><p>get pub info from neotoma</p></td>
-      </tr><tr><td>
           <p><code><a href="getQueryTable.html">getQueryTable()</a></code> </p>
         </td>
         <td><p>Download the remote query table</p></td>
+      </tr><tr><td>
+          <p><code><a href="getTables.html">getTables()</a></code> </p>
+        </td>
+        <td><p>Get all tables in a LiPD file as data.frames</p></td>
       </tr><tr><td>
           <p><code><a href="getTimestamp.html">getTimestamp()</a></code> </p>
         </td>
@@ -204,10 +222,6 @@
           <p><code><a href="getVersion.html">getVersion()</a></code> </p>
         </td>
         <td><p>Get the current version of a LiPD file from it's changelog</p></td>
-      </tr><tr><td>
-          <p><code><a href="get_table.html">get_table()</a></code> </p>
-        </td>
-        <td><p>Get the target table</p></td>
       </tr><tr><td>
           <p><code><a href="get_ts_lipd.html">get_ts_lipd()</a></code> </p>
         </td>
@@ -239,7 +253,7 @@
       </tr><tr><td>
           <p><code><a href="lipd2neotoma.html">lipd2neotoma()</a></code> </p>
         </td>
-        <td><p>Convert lipd to neotoma</p></td>
+        <td><p>Convert a LiPD object into a Neotoma site</p></td>
       </tr><tr><td>
           <p><code><a href="lipdSummary.html">lipdSummary()</a></code> </p>
         </td>
@@ -248,10 +262,6 @@
           <p><code><a href="lipdTSSummary.html">lipdTSSummary()</a></code> </p>
         </td>
         <td><p>Print a summary of the contents of a lipd_ts or lipd_ts_tibble</p></td>
-      </tr><tr><td>
-          <p><code><a href="lumpTsMetaVariables.html">lumpTsMetaVariables()</a></code> </p>
-        </td>
-        <td><p>Lump metadata variables with other rows in Ts (treeTS)</p></td>
       </tr><tr><td>
           <p><code><a href="matchCols.html">matchCols()</a></code> </p>
         </td>
@@ -305,10 +315,6 @@
         </td>
         <td><p>Print summary data from Paleo/Chron measurement tables</p></td>
       </tr><tr><td>
-          <p><code><a href="process_expression.html">process_expression()</a></code> </p>
-        </td>
-        <td><p>Worker function that sends through the query expressions for finding matching entries in the time series</p></td>
-      </tr><tr><td>
           <p><code><a href="pullTsVariable.html">pullTsVariable()</a></code> </p>
         </td>
         <td><p>pull variable out of TS object</p></td>
@@ -341,10 +347,6 @@
         </td>
         <td><p>Remove ensembles from a LiPD object</p></td>
       </tr><tr><td>
-          <p><code><a href="remove_names_from_lists.html">remove_names_from_lists()</a></code> </p>
-        </td>
-        <td><p>remove names from lists</p></td>
-      </tr><tr><td>
           <p><code><a href="replaceLocalZipMD5.html">replaceLocalZipMD5()</a></code> </p>
         </td>
         <td><p>Replace the query zip file MD5 sums after replacing the query table</p></td>
@@ -356,10 +358,6 @@
           <p><code><a href="splitInterpretationByScope.html">splitInterpretationByScope()</a></code> </p>
         </td>
         <td><p>Split interpretation by scope</p></td>
-      </tr><tr><td>
-          <p><code><a href="standardizeQCsheetValues.html">standardizeQCsheetValues()</a></code> </p>
-        </td>
-        <td><p>standardizeQCsheetValues</p></td>
       </tr><tr><td>
           <p><code><a href="stripExtension.html">stripExtension()</a></code> </p>
         </td>
@@ -389,10 +387,6 @@
         </td>
         <td><p>create tidy data.frame from TS</p></td>
       </tr><tr><td>
-          <p><code><a href="tidyTsOld.html">tidyTsOld()</a></code> </p>
-        </td>
-        <td><p>create tidy data.frame from TS (old version)</p></td>
-      </tr><tr><td>
           <p><code><a href="ts2tibble.html">ts2tibble()</a></code> </p>
         </td>
         <td><p>Convert a LiPD TS object into an equivalent nested tibble</p></td>
@@ -421,6 +415,10 @@
         </td>
         <td><p>Warn people about writing ageEnsembles that have been mapped into paleoData. This is a common procedure in GeoChronR, and thus will come up, however it can greatly increase the size of the LiPD file, and is easily and quickly replicated upon loading with geoChronR::mapAgeEnsembleToPaleoData()</p></td>
       </tr><tr><td>
+          <p><code><a href="writeLipd.html">writeLipd()</a></code> </p>
+        </td>
+        <td><p>Write LiPD data onto disk as LiPD files</p></td>
+      </tr><tr><td>
           <p><code><a href="writeVersionToRoot.html">writeVersionToRoot()</a></code> </p>
         </td>
         <td><p>write dataset version to a variable in the LiPD file</p></td>
@@ -437,7 +435,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

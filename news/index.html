@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.0</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/lipd2neotoma.html">Neotoma to LiPD</a>
+      <a href="../articles/lipd2neotoma.html">LiPD and Neotoma interoperability</a>
     </li>
     <li>
       <a href="../articles/Query.html">LiPD Queries</a>
@@ -44,7 +44,13 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/nickmckay/lipdR/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -54,9 +60,27 @@
   <div class="col-md-9 contents">
     <div class="page-header">
       <h1 data-toc-skip>Changelog <small></small></h1>
-
+      <small>Source: <a href="https://github.com/nickmckay/lipdR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.7.0" id="lipdr-070">lipdR 0.7.0<a class="anchor" aria-label="anchor" href="#lipdr-070"></a></h2>
+<ul><li><p>Reading a file with no <code>lipdVersion</code> key no longer prompts. It asked on every such file, which made reading a directory interactive, and answered nothing useful when it could not ask: a non-interactive <code><a href="https://rdrr.io/r/base/readline.html" class="external-link">readline()</a></code> returns <code>""</code>, which matched neither the yes nor the no branch, so the version was left <code>NA</code> and written back into the file that way. Files without a version key are now assumed to be current (1.3), and an unrecognised version warns instead of printing.</p></li>
+<li><p>Fixed <code><a href="../reference/collapse_block_indexed.html">collapse_block_indexed()</a></code> materialising empty interpretations on every column of a rectangular time series tibble, including <code>age</code> and <code>year</code> columns that cannot have one. This is the mechanism behind the empty interpretation shells that accumulated in the LiPDverse database, and it fired on every file passing through <code><a href="../reference/as.lipdTsTibble.html">as.lipdTsTibble()</a></code>/<code><a href="../reference/as.lipd.html">as.lipd()</a></code>.</p></li>
+<li><p>Prepared the package for CRAN (passes <code>R CMD check --as-cran</code> cleanly).</p></li>
+<li><p><code><a href="../reference/writeLipd.html">writeLipd()</a></code> is substantially faster for large files. Zip compression is now configurable via a new <code>compression_level</code> argument (default <code>2</code>), which writes datasets with large ensemble tables roughly 3-4x faster for slightly larger files. Pass <code>compression_level = 6-9</code> to prioritize file size over speed.</p></li>
+<li><p><code><a href="../reference/writeLipd.html">writeLipd()</a></code> gained a <code>parallel</code> option for writing a <code>multiLipd</code> of many datasets in parallel (uses <code>furrr</code>; call <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code> first, as with <code>readLipd(parallel = TRUE)</code>).</p></li>
+<li><p>Reading with <code>dont.load.ensemble = TRUE</code> no longer extracts the archive twice, speeding up loads of ensemble-heavy files.</p></li>
+<li><p>Fixed a bug where string and logical measurement columns (e.g. <code>labID</code>, <code>materialDated</code>, <code>notes</code>) were silently written as <code>NaN</code>, causing data loss on <code><a href="../reference/writeLipd.html">writeLipd()</a></code>. Columns now keep their type through a read/write round trip.</p></li>
+<li><p>Fixed the mirror image of that bug: a numeric column whose values are all <code>NaN</code> was typed logical on re-read, because an all-missing CSV column carries no type information and <code>fread</code> defaults to logical. The file then failed <code><a href="../reference/validLipd.html">validLipd()</a></code> with e.g. “depth values are not numeric”. All-missing columns are now read as numeric. This affected 14 of the 7,177 files in the LiPDverse database.</p></li>
+<li><p>Fixed paleo ensemble tables doubling in width on a read/write round trip (1000 members became 2000). <code><a href="../reference/merge_csv_columns.html">merge_csv_columns()</a></code> decided which CSV columns a metadata entry with no <code>number</code> should take by looking only at the columns processed so far, so a numberless column listed <em>before</em> the column that claims the data was handed the whole table, and the claiming column then took it as well. Claims are now gathered across all columns before any assignment. Chron ensembles were unaffected, because their columns declare disjoint <code>number</code> ranges.</p></li>
+<li><p><code><a href="../reference/extractTs.html">extractTs()</a></code> now adds standardized time metadata (<code>time</code>, <code>timeUnits</code>, <code>timeDatum</code>, <code>timeDirection</code>, <code>timeExponent</code>, <code>timeMin</code>/<code>timeMax</code>) to every entry, and an optional <code>calculateResolution</code> argument computes per-column resolution.</p></li>
+<li><p>Renamed <code>inCompilationBeta</code> to <code>inCompilation</code>, with automatic migration of legacy keys on read. Added a new <code><a href="../reference/filterByCompilation.html">filterByCompilation()</a></code> function.</p></li>
+<li><p>Added support for compilation-specific metadata (<code>csm</code>), stored under <code>csm</code> inside each <code>inCompilation</code> entry. <code><a href="../reference/extractTs.html">extractTs()</a></code> flattens these to <code>&lt;compilation&gt;_csm_&lt;field&gt;</code> (e.g. <code>iso2k_csm_certification</code>), keyed by compilation name rather than array index, and <code><a href="../reference/collapseTs.html">collapseTs()</a></code> folds them back into the matching entry. <code><a href="../reference/csmFields.html">csmFields()</a></code> lists what a time series carries. Note that <code><a href="../reference/extractTs.html">extractTs()</a></code> always emits every compilation’s <code>csm</code>, and <code><a href="../reference/collapseTs.html">collapseTs()</a></code> writes back exactly what the time series carries, so a filtered time series should not be collapsed.</p></li>
+<li><p>Fixed the LiPD-to-Neotoma conversion (<code><a href="../reference/lipd2neotoma.html">lipd2neotoma()</a></code>), which is now working and tested.</p></li>
+<li><p>Fixed a crash in <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>/<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> for objects with no measurement table.</p></li>
+<li><p>Added <code><a href="../reference/getTables.html">getTables()</a></code>, which extracts every measurement, summary, ensemble, and/or distribution table from a LiPD file as a named list of data.frames. Generalizes <code><a href="../reference/getMeasurementTables.html">getMeasurementTables()</a></code> to all table types and correctly expands matrix-valued columns (e.g. ensemble table draws) into one output column each.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.0" id="lipdr-060">lipdR 0.6.0<a class="anchor" aria-label="anchor" href="#lipdr-060"></a></h2>
 <ul><li>a handful of improvements and error handling</li>
@@ -174,7 +198,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>
