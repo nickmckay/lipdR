@@ -62,7 +62,7 @@ get_src_or_dst<- function(path){
         if(any("datasetVersion" %in% names(path))){
           vers <- c(path$datasetVersion) |> str_replace_all("\\.","_")
         }else{
-          vers <- rep(NA,length(path))
+          vers <- rep(NA,nrow(path))
         }
         path <- c(path$datasetId)
       }
@@ -72,15 +72,7 @@ get_src_or_dst<- function(path){
             if(any(is.na(vers))){
               message("Getting version information from lipdverse")
             }
-            path <- purrr::map2_chr(path,vers,
-                                    purrr::possibly(
-                                      purrr::insistently(convert_dsid_to_path,
-                                                         rate = purrr::rate_backoff(pause_base = 1,
-                                                                                    pause_cap = 60,
-                                                                                    pause_min = 1,
-                                                                                    max_times = 20)),
-                                      otherwise = NA),
-                                    .progress = TRUE)
+            path <- lookup_dsid_paths(path,vers)
           }else{
             stop("Error: The provided vector of paths must all point to lipd files (.lpd extensions) that exist (check for full paths), or dsids on lipdverse")
           }
@@ -127,14 +119,141 @@ get_src_or_dst<- function(path){
 convert_dsid_to_path <- function(dsid,vers = NA){
   webpath <- paste0("https://lipdverse.org/data/",dsid)
   if(is.na(vers)){#get most recent
-    vers <- try(stringr::str_extract(string = paste(readLines(webpath),collapse = " ") , pattern = "\\d{1,}_\\d{1,}_\\d{1,}"),silent = TRUE)
-
-    if(is(vers,"try-error")){
-      stop("Cant get dataset version from path.")
-    }
+    vers <- get_dsid_version(webpath)
   }
   path <- file.path(webpath,vers,"lipd.lpd")
   return(path)
+}
+
+#' Get the paths for a vector of datasetIds
+#'
+#' A lookup that fails is left out and reported, so the rest can still load. If
+#' they all fail, this stops and gives the reason.
+#' @keywords internal
+#' @param dsids the datasetIds
+#' @param vers the versions, NA for the most recent. Recycled to the length of dsids.
+#' @param sleep the function used to pause between retries
+#' @return the paths for the lookups that succeeded
+lookup_dsid_paths <- function(dsids,vers = NA,sleep = Sys.sleep){
+  lookups <- purrr::map2(dsids,vers,
+                         purrr::safely(retry_transient(convert_dsid_to_path,sleep = sleep)),
+                         .progress = TRUE)
+  errors <- purrr::map(lookups,"error")
+  failed <- !purrr::map_lgl(errors,is.null)
+
+  if(all(failed)){
+    stop(glue::glue("Couldn't get a version for any of the {length(dsids)} datasetIds. The first problem was: {conditionMessage(errors[[1]])}"),call. = FALSE)
+  }
+  if(any(failed)){
+    cat(crayon::bold(crayon::red(glue::glue('Couldn\'t get a version for {sum(failed)} datasets. You are missing the following datasetIds: \n{paste0(dsids[failed],collapse = ";\n")}\nThe first problem was: {conditionMessage(errors[failed][[1]])}'))))
+    cat("\n\n")
+  }
+  return(purrr::map_chr(lookups[!failed],"result"))
+}
+
+#' Retry a function when it hits a temporary url problem
+#'
+#' Anything else, such as a missing dataset or a bad certificate, won't get better
+#' by waiting, so it fails straight away.
+#' @keywords internal
+#' @param f the function to retry
+#' @param max_times the most times to try
+#' @param pause_cap the longest pause between tries, in seconds
+#' @param sleep the function used to pause
+#' @return a function that retries f
+retry_transient <- function(f,max_times = 20,pause_cap = 60,sleep = Sys.sleep){
+  function(...){
+    for(i in seq_len(max_times)){
+      out <- tryCatch(f(...),url_transient = function(e) e)
+      if(!inherits(out,"url_transient")){
+        return(out)
+      }
+      if(i < max_times){
+        sleep(stats::runif(1,0,min(pause_cap,2^i)))
+      }
+    }
+    stop(out)
+  }
+}
+
+#' Work out what kind of problem a failed url read was
+#' @keywords internal
+#' @param why the message that R gave for the failure
+#' @return the condition class: url_not_found, url_transient or url_error
+url_error_class <- function(why){
+  status <- stringr::str_extract(why,"(?<=')\\d{3}(?=\\b)")
+  if(!is.na(status)){
+    if(status == "404"){
+      return("url_not_found")
+    }
+    if(status %in% c("408","429") || startsWith(status,"5")){
+      return("url_transient")
+    }
+    return("url_error")
+  }
+  if(grepl("timeout|timed out|couldn't connect|failure when receiving|failed sending|empty reply|connection reset",why,ignore.case = TRUE)){
+    return("url_transient")
+  }
+  return("url_error")
+}
+
+#' Read lines from a url, keeping the reason if it fails
+#'
+#' readLines() gives the reason in a warning, and a generic error afterwards, so
+#' the warnings are caught and used as the message of the error.
+#' @keywords internal
+#' @param url the url to read
+#' @return a character vector of lines
+read_url_lines <- function(url){
+  problems <- character(0)
+  tryCatch(
+    withCallingHandlers(
+      readLines(url,warn = FALSE),
+      warning = function(w){
+        problems <<- c(problems,conditionMessage(w))
+        invokeRestart("muffleWarning")
+      }),
+    error = function(e){
+      why <- if(length(problems) > 0) paste(problems,collapse = "; ") else conditionMessage(e)
+      stop(structure(class = c(url_error_class(why),"error","condition"),
+                     list(message = why,call = NULL)))
+    })
+}
+
+#' Get the current version of a dataset on lipdverse
+#'
+#' Reads the plain text version.txt that is published with each dataset. Datasets
+#' without one (a 404) fall back on the first version string in the dataset page.
+#' Other failures are errors, because the page can name an older version.
+#' @keywords internal
+#' @param webpath the url of the dataset on lipdverse
+#' @return the current version, with underscores (e.g., 1_0_12)
+get_dsid_version <- function(webpath){
+  versionPattern <- "\\d+_\\d+_\\d+"
+
+  #keep the class of the error, so that temporary problems can be retried
+  cant_get_version <- function(e){
+    e$message <- glue::glue("Can't get dataset version from {webpath}: {conditionMessage(e)}")
+    e$call <- NULL
+    stop(e)
+  }
+
+  versionFile <- tryCatch(read_url_lines(file.path(webpath,"version.txt")),
+                          url_not_found = function(e) character(0),
+                          error = cant_get_version)
+  versionFile <- trimws(versionFile)
+  #validate it, in case the server answered with a page rather than the file
+  if(length(versionFile) >= 1 && grepl(paste0("^",versionPattern,"$"),versionFile[1])){
+    return(versionFile[1])
+  }
+
+  page <- tryCatch(paste(read_url_lines(webpath),collapse = " "),
+                   error = cant_get_version)
+  vers <- stringr::str_extract(page,versionPattern)
+  if(is.na(vers)){
+    stop(glue::glue("Can't get dataset version from {webpath}: no version found."),call. = FALSE)
+  }
+  return(vers)
 }
 
 #' Get a list of paths to LiPD files

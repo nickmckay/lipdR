@@ -1,3 +1,11 @@
+# lipdR 0.7.1
+
+* `readLipd()` given a dataset id now gets the current version from the dataset's `version.txt` on lipdverse, falling back on the dataset page where that file doesn't exist yet.
+* A dataset id whose version can't be found is now an error. Previously it built a url containing `NA` and failed later with a confusing download error.
+* `readLipd()` given several dataset ids now retries a version lookup only for temporary problems (timeouts, and HTTP 408, 429 and 5xx). It used to retry every failure for several minutes per id, including ones that can't recover, such as a missing dataset or a bad certificate.
+* Ids whose lookup fails are now left out and named, and the rest still load. If every lookup fails, `readLipd()` stops and gives the reason. Previously a failure became a missing path that broke the whole read with an unrelated error.
+* `readLipd()` given a data frame of dataset ids with no `datasetVersion` column no longer fails. The placeholder versions were counted by column rather than by row.
+
 # lipdR 0.7.0
 
 * Reading a file with no `lipdVersion` key no longer prompts. It asked on every such file, which made reading a directory interactive, and answered nothing useful when it could not ask: a non-interactive `readline()` returns `""`, which matched neither the yes nor the no branch, so the version was left `NA` and written back into the file that way. Files without a version key are now assumed to be current (1.3), and an unrecognised version warns instead of printing.
