@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.1</span>
       </span>
     </div>
 
@@ -63,6 +63,17 @@
       <small>Source: <a href="https://github.com/nickmckay/lipdR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.7.1" id="lipdr-071">lipdR 0.7.1<a class="anchor" aria-label="anchor" href="#lipdr-071"></a></h2>
+<ul><li>
+<code><a href="../reference/readLipd.html">readLipd()</a></code> given a dataset id now gets the current version from the dataset’s <code>version.txt</code> on lipdverse, falling back on the dataset page where that file doesn’t exist yet.</li>
+<li>A dataset id whose version can’t be found is now an error. Previously it built a url containing <code>NA</code> and failed later with a confusing download error.</li>
+<li>
+<code><a href="../reference/readLipd.html">readLipd()</a></code> given several dataset ids now retries a version lookup only for temporary problems (timeouts, and HTTP 408, 429 and 5xx). It used to retry every failure for several minutes per id, including ones that can’t recover, such as a missing dataset or a bad certificate.</li>
+<li>Ids whose lookup fails are now left out and named, and the rest still load. If every lookup fails, <code><a href="../reference/readLipd.html">readLipd()</a></code> stops and gives the reason. Previously a failure became a missing path that broke the whole read with an unrelated error.</li>
+<li>
+<code><a href="../reference/readLipd.html">readLipd()</a></code> given a data frame of dataset ids with no <code>datasetVersion</code> column no longer fails. The placeholder versions were counted by column rather than by row.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.0" id="lipdr-070">lipdR 0.7.0<a class="anchor" aria-label="anchor" href="#lipdr-070"></a></h2>
 <ul><li><p>Reading a file with no <code>lipdVersion</code> key no longer prompts. It asked on every such file, which made reading a directory interactive, and answered nothing useful when it could not ask: a non-interactive <code><a href="https://rdrr.io/r/base/readline.html" class="external-link">readline()</a></code> returns <code>""</code>, which matched neither the yes nor the no branch, so the version was left <code>NA</code> and written back into the file that way. Files without a version key are now assumed to be current (1.3), and an unrecognised version warns instead of printing.</p></li>

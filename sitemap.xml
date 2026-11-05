@@ -83,6 +83,7 @@
 <url><loc>/reference/get_csv_from_table.html</loc></url>
 <url><loc>/reference/get_datasetname.html</loc></url>
 <url><loc>/reference/get_download_path.html</loc></url>
+<url><loc>/reference/get_dsid_version.html</loc></url>
 <url><loc>/reference/get_lipd_paths.html</loc></url>
 <url><loc>/reference/get_lipd_version.html</loc></url>
 <url><loc>/reference/get_matches.html</loc></url>
@@ -119,6 +120,7 @@
 <url><loc>/reference/lipd_read.html</loc></url>
 <url><loc>/reference/lipd_write.html</loc></url>
 <url><loc>/reference/list_files_recursive.html</loc></url>
+<url><loc>/reference/lookup_dsid_paths.html</loc></url>
 <url><loc>/reference/matchCols.html</loc></url>
 <url><loc>/reference/merge_csv_columns.html</loc></url>
 <url><loc>/reference/merge_csv_metadata.html</loc></url>
@@ -149,10 +151,12 @@
 <url><loc>/reference/readLipd.html</loc></url>
 <url><loc>/reference/read_csv_from_file.html</loc></url>
 <url><loc>/reference/read_jsonld.html</loc></url>
+<url><loc>/reference/read_url_lines.html</loc></url>
 <url><loc>/reference/removeEnsembles.html</loc></url>
 <url><loc>/reference/remove_names_from_lists.html</loc></url>
 <url><loc>/reference/replaceLocalZipMD5.html</loc></url>
 <url><loc>/reference/replace_invalid_chars.html</loc></url>
+<url><loc>/reference/retry_transient.html</loc></url>
 <url><loc>/reference/rm_empty_fields.html</loc></url>
 <url><loc>/reference/rm_existing_tables.html</loc></url>
 <url><loc>/reference/splitInterpretationByScope.html</loc></url>
@@ -181,6 +185,7 @@
 <url><loc>/reference/update_lipd_v1_3_keys.html</loc></url>
 <url><loc>/reference/update_lipd_v1_3_structure.html</loc></url>
 <url><loc>/reference/update_lipd_version.html</loc></url>
+<url><loc>/reference/url_error_class.html</loc></url>
 <url><loc>/reference/validLipd.html</loc></url>
 <url><loc>/reference/warn_ensembles_in_paleo.html</loc></url>
 <url><loc>/reference/writeLipd.html</loc></url>
