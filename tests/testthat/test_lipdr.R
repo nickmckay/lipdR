@@ -122,6 +122,11 @@ test_that("LiPD Read: v1.3 with all table types", {
 })
 
 test_that("LiPD Read: by 1 or more datasetId", {
+  lipdverseReachable <- tryCatch({
+    suppressWarnings(readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5", warn = FALSE))
+    TRUE
+  }, error = function(e) FALSE)
+  skip_if_not(lipdverseReachable, "can't connect to lipdverse.org")
   print("LiPD Read: by 1 or more datasetId")
   sink("log")
   expect_equal(test_lipdreaddsid(), 0)
