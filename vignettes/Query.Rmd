@@ -10,11 +10,20 @@ vignette: >
 ```{r setup, include = FALSE, width.out='100%'}
 
 options(width = 500)
+lipdverse_ok <- tryCatch({
+  suppressWarnings(readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5", n = 1, warn = FALSE))
+  TRUE
+}, error = function(e) FALSE)
 knitr::opts_chunk$set(
   error=TRUE,
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = lipdverse_ok
 )
+```
+
+```{r offline-note, echo = FALSE, eval = !lipdverse_ok, results = "asis"}
+cat("> lipdverse.org couldn't be reached when this vignette was built, so the code below is shown without its output.\n")
 ```
 
 The `queryLipdverse()` function in `lipdR` allows users to download LiPD files based on various filter parameters

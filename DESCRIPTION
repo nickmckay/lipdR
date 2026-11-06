@@ -20,7 +20,7 @@ Description: Read, write, manipulate, and analyze Linked Paleo Data ('LiPD')
     data into tidy time series for querying and filtering, and convert to and
     from the Neotoma Paleoecology Database. See McKay and Emile-Geay (2016)
     <doi:10.5194/cp-12-1093-2016> for a description of the 'LiPD' framework.
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.1.0)
 License: MIT + file LICENSE
 RoxygenNote: 7.3.3
 URL: https://github.com/nickmckay/lipdR, https://www.lipd.net
