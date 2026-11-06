@@ -68,7 +68,7 @@
 <ul><li>
 <code><a href="../reference/readLipd.html">readLipd()</a></code> gives downloads at least an hour, instead of R’s default 60 seconds, so large compilation zips (such as the 285 MB hydroclimate2k) no longer fail partway. A longer <code>options(timeout)</code> set by the user is kept, and the setting is restored afterwards.</li>
 <li>On Windows, downloads now use R’s built-in downloader (libcurl), as on macOS and Linux, instead of the external curl program. Windows downloads now respect <code>options(timeout)</code> and <code>R_LIBCURL_SSL_REVOKE_BEST_EFFORT</code>.</li>
-<li>A failed download now says why. A timeout explains how to allow longer, and a failed certificate revocation check on Windows names the <code>R_LIBCURL_SSL_REVOKE_BEST_EFFORT</code> workaround.</li>
+<li>A failed download now says why. A timeout explains how to allow longer, and a failed certificate revocation check on Windows names the <code>R_LIBCURL_SSL_REVOKE_BEST_EFFORT</code> workaround. On Windows, libcurl reports a revocation failure only as “SSL connect error”, so that gets the hint too.</li>
 <li>Fixed a spurious <code>no non-missing arguments to max</code> warning when reading a single file from a URL.</li>
 </ul></div>
     <div class="section level2">
