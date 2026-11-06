@@ -9,10 +9,19 @@ vignette: >
 
 ```{r setup, include = FALSE, width.out='100%', echo = FALSE}
 options(width = 500)
+lipdverse_ok <- tryCatch({
+  suppressWarnings(readLines("https://lipdverse.org/lipdverse/lipdverseQuery.md5", n = 1, warn = FALSE))
+  TRUE
+}, error = function(e) FALSE)
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = lipdverse_ok
 )
+```
+
+```{r offline-note, echo = FALSE, eval = !lipdverse_ok, results = "asis"}
+cat("> lipdverse.org couldn't be reached when this vignette was built, so the code below is shown without its output.\n")
 ```
 
 
@@ -117,7 +126,7 @@ Let's quickly check the size of this tibble
 dim(tibTS)
 ```
 
-Wow - that's pretty big. That means that there are `r nrow(tibTS)` variables across all our datasets, and `r ncol(tibTS)` data or metadata fields present in one or more of the datasets. 
+Wow - that's pretty big. That means that there are `r if (lipdverse_ok) nrow(tibTS) else "thousands of"` variables across all our datasets, and `r if (lipdverse_ok) ncol(tibTS) else "hundreds of"` data or metadata fields present in one or more of the datasets. 
 
 Again, let's print out a quick overview:
 
@@ -160,7 +169,7 @@ subsetTs <- tibTS %>%
          !is.na(interpretation1_variable))
 ```
 
-Great - we found `r nrow(subsetTs)` timeseries that meet these criteria. Let's explore their interpretations in a bit more detail by saving the table output.
+Great - we found `r if (lipdverse_ok) nrow(subsetTs) else "several"` timeseries that meet these criteria. Let's explore their interpretations in a bit more detail by saving the table output.
 
 ```{r}
 sumTable <- summary(subsetTs,
