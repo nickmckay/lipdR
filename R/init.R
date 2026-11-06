@@ -64,7 +64,7 @@ newQueryTable <- function(){
   query_url <- "https://lipdverse.org/lipdverse/lipdverseQuery.zip"
   temp <- tempdir()
   zip_dir <- paste0(temp, "/queryTable.zip")
-  download.file(query_url, zip_dir)
+  download_with_timeout(query_url, zip_dir)
   unzip(zipfile = zip_dir, files = "lipdverseQuery.csv", exdir = temp)
   fPth <- paste0(temp, "/lipdverseQuery.csv")
   queryTable <- read.csv(fPth)
