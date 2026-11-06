@@ -67,3 +67,11 @@ test_that("a failed single-file download still returns download-error, with the 
                  "Couldn't download")
   expect_equal(out, "download-error")
 })
+
+test_that("libcurl's bare SSL connect error gets the revocation hint on Windows only", {
+  why <- "URL 'https://lipdverse.org/a.zip': status was 'SSL connect error'"
+  expect_match(download_failure_message("https://lipdverse.org/a.zip", why, on_windows = TRUE),
+               "R_LIBCURL_SSL_REVOKE_BEST_EFFORT", fixed = TRUE)
+  expect_no_match(download_failure_message("https://lipdverse.org/a.zip", why, on_windows = FALSE),
+                  "R_LIBCURL_SSL_REVOKE_BEST_EFFORT", fixed = TRUE)
+})

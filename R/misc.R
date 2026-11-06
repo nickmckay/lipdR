@@ -118,15 +118,16 @@ do_download <- function(url, destfile, method, quiet){
 
 #' Explain a failed download, with a hint when the cause is recognisable
 #' @noRd
-download_failure_message <- function(url, why){
+download_failure_message <- function(url, why, on_windows = get_os() == "win"){
   why <- unique(why[nzchar(why)])
   msg <- paste0("Couldn't download ", url, ": ", paste(why, collapse = "; "))
   all_why <- paste(why, collapse = " ")
   if(grepl("timeout|timed out", all_why, ignore.case = TRUE)){
     msg <- paste0(msg, "\nThe download took longer than ", getOption("timeout"),
                   " seconds. For a large file or slow connection, allow longer with options(timeout = 7200), or download it in a browser and read the local file.")
-  }else if(grepl("revocation", all_why, ignore.case = TRUE)){
-    msg <- paste0(msg, "\nWindows couldn't reach the certificate authority to check whether the site's certificate was revoked. ",
+  }else if(grepl("revocation", all_why, ignore.case = TRUE) ||
+           (on_windows && grepl("SSL connect error", all_why, fixed = TRUE))){
+    msg <- paste0(msg, "\nOn Windows, this is often a certificate revocation check that couldn't reach the certificate authority. ",
                   "If that keeps happening, Sys.setenv(R_LIBCURL_SSL_REVOKE_BEST_EFFORT = \"true\") lets the download go ahead when the check can't be done; a certificate known to be revoked is still refused.")
   }
   msg

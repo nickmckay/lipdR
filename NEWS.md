@@ -2,7 +2,7 @@
 
 * `readLipd()` gives downloads at least an hour, instead of R's default 60 seconds, so large compilation zips (such as the 285 MB hydroclimate2k) no longer fail partway. A longer `options(timeout)` set by the user is kept, and the setting is restored afterwards.
 * On Windows, downloads now use R's built-in downloader (libcurl), as on macOS and Linux, instead of the external curl program. Windows downloads now respect `options(timeout)` and `R_LIBCURL_SSL_REVOKE_BEST_EFFORT`.
-* A failed download now says why. A timeout explains how to allow longer, and a failed certificate revocation check on Windows names the `R_LIBCURL_SSL_REVOKE_BEST_EFFORT` workaround.
+* A failed download now says why. A timeout explains how to allow longer, and a failed certificate revocation check on Windows names the `R_LIBCURL_SSL_REVOKE_BEST_EFFORT` workaround. On Windows, libcurl reports a revocation failure only as "SSL connect error", so that gets the hint too.
 * Fixed a spurious `no non-missing arguments to max` warning when reading a single file from a URL.
 
 # lipdR 0.7.1
