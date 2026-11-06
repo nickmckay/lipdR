@@ -69,6 +69,69 @@ create_range <- function(start, len){
   return(l)
 }
 
+#' How long a LiPD download may take, in seconds
+#'
+#' R's default `options(timeout)` is 60 seconds, too short for compilation
+#' zips of a few hundred MB. Downloads get at least this long, or longer if
+#' the user has set a larger timeout.
+#' @noRd
+lipd_download_timeout <- 3600
+
+#' Download a file with R's built-in downloader and a generous timeout
+#'
+#' Uses libcurl on every platform, so Windows honours `options(timeout)` and
+#' `R_LIBCURL_SSL_REVOKE_BEST_EFFORT`, which the external curl program
+#' lipdR used before did not. The timeout is raised only for this download.
+#' Errors carry the underlying reason, with a hint for timeouts and
+#' certificate revocation checks.
+#' @param url URL to download
+#' @param destfile local file to write
+#' @param quiet passed to download.file()
+#' @param timeout minimum timeout in seconds
+#' @return invisibly, the status from download.file()
+#' @noRd
+download_with_timeout <- function(url, destfile, quiet = FALSE, timeout = lipd_download_timeout){
+  withr::local_options(timeout = max(getOption("timeout", 60), timeout))
+  method <- if(isTRUE(capabilities("libcurl"))) "libcurl" else "auto"
+  why <- character(0)
+  status <- tryCatch(
+    withCallingHandlers(
+      do_download(url, destfile, method = method, quiet = quiet),
+      warning = function(w){
+        why <<- c(why, conditionMessage(w))
+        invokeRestart("muffleWarning")
+      }),
+    error = function(e){
+      stop(download_failure_message(url, c(why, conditionMessage(e))), call. = FALSE)
+    })
+  if(!identical(as.integer(status), 0L)){
+    stop(download_failure_message(url, c(why, paste("download.file() returned status", status))), call. = FALSE)
+  }
+  invisible(status)
+}
+
+#' Thin wrapper around download.file(), so tests can mock it
+#' @noRd
+do_download <- function(url, destfile, method, quiet){
+  utils::download.file(url, destfile, method = method, quiet = quiet, mode = "wb")
+}
+
+#' Explain a failed download, with a hint when the cause is recognisable
+#' @noRd
+download_failure_message <- function(url, why){
+  why <- unique(why[nzchar(why)])
+  msg <- paste0("Couldn't download ", url, ": ", paste(why, collapse = "; "))
+  all_why <- paste(why, collapse = " ")
+  if(grepl("timeout|timed out", all_why, ignore.case = TRUE)){
+    msg <- paste0(msg, "\nThe download took longer than ", getOption("timeout"),
+                  " seconds. For a large file or slow connection, allow longer with options(timeout = 7200), or download it in a browser and read the local file.")
+  }else if(grepl("revocation", all_why, ignore.case = TRUE)){
+    msg <- paste0(msg, "\nWindows couldn't reach the certificate authority to check whether the site's certificate was revoked. ",
+                  "If that keeps happening, Sys.setenv(R_LIBCURL_SSL_REVOKE_BEST_EFFORT = \"true\") lets the download go ahead when the check can't be done; a certificate known to be revoked is still refused.")
+  }
+  msg
+}
+
 #' Download a LiPD file from a URL
 #' @export
 #' @keywords internal
@@ -78,12 +141,6 @@ create_range <- function(start, len){
 download_from_url <- function(path){
 
   path <- unique(path)
-  #check for libcurl
-  if(get_os() == "win"){
-    dmeth <- "curl"
-  }else{
-    dmeth <- "auto"
-  }
 
   if(length(path) == 1){
     # Test if the string is a URL or not
@@ -101,7 +158,7 @@ download_from_url <- function(path){
         dir.create(file.path(get_download_path(),"lpdDownload"))
 
         #download it
-        download.file(path, file.path(get_download_path(), "zippedLipds.zip"), method = dmeth)
+        download_with_timeout(path, file.path(get_download_path(), "zippedLipds.zip"))
 
         #unzip it
         unzip(zipfile = file.path(get_download_path(), "zippedLipds.zip"),exdir = dp)
@@ -117,10 +174,7 @@ download_from_url <- function(path){
 
         #truncate for linkedearth
         end <- nchar(dsn)
-        start <- max(unlist(stringr::str_locate_all(dsn,"=")))+1
-        if(!is.finite(start)){
-          start <- 1
-        }
+        start <- max(c(0, unlist(stringr::str_locate_all(dsn,"="))))+1
         dsn <- substr(dsn, start = start, stop = end)
 
 
@@ -130,8 +184,9 @@ download_from_url <- function(path){
         # Initiate download
         dir <- get_download_path()
         local_path <- file.path(dir, paste0(dsn, ".lpd"))
-        succ <- try(download.file(path, local_path, method = dmeth),silent = TRUE)
+        succ <- try(download_with_timeout(path, local_path),silent = TRUE)
         if(is(succ,"try-error")){
+          message(conditionMessage(attr(succ,"condition")))
           return("download-error")
         }
 
@@ -153,8 +208,7 @@ download_from_url <- function(path){
       print(glue::glue("Downloading {length(path)} datasets from lipdverse.org..."))
       purrr::walk2(path,
                    local_path,
-                   purrr::possibly(download.file,otherwise = NA),
-                   method = dmeth,
+                   purrr::possibly(download_with_timeout,otherwise = NA),
                    quiet = TRUE,
                    .progress = TRUE)
 
