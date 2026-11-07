@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.3</span>
       </span>
     </div>
 
@@ -63,6 +63,16 @@
       <small>Source: <a href="https://github.com/nickmckay/lipdR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.7.3" id="lipdr-073">lipdR 0.7.3<a class="anchor" aria-label="anchor" href="#lipdr-073"></a></h2>
+<ul><li>New <code><a href="../reference/convertTime.html">convertTime()</a></code>, <code><a href="../reference/getTsTime.html">getTsTime()</a></code> and <code><a href="../reference/convertTsTime.html">convertTsTime()</a></code> use the time metadata from <code><a href="../reference/extractTs.html">extractTs()</a></code> (<code>timeDatum</code>, <code>timeDirection</code>, <code>timeExponent</code>) to put records on one time scale, for example yr BP, ka or year CE. <code><a href="../reference/getTsTime.html">getTsTime()</a></code> returns one timeseries’ time axis on a chosen scale, using an age or year ensemble when there is one. <code><a href="../reference/convertTsTime.html">convertTsTime()</a></code> converts the <code>time</code> of a whole TS list or timeseries tibble. Radiocarbon years are never converted.</li>
+<li>
+<code><a href="../reference/as.lipdTs.html">as.lipdTs()</a></code> and <code><a href="../reference/as.lipdTsTibble.html">as.lipdTsTibble()</a></code> now accept timeseries tibbles that have lost their class (as dplyr verbs can do), plain data frames, and unclassed lists of timeseries.</li>
+<li>
+<code><a href="../reference/ts2tibble.html">ts2tibble()</a></code> no longer warns about, or adds a spurious <code>chronData_TSid</code> to, timeseries without a <code>mode</code> field (for example ones built by hand).</li>
+<li>
+<code><a href="../reference/extractTs.html">extractTs()</a></code> no longer needs R 4.4 or later: it used <code>%||%</code>, which base R only gained in 4.4.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.2" id="lipdr-072">lipdR 0.7.2<a class="anchor" aria-label="anchor" href="#lipdr-072"></a></h2>
 <ul><li>

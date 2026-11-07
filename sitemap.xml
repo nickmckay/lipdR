@@ -18,6 +18,7 @@
 <url><loc>/reference/as.lipdTsTibble.html</loc></url>
 <url><loc>/reference/as.lipdTsTibbleLong.html</loc></url>
 <url><loc>/reference/as.multiLipd.html</loc></url>
+<url><loc>/reference/as_ts_entry.html</loc></url>
 <url><loc>/reference/ask_how_many.html</loc></url>
 <url><loc>/reference/browse_dialog.html</loc></url>
 <url><loc>/reference/build_structure.html</loc></url>
@@ -35,6 +36,8 @@
 <url><loc>/reference/combineInterpretationByScope.html</loc></url>
 <url><loc>/reference/compilation_version_matches.html</loc></url>
 <url><loc>/reference/contract_csm_entry.html</loc></url>
+<url><loc>/reference/convertTime.html</loc></url>
+<url><loc>/reference/convertTsTime.html</loc></url>
 <url><loc>/reference/convert_dsid_to_path.html</loc></url>
 <url><loc>/reference/createChangelog.html</loc></url>
 <url><loc>/reference/createColumn.html</loc></url>
@@ -74,6 +77,7 @@
 <url><loc>/reference/getQueryTable.html</loc></url>
 <url><loc>/reference/getTables.html</loc></url>
 <url><loc>/reference/getTimestamp.html</loc></url>
+<url><loc>/reference/getTsTime.html</loc></url>
 <url><loc>/reference/getVersion.html</loc></url>
 <url><loc>/reference/get_calculate_resolution.html</loc></url>
 <url><loc>/reference/get_csv_from_columns.html</loc></url>
@@ -171,6 +175,8 @@
 <url><loc>/reference/tabulateTs.html</loc></url>
 <url><loc>/reference/tidyTs.html</loc></url>
 <url><loc>/reference/time_metadata_from_units.html</loc></url>
+<url><loc>/reference/time_spec.html</loc></url>
+<url><loc>/reference/time_spec_from_fields.html</loc></url>
 <url><loc>/reference/ts2tibble.html</loc></url>
 <url><loc>/reference/tsPluck.html</loc></url>
 <url><loc>/reference/unindex_geo.html</loc></url>
