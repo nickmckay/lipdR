@@ -41,29 +41,27 @@ ts2tibble <- function(TS){
     tibble::as_tibble() %>%
     purrr::modify(tsPluck) # this pulls all the single entry lists to the top level, and tries to use appropriate calsses
 
-  #check for TSid
-  if(all(tibbleTS$mode == "chron")){
-    if(is.null(tibbleTS$chronData_TSid)){
+  #check for TSid (timeseries built by hand may have no mode; treat those as paleo)
+  mode <- tibbleTS[["mode"]]
+  if(!is.null(mode) && all(mode == "chron")){
+    if(is.null(tibbleTS[["chronData_TSid"]])){
       tibbleTS$chronData_TSid <- NA
     }
 
-
-    win <- which(is.na(tibbleTS$chronData_TSid))
+    win <- which(is.na(tibbleTS[["chronData_TSid"]]))
     if(length(win > 0)){
       tibbleTS$chronData_TSid[win] <- paste0(tibbleTS$dataSetName[1],"-chron-NA",seq_along(win))
     }
   }
 
-
-  if(all(tibbleTS$mode == "paleo")){
-    if(is.null(tibbleTS$paleoData_TSid)){
+  if(is.null(mode) || all(mode == "paleo")){
+    if(is.null(tibbleTS[["paleoData_TSid"]])){
       tibbleTS$paleoData_TSid <- paste0("NA",seq_len(nrow(tibbleTS)))
     }
 
-
-    win <- which(is.na(tibbleTS$paleoData_TSid))
+    win <- which(is.na(tibbleTS[["paleoData_TSid"]]))
     if(length(win > 0)){
-      tibbleTS$paleoData_TSid[win] <- paste0(tibbleTS$dataSetName[1],"-paleo-NA",seq_along(win))
+      tibbleTS$paleoData_TSid[win] <- paste0(tibbleTS[["dataSetName"]][1] %||% "NA","-paleo-NA",seq_along(win))
     }
   }
 

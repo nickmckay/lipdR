@@ -87,3 +87,10 @@ test_that("as.lipdTs and as.lipdTsTibble accept unclassed data frames and lists"
   long <- tibble::as_tibble(unclass(long))
   expect_s3_class(as.lipdTs(long), "lipd_ts")
 })
+
+test_that("ts2tibble handles hand-built timeseries without mode, quietly", {
+  ts <- list(list(dataSetName = "x", paleoData_values = 1:3, age = 1:3))
+  expect_no_warning(tib <- ts2tibble(ts))
+  expect_false("chronData_TSid" %in% names(tib))
+  expect_equal(tib$paleoData_TSid, "NA1")
+})
