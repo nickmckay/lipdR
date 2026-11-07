@@ -212,6 +212,14 @@ as.lipdTs <- function(x){
     untidyTs(x) %>%
       structure(class = c("lipd_ts",class(list()))) %>%
       return()
+  }else if(is.data.frame(x)){
+    # an unclassed timeseries tibble/data frame (dplyr verbs can drop the class)
+    if(looks_like_long_ts(x)){
+      return(new_lipdTs(untidyTs(x)))
+    }
+    return(new_lipdTs(purrr::transpose(as.list(x))))
+  }else if(looks_like_ts_list(x)){
+    return(new_lipdTs(unclass(x)))
   }else{
     stop(glue::glue("I don't know how to convert class: {class(x)} to lipd_ts object."))
   }
@@ -240,6 +248,14 @@ as.lipdTsTibble <- function(x){
       ts2tibble() %>%
       structure(class = c("lipd_ts_tibble",class(tibble::tibble()))) %>%
       return()
+  }else if(is.data.frame(x)){
+    # an unclassed timeseries tibble/data frame (dplyr verbs can drop the class)
+    if(looks_like_long_ts(x)){
+      return(as.lipdTsTibble(new_lipdTs(untidyTs(x))))
+    }
+    return(new_lipdTsTibble(tibble::as_tibble(x)))
+  }else if(looks_like_ts_list(x)){
+    return(as.lipdTsTibble(new_lipdTs(unclass(x))))
   }else{
     stop(glue::glue("I don't know how to convert class: {class(x)} to lipd_ts_tibble object."))
   }
@@ -375,3 +391,15 @@ summary.lipd_ts_tibble <- function(object, ...) {
 
 
 
+
+# Is this an unclassed list of timeseries entries (e.g. a TS list after purrr::map)?
+looks_like_ts_list <- function(x){
+  is.list(x) && !is.data.frame(x) && length(x) > 0 &&
+    all(purrr::map_lgl(x, function(e) is.list(e) && any(c("paleoData_values", "chronData_values") %in% names(e))))
+}
+
+# Is this data frame in the long (tidyTs) form, one row per observation?
+looks_like_long_ts <- function(x){
+  vc <- intersect(c("paleoData_values", "chronData_values"), names(x))
+  length(vc) > 0 && !is.list(x[[vc[1]]])
+}

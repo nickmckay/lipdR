@@ -1,3 +1,10 @@
+# lipdR 0.7.3
+
+* New `convertTime()`, `getTsTime()` and `convertTsTime()` use the time metadata from `extractTs()` (`timeDatum`, `timeDirection`, `timeExponent`) to put records on one time scale, for example yr BP, ka or year CE. `getTsTime()` returns one timeseries' time axis on a chosen scale, using an age or year ensemble when there is one. `convertTsTime()` converts the `time` of a whole TS list or timeseries tibble. Radiocarbon years are never converted.
+* `as.lipdTs()` and `as.lipdTsTibble()` now accept timeseries tibbles that have lost their class (as dplyr verbs can do), plain data frames, and unclassed lists of timeseries.
+* `ts2tibble()` no longer warns about, or adds a spurious `chronData_TSid` to, timeseries without a `mode` field (for example ones built by hand).
+* `extractTs()` no longer needs R 4.4 or later: it used `%||%`, which base R only gained in 4.4.
+
 # lipdR 0.7.2
 
 * `readLipd()` gives downloads at least an hour, instead of R's default 60 seconds, so large compilation zips (such as the 285 MB hydroclimate2k) no longer fail partway. A longer `options(timeout)` set by the user is kept, and the setting is restored afterwards.
