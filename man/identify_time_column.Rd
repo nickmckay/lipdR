@@ -13,7 +13,11 @@ identify_time_column(table_data)
 list(variableName, units, values) for the chosen column, or NULL if none
 }
 \description{
-Chooses, in priority order: a column flagged `isPrimary` (synonym
-`primaryAgeColumn`), then a column named `age`, then a column named `year`.
+Only time columns are candidates: columns named `age` or `year`, and
+columns whose units are calendar time units (yr BP, ka, yr AD, CE, b2k, ...).
+Among those it chooses, in priority order: a column flagged
+`primaryAgeColumn`, then one flagged `isPrimary`, then a column named `age`,
+then a column named `year`. (`isPrimary` usually marks the primary variable
+of a table, such as depth or the proxy, so it is not trusted on its own.)
 }
 \keyword{internal}

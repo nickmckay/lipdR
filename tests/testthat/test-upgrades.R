@@ -68,6 +68,72 @@ test_that("primary column detection prefers isPrimary over age/year", {
   expect_equal(tc$variableName, "calAge")
 })
 
+test_that("a depth or proxy column flagged isPrimary is not used as time", {
+  table_data <- list(
+    tableName = "t",
+    depth = list(variableName = "depth", units = "cm", values = c(0.02, 0.04, 0.06),
+                 isPrimary = TRUE),
+    d18O = list(variableName = "d18O", units = "permil", values = c(-5, -6, -7),
+                isPrimary = TRUE),
+    age = list(variableName = "age", units = "yr BP", values = c(100, 200, 300),
+               isPrimary = TRUE)
+  )
+  tc <- identify_time_column(table_data)
+  expect_equal(tc$variableName, "age")
+
+  table_data$age$isPrimary <- NULL
+  expect_equal(identify_time_column(table_data)$variableName, "age")
+
+  table_data$age <- NULL
+  expect_null(identify_time_column(table_data))
+})
+
+test_that("primaryAgeColumn wins among time columns, and is ignored on other columns", {
+  table_data <- list(
+    tableName = "t",
+    grayscale = list(variableName = "grayscale", units = "unitless", values = c(1, 2, 3),
+                     primaryAgeColumn = TRUE),
+    year = list(variableName = "year", units = "CE", values = c(1990, 1991, 1992),
+                isPrimary = TRUE),
+    calAge = list(variableName = "calAge", units = "yr BP", values = c(60, 59, 58),
+                  primaryAgeColumn = TRUE)
+  )
+  expect_equal(identify_time_column(table_data)$variableName, "calAge")
+  table_data$calAge <- NULL
+  expect_equal(identify_time_column(table_data)$variableName, "year")
+})
+
+test_that("extractTs puts the age column, not depth, in time", {
+  L <- readLipd(test_path("ODP1098B13.lpd"))
+  mt <- L$paleoData[[1]]$measurementTable[[1]]
+  for(i in which(vapply(mt, is.list, logical(1)))){
+    mt[[i]]$isPrimary <- NULL
+  }
+  mt$depth$isPrimary <- TRUE
+  L$paleoData[[1]]$measurementTable[[1]] <- mt
+  TS <- extractTs(L)
+  expect_equal(TS[[1]]$time, TS[[1]]$age)
+})
+
+test_that("is_time_column recognises time axes", {
+  expect_true(is_time_column("age", "yr BP"))
+  expect_true(is_time_column("year", "count/yr"))
+  expect_true(is_time_column("calage", "cal yr BP"))
+  expect_true(is_time_column("agema", "Ma"))
+  expect_true(is_time_column("t", "ka"))
+  expect_true(is_time_column("t", "a"))
+  expect_true(is_time_column("yearb2k", "yr b2k"))
+  expect_false(is_time_column("depth", "cm"))
+  expect_false(is_time_column("d18o", "permil"))
+  expect_false(is_time_column("intensity", "a.u."))
+  expect_false(is_time_column("ageuncertainty", "yr"))
+  expect_false(is_time_column("agemax", "yr BP"))
+  expect_false(is_time_column("age14c", "yr 14C BP"))
+  expect_false(is_time_column("age", "yr 14C BP"))
+  expect_false(is_time_column("grayscale", NULL))
+  expect_false(is_time_column("mar", "g/cm2/yr"))
+})
+
 test_that("collapseTs preserves column number", {
   L <- readLipd(test_path("ODP1098B13.lpd"))
   ts <- extractTs(L)

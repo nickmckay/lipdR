@@ -1,3 +1,7 @@
+# lipdR 0.7.4
+
+* `extractTs()` no longer puts depth, or the proxy, in `time` for some records. It took the first column flagged `isPrimary` as the time axis, but in LiPD `isPrimary` usually marks a table's primary variable, so records with depth flagged first (many lake and speleothem records) got depth in `time`, labeled yr BP. Now only time columns are candidates: columns named `age` or `year`, or with calendar time units (yr BP, ka, yr AD, CE, b2k, ...), excluding radiocarbon and uncertainty columns. Among them, a column flagged `primaryAgeColumn` comes first, then `isPrimary`, then `age`, then `year`. This matters because lipdViz, compositeR, actR and ens use `time` by default.
+
 # lipdR 0.7.3
 
 * New `convertTime()`, `getTsTime()` and `convertTsTime()` use the time metadata from `extractTs()` (`timeDatum`, `timeDirection`, `timeExponent`) to put records on one time scale, for example yr BP, ka or year CE. `getTsTime()` returns one timeseries' time axis on a chosen scale, using an age or year ensemble when there is one. `convertTsTime()` converts the `time` of a whole TS list or timeseries tibble. Radiocarbon years are never converted.
