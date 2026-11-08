@@ -213,8 +213,12 @@ extract_special= function(table_data, current){
 
 #' Identify the primary time column of a measurement table
 #'
-#' Chooses, in priority order: a column flagged `isPrimary` (synonym
-#' `primaryAgeColumn`), then a column named `age`, then a column named `year`.
+#' Only time columns are candidates: columns named `age` or `year`, and
+#' columns whose units are calendar time units (yr BP, ka, yr AD, CE, b2k, ...).
+#' Among those it chooses, in priority order: a column flagged
+#' `primaryAgeColumn`, then one flagged `isPrimary`, then a column named `age`,
+#' then a column named `year`. (`isPrimary` usually marks the primary variable
+#' of a table, such as depth or the proxy, so it is not trusted on its own.)
 #' @keywords internal
 #' @param table_data A measurement/summary table (named list of columns + root keys)
 #' @return list(variableName, units, values) for the chosen column, or NULL if none
@@ -235,23 +239,29 @@ identify_time_column <- function(table_data){
     if(is.null(v) || length(v) == 0) NA_character_ else tolower(as.character(v)[[1]])
   }, character(1))
 
-  # primary flag on each candidate column
-  isPrim <- vapply(cols, function(i){
-    col <- table_data[[i]]
-    flag <- col$isPrimary
-    if(is.null(flag)){
-      flag <- col$primaryAgeColumn
-    }
-    is_primary_flag(flag)
+  # only time columns can be the time axis
+  isTime <- vapply(seq_along(cols), function(k){
+    is_time_column(vn[[k]], table_data[[cols[[k]]]]$units)
   }, logical(1))
 
+  # primary flags on each candidate column
+  flagged <- function(field){
+    vapply(cols, function(i) is_primary_flag(table_data[[i]][[field]]), logical(1)) & isTime
+  }
+  primAge <- flagged("primaryAgeColumn")
+  isPrim <- flagged("isPrimary")
+  isAge <- vn %in% "age" & isTime
+  isYear <- vn %in% "year" & isTime
+
   chosen <- NULL
-  if(any(isPrim)){
+  if(any(primAge)){
+    chosen <- cols[[which(primAge)[[1]]]]
+  } else if(any(isPrim)){
     chosen <- cols[[which(isPrim)[[1]]]]
-  } else if(any(vn == "age", na.rm = TRUE)){
-    chosen <- cols[[which(vn == "age")[[1]]]]
-  } else if(any(vn == "year", na.rm = TRUE)){
-    chosen <- cols[[which(vn == "year")[[1]]]]
+  } else if(any(isAge)){
+    chosen <- cols[[which(isAge)[[1]]]]
+  } else if(any(isYear)){
+    chosen <- cols[[which(isYear)[[1]]]]
   }
 
   if(is.null(chosen)){
@@ -362,6 +372,34 @@ standardize_time_units <- function(exponent, direction, u){
          "6" = "Ma",
          "9" = "Ga",
          "yr BP")
+}
+
+#' Could a column be a time axis?
+#'
+#' TRUE for columns named `age` or `year`, and for columns whose units are
+#' calendar time units (e.g. "yr BP", "ka", "yr AD", "CE", "yr b2k").
+#' Radiocarbon ages and uncertainty or range columns are not time axes.
+#' @keywords internal
+#' @param variableName lowercased variableName of the column
+#' @param units the column's units
+#' @return logical
+is_time_column <- function(variableName, units){
+  vn <- tolower(trimws(paste(variableName, collapse = " ")))
+  if(grepl("unc|err|sigma|\\bsd\\b|^sd|min$|max$|low|high|range|14c", vn)){
+    return(FALSE)
+  }
+  u <- tolower(trimws(paste(units, collapse = " ")))
+  if(grepl("14c", u)){
+    return(FALSE)
+  }
+  # columns named age or year count whatever their units say (some are mislabeled, e.g. "count/yr")
+  if(vn %in% c("age", "year")){
+    return(TRUE)
+  }
+  if(length(u) == 0 || is.na(u) || u %in% c("", "null", "na", "unitless")){
+    return(FALSE)
+  }
+  grepl("^(yr|yrs|year|years|ka|kyr|ma|myr|ga|gyr|bp|ad|ce|bc|bce|b2k|cal)\\b|^a( |$)|\\b(bp|ad|ce|bce|b2k|ka|kyr|ma|myr)\\b", u)
 }
 
 #' Is a column's primary flag truthy?
