@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.4</span>
       </span>
     </div>
 
@@ -63,6 +63,11 @@
       <small>Source: <a href="https://github.com/nickmckay/lipdR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.7.4" id="lipdr-074">lipdR 0.7.4<a class="anchor" aria-label="anchor" href="#lipdr-074"></a></h2>
+<ul><li>
+<code><a href="../reference/extractTs.html">extractTs()</a></code> no longer puts depth, or the proxy, in <code>time</code> for some records. It took the first column flagged <code>isPrimary</code> as the time axis, but in LiPD <code>isPrimary</code> usually marks a table’s primary variable, so records with depth flagged first (many lake and speleothem records) got depth in <code>time</code>, labeled yr BP. Now only time columns are candidates: columns named <code>age</code> or <code>year</code>, or with calendar time units (yr BP, ka, yr AD, CE, b2k, …), excluding radiocarbon and uncertainty columns. Among them, a column flagged <code>primaryAgeColumn</code> comes first, then <code>isPrimary</code>, then <code>age</code>, then <code>year</code>. This matters because lipdViz, compositeR, actR and ens use <code>time</code> by default.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.3" id="lipdr-073">lipdR 0.7.3<a class="anchor" aria-label="anchor" href="#lipdr-073"></a></h2>
 <ul><li>New <code><a href="../reference/convertTime.html">convertTime()</a></code>, <code><a href="../reference/getTsTime.html">getTsTime()</a></code> and <code><a href="../reference/convertTsTime.html">convertTsTime()</a></code> use the time metadata from <code><a href="../reference/extractTs.html">extractTs()</a></code> (<code>timeDatum</code>, <code>timeDirection</code>, <code>timeExponent</code>) to put records on one time scale, for example yr BP, ka or year CE. <code><a href="../reference/getTsTime.html">getTsTime()</a></code> returns one timeseries’ time axis on a chosen scale, using an age or year ensemble when there is one. <code><a href="../reference/convertTsTime.html">convertTsTime()</a></code> converts the <code>time</code> of a whole TS list or timeseries tibble. Radiocarbon years are never converted.</li>
