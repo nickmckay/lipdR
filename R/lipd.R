@@ -18,6 +18,7 @@ lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
       j <- jsonlite::fromJSON(j.string.clean, simplifyDataFrame = FALSE)
       j <- rm_empty_fields(j)
       j <- update_lipd_version(j)
+      j <- add_time_scales(j)
     }else{
       dir_tmp <- create_tmp_dir()
       unzipper(path, dir_tmp)
@@ -43,6 +44,7 @@ lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
         unlink(dir_tmp, recursive=TRUE)
       }
       j <- idx_num_to_name(j)
+      j <- add_time_scales(j)
       # j = put_tsids(j)
     }
   }, error = function(cond){
@@ -68,6 +70,8 @@ lipd_read <- function(path,jsonOnly = FALSE, dont.load.ensemble = FALSE){
 #' @return none:
 lipd_write <- function(j, dir_original, path, dsn, ignore.warnings,removeNamesFromLists = FALSE,jsonOnly = FALSE,delete.saved.ensembles = FALSE,compression_level = 2){
   tryCatch({
+    # time scales derived on read are not written; ones the file stated are
+    j <- strip_derived_time_scales(j)
     # dsn <- replace_invalid_chars(dsn)
     if(is.null(j$datasetVersion)){
       j$datasetVersion <- "0.0.0"

@@ -10,11 +10,12 @@ identify_time_column(table_data)
 \item{table_data}{A measurement/summary table (named list of columns + root keys)}
 }
 \value{
-list(variableName, units, values) for the chosen column, or NULL if none
+list(name, variableName, units, values, scale) for the chosen column, or NULL if none
 }
 \description{
 Only time columns are candidates: columns named `age` or `year`, and
-columns whose units are calendar time units (yr BP, ka, yr AD, CE, b2k, ...).
+columns whose units are calendar time units (yr BP, ka, yr AD, CE, b2k,
+...), or that state their time scale. Ensembles are not candidates.
 Among those it chooses, in priority order: a column flagged
 `primaryAgeColumn`, then one flagged `isPrimary`, then a column named `age`,
 then a column named `year`. (`isPrimary` usually marks the primary variable
