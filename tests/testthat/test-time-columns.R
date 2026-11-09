@@ -171,3 +171,13 @@ test_that("commonTimeUnits keeps a shared scale, and falls back with a message",
   expect_message(u <- commonTimeUnits(mixed), "different time scales")
   expect_equal(u, "yr BP")
 })
+
+test_that("addTimeScales is exported, and a guessed source scale doesn't override time's", {
+  L <- addTimeScales(make_time_lipd())
+  expect_equal(L$paleoData[[1]]$measurementTable[[1]]$calAge$timeUnits, "ka")
+  ts <- list(dataSetName = "x", paleoData_values = 1:2, calAge = c(1, 2),
+             time = c(1, 2), timeUnits = "ka", timeDatum = 1950, timeDirection = "retrograde",
+             timeExponent = 3, timeSource = "units", timeVariableName = "calAge")
+  expect_no_warning(tm <- getTsTime(ts, "yr BP"))
+  expect_equal(as.numeric(tm), c(1000, 2000))
+})

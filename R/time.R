@@ -207,6 +207,12 @@ getTsTime <- function(ts, units = "yr BP", ensemble = TRUE, variable = "time", w
     src <- unlist(ts[["timeVariableName"]])[1]
     if(!is.null(src) && !is.na(src) && src != "time"){
       tv <- tryCatch(ts_time_variable(ts, src), error = function(e) NULL)
+      # a source column whose scale was guessed doesn't override a stated scale on time
+      timeSrc <- unlist(ts[["timeSource"]])[1]
+      if(!is.null(tv) && identical(tv$source, "assumed") && !is.null(timeSrc) && !is.na(timeSrc) &&
+         !identical(timeSrc, "assumed") && has_values(ts[["time"]])){
+        tv <- NULL
+      }
       if(!is.null(tv)){
         check_time_cache(ts, tv)
       }

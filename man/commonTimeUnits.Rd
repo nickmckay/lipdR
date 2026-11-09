@@ -33,6 +33,7 @@ If every timeseries is on the same time scale, returns it, so
 }
 \seealso{
 Other time: 
+\code{\link{addTimeScales}()},
 \code{\link{convertTime}()},
 \code{\link{convertTsTime}()},
 \code{\link{getTsTime}()},

@@ -37,6 +37,7 @@ Returns a time axis of one timeseries, converted to `units`.
 }
 \seealso{
 Other time: 
+\code{\link{addTimeScales}()},
 \code{\link{commonTimeUnits}()},
 \code{\link{convertTime}()},
 \code{\link{convertTsTime}()},
