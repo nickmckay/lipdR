@@ -1,3 +1,7 @@
+# lipdR 0.8.3
+
+* `pullTsVariable()` and `pushTsVariable()`: a near match such as "variableName" again finds `paleoData_variableName`. Since 0.8.0 it also matched the new `timeVariableName` and stopped with "multiple near matches". When several fields match, the `paleoData_` (or `chronData_`) one is used. Field names are also no longer listed twice.
+
 # lipdR 0.8.2
 
 * New exported `addTimeScales()` adds time scales to the time columns of a LiPD dataset, for columns created in memory (for example by an age model).

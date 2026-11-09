@@ -228,7 +228,7 @@ return(L)
 #'
 #' @return a vector of the values, with NA representing instances without this variable.
 pullTsVariable = function(TS,variable,strict.search = FALSE){
-  allNames <- unique(unlist(sapply(TS,names)))
+  allNames <- unique(unlist(lapply(TS,names)))
 
   #test for exact match
   which.var <- which(variable == allNames)
@@ -236,7 +236,7 @@ pullTsVariable = function(TS,variable,strict.search = FALSE){
     if(strict.search){
       stop(paste0("Couldn't find any matches for '",variable,"', stopping"))
     }
-    which.var <- which(grepl(pattern = variable,x = allNames,ignore.case = TRUE))
+    which.var <- prefer_data_field(which(grepl(pattern = variable,x = allNames,ignore.case = TRUE)), allNames, variable)
     if(length(which.var) == 1){#
       warning(paste0("Couldn't find exact match for '",variable,"', using ",allNames[which.var]," instead."))
     }else if(length(which.var) == 0){
@@ -273,7 +273,7 @@ pullTsVariable = function(TS,variable,strict.search = FALSE){
 #' @param createNew allow the function to create a new variable in the TS?
 #' @return a vector of the values, with NA representing instances without this variable.
 pushTsVariable = function(TS,variable,vec,createNew = FALSE){
-  allNames <- unique(unlist(sapply(TS,names)))
+  allNames <- unique(unlist(lapply(TS,names)))
 
   if(length(TS) != length(vec)){
     stop("the lengths of TS and vec must match!")
@@ -284,7 +284,7 @@ pushTsVariable = function(TS,variable,vec,createNew = FALSE){
     which.var <- which(variable == allNames)
 
     if(length(which.var) == 0){#try a fuzzier search
-      which.var <- which(grepl(pattern = variable,x = allNames,ignore.case = TRUE))
+      which.var <- prefer_data_field(which(grepl(pattern = variable,x = allNames,ignore.case = TRUE)), allNames, variable)
       if(length(which.var) == 1){#
         warning(paste0("Couldn't find exact match for '",variable,"', using ",allNames[which.var]," instead."))
       }else if(length(which.var) == 0){
@@ -304,3 +304,16 @@ pushTsVariable = function(TS,variable,vec,createNew = FALSE){
 
 }
 
+# Among several near matches for a TS field, prefer the data column's own
+# field: "variableName" means paleoData_variableName, not timeVariableName.
+prefer_data_field <- function(which.var, allNames, variable){
+  if(length(which.var) > 1){
+    for(pre in c("paleoData_", "chronData_")){
+      prefixed <- which.var[tolower(allNames[which.var]) == tolower(paste0(pre, variable))]
+      if(length(prefixed) == 1){
+        return(prefixed)
+      }
+    }
+  }
+  which.var
+}
