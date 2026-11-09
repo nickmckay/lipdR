@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.3</span>
       </span>
     </div>
 
@@ -63,6 +63,11 @@
       <small>Source: <a href="https://github.com/nickmckay/lipdR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.8.3" id="lipdr-083">lipdR 0.8.3<a class="anchor" aria-label="anchor" href="#lipdr-083"></a></h2>
+<ul><li>
+<code><a href="../reference/pullTsVariable.html">pullTsVariable()</a></code> and <code><a href="../reference/pushTsVariable.html">pushTsVariable()</a></code>: a near match such as “variableName” again finds <code>paleoData_variableName</code>. Since 0.8.0 it also matched the new <code>timeVariableName</code> and stopped with “multiple near matches”. When several fields match, the <code>paleoData_</code> (or <code>chronData_</code>) one is used. Field names are also no longer listed twice.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.8.2" id="lipdr-082">lipdR 0.8.2<a class="anchor" aria-label="anchor" href="#lipdr-082"></a></h2>
 <ul><li>New exported <code><a href="../reference/addTimeScales.html">addTimeScales()</a></code> adds time scales to the time columns of a LiPD dataset, for columns created in memory (for example by an age model).</li>
