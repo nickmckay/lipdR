@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.0</span>
       </span>
     </div>
 
@@ -100,14 +100,23 @@ and store them in the `hasResolution_*` fields. Default FALSE.</p></dd>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>In addition to flattening each column, `extractTs()` identifies the
-  primary time axis of each table (an `age`/`year` column, or a column flagged
-  `isPrimary`/`primaryAgeColumn`) and adds a standardized time description to every
-  entry: `time` (the values), `timeUnits`, `timeDatum` (reference year, e.g. 1950
-  for BP, 0 for CE/AD), `timeDirection` (`"prograde"` or `"retrograde"`),
-  `timeExponent` (base-10 exponent of the units, e.g. 0 for yr, 3 for ka), and
-  `timeMin`/`timeMax`. The `timeMin`/`timeMax` fields make it easy to filter a time
-  series by age range with e.g. `dplyr::filter()`.</p>
+    <p>Every time column (`age`, `year`, their ensembles, and any column
+  with calendar time units such as yr BP, ka, CE or b2k) has a time scale:
+  `timeUnits` (a standardized label), `timeDatum` (the year CE of time zero,
+  e.g. 1950 for BP, 0 for CE), `timeDirection` (`"prograde"` or
+  `"retrograde"`), `timeExponent` (e.g. 0 for yr, 3 for ka) and `timeSource`
+  (`"metadata"` if the file states the scale, `"units"` if it was read from the
+  units, `"assumed"` if the units don't say and it was guessed). [readLipd()]
+  adds these to each column; [writeLipd()] keeps only scales the file stated.</p>
+<p>`extractTs()` copies every time column of a table into each entry, with its
+  units and scale as `&lt;name&gt;TimeUnits`, `&lt;name&gt;TimeDatum`,
+  `&lt;name&gt;TimeDirection`, `&lt;name&gt;TimeExponent` and `&lt;name&gt;TimeSource` (for
+  example `ageTimeDatum`). It also picks the table's primary time axis (a time
+  column flagged `primaryAgeColumn`, then `isPrimary`, then `age`, then `year`)
+  and adds `time` (a copy of its values), its scale (`timeUnits`, `timeDatum`,
+  `timeDirection`, `timeExponent`, `timeSource`), `timeVariableName` (the
+  column it came from) and `timeMin`/`timeMax`. Use [getTsTime()] to get any
+  time variable on any scale, and [tsTimeVariables()] to list them.</p>
     </div>
     <div id="author">
     <h2>Author</h2>

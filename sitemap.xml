@@ -13,6 +13,7 @@
 <url><loc>/reference/addTSidToLipd.html</loc></url>
 <url><loc>/reference/add_created_by.html</loc></url>
 <url><loc>/reference/add_resolution.html</loc></url>
+<url><loc>/reference/add_time_scales.html</loc></url>
 <url><loc>/reference/as.lipd.html</loc></url>
 <url><loc>/reference/as.lipdTs.html</loc></url>
 <url><loc>/reference/as.lipdTsTibble.html</loc></url>
@@ -33,6 +34,7 @@
 <url><loc>/reference/collapse_column.html</loc></url>
 <url><loc>/reference/collapse_table.html</loc></url>
 <url><loc>/reference/collapse_table_root.html</loc></url>
+<url><loc>/reference/column_time_scale.html</loc></url>
 <url><loc>/reference/combineInterpretationByScope.html</loc></url>
 <url><loc>/reference/compilation_version_matches.html</loc></url>
 <url><loc>/reference/contract_csm_entry.html</loc></url>
@@ -56,6 +58,7 @@
 <url><loc>/reference/download_from_url.html</loc></url>
 <url><loc>/reference/duplicateTable.html</loc></url>
 <url><loc>/reference/entry_in_compilation.html</loc></url>
+<url><loc>/reference/entry_time_keys.html</loc></url>
 <url><loc>/reference/expand_csm.html</loc></url>
 <url><loc>/reference/expand_csm_entry.html</loc></url>
 <url><loc>/reference/export_model.html</loc></url>
@@ -126,6 +129,7 @@
 <url><loc>/reference/lipd_write.html</loc></url>
 <url><loc>/reference/list_files_recursive.html</loc></url>
 <url><loc>/reference/lookup_dsid_paths.html</loc></url>
+<url><loc>/reference/map_lipd_columns.html</loc></url>
 <url><loc>/reference/matchCols.html</loc></url>
 <url><loc>/reference/merge_csv_columns.html</loc></url>
 <url><loc>/reference/merge_csv_metadata.html</loc></url>
@@ -167,6 +171,7 @@
 <url><loc>/reference/splitInterpretationByScope.html</loc></url>
 <url><loc>/reference/standardize_time_units.html</loc></url>
 <url><loc>/reference/stripExtension.html</loc></url>
+<url><loc>/reference/strip_derived_time_scales.html</loc></url>
 <url><loc>/reference/summary.lipd.html</loc></url>
 <url><loc>/reference/summary.lipd_ts.html</loc></url>
 <url><loc>/reference/summary.lipd_ts_tibble.html</loc></url>
@@ -178,8 +183,11 @@
 <url><loc>/reference/time_metadata_from_units.html</loc></url>
 <url><loc>/reference/time_spec.html</loc></url>
 <url><loc>/reference/time_spec_from_fields.html</loc></url>
+<url><loc>/reference/time_units_recognized.html</loc></url>
 <url><loc>/reference/ts2tibble.html</loc></url>
 <url><loc>/reference/tsPluck.html</loc></url>
+<url><loc>/reference/tsTimeVariables.html</loc></url>
+<url><loc>/reference/ts_time_variable.html</loc></url>
 <url><loc>/reference/unindex_geo.html</loc></url>
 <url><loc>/reference/untidyTs.html</loc></url>
 <url><loc>/reference/unzipper.html</loc></url>

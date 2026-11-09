@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.0</span>
       </span>
     </div>
 
@@ -69,7 +69,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">createTimeMetadata</span><span class="op">(</span><span class="va">current</span>, <span class="va">values</span>, <span class="va">variableName</span>, <span class="va">units</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">createTimeMetadata</span><span class="op">(</span><span class="va">current</span>, <span class="va">values</span>, <span class="va">scale</span>, <span class="va">source</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -84,18 +84,18 @@
 <dd><p>The values of the identified time column</p></dd>
 
 
-<dt id="arg-variablename">variableName<a class="anchor" aria-label="anchor" href="#arg-variablename"></a></dt>
-<dd><p>The variableName of the time column</p></dd>
+<dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
+<dd><p>The column's time scale (from column_time_scale())</p></dd>
 
 
-<dt id="arg-units">units<a class="anchor" aria-label="anchor" href="#arg-units"></a></dt>
-<dd><p>The units of the time column</p></dd>
+<dt id="arg-source">source<a class="anchor" aria-label="anchor" href="#arg-source"></a></dt>
+<dd><p>The name of the entry field holding that column (timeVariableName)</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>current with time, timeUnits, timeDatum, timeDirection, timeExponent,
-  timeMin and timeMax added</p>
+  timeSource, timeVariableName, timeMin and timeMax added</p>
     </div>
 
   </div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.0</span>
       </span>
     </div>
 
@@ -63,6 +63,20 @@
       <small>Source: <a href="https://github.com/nickmckay/lipdR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.8.0" id="lipdr-080">lipdR 0.8.0<a class="anchor" aria-label="anchor" href="#lipdr-080"></a></h2>
+<p>Every time column now carries its time scale, so lipdR and the analysis packages can convert between time axes without guessing.</p>
+<ul><li>
+<code><a href="../reference/readLipd.html">readLipd()</a></code> adds a time scale to every time column (<code>age</code>, <code>year</code>, their ensembles, and any column with calendar time units such as yr BP, ka, CE or b2k): <code>timeUnits</code>, <code>timeDatum</code>, <code>timeDirection</code>, <code>timeExponent</code>, and <code>timeSource</code>, which says where the scale came from: <code>"metadata"</code> (the file states it), <code>"units"</code> (read from the units) or <code>"assumed"</code> (the units don’t say, so it was guessed from the variable name). <code><a href="../reference/writeLipd.html">writeLipd()</a></code> writes only scales the file stated, so a curator can state the scale of an oddly labeled column by giving it <code>timeDatum</code>, <code>timeDirection</code> and <code>timeExponent</code>.</li>
+<li>
+<code><a href="../reference/extractTs.html">extractTs()</a></code> copies every time column of a table into each entry, with its scale (<code>ageTimeDatum</code>, <code>calAgeTimeUnits</code>, …), not only <code>age</code>, <code>year</code> and <code>ageEnsemble</code>. The new <code>timeVariableName</code> says which column <code>time</code> came from, and <code>timeSource</code> says how its scale was found.</li>
+<li>
+<code>time</code> is now a copy of the column <code>timeVariableName</code> points to. <code><a href="../reference/getTsTime.html">getTsTime()</a></code> reads that column, so edits to it after <code><a href="../reference/extractTs.html">extractTs()</a></code> are respected; if <code>time</code> no longer matches, it warns and uses the column.</li>
+<li>
+<code><a href="../reference/getTsTime.html">getTsTime()</a></code> gains <code>variable</code>, to get any time variable on any scale (e.g. <code>getTsTime(ts, "CE", variable = "age")</code>), and <code>warn.assumed</code>: it warns when a scale was assumed. The result’s attributes give the variable used and its <code>timeSource</code>. New <code><a href="../reference/tsTimeVariables.html">tsTimeVariables()</a></code> lists the time variables of an entry.</li>
+<li>An ensemble whose units don’t say its scale uses its <code>age</code> or <code>year</code> column’s scale.</li>
+<li>Fixed: <code><a href="../reference/collapseTs.html">collapseTs()</a></code> put <code>time</code>, <code>timeUnits</code> and the other time fields at the dataset root, so <code><a href="../reference/writeLipd.html">writeLipd()</a></code> wrote them into files (since 0.7.0). They, and the copied time columns, are no longer collapsed.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.7.4" id="lipdr-074">lipdR 0.7.4<a class="anchor" aria-label="anchor" href="#lipdr-074"></a></h2>
 <ul><li>

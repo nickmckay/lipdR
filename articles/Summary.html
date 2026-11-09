@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.0</span>
       </span>
     </div>
 
@@ -1187,15 +1187,15 @@ you’ll probably prefer the latter, so we’ll do that here:</p>
 <p>Let’s quickly check the size of this tibble</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">tibTS</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 583 390</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 583 484</span></span></code></pre></div>
 <p>Wow - that’s pretty big. That means that there are 583 variables
-across all our datasets, and 390 data or metadata fields present in one
+across all our datasets, and 484 data or metadata fields present in one
 or more of the datasets.</p>
 <p>Again, let’s print out a quick overview:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tibTS</span></span>
 <span><span class="co">#&gt; LiPD TS object containing 47 datasets</span></span>
-<span><span class="co">#&gt; 583 variables and 390 data and metadata fields.</span></span>
+<span><span class="co">#&gt; 583 variables and 484 data and metadata fields.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; TS object contains a mixture of age (BP) and year (AD) units.</span></span>
 <span><span class="co">#&gt; 139 variables contain year (AD), while 486 contain age (BP).</span></span>
@@ -1213,7 +1213,7 @@ first 10 rows only</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">tibTS</span>, print.length <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; LiPD TS object containing 47 datasets</span></span>
-<span><span class="co">#&gt; 583 variables and 390 data and metadata fields.</span></span>
+<span><span class="co">#&gt; 583 variables and 484 data and metadata fields.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; TS object contains a mixture of age (BP) and year (AD) units.</span></span>
 <span><span class="co">#&gt; 139 variables contain year (AD), while 486 contain age (BP).</span></span>
@@ -1244,7 +1244,7 @@ which metadata fields we’d like to summarize using the
 <span>        print.length <span class="op">=</span> <span class="fl">10</span>, </span>
 <span>        add.variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"archiveType"</span>, <span class="st">"paleoData_meanValue12k"</span>,<span class="st">"geo_continent"</span>, <span class="st">"geo_elevation"</span>, <span class="st">"agesPerKyr"</span>, <span class="st">"dataSetName"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; LiPD TS object containing 47 datasets</span></span>
-<span><span class="co">#&gt; 583 variables and 390 data and metadata fields.</span></span>
+<span><span class="co">#&gt; 583 variables and 484 data and metadata fields.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; TS object contains a mixture of age (BP) and year (AD) units.</span></span>
 <span><span class="co">#&gt; 139 variables contain year (AD), while 486 contain age (BP).</span></span>
@@ -1304,7 +1304,7 @@ output.</p>
 <span>                                     <span class="st">"interpretation1_variableDetail"</span>,</span>
 <span>                                     <span class="st">"interpretation1_seasonality"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; LiPD TS object containing 3 datasets</span></span>
-<span><span class="co">#&gt; 29 variables and 390 data and metadata fields.</span></span>
+<span><span class="co">#&gt; 29 variables and 484 data and metadata fields.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; All variables contain age (BP) data, 1 variables contain year (AD) data.</span></span>
 <span><span class="co">#&gt; </span></span>
