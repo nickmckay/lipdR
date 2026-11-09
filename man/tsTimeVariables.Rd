@@ -19,6 +19,7 @@ Lists the time variables of one timeseries that [getTsTime()]
 }
 \seealso{
 Other time: 
+\code{\link{addTimeScales}()},
 \code{\link{commonTimeUnits}()},
 \code{\link{convertTime}()},
 \code{\link{convertTsTime}()},

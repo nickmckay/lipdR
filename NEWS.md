@@ -1,3 +1,8 @@
+# lipdR 0.8.2
+
+* New exported `addTimeScales()` adds time scales to the time columns of a LiPD dataset, for columns created in memory (for example by an age model).
+* `getTsTime()`: when the column `time` points to has no units (so its scale would be guessed), but `time` has a stated scale, `time`'s scale is used.
+
 # lipdR 0.8.1
 
 Helpers so analysis packages handle time scales the same way:

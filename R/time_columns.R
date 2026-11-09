@@ -151,9 +151,19 @@ is_single_dataset <- function(D){
 
 #' Add time scales to every time column
 #'
-#' @keywords internal
+#' @description Gives every time column of a LiPD dataset (age, year, their
+#'   ensembles, and any column with calendar time units) its time scale:
+#'   `timeUnits`, `timeDatum`, `timeDirection`, `timeExponent` and
+#'   `timeSource`. [readLipd()] and [extractTs()] do this already; use it on
+#'   columns created in memory, for example by an age model.
 #' @param D one LiPD dataset or several
-#' @return D, with `time_scale_fields` on every time column
+#' @return D, with a time scale on every time column
+#' @export
+#' @family time
+addTimeScales <- function(D){
+  add_time_scales(D)
+}
+
 add_time_scales <- function(D){
   annotate <- function(col, name){
     scale <- column_time_scale(col, name)
