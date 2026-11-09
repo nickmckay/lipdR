@@ -67,6 +67,7 @@
 <url><loc>/reference/extractTs.html</loc></url>
 <url><loc>/reference/extract_by_key.html</loc></url>
 <url><loc>/reference/filterByCompilation.html</loc></url>
+<url><loc>/reference/filterByInterpretation.html</loc></url>
 <url><loc>/reference/filterTs.html</loc></url>
 <url><loc>/reference/find_data_dir.html</loc></url>
 <url><loc>/reference/fixPubAuthorList.html</loc></url>
@@ -75,6 +76,7 @@
 <url><loc>/reference/getChangelog.html</loc></url>
 <url><loc>/reference/getChronDataNeotoma2.html</loc></url>
 <url><loc>/reference/getGeoNeotoma2.html</loc></url>
+<url><loc>/reference/getInterpretations.html</loc></url>
 <url><loc>/reference/getMeasurementTables.html</loc></url>
 <url><loc>/reference/getPaleoDataNeotoma2.html</loc></url>
 <url><loc>/reference/getPubNeotoma2.html</loc></url>
