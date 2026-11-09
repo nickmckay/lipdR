@@ -181,3 +181,9 @@ test_that("addTimeScales is exported, and a guessed source scale doesn't overrid
   expect_no_warning(tm <- getTsTime(ts, "yr BP"))
   expect_equal(as.numeric(tm), c(1000, 2000))
 })
+
+test_that("pullTsVariable('variableName') still finds paleoData_variableName next to timeVariableName", {
+  TS <- extractTs(make_time_lipd())
+  expect_warning(v <- pullTsVariable(TS, "variableName"), "paleoData_variableName")
+  expect_equal(v, c("d18O", "year", "age", "calAge"))
+})
