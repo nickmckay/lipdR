@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lipdR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.8.1</span>
       </span>
     </div>
 
@@ -63,6 +63,16 @@
       <small>Source: <a href="https://github.com/nickmckay/lipdR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.8.1" id="lipdr-081">lipdR 0.8.1<a class="anchor" aria-label="anchor" href="#lipdr-081"></a></h2>
+<p>Helpers so analysis packages handle time scales the same way:</p>
+<ul><li>
+<code><a href="../reference/timeScale.html">timeScale()</a></code> describes a time scale (from units, time metadata, or a timeseries), and <code><a href="../reference/isPrograde.html">isPrograde()</a></code> says whether it counts forward (year CE) or back (yr BP, ka, b2k).</li>
+<li>
+<code><a href="../reference/getTsTimes.html">getTsTimes()</a></code> gets one time variable of every timeseries on one scale, with a single warning listing records whose scale was assumed or that have no time.</li>
+<li>
+<code><a href="../reference/commonTimeUnits.html">commonTimeUnits()</a></code> returns the scale shared by a set of timeseries, or a default (yr BP) with a message when they differ.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.8.0" id="lipdr-080">lipdR 0.8.0<a class="anchor" aria-label="anchor" href="#lipdr-080"></a></h2>
 <p>Every time column now carries its time scale, so lipdR and the analysis packages can convert between time axes without guessing.</p>
