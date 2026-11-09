@@ -1,7 +1,7 @@
 Package: lipdR
 Type: Package
 Title: LiPD Utilities for R
-Version: 0.8.0
+Version: 0.8.1
 Authors@R:
     c(person(given = "Nick",
            family = "McKay",

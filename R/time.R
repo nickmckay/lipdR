@@ -363,3 +363,145 @@ convertTsTime <- function(TS, units = "yr BP"){
   class(out) <- cl
   out
 }
+
+#' Describe a time scale
+#'
+#' @description Turns a units string (e.g. "yr BP", "ka", "CE", "yr b2k"), a
+#'   list of time metadata, or a timeseries entry into a standard description
+#'   of its time scale. Use it to compare scales or check their direction.
+#'
+#' @param x a units string, a list with `timeDatum`, `timeDirection` and
+#'   `timeExponent` (or `timeUnits`), or one timeseries (whose `time` scale is used)
+#' @return a list: `timeUnits` (standardized label), `timeDatum` (year CE of
+#'   time zero), `timeDirection` ("prograde" or "retrograde"), `timeExponent`
+#'   (base-10 exponent) and `radiocarbon` (logical)
+#' @export
+#' @family time
+#' @examples
+#' timeScale("ka")
+#' timeScale("CE")$timeDirection
+timeScale <- function(x){
+  as_time_spec(x)
+}
+
+#' Does a time scale count forward?
+#'
+#' @description TRUE for scales that count forward in time, like year CE
+#'   ("prograde"), FALSE for scales that count back, like yr BP, ka or b2k
+#'   ("retrograde"). On a prograde scale larger values are younger; on a
+#'   retrograde scale larger values are older.
+#' @inheritParams timeScale
+#' @return logical
+#' @export
+#' @family time
+#' @examples
+#' isPrograde("yr AD")
+#' isPrograde("ka")
+isPrograde <- function(x){
+  identical(timeScale(x)$timeDirection, "prograde")
+}
+
+ts_entries <- function(TS){
+  if(is.data.frame(TS)){
+    return(purrr::transpose(as.list(TS)))
+  }
+  if(is.list(TS) && !is.null(TS[["paleoData_values"]] %||% TS[["chronData_values"]])){
+    return(list(TS))
+  }
+  unclass(TS)
+}
+
+ts_label <- function(ts){
+  paste(c(unlist(ts[["dataSetName"]])[1], unlist(ts[["paleoData_variableName"]] %||% ts[["chronData_variableName"]])[1]),
+        collapse = " ")
+}
+
+#' Get the time axis of every timeseries, on one time scale
+#'
+#' @description Runs [getTsTime()] on every timeseries in a TS list or
+#'   timeseries tibble, converting each to `units`. Instead of a warning per
+#'   record, it gives one warning that lists the records whose time scale was
+#'   assumed, and one for records without the time variable.
+#'
+#' @param TS a TS list ([extractTs()]) or a timeseries tibble ([ts2tibble()])
+#' @inheritParams getTsTime
+#' @param missing what to do with timeseries that don't have the time
+#'   variable: "warn" (default; their element is NULL), "error" or "quiet"
+#' @return a list with one element per timeseries: a numeric vector, or a
+#'   matrix for an ensemble, on the `units` scale (NULL where there was no
+#'   time). Its "timeUnits" attribute gives the scale.
+#' @export
+#' @family time
+getTsTimes <- function(TS, units = "yr BP", variable = "time", ensemble = TRUE,
+                       warn.assumed = TRUE, missing = c("warn", "error", "quiet")){
+  missing <- match.arg(missing)
+  entries <- ts_entries(TS)
+  assumed <- character(0)
+  absent <- character(0)
+  out <- vector("list", length(entries))
+  for(i in seq_along(entries)){
+    tm <- tryCatch(getTsTime(entries[[i]], units = units, ensemble = ensemble,
+                             variable = variable, warn.assumed = FALSE),
+                   error = function(e){
+                     if(grepl("has no", conditionMessage(e))) NULL else stop(ts_label(entries[[i]]), ": ", conditionMessage(e), call. = FALSE)
+                   })
+    if(is.null(tm)){
+      absent <- c(absent, ts_label(entries[[i]]))
+      next
+    }
+    if(identical(attr(tm, "timeSource"), "assumed")){
+      assumed <- c(assumed, ts_label(entries[[i]]))
+    }
+    out[i] <- list(tm)
+  }
+  list_some <- function(x){
+    x <- unique(x)
+    paste0(paste(utils::head(x, 10), collapse = "; "), if(length(x) > 10) paste0("; and ", length(x) - 10, " more") else "")
+  }
+  if(length(absent) > 0){
+    msg <- paste0(length(absent), " timeseries have no '", variable, "' and were skipped: ", list_some(absent))
+    if(missing == "error"){
+      stop(msg, call. = FALSE)
+    }else if(missing == "warn"){
+      warning(msg, call. = FALSE)
+    }
+  }
+  if(warn.assumed && length(assumed) > 0){
+    warning("The time scale of ", length(unique(assumed)), " timeseries was assumed, because their units don't say: ",
+            list_some(assumed), ". Check them with getTsTime(), and set their units, or timeDatum, timeDirection and timeExponent.",
+            call. = FALSE)
+  }
+  if(!(length(units) == 1 && is.na(units))){
+    attr(out, "timeUnits") <- timeScale(units)$timeUnits
+  }
+  out
+}
+
+#' The time scale to use for a set of timeseries
+#'
+#' @description If every timeseries is on the same time scale, returns it, so
+#'   results stay on the records' own axis. Otherwise returns `default` with a
+#'   message. Analysis functions use this when the user doesn't choose a scale.
+#'
+#' @inheritParams getTsTimes
+#' @param default the scale to use when the records are on different scales (default = "yr BP")
+#' @param quiet don't give the message? (default = FALSE)
+#' @return a standardized units string
+#' @export
+#' @family time
+commonTimeUnits <- function(TS, variable = "time", ensemble = FALSE, default = "yr BP", quiet = FALSE){
+  entries <- ts_entries(TS)
+  scales <- unique(unlist(lapply(entries, function(ts){
+    tm <- tryCatch(getTsTime(ts, units = NA, ensemble = ensemble, variable = variable, warn.assumed = FALSE),
+                   error = function(e) NULL)
+    if(is.null(tm)) NULL else attr(tm, "timeUnits")
+  })))
+  if(length(scales) == 1){
+    return(scales)
+  }
+  if(!quiet && length(scales) > 1){
+    message("The timeseries are on different time scales (", paste(scales, collapse = ", "), "), so ",
+            timeScale(default)$timeUnits, " is used. Set the time units to choose another.")
+  }
+  timeScale(default)$timeUnits
+}

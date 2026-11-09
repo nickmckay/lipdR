@@ -30,8 +30,12 @@ TS <- convertTsTime(TS, "yr BP")
 }
 \seealso{
 Other time: 
+\code{\link{commonTimeUnits}()},
 \code{\link{convertTime}()},
 \code{\link{getTsTime}()},
+\code{\link{getTsTimes}()},
+\code{\link{isPrograde}()},
+\code{\link{timeScale}()},
 \code{\link{tsTimeVariables}()}
 }
 \concept{time}
