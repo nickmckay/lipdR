@@ -1,3 +1,10 @@
+# lipdR 0.8.4
+
+* New `filterByInterpretation()` keeps timeseries whose interpretations match a set of conditions, on a TS list, a ts-tibble or a long ts-tibble. Conditions are checked within each interpretation, so `variable = "temperature", seasonality = "annual"` needs one interpretation that is both. Named arguments match any of their values (ignoring case); unnamed R expressions allow OR across fields. `scope` limits which interpretations count (a missing scope counts as "climate"), and `match` chooses whether any, all, none, or only the primary (lowest rank, else first) interpretation must match. Call it twice for AND across interpretations.
+* New `getInterpretations()` returns one row per interpretation of each timeseries.
+* `splitInterpretationByScope()`: interpretation 1 no longer picks up the fields of interpretation 10 and above, and interpretation numbers with gaps (e.g. 1 and 3) no longer stop with an error.
+* `combineInterpretationByScope()` keeps interpretations of every scope (e.g. "environment"); it used to drop all but climate, isotope, ecology and chronology.
+
 # lipdR 0.8.3
 
 * `pullTsVariable()` and `pushTsVariable()`: a near match such as "variableName" again finds `paleoData_variableName`. Since 0.8.0 it also matched the new `timeVariableName` and stopped with "multiple near matches". When several fields match, the `paleoData_` (or `chronData_`) one is used. Field names are also no longer listed twice.

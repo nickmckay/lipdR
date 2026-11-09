@@ -705,44 +705,26 @@ splitInterpretationByScope <- function(TS){
     iNames <- tsNames[which(grepl("^interpretation\\d{1,}_",tsNames))]
 
     if(length(iNames) > 0){#there are some
-      snames <- str_split(iNames,"_")
-      upref <- unique(sapply(snames,"[[",1))
-      ro <- str_split(upref,"interpretation")
-
-      maxIntNum <- max(as.numeric(sapply(ro,"[[",2)))
-      lenIntNum <- length(upref)
-
-
-
-      if(maxIntNum==lenIntNum){
-        nInt <- lenIntNum
-      }else{
-        stop("theres a discrepancy about the number of interpretations")
-      }
+      # the interpretation numbers present (they need not run 1..n)
+      intNums <- sort(unique(as.numeric(str_match(iNames, "^interpretation(\\d+)_")[, 2])))
+      nInt <- length(intNums)
 
       scopeType <- as.data.frame(matrix(NA,nrow = nInt,ncol = 2))
-      for(n in 1:nInt){
-        thisScope <- mts[[str_c("interpretation",as.character(n),"_scope")]]
-        if(is.null(thisScope)){
-          #normally
-          #stop("All interpretations must have a scope")
+      for(j in seq_len(nInt)){
+        n <- intNums[j]
+        thisScope <- as.character(unlist(mts[[str_c("interpretation",as.character(n),"_scope")]]))[1]
+        if(length(thisScope) == 0 || is.na(thisScope) || !nzchar(thisScope)){
           thisScope <- "climate"
         }
 
-        scopeType[n,1] <- thisScope
-
-
-        if(n==1){
-          scopeType[n,2] <- 1
-        }else{#count how many others match this scope
-          prev <- sum(thisScope==scopeType[,1],na.rm = T)
-          scopeType[n,2] <- prev
-        }
-
+        scopeType[j,1] <- thisScope
+        # count of interpretations so far with this scope
+        scopeType[j,2] <- sum(thisScope==scopeType[,1],na.rm = T)
 
         #loop through all the variables and assign
         sch <- str_c("interpretation",as.character(n))
-        ti <-  tsNames[grepl(sch,tsNames)]
+        # anchored, so interpretation1 doesn't also pick up interpretation10_*
+        ti <-  tsNames[startsWith(tsNames, str_c(sch, "_"))]
         #remove scope from this
         # ti <- ti[-which(ti==str_c(sch,"_scope"))]
 
@@ -750,7 +732,7 @@ splitInterpretationByScope <- function(TS){
         #add them in
         for(v in ti){
           thisVar <- str_remove(v,sch)
-          mts[[str_c(scopeType[n,1],"Interpretation",as.character(scopeType[n,2]),thisVar)]] <- mts[[v]]
+          mts[[str_c(scopeType[j,1],"Interpretation",as.character(scopeType[j,2]),thisVar)]] <- mts[[v]]
           mts[[v]] <- NULL
         }
 
@@ -773,15 +755,18 @@ splitInterpretationByScope <- function(TS){
 combineInterpretationByScope <- function(sTS){
 
   cTS <- sTS
-  scopes = c('climate','isotope','ecology','chronology');
+  knownScopes = c('climate','isotope','ecology','chronology');
 
   for(i in 1:length(sTS)){
     mts <- sTS[[i]]
 
     fnames <- names(mts)
+    # every scope present, known scopes first (so e.g. "environment" isn't dropped)
+    found <- unique(na.omit(str_match(fnames, "^(.+?)Interpretation\\d+_")[, 2]))
+    scopes <- c(intersect(knownScopes, found), sort(setdiff(found, knownScopes)))
     #remove any preexisting fields
-    interpNames <- str_which(fnames,"interpretation\\d{1,}")
-    if(length(interpNames>0)){
+    interpNames <- str_which(fnames,"^interpretation\\d{1,}_")
+    if(length(interpNames) > 0){
       print("Removing 'interpretationX_*' fields, which we are about to create...")
       mts[interpNames] <- NULL
     }
@@ -792,14 +777,16 @@ combineInterpretationByScope <- function(sTS){
 
       #how many interpertaions with this scope
 
-      nInterp <- length(unique(na.omit(str_extract(fnames,str_c(sts,"\\d{1,}")))))
-      if(nInterp>0){
-        for(ni in 1:nInterp){
+      onScope <- fnames[startsWith(fnames, sts)]
+      nums <- sort(unique(as.numeric(na.omit(str_match(substring(onScope, nchar(sts) + 1), "^(\\d+)_")[, 2]))))
+      if(length(nums) > 0){
+        for(ni in nums){
           ti <- ti+1 #new interp number
 
-          inames <- fnames[str_which(fnames,str_c(sts,as.character(ni),"_"))]
+          pre <- str_c(sts, as.character(ni))
+          inames <- fnames[startsWith(fnames, str_c(pre, "_"))]
           for(ini in inames){
-            varName <- str_remove(ini,str_c(sts,as.character(ni)))
+            varName <- substring(ini, nchar(pre) + 1)
             newName <- str_c("interpretation",as.character(ti),varName)
             mts[[newName]] <- mts[[ini]]
             mts[[ini]] <- NULL
