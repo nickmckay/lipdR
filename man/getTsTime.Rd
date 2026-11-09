@@ -37,8 +37,12 @@ Returns a time axis of one timeseries, converted to `units`.
 }
 \seealso{
 Other time: 
+\code{\link{commonTimeUnits}()},
 \code{\link{convertTime}()},
 \code{\link{convertTsTime}()},
+\code{\link{getTsTimes}()},
+\code{\link{isPrograde}()},
+\code{\link{timeScale}()},
 \code{\link{tsTimeVariables}()}
 }
 \concept{time}

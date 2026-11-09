@@ -1,3 +1,11 @@
+# lipdR 0.8.1
+
+Helpers so analysis packages handle time scales the same way:
+
+* `timeScale()` describes a time scale (from units, time metadata, or a timeseries), and `isPrograde()` says whether it counts forward (year CE) or back (yr BP, ka, b2k).
+* `getTsTimes()` gets one time variable of every timeseries on one scale, with a single warning listing records whose scale was assumed or that have no time.
+* `commonTimeUnits()` returns the scale shared by a set of timeseries, or a default (yr BP) with a message when they differ.
+
 # lipdR 0.8.0
 
 Every time column now carries its time scale, so lipdR and the analysis packages can convert between time axes without guessing.

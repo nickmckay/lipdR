@@ -19,8 +19,12 @@ Lists the time variables of one timeseries that [getTsTime()]
 }
 \seealso{
 Other time: 
+\code{\link{commonTimeUnits}()},
 \code{\link{convertTime}()},
 \code{\link{convertTsTime}()},
-\code{\link{getTsTime}()}
+\code{\link{getTsTime}()},
+\code{\link{getTsTimes}()},
+\code{\link{isPrograde}()},
+\code{\link{timeScale}()}
 }
 \concept{time}

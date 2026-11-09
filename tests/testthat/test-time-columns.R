@@ -132,3 +132,42 @@ test_that("convertTsTime converts time and keeps the pointer", {
   expect_true(all(tib$timeVariableName == "year"))
   expect_equal(as.numeric(getTsTime(tib[1, ], "yr BP")), c(50, 150, 250, 350))
 })
+
+test_that("timeScale and isPrograde describe scales", {
+  expect_equal(timeScale("ka")$timeExponent, 3)
+  expect_equal(timeScale(list(timeDatum = 2000, timeDirection = "retrograde", timeExponent = 0))$timeDatum, 2000)
+  expect_true(isPrograde("yr AD"))
+  expect_true(isPrograde("CE"))
+  expect_false(isPrograde("ka"))
+  expect_false(isPrograde("yr b2k"))
+})
+
+test_that("getTsTimes converts every record and warns once", {
+  a <- list(dataSetName = "a", paleoData_variableName = "x", paleoData_values = 1:2,
+            year = c(1900, 1950), yearUnits = "CE")
+  b <- list(dataSetName = "b", paleoData_variableName = "x", paleoData_values = 1:2,
+            age = c(0, 100))
+  c3 <- list(dataSetName = "c", paleoData_variableName = "x", paleoData_values = 1:2)
+  TS <- list(a, b, c3)
+  w <- character(0)
+  out <- withCallingHandlers(getTsTimes(TS, "yr BP"),
+                             warning = function(cnd){ w <<- c(w, conditionMessage(cnd)); invokeRestart("muffleWarning") })
+  expect_length(w, 2)
+  expect_match(w[1], "1 timeseries have no 'time'")
+  expect_match(w[2], "was assumed.*b x")
+  expect_equal(as.numeric(out[[1]]), c(50, 0))
+  expect_null(out[[3]])
+  expect_error(getTsTimes(TS, missing = "error", warn.assumed = FALSE), "no 'time'")
+  expect_equal(attr(out, "timeUnits"), "yr BP")
+
+  tib <- ts2tibble(extractTs(make_time_lipd()))
+  expect_length(getTsTimes(tib, "ka"), nrow(tib))
+})
+
+test_that("commonTimeUnits keeps a shared scale, and falls back with a message", {
+  TS <- extractTs(make_time_lipd())
+  expect_equal(commonTimeUnits(TS), "yr AD")
+  mixed <- list(TS[[1]], list(dataSetName = "b", paleoData_values = 1:2, age = c(0, 1), ageUnits = "ka"))
+  expect_message(u <- commonTimeUnits(mixed), "different time scales")
+  expect_equal(u, "yr BP")
+})

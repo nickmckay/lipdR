@@ -32,8 +32,12 @@ convertTime(c(50, 100), from = "yr b2k", to = "CE")
 }
 \seealso{
 Other time: 
+\code{\link{commonTimeUnits}()},
 \code{\link{convertTsTime}()},
 \code{\link{getTsTime}()},
+\code{\link{getTsTimes}()},
+\code{\link{isPrograde}()},
+\code{\link{timeScale}()},
 \code{\link{tsTimeVariables}()}
 }
 \concept{time}
