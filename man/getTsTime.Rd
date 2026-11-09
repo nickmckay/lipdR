@@ -4,7 +4,13 @@
 \alias{getTsTime}
 \title{Get the time values of a timeseries on a given time scale}
 \usage{
-getTsTime(ts, units = "yr BP", ensemble = TRUE)
+getTsTime(
+  ts,
+  units = "yr BP",
+  ensemble = TRUE,
+  variable = "time",
+  warn.assumed = TRUE
+)
 }
 \arguments{
 \item{ts}{one timeseries: an element of a TS list, or one row of a timeseries tibble}
@@ -12,20 +18,27 @@ getTsTime(ts, units = "yr BP", ensemble = TRUE)
 \item{units}{the time scale to return, e.g. "yr BP" (default), "ka", "CE". NA returns the values unconverted.}
 
 \item{ensemble}{use an age or year ensemble when there is one? (default = TRUE)}
+
+\item{variable}{which time variable: "time" (the primary time axis, default), or the name of a time column, e.g. "age", "year", "ageEnsemble"}
+
+\item{warn.assumed}{warn when the variable's time scale was assumed, because its units don't say? (default = TRUE)}
 }
 \value{
-a numeric vector, or a matrix (rows are observations, columns ensemble members), on the requested scale. Its "timeUnits" attribute gives the scale.
+a numeric vector, or a matrix (rows are observations, columns ensemble members), on the requested scale. Its attributes give the scale ("timeUnits"), the variable used ("timeVariableName") and where its scale came from ("timeSource": "metadata", "units" or "assumed").
 }
 \description{
-Returns the time axis of one timeseries, converted to `units`.
-  With `ensemble = TRUE`, an age or year ensemble (`ageEnsemble`,
-  `yearEnsemble`) is used when there is one, so age uncertainty is kept.
-  Otherwise it uses `time` and its metadata (added by [extractTs()]), and
-  falls back to `age` or `year` for timeseries without them.
+Returns a time axis of one timeseries, converted to `units`.
+  By default this is the primary time axis chosen by [extractTs()]
+  (`variable = "time"`). `time` points to its source column
+  (`timeVariableName`), and the column is read, so edits to it after
+  extraction are respected. With `ensemble = TRUE`, an age or year ensemble
+  is used when there is one, so age uncertainty is kept. Any other time
+  variable of the entry can be asked for by name, e.g. `variable = "year"`.
 }
 \seealso{
 Other time: 
 \code{\link{convertTime}()},
-\code{\link{convertTsTime}()}
+\code{\link{convertTsTime}()},
+\code{\link{tsTimeVariables}()}
 }
 \concept{time}

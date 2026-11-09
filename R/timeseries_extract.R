@@ -10,14 +10,24 @@
 #'   and store them in the `hasResolution_*` fields. Default FALSE.
 #' @importFrom methods is
 #' @return ts:  Time series : list
-#' @details In addition to flattening each column, `extractTs()` identifies the
-#'   primary time axis of each table (an `age`/`year` column, or a column flagged
-#'   `isPrimary`/`primaryAgeColumn`) and adds a standardized time description to every
-#'   entry: `time` (the values), `timeUnits`, `timeDatum` (reference year, e.g. 1950
-#'   for BP, 0 for CE/AD), `timeDirection` (`"prograde"` or `"retrograde"`),
-#'   `timeExponent` (base-10 exponent of the units, e.g. 0 for yr, 3 for ka), and
-#'   `timeMin`/`timeMax`. The `timeMin`/`timeMax` fields make it easy to filter a time
-#'   series by age range with e.g. `dplyr::filter()`.
+#' @details Every time column (`age`, `year`, their ensembles, and any column
+#'   with calendar time units such as yr BP, ka, CE or b2k) has a time scale:
+#'   `timeUnits` (a standardized label), `timeDatum` (the year CE of time zero,
+#'   e.g. 1950 for BP, 0 for CE), `timeDirection` (`"prograde"` or
+#'   `"retrograde"`), `timeExponent` (e.g. 0 for yr, 3 for ka) and `timeSource`
+#'   (`"metadata"` if the file states the scale, `"units"` if it was read from the
+#'   units, `"assumed"` if the units don't say and it was guessed). [readLipd()]
+#'   adds these to each column; [writeLipd()] keeps only scales the file stated.
+#'
+#'   `extractTs()` copies every time column of a table into each entry, with its
+#'   units and scale as `<name>TimeUnits`, `<name>TimeDatum`,
+#'   `<name>TimeDirection`, `<name>TimeExponent` and `<name>TimeSource` (for
+#'   example `ageTimeDatum`). It also picks the table's primary time axis (a time
+#'   column flagged `primaryAgeColumn`, then `isPrimary`, then `age`, then `year`)
+#'   and adds `time` (a copy of its values), its scale (`timeUnits`, `timeDatum`,
+#'   `timeDirection`, `timeExponent`, `timeSource`), `timeVariableName` (the
+#'   column it came from) and `timeMin`/`timeMax`. Use [getTsTime()] to get any
+#'   time variable on any scale, and [tsTimeVariables()] to list them.
 #' @examples
 #' \dontrun{
 #' D <- readLipd()
@@ -32,6 +42,7 @@ extractTs= function(D, whichtables = "all", mode = "paleo", calculateResolution 
   # Backup full data to lipd space (for collapseTs).
   # Loop datasets and send to next function (extract1) ONE at a time for processing
   assign("calculateResolution", isTRUE(calculateResolution), envir = lipdEnv)
+  D <- add_time_scales(D)
   time_id = set_ts_lipd(D)
   # Flag that stops looping if this is a single dataset. Otherwise, flag never sets and continues looping for N datasets.
   breakFlag=FALSE
@@ -191,22 +202,46 @@ extract_table=function(table_data, table_type, pc, TS, current){
 
 
 extract_special= function(table_data, current){
-  # Special columns need to be included with all time series entries
-  specialColumns = c("age","year","depth","ageEnsemble")
-  specCols = which((tolower(names(table_data)) %in% tolower(specialColumns)) & sapply(table_data,is.list))
-  for(sc in specCols){
-    #only assign in values and units for now
-    #use the correct names
-    nameToUse <- specialColumns[which(tolower(names(table_data)[sc]) == tolower(specialColumns))]
-    current[[paste0(nameToUse,"Units")]] = table_data[[sc]]$units
-    current[[nameToUse]] = table_data[[sc]]$values
+  # Special columns are copied into every time series entry of the table:
+  # depth, and every time column, each with its units and time scale
+  # (<name>TimeUnits, <name>TimeDatum, <name>TimeDirection, <name>TimeExponent,
+  # <name>TimeSource).
+  canonical <- c("age", "year", "depth", "ageEnsemble", "yearEnsemble")
+  reserved <- c(names(current), "time", "mode", "tableType")
+  tabNames <- names(table_data) %||% rep("", length(table_data))
+  cols <- which(vapply(table_data, is.list, logical(1)) & nzchar(tabNames))
+  fieldNames <- list()
+  for(sc in cols){
+    nm <- names(table_data)[sc]
+    col <- table_data[[sc]]
+    scale <- column_time_scale(col, nm)
+    ci <- match(tolower(nm), tolower(canonical))
+    if(!is.na(ci)){
+      field <- canonical[ci]
+    }else if(!is.null(scale)){
+      field <- nm
+    }else{
+      next
+    }
+    if(field %in% reserved || startsWith(field, "time")){
+      next
+    }
+    current[[paste0(field, "Units")]] <- col$units
+    current[[field]] <- col$values
+    if(!is.null(scale)){
+      for(f in names(scale)){
+        current[[paste0(field, "T", substring(f, 2))]] <- scale[[f]]
+      }
+    }
+    fieldNames[[nm]] <- field
   }
 
-  # Identify the primary time axis and attach standardized time metadata
-  # (time, timeUnits, timeDatum, timeDirection, timeExponent, timeMin, timeMax)
+  # The primary time axis: time is a copy of that column, and timeVariableName
+  # points to it (getTsTime() reads the column, so edits to it are respected)
   timeCol <- identify_time_column(table_data)
   if(!is.null(timeCol)){
-    current <- createTimeMetadata(current, timeCol$values, timeCol$variableName, timeCol$units)
+    current <- createTimeMetadata(current, timeCol$values, timeCol$scale,
+                                  fieldNames[[timeCol$name]] %||% timeCol$variableName)
   }
   return(current)
 }
@@ -214,23 +249,26 @@ extract_special= function(table_data, current){
 #' Identify the primary time column of a measurement table
 #'
 #' Only time columns are candidates: columns named `age` or `year`, and
-#' columns whose units are calendar time units (yr BP, ka, yr AD, CE, b2k, ...).
+#' columns whose units are calendar time units (yr BP, ka, yr AD, CE, b2k,
+#' ...), or that state their time scale. Ensembles are not candidates.
 #' Among those it chooses, in priority order: a column flagged
 #' `primaryAgeColumn`, then one flagged `isPrimary`, then a column named `age`,
 #' then a column named `year`. (`isPrimary` usually marks the primary variable
 #' of a table, such as depth or the proxy, so it is not trusted on its own.)
 #' @keywords internal
 #' @param table_data A measurement/summary table (named list of columns + root keys)
-#' @return list(variableName, units, values) for the chosen column, or NULL if none
+#' @return list(name, variableName, units, values, scale) for the chosen column, or NULL if none
 identify_time_column <- function(table_data){
-  isCol <- sapply(table_data, is.list)
+  isCol <- vapply(table_data, is.list, logical(1))
   cols <- which(isCol)
   if(length(cols) == 0){
     return(NULL)
   }
-
-  # variableName of each candidate column (fall back to the list name)
   colNames <- names(table_data)
+  if(is.null(colNames)){
+    colNames <- rep("", length(table_data))
+  }
+
   vn <- vapply(cols, function(i){
     v <- table_data[[i]]$variableName
     if(is.null(v)){
@@ -239,12 +277,12 @@ identify_time_column <- function(table_data){
     if(is.null(v) || length(v) == 0) NA_character_ else tolower(as.character(v)[[1]])
   }, character(1))
 
-  # only time columns can be the time axis
+  scales <- lapply(cols, function(i) column_time_scale(table_data[[i]], colNames[i]))
   isTime <- vapply(seq_along(cols), function(k){
-    is_time_column(vn[[k]], table_data[[cols[[k]]]]$units)
+    vals <- table_data[[cols[[k]]]]$values
+    !is.null(scales[[k]]) && !grepl("ensemble", vn[[k]]) && !is.matrix(vals) && !is.data.frame(vals)
   }, logical(1))
 
-  # primary flags on each candidate column
   flagged <- function(field){
     vapply(cols, function(i) is_primary_flag(table_data[[i]][[field]]), logical(1)) & isTime
   }
@@ -253,44 +291,47 @@ identify_time_column <- function(table_data){
   isAge <- vn %in% "age" & isTime
   isYear <- vn %in% "year" & isTime
 
-  chosen <- NULL
+  k <- NULL
   if(any(primAge)){
-    chosen <- cols[[which(primAge)[[1]]]]
+    k <- which(primAge)[[1]]
   } else if(any(isPrim)){
-    chosen <- cols[[which(isPrim)[[1]]]]
+    k <- which(isPrim)[[1]]
   } else if(any(isAge)){
-    chosen <- cols[[which(isAge)[[1]]]]
+    k <- which(isAge)[[1]]
   } else if(any(isYear)){
-    chosen <- cols[[which(isYear)[[1]]]]
+    k <- which(isYear)[[1]]
   }
 
-  if(is.null(chosen)){
+  if(is.null(k)){
     return(NULL)
   }
-  col <- table_data[[chosen]]
+  col <- table_data[[cols[[k]]]]
   if(is.null(col$values)){
     return(NULL)
   }
-  list(variableName = col$variableName %||% colNames[chosen],
+  list(name = colNames[cols[[k]]],
+       variableName = col$variableName %||% colNames[cols[[k]]],
        units = col$units,
-       values = col$values)
+       values = col$values,
+       scale = scales[[k]])
 }
 
 #' Attach standardized time metadata to a time series entry
 #' @keywords internal
 #' @param current The (shared) time series entry being built
 #' @param values The values of the identified time column
-#' @param variableName The variableName of the time column
-#' @param units The units of the time column
+#' @param scale The column's time scale (from column_time_scale())
+#' @param source The name of the entry field holding that column (timeVariableName)
 #' @return current with time, timeUnits, timeDatum, timeDirection, timeExponent,
-#'   timeMin and timeMax added
-createTimeMetadata <- function(current, values, variableName, units){
-  meta <- time_metadata_from_units(variableName, units)
+#'   timeSource, timeVariableName, timeMin and timeMax added
+createTimeMetadata <- function(current, values, scale, source){
   current[["time"]] <- values
-  current[["timeUnits"]] <- meta$timeUnits
-  current[["timeDatum"]] <- meta$timeDatum
-  current[["timeDirection"]] <- meta$timeDirection
-  current[["timeExponent"]] <- meta$timeExponent
+  current[["timeUnits"]] <- scale$timeUnits
+  current[["timeDatum"]] <- scale$timeDatum
+  current[["timeDirection"]] <- scale$timeDirection
+  current[["timeExponent"]] <- scale$timeExponent
+  current[["timeSource"]] <- scale$timeSource
+  current[["timeVariableName"]] <- source
 
   vv <- suppressWarnings(as.numeric(unlist(values)))
   vv <- vv[is.finite(vv)]
@@ -372,34 +413,6 @@ standardize_time_units <- function(exponent, direction, u){
          "6" = "Ma",
          "9" = "Ga",
          "yr BP")
-}
-
-#' Could a column be a time axis?
-#'
-#' TRUE for columns named `age` or `year`, and for columns whose units are
-#' calendar time units (e.g. "yr BP", "ka", "yr AD", "CE", "yr b2k").
-#' Radiocarbon ages and uncertainty or range columns are not time axes.
-#' @keywords internal
-#' @param variableName lowercased variableName of the column
-#' @param units the column's units
-#' @return logical
-is_time_column <- function(variableName, units){
-  vn <- tolower(trimws(paste(variableName, collapse = " ")))
-  if(grepl("unc|err|sigma|\\bsd\\b|^sd|min$|max$|low|high|range|14c", vn)){
-    return(FALSE)
-  }
-  u <- tolower(trimws(paste(units, collapse = " ")))
-  if(grepl("14c", u)){
-    return(FALSE)
-  }
-  # columns named age or year count whatever their units say (some are mislabeled, e.g. "count/yr")
-  if(vn %in% c("age", "year")){
-    return(TRUE)
-  }
-  if(length(u) == 0 || is.na(u) || u %in% c("", "null", "na", "unitless")){
-    return(FALSE)
-  }
-  grepl("^(yr|yrs|year|years|ka|kyr|ma|myr|ga|gyr|bp|ad|ce|bc|bce|b2k|cal)\\b|^a( |$)|\\b(bp|ad|ce|bce|b2k|ka|kyr|ma|myr)\\b", u)
 }
 
 #' Is a column's primary flag truthy?

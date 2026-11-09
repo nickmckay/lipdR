@@ -1,3 +1,14 @@
+# lipdR 0.8.0
+
+Every time column now carries its time scale, so lipdR and the analysis packages can convert between time axes without guessing.
+
+* `readLipd()` adds a time scale to every time column (`age`, `year`, their ensembles, and any column with calendar time units such as yr BP, ka, CE or b2k): `timeUnits`, `timeDatum`, `timeDirection`, `timeExponent`, and `timeSource`, which says where the scale came from: `"metadata"` (the file states it), `"units"` (read from the units) or `"assumed"` (the units don't say, so it was guessed from the variable name). `writeLipd()` writes only scales the file stated, so a curator can state the scale of an oddly labeled column by giving it `timeDatum`, `timeDirection` and `timeExponent`.
+* `extractTs()` copies every time column of a table into each entry, with its scale (`ageTimeDatum`, `calAgeTimeUnits`, ...), not only `age`, `year` and `ageEnsemble`. The new `timeVariableName` says which column `time` came from, and `timeSource` says how its scale was found.
+* `time` is now a copy of the column `timeVariableName` points to. `getTsTime()` reads that column, so edits to it after `extractTs()` are respected; if `time` no longer matches, it warns and uses the column.
+* `getTsTime()` gains `variable`, to get any time variable on any scale (e.g. `getTsTime(ts, "CE", variable = "age")`), and `warn.assumed`: it warns when a scale was assumed. The result's attributes give the variable used and its `timeSource`. New `tsTimeVariables()` lists the time variables of an entry.
+* An ensemble whose units don't say its scale uses its `age` or `year` column's scale.
+* Fixed: `collapseTs()` put `time`, `timeUnits` and the other time fields at the dataset root, so `writeLipd()` wrote them into files (since 0.7.0). They, and the copied time columns, are no longer collapsed.
+
 # lipdR 0.7.4
 
 * `extractTs()` no longer puts depth, or the proxy, in `time` for some records. It took the first column flagged `isPrimary` as the time axis, but in LiPD `isPrimary` usually marks a table's primary variable, so records with depth flagged first (many lake and speleothem records) got depth in `time`, labeled yr BP. Now only time columns are candidates: columns named `age` or `year`, or with calendar time units (yr BP, ka, yr AD, CE, b2k, ...), excluding radiocarbon and uncertainty columns. Among them, a column flagged `primaryAgeColumn` comes first, then `isPrimary`, then `age`, then `year`. This matters because lipdViz, compositeR, actR and ens use `time` by default.

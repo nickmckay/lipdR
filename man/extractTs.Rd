@@ -24,14 +24,24 @@ ts:  Time series : list
 Create a time series from a library of LiPD datasets. A Time series is a flattened version of LiPD data that can be queried and filtered for easier data analysis.
 }
 \details{
-In addition to flattening each column, `extractTs()` identifies the
-  primary time axis of each table (an `age`/`year` column, or a column flagged
-  `isPrimary`/`primaryAgeColumn`) and adds a standardized time description to every
-  entry: `time` (the values), `timeUnits`, `timeDatum` (reference year, e.g. 1950
-  for BP, 0 for CE/AD), `timeDirection` (`"prograde"` or `"retrograde"`),
-  `timeExponent` (base-10 exponent of the units, e.g. 0 for yr, 3 for ka), and
-  `timeMin`/`timeMax`. The `timeMin`/`timeMax` fields make it easy to filter a time
-  series by age range with e.g. `dplyr::filter()`.
+Every time column (`age`, `year`, their ensembles, and any column
+  with calendar time units such as yr BP, ka, CE or b2k) has a time scale:
+  `timeUnits` (a standardized label), `timeDatum` (the year CE of time zero,
+  e.g. 1950 for BP, 0 for CE), `timeDirection` (`"prograde"` or
+  `"retrograde"`), `timeExponent` (e.g. 0 for yr, 3 for ka) and `timeSource`
+  (`"metadata"` if the file states the scale, `"units"` if it was read from the
+  units, `"assumed"` if the units don't say and it was guessed). [readLipd()]
+  adds these to each column; [writeLipd()] keeps only scales the file stated.
+
+  `extractTs()` copies every time column of a table into each entry, with its
+  units and scale as `<name>TimeUnits`, `<name>TimeDatum`,
+  `<name>TimeDirection`, `<name>TimeExponent` and `<name>TimeSource` (for
+  example `ageTimeDatum`). It also picks the table's primary time axis (a time
+  column flagged `primaryAgeColumn`, then `isPrimary`, then `age`, then `year`)
+  and adds `time` (a copy of its values), its scale (`timeUnits`, `timeDatum`,
+  `timeDirection`, `timeExponent`, `timeSource`), `timeVariableName` (the
+  column it came from) and `timeMin`/`timeMax`. Use [getTsTime()] to get any
+  time variable on any scale, and [tsTimeVariables()] to list them.
 }
 \examples{
 \dontrun{

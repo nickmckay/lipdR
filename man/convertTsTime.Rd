@@ -31,6 +31,7 @@ TS <- convertTsTime(TS, "yr BP")
 \seealso{
 Other time: 
 \code{\link{convertTime}()},
-\code{\link{getTsTime}()}
+\code{\link{getTsTime}()},
+\code{\link{tsTimeVariables}()}
 }
 \concept{time}

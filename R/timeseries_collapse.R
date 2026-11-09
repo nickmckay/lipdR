@@ -106,10 +106,10 @@ collapseTs <- function(ts, force=FALSE, verbose = NA){
   return(D)
 }
 
-is_include_key <- function(key, pc){
+is_include_key <- function(key, pc, extra_exclude = character(0)){
   exclude <- c("mode", "whichtables", "paleoNumber", "chronNumber", "tableNumber", "modelNumber", "timeID", "tableType",
                "raw", "depth", "depthUnits", "age", "ageUnits", "interpretation", "calibration", "hasResolution","inCompilation", "physicalSample",
-               "depthUnits","year","yearUnits")
+               "depthUnits","year","yearUnits", entry_time_keys(), extra_exclude)
   match_idx <- stringr::str_match_all(key, "(\\w+)(\\d+)[_](\\w+)")
   match_non_idx <- stringr::str_match_all(key, "(\\w+)[_](\\w+)")
 
@@ -144,9 +144,25 @@ is_include_key <- function(key, pc){
   return(TRUE)
 }
 
+#' Time fields of a time series entry that extractTs() derives from the tables
+#' @keywords internal
+#' @param keys names of a time series entry
+#' @return the keys that must not be collapsed into the dataset root
+entry_time_keys <- function(keys = character(0)){
+  fixed <- c("time", "timeUnits", "timeDatum", "timeDirection", "timeExponent", "timeSource",
+             "timeVariableName", "timeMin", "timeMax",
+             "ageEnsemble", "ageEnsembleUnits", "yearEnsemble", "yearEnsembleUnits")
+  # every special column copied by extract_special() has <name>TimeDatum etc.
+  timeCols <- sub("TimeDatum$", "", keys[grepl(".TimeDatum$", keys)])
+  derived <- c(timeCols, paste0(timeCols, "Units"),
+               as.vector(outer(timeCols, c("TimeUnits", "TimeDatum", "TimeDirection", "TimeExponent", "TimeSource"), paste0)))
+  c(fixed, derived)
+}
+
 collapse_root <- function(d, entry, pc){
 
   ts_keys <- names(entry)
+  timeKeys <- entry_time_keys(ts_keys)
   pub <- list()
   funding <- list()
   # geo <- list(geometry=list(coordinates=list(NA, NA, NA), type="Point"), properties=list())
@@ -154,7 +170,7 @@ collapse_root <- function(d, entry, pc){
   for(i in 1:length(ts_keys)){
     key <- ts_keys[[i]]
     # Is this a key that should be added
-    include <- is_include_key(key, pc)
+    include <- is_include_key(key, pc, timeKeys)
     # Filter all the keys we don't want
     if(include){
       if(grepl("geo", key)){

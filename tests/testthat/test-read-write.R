@@ -31,6 +31,8 @@ test_that("writeLipd and readLipd perform a perfect round trip for a single file
   # We remove the 'savedEnsembles' field as this is a transient state
   # added during read and not part of the core data.
   L_read$savedEnsembles <- NULL
+  # reading adds a time scale to every time column (not stored in the file)
+  L_original <- add_time_scales(L_original)
 
   #sort them both by alphabetical order:
   L_original <- L_original[order(names(L_original))]
@@ -68,7 +70,7 @@ test_that("readLipd correctly reads a directory of LiPD files", {
 
   # Check one of the loaded objects for correctness
   D_read$MultiRead1$savedEnsembles <- NULL
-  expect_setequal(D_read$MultiRead1, L1)
+  expect_setequal(D_read$MultiRead1, add_time_scales(L1))
 })
 
 test_that("readLipd fails gracefully on bad path", {

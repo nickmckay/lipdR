@@ -4,20 +4,20 @@
 \alias{createTimeMetadata}
 \title{Attach standardized time metadata to a time series entry}
 \usage{
-createTimeMetadata(current, values, variableName, units)
+createTimeMetadata(current, values, scale, source)
 }
 \arguments{
 \item{current}{The (shared) time series entry being built}
 
 \item{values}{The values of the identified time column}
 
-\item{variableName}{The variableName of the time column}
+\item{scale}{The column's time scale (from column_time_scale())}
 
-\item{units}{The units of the time column}
+\item{source}{The name of the entry field holding that column (timeVariableName)}
 }
 \value{
 current with time, timeUnits, timeDatum, timeDirection, timeExponent,
-  timeMin and timeMax added
+  timeSource, timeVariableName, timeMin and timeMax added
 }
 \description{
 Attach standardized time metadata to a time series entry

@@ -33,6 +33,7 @@ convertTime(c(50, 100), from = "yr b2k", to = "CE")
 \seealso{
 Other time: 
 \code{\link{convertTsTime}()},
-\code{\link{getTsTime}()}
+\code{\link{getTsTime}()},
+\code{\link{tsTimeVariables}()}
 }
 \concept{time}
